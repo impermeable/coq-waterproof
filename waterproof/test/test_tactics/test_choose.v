@@ -1,4 +1,4 @@
-(** * test_choose.v
+(** * Testcases for [choose.v]
 Authors: 
     - Cosmin Manea (1298542)
 

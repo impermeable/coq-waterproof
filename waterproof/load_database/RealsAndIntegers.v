@@ -1,4 +1,4 @@
-(** * RealsAndINtegers
+(** * [RealsAndIntegers.v]
 Authors: 
     - Cosmin Manea (1298542)
 Creation date: 21 June 2021

@@ -1,4 +1,4 @@
-(** * we_need_to_show.v
+(** * [we_need_to_show.v]
 Authors: 
     - Lulof Pirée (1363638)
 
@@ -76,6 +76,7 @@ Local Ltac2 check_goal := fun (t:constr) =>
 Ltac2 Notation "We" "need" "to" "show" that(opt("that")) 
         column(opt(":")) t(constr) :=
         check_goal t.
+
 Ltac2 Notation "To" "show" that(opt("that")) column(opt(":")) t(constr) :=
   check_goal t.
 

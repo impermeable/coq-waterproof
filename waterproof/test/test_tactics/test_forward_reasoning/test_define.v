@@ -1,9 +1,9 @@
-(** * test_defined.v
+(** * Testcases for [define.v]
 Authors: 
     - Cosmin Manea (1298542)
 Creation date: 06 June 2021
 
-Test cases for the [We show/prove both directions] tactic.
+Test cases for the [Define] tactic.
 Tests pass if they can be run without unhandled errors.
 --------------------------------------------------------------------------------
 

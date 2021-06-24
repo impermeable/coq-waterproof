@@ -1,4 +1,4 @@
-(** * auxiliary.v
+(** * [auxiliary.v]
 Authors:
     - Lulof Pirée (1363638)
 Creation date: 14 May 2021

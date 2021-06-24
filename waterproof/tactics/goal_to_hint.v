@@ -1,4 +1,4 @@
-(** * goal_to_hint.v
+(** * [goal_to_hint.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 2 June 2021

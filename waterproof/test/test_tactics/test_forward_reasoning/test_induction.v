@@ -1,10 +1,10 @@
-(** * test_induction.v
+(** * Testcases for [induction.v]
 Authors: 
     - Cosmin Manea (1298542)
 
 Creation date: 06 June 2021
 
-Testcases for the [We prove by induction...] tactic.
+Testcases for the [We prove by induction] tactic.
 Tests pass if they can be run without unhandled errors.
 --------------------------------------------------------------------------------
 

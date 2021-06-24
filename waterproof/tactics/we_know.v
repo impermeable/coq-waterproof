@@ -1,4 +1,4 @@
-(** * we_know.v
+(** * [we_know.v]
 Authors: 
     - Lulof Pirée (1363638)
     - Cosmin Manea (refactored file)

@@ -1,5 +1,4 @@
-
-(** * auto_hintdb_arg.v
+(** * [auto_hintdb_arg.v]
 Authors: 
     - Lulof Pirée (1363638)
 

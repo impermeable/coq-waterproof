@@ -1,4 +1,4 @@
-(** * because.v
+(** * [because.v]
 Authors: 
     - Cosmin Manea (1298542)
 
@@ -41,7 +41,7 @@ From Ltac2 Require Import Ltac2.
     Does:
         - splits [s] into its two respective parts.
 *)
-Ltac2 and_hypothesis_destruct (s:ident) (u:ident) (v:ident) :=
+Local Ltac2 and_hypothesis_destruct (s:ident) (u:ident) (v:ident) :=
     let s_val := Control.hyp s in (destruct $s_val as [$u $v]).
 
 
@@ -57,7 +57,7 @@ Ltac2 and_hypothesis_destruct (s:ident) (u:ident) (v:ident) :=
     Does:
         - splits [s] into its two respective parts.
 *)
-Ltac2 or_hypothesis_destruct s u v :=
+Local Ltac2 or_hypothesis_destruct s u v :=
     let s_val := Control.hyp s in (destruct $s_val as [$u | $v]).
 
 

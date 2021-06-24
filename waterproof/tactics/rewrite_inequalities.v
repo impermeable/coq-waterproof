@@ -1,4 +1,4 @@
-(** * rewrite_inequalities.v
+(** * [rewrite_inequalities.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 10 June 2021

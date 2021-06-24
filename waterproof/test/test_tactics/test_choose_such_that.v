@@ -1,4 +1,4 @@
-(** * test_choose_such_that.v
+(** * Testcases for [choose_such_that.v]
 Authors: 
     - Cosmin Manea (1298542)
 

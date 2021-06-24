@@ -1,4 +1,4 @@
-(** * subsequences.v
+(** * [subsequences_definitions.v.v]
 Authors:
     - Jim Portegies
     - Lulof Pirée (minor edits)
@@ -80,8 +80,8 @@ Proof.
     apply H.
 Qed.
 
-Global Hint Resolve index_sequence_property : reals.
-Global Hint Extern 1 => (unfold ge) : reals.
+Global Hint Resolve index_sequence_property : subsequences.
+Global Hint Extern 1 => (unfold ge) : subsequences.
 
 
 
@@ -180,7 +180,7 @@ Proof.
     Apply k1_ge_k2.
 Qed.
 
-Global Hint Resolve index_sequence_property2 : reals.
+Global Hint Resolve index_sequence_property2 : subsequences.
 
 
 Lemma double_is_even : forall n : nat, Nat.even (2 * n) = true.
@@ -191,4 +191,4 @@ Proof.
     This concludes the proof.
 Qed.
 
-Global Hint Resolve double_is_even : reals.
+Global Hint Resolve double_is_even : subsequences.

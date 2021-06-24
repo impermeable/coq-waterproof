@@ -1,9 +1,9 @@
-(** * Waterproof.v
+(** * [AllTactics.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 9 June 2021
 
-File that imports all subfiles of the Waterproof library.
+File that imports all subfiles under the [tactics] folder of the Waterproof library.
 
 --------------------------------------------------------------------------------
 

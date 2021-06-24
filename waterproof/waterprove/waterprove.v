@@ -1,4 +1,4 @@
-(** * waterprove.v
+(** * [waterprove.v]
 Authors: 
     - Cosmin Manea (1298542)
     - Lulof Pirée (1363638)
@@ -6,8 +6,9 @@ Authors:
 Creation date: 01 June 2021
 
 The waterprove automation function.
-This function calls the automation tactics, [auto], [eauto] and [intuition], 
-with a specific set of lemmas.
+This function calls the automation tactics, [auto], [eauto], 
+with a specific set of lemmas and search depth.
+It is also possible to call the [intuition] Ltac1 tactic.
 
 --------------------------------------------------------------------------------
 

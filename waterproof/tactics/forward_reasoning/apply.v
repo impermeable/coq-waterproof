@@ -1,4 +1,4 @@
-(** * apply.v
+(** * [apply.v]
 Authors: 
     - Cosmin Manea (1298542)
 

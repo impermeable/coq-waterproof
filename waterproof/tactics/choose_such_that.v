@@ -1,4 +1,4 @@
-(** * choose_such_that.v
+(** * [choose_such_that.v]
 Author: 
     - Cosmin Manea (1298542)
 Creation date: 30 May 2021

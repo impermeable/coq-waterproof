@@ -1,4 +1,4 @@
-(** * test_either.v
+(** * Testcases for [either.v]
 Authors: 
     - Cosmin Manea (1298542)
 

@@ -1,4 +1,4 @@
-(** * Choose.v
+(** * [choose.v]
 Author: 
     - Cosmin Manea (1298542)
 Creation date: 20 May 2021

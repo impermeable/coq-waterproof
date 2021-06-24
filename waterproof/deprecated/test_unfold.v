@@ -1,10 +1,10 @@
-(** * test_unfold.v
+(** * [test_unfold.v]
 Authors: 
     - Cosmin Manea (1298542)
 
 Creation date: 09 June 2021
 
-Testcases for the [Choose ... such that ...] tactic.
+Testcases for the [Unfold] tactic.
 Tests pass if they can be run without unhandled errors.
 --------------------------------------------------------------------------------
 

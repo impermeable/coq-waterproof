@@ -1,4 +1,4 @@
-(** * subsequences.v
+(** * [notations.v]
 Authors:
   - Jim Portegies
 Creation date: 17 June 2021

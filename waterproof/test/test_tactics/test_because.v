@@ -1,4 +1,4 @@
-(** * test_because.v
+(** * Testcases for [because.v]
 Authors: 
     - Cosmin Manea (1298542)
 

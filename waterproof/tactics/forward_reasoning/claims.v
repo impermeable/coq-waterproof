@@ -1,4 +1,4 @@
-(** * claims.v
+(** * [claims.v]
 Author: 
     - Cosmin Manea (1298542)
 Creation date: 06 June 2021

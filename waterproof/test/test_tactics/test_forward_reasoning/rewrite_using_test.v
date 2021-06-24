@@ -1,4 +1,4 @@
-(** * rewrite_using_test.v
+(** * Testcases for [rewrite_using.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 08 June 2021

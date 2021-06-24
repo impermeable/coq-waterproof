@@ -1,4 +1,4 @@
-(** * take.v
+(** * [take.v]
 Authors: 
     - Lulof Pirée (1363638)
     - Cosmin Manea (1298542)

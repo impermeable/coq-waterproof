@@ -1,4 +1,4 @@
-(** * test_we_know.v
+(** * Testcases for [we_know.v]
 Authors: 
     - Lulof Pirée (1363638)
     - Cosmin Manea (refactored file)

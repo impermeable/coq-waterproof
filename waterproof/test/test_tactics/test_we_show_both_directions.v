@@ -1,4 +1,4 @@
-(** * test_we_show_both_directions.
+(** * Testcases for [we_show_both_directions.v]
 Authors: 
     - Cosmin Manea (1298542)
 

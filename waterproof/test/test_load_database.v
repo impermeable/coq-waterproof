@@ -2,7 +2,8 @@
 Authors: 
     - Lulof Pirée (1363638)
     - Tudor Voicu (1339532)
-    - Adrian Vramulet (1284487)
+    - Adrian Vrămuleţ (1284487)
+    - Cosmin Manea (small changes)
 Creation date: 18 June 2021
 
 Test if importing any of the files in
@@ -35,13 +36,15 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
-Require Import  Waterproof.selected_databases.
+Require Import Waterproof.selected_databases.
+Require Import Waterproof.set_intuition.Disabled.
+Require Import Waterproof.load_database.DisableWildcard.
 
 Local Open Scope R_scope.
 
 
 Ltac2 Eval print (of_string "Initial database selection is:").
-(* Note: [nocore] is always *implicitly* included. *)
+(* Note: [core] is always *implicitly* included. *)
 
 Require Import load_database.All.
 Ltac2 Eval global_database_selection. 
@@ -69,7 +72,6 @@ Ltac2 Eval global_database_selection.
 (** * Test 1b
     Lemma that should be NOT proveable with [nocore].
 *)
-(*** TODO: put a suitable lemma here *)
 Lemma load_db_test_1b: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
     let result () := waterprove (Control.goal ()) [] in
     assert_raises_error result.
@@ -265,7 +267,7 @@ Lemma load_db_test_12: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
     assert_raises_error result.
 Abort.
 
-(*Empty the database*)
+(* Empty the database *)
 Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBSquareRoot)::old_selection.

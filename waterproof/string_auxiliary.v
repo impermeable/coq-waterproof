@@ -1,6 +1,6 @@
-(*
+(** * [string_auxiliary.v]
 Authors: 
-    * Lulof Pirée (1363638)
+    - Lulof Pirée (1363638)
 Creation date: 23 May 2021
 
 Auxiliary functions defining some basic operations on Ltac2 strings.

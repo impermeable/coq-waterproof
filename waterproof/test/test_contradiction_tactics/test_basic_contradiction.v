@@ -1,4 +1,4 @@
-(** * test_basic_contradiction.v
+(** * Testcases for [basic_contradiction.v]
 Authors: 
     - Cosmin Manea (1298542)
 

@@ -1,4 +1,4 @@
-(** * we_show_both_statements.v
+(** * [we_show_both_statements.v]
 Authors: 
     - Cosmin Manea (1298542)
 Creation date: 22 May 2021

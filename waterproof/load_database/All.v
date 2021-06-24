@@ -1,6 +1,9 @@
-(** * All
+(** * [All.v]
 Authors: 
     - Lulof Pirée (1363638)
+    - Cosmin Manea (1298542)
+    - Tudor Voicu (1339532)
+    - Adrian Vrămuleţ (1284487)
 Creation date: 15 June 2021
 
 Importing this file adds all Waterproof hint databases 

@@ -1,4 +1,4 @@
-(** * apply.v
+(** * Testcases for [apply.v]
 Authors: 
     - Cosmin Manea (1298542)
 
@@ -39,7 +39,7 @@ Proof.
     pose (m := n).
     exists m.
     Apply X.
-Defined.
+Qed.
 
 
 (** Test 1: This should also work just fine, by applying a lemma *)
@@ -47,11 +47,11 @@ Defined.
 Lemma my_refl (n : nat) : n = n.
 Proof.
     reflexivity.
-Defined.
+Qed.
 
 Goal forall n : nat, n = n.
 Proof.
     intro n.
     Apply (my_refl n).
-Defined.
+Qed.
 

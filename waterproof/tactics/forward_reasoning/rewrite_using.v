@@ -1,4 +1,4 @@
-(** * rewrite_using.v
+(** * [rewrite_using.v]
 Authors: 
     - Cosmin Manea (1298542)
     - Lulof Pirée (1363638)

@@ -1,4 +1,4 @@
-(** * we_need_to_show_test.v
+(** * Testcases for [we_need_to_show_that.v]
 Authors: 
     - Lulof Pirée (1363638)
     - Cosmin Manea (refactored file)

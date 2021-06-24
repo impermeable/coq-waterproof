@@ -1,4 +1,4 @@
-(** * we_show_both_directions.v
+(** * [we_show_both_directions.v]
 Authors: 
     - Cosmin Manea (1298542)
 Creation date: 22 May 2021

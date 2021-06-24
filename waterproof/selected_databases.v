@@ -1,6 +1,9 @@
-(** * databases.v
+(** * [selected_databases.v]
 Authors: 
     - Lulof Pirée (1363638)
+    - Cosmin Manea (small additions)
+    - Tudor Voice (small additions)
+    - Adrian Vrămuleţ (small additions)
 Creation date: 14 June 2021
 
 File that hosts the definitions and functions

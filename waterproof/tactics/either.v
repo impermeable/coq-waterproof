@@ -1,4 +1,4 @@
-(** * either.v
+(** * [either.v]
 Authors: 
     - Cosmin Manea (1298542)
 

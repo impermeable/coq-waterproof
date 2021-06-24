@@ -1,4 +1,4 @@
-(** # **Collect all databases**
+(** * [deprecated_collect_db.v]
 
 Authors: 
     - Adrian Vramulet

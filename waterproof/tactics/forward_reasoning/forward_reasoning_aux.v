@@ -1,4 +1,4 @@
-(** * forward_reasoning.v
+(** * [forward_reasoning.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 3 June 2021

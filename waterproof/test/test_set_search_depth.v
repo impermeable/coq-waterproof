@@ -1,6 +1,7 @@
 (** * Testcases for changing the global variable [global_search_depth]
 Authors: 
     - Lulof Pirée (1363638)
+    - Cosmin Manea (small changes)
 Creation date: 18 June 2021
 
 Test if importing any of the files in
@@ -60,7 +61,6 @@ Qed.
     Lemma that should NOT be proveable with a search depth of 1.
     (Nor with intuition, which has a larger search depth!)
 *)
-(*** TODO: put a suitable lemma here, this one is too easy *)
 Lemma search_depth_test_2: forall x: R, (x = 1) -> x = 2 -> (x <> x).
     let result () := waterprove (Control.goal ()) [] in
     assert_raises_error result.
@@ -68,7 +68,7 @@ Abort.
 
 (*
 --------------------------------------------------------------------------------
-*)(** * Testcases with a search depth of [TODO: something]
+*)(** * Testcases with a search depth of 2
 *)
 
 Require Import Waterproof.set_search_depth.To_2.

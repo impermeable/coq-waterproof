@@ -1,4 +1,4 @@
-(** * assume.v
+(** * [assume.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 20 May 2021

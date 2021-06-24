@@ -1,4 +1,4 @@
-(** * test_claims.v
+(** * Testcases for [claims.v]
 Authors: 
     - Cosmin Manea (1298542)
 

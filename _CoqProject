@@ -79,7 +79,7 @@ waterproof/tactics/forward_reasoning/write_as.v
 waterproof/AllTactics.v
 
 # These depend on AllTactics.
-waterproof/definitions/subsequences.v
+waterproof/definitions/subsequences_definitions.v
 
 # Testcases. Not needed by the end-user,
 # but used to enforce they all pass for compilation.

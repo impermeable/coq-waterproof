@@ -1,4 +1,4 @@
-(** * define.v
+(** * [define.v]
 Authors: 
     - Cosmin Manea (1298542)
 

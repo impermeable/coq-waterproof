@@ -1,4 +1,4 @@
-(** * PlusMinus
+(** * [PlusMinus.v]
 Authors: 
     - Lulof Pirée (1363638)
 Creation date: 15 June 2021

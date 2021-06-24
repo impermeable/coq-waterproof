@@ -1,5 +1,7 @@
-(*
-Author: Lulof Pirée (1363638)
+(** * Tescases for[auxiliary.v]
+
+Authors: 
+    - Lulof Pirée (1363638)
 Creation date: 16 May 2021
 
 Auxiliary functions for testing.

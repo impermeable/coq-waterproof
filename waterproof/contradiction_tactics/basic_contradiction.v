@@ -1,4 +1,4 @@
-(** * basic_contradiction.v
+(** * [basic_contradiction.v]
 Author: 
     - Cosmin Manea (1298542)
 Creation date: 09 June 2021

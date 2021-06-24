@@ -1,4 +1,4 @@
-(** * test_sets_automation_tactics.v
+(** * Testcases for [sets_automation_tactics.v]
 Authors: 
     - Cosmin Manea (1298542)
 

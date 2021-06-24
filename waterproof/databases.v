@@ -1,4 +1,4 @@
-(** # **Databases**
+(** * [databases.v]
 
 Authors: 
     - Adrian Vramulet (1284487)
@@ -16,14 +16,6 @@ until a certain search depth (standard is 5).
 We choose to split the interesting hints among a number 
 of different databases, so that the recursive search
 size and the corresponding search time remain relatively small.
-
-## **Equality**
-We first look at databases that can be used for solving equalities, 
-like $x + y = y + x$ and $|(\left|\log(e^x)|)\right| = |x|$.
-The most important operation in each of the databases is the 
-`reflexivity` tactic, since with that tactic, we want to solve the step.
-We distinguish a number of operations and characteristics, 
-and initialise these databases by adding a reflexivity hint.
 
 --------------------------------------------------------------------------------
 
@@ -51,25 +43,29 @@ Require Import Reals.
 Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
 
-(** ### **Additional ***)
+
+
+(** ### ** The additional database ***)
+
+(** ### Various lemmas *)
 Lemma base_same : forall C : Type,
     forall P : C -> Prop,
     forall x y : sig P, proj1_sig x = proj1_sig y -> x = y.
 Proof.
-intros C P x y H.
-apply eq_sig_hprop.
-intros.
-apply proof_irrelevance.
-apply H.
+    intros C P x y H.
+    apply eq_sig_hprop.
+    intros.
+    apply proof_irrelevance.
+    apply H.
 Qed.
 
 Lemma same_base : forall C : Type,
     forall P : C -> Prop,
         forall x y : sig P, x = y -> proj1_sig x = proj1_sig y.
 Proof.
-intros C P x y H.
-rewrite H.
-trivial.
+    intros C P x y H.
+    rewrite H.
+    trivial.
 Qed.
 
 Global Hint Resolve base_same : additional.
@@ -77,40 +73,54 @@ Global Hint Resolve same_base : additional.
 
 Lemma Req_true : forall x y : R, x = y -> Reqb x y = true.
 Proof.
-intros. destruct (Reqb_eq x y). apply (H1 H).
+    intros. 
+    destruct (Reqb_eq x y). 
+    apply (H1 H).
 Qed.
 
 Lemma true_Req : forall x y : R, Reqb x y = true -> x = y.
 Proof.
-intros. destruct (Reqb_eq x y). apply (H0 H).
+    intros.
+    destruct (Reqb_eq x y). 
+    apply (H0 H).
 Qed.
 
 Lemma Req_false : forall x y : R, x <> y -> Reqb x y = false.
 Proof.
-intros. unfold Reqb. destruct Req_dec. contradiction. trivial.
+    intros. 
+    unfold Reqb. 
+    destruct Req_dec. 
+    contradiction. 
+    trivial.
 Qed.
 
 Lemma false_Req : forall x y : R, Reqb x y = false -> x <> y.
 Proof.
-intros. destruct (Req_dec x y). rewrite (Req_true x y e) in H. 
-assert (H1 : true <> false). auto with *. contradiction.
-apply n.
+    intros. 
+    destruct (Req_dec x y). 
+    rewrite (Req_true x y e) in H. 
+    assert (H1 : true <> false). 
+    auto with *. 
+    contradiction.
+    apply n.
 Qed.
 
 Global Hint Resolve (eq_sym) : reals.
 Global Hint Resolve false_Req : reals.
 Global Hint Resolve true_Req : reals.
 
-(** ** Subsets*)
+
+(** ** Subsets: lemmas for subsets of elements*)
 Lemma subset_elements_satisfy_predicate :
     forall V : subsets_R,
         forall x : V, 
             Waterproof.definitions.set_definitions.is_in V x.
 Proof.
-intro V.
-induction x.
-assumption.
+    intro V.
+    induction x.
+    assumption.
 Qed.
+
 Global Hint Resolve subset_elements_satisfy_predicate : additional.
 
 Lemma elements_satisfy_other_pred :
@@ -119,61 +129,71 @@ Lemma elements_satisfy_other_pred :
             ∀ b : ℝ, 
             Waterproof.definitions.set_definitions.is_in 
                 A b ⇒ pred b.
-    
-        
 Proof.
-intros A pred A_satisfies b b_in_A.
-set (c := (mk_element_R 
-    (Waterproof.definitions.set_definitions.is_in A) b b_in_A)).
-assert (pred_c : (pred c)) by eauto using A_satisfies with *.
-eauto with *.
+    intros A pred A_satisfies b b_in_A.
+    set (c := (mk_element_R (Waterproof.definitions.set_definitions.is_in A) b b_in_A)).
+    assert (pred_c : (pred c)) by eauto using A_satisfies with *.
+    eauto with *.
 Qed.
-(** 
-### Intervals*)
+
+
+(** ### Intervals : definitions of intervals *)
 Definition int_cc_prop {x y : R} :
     forall r : [x, y], x <= r <= y
     := subset_elements_satisfy_predicate [x,y].
+
 Definition int_co_prop {x y : R} :
     forall r : [x, y), x <= r < y
     := subset_elements_satisfy_predicate [x,y).
+
 Definition int_oc_prop {x y : R}:
     forall r : (x, y], x < r <= y
     := subset_elements_satisfy_predicate (x,y].
+
 Definition int_oo_prop {x y : R}:
     forall r : (x, y), x < r < y
     := subset_elements_satisfy_predicate (x,y).
+
 Definition int_cc_prop1 {x y : R} : forall r : [x,y], x <= r.
     intro r. 
     apply (subset_elements_satisfy_predicate [x,y]).
 Qed.
+
 Definition int_cc_prop2 {x y : R} : forall r : [x, y], r <= y.
     intro r.
     apply (subset_elements_satisfy_predicate [x,y]).
 Qed.
+
 Definition int_co_prop1 {x y : R} : forall r : [x,y), x <= r.
     intro r.
     apply (subset_elements_satisfy_predicate [x,y)).
 Qed.
+
 Definition int_co_prop2 {x y : R} : forall r : [x,y), r < y.
     intro r.
     apply (subset_elements_satisfy_predicate [x,y)).
 Qed.
+
 Definition int_oc_prop1 {x y : R} : forall r : (x,y], x < r.
     intro r.
     apply (subset_elements_satisfy_predicate (x,y]).
 Qed.
+
 Definition int_oc_prop2 {x y : R} : forall r : (x,y], r <= y.
     intro r.
     apply (subset_elements_satisfy_predicate (x,y]).
 Qed.
+
 Definition int_oo_prop1 {x y : R} : forall r : (x,y), x < r.
     intro r.
     apply (subset_elements_satisfy_predicate (x,y)).
 Qed.
+
 Definition int_oo_prop2 {x y : R} : forall r : (x,y), r < y.
     intro r.
     apply (subset_elements_satisfy_predicate (x,y)).
 Qed.
+
 Global Hint Resolve int_cc_prop : additional.
 Global Hint Resolve int_co_prop : additional.
 Global Hint Resolve int_oc_prop : additional.
@@ -187,57 +207,90 @@ Global Hint Resolve int_oc_prop1 : additional.
 Global Hint Resolve int_oc_prop2 : additional.
 Global Hint Resolve int_oo_prop1 : additional.
 Global Hint Resolve int_oo_prop2 : additional.
-(** ## Absolute values and inverses*)
+
+
+
+
+
+
+
+(** ### ** The reals database ***)
+
+
+(** ## Lemmas regarding identities for absolute values and inverses*)
 Lemma div_sign_flip : forall r1 r2 : R, r1 > 0 -> r2 > 0 -> r1 > 1 / r2 -> 1 / r1 < r2.
 Proof.
-intros.
-unfold Rdiv in *.
-rewrite Rmult_1_l in *.
-rewrite <- (Rinv_involutive r2).
-apply (Rinv_lt_contravar (/ r2) r1).
-apply Rmult_lt_0_compat. apply Rinv_0_lt_compat. apply H0. apply H.
-apply H1. apply Rgt_not_eq. apply H0.
+    intros.
+    unfold Rdiv in *.
+    rewrite Rmult_1_l in *.
+    rewrite <- (Rinv_involutive r2).
+    apply (Rinv_lt_contravar (/ r2) r1).
+    apply Rmult_lt_0_compat. 
+    apply Rinv_0_lt_compat. 
+    apply H0. 
+    apply H.
+    apply H1. 
+    apply Rgt_not_eq. 
+    apply H0.
 Qed.
 
 Lemma div_pos : forall r1 r2 : R, r1 > 0 ->1 / r1 > 0.
 Proof.
-intros. unfold Rdiv. rewrite Rmult_1_l. apply Rinv_0_lt_compat. apply H.
+    intros. 
+    unfold Rdiv. 
+    rewrite Rmult_1_l. 
+    apply Rinv_0_lt_compat. 
+    apply H.
 Qed.
 
 Lemma Rabs_zero : forall r : R, Rabs (r - 0) = Rabs r.
 Proof.
-intros. rewrite Rminus_0_r. trivial.
+    intros. 
+    rewrite Rminus_0_r. 
+    trivial.
 Qed.
 
 Lemma inv_remove : forall r1 r2 : R, 0 < r1 -> 0 < r2 -> 1 / r1 < 1 / r2 -> r1 > r2.
 Proof.
-intros.
-unfold Rdiv in *. rewrite Rmult_1_l in *.
-rewrite <- (Rinv_involutive r1), <- (Rinv_involutive r2).
-apply (Rinv_lt_contravar (/ r1) (/ r2)). apply Rmult_lt_0_compat. apply Rinv_0_lt_compat. apply H.
-apply Rinv_0_lt_compat. apply H0. rewrite Rmult_1_l in *. apply H1.
-all: apply Rgt_not_eq; assumption.
+    intros.
+    unfold Rdiv in *. 
+    rewrite Rmult_1_l in *.
+    rewrite <- (Rinv_involutive r1), <- (Rinv_involutive r2).
+    apply (Rinv_lt_contravar (/ r1) (/ r2)). 
+    apply Rmult_lt_0_compat. 
+    apply Rinv_0_lt_compat. 
+    apply H.
+    apply Rinv_0_lt_compat. 
+    apply H0. 
+    rewrite Rmult_1_l in *. 
+    apply H1.
+    all: apply Rgt_not_eq; assumption.
 Qed.
 
 Lemma Rle_abs_min : forall x : R, -x <= Rabs x.
 Proof.
-intros. rewrite <- (Rabs_Ropp (x)). apply Rle_abs.
+    intros. 
+    rewrite <- (Rabs_Ropp (x)). 
+    apply Rle_abs.
 Qed.
 
 Lemma Rge_min_abs : forall x : R, x >= -Rabs x.
 Proof.
-intros. rewrite <- (Ropp_involutive x). apply Ropp_le_ge_contravar.
-rewrite (Rabs_Ropp (- x)). apply Rle_abs.
+    intros. 
+    rewrite <- (Ropp_involutive x). 
+    apply Ropp_le_ge_contravar.
+    rewrite (Rabs_Ropp (- x)). 
+    apply Rle_abs.
 Qed.
 
 Lemma Rmax_abs : forall a b : R, Rmax (Rabs a) (Rabs b) >= 0.
 Proof.
-intros.
-apply (Rge_trans _ (Rabs a) _).
-apply Rle_ge.
-apply Rmax_l.
-apply (Rle_ge 0 (Rabs a)).
-apply Rabs_pos.
+    intros.
+    apply (Rge_trans _ (Rabs a) _).
+    apply Rle_ge.
+    apply Rmax_l.
+    apply (Rle_ge 0 (Rabs a)).
+    apply Rabs_pos.
 Qed.
 
 
@@ -257,7 +310,12 @@ Global Hint Resolve Rmax_abs : reals.
 
 
 Hint Extern 1 => rewrite Rabs_zero : reals.
-(** ## Subsequences*)
+
+
+
+
+
+
 
 
 
@@ -266,6 +324,11 @@ Local Open Scope R_scope.
 From Ltac2 Require Import Ltac2 Ident.
 Require Import Ltac.
 Require Import Ltac2.Init.
+
+
+
+
+
 
 
 Hint Extern 0 => reflexivity : 
@@ -277,22 +340,24 @@ Hint Extern 1 (_ = _) => lra :
   
   eq_abs eq_sqr eq_exp.
 
-(** Next, we will categorise existing lemmas of the form `forall _ : R, _ = _`, and use the rewrite tactic to change the goal.
-These are ideal for solving equalities, since they do not require any assumptions.
 
-Note that we add all lemmas to a general database ``.*)
-(** ### **Plus, minus and multiplication rewriters**
-In this database, we will add commutative, associative and distributative properties of numbers in combination with the $+$ operator.
-We let $x, y ∈ \mathbb{R}$.
+
+
+
+(** ### ** Plus, minus and multiplication rewriters**
+In this database, we will add commutative, associative and distributative properties of numbers in combination with 
+the $+$ operator. We let $x, y ∈ \mathbb{R}$.
 
 #### Commutativity:
 We have the following commutative properties:*)
 Hint Extern 1 => (rewrite Rplus_comm) :  eq_plus. (* x + y = y + x *)
 Hint Extern 1 => (rewrite Rmult_comm) :  eq_mult. (* x * y = y * x *)
+
 (** #### Associativity
 We have the following associative properties:*)
 Hint Extern 1 => (rewrite Rplus_assoc) :  eq_plus. (* x + y + z = x + (y + z) *)
 Hint Extern 1 => (rewrite Rmult_assoc) :  eq_mult. (* x * y * z = x * (y * z) *)
+
 (** #### Distributivity
 We have the following distributive properties:*)
 Hint Extern 1 => (rewrite Rdiv_plus_distr) :  eq_plus. 
@@ -303,6 +368,7 @@ Hint Extern 1 => (rewrite Rmult_plus_distr_l) :  eq_mult eq_plus.
   (* x * (y+z) = x * y + x * z *)
 Hint Extern 1 => (rewrite Rmult_plus_distr_r) :  eq_mult eq_plus. 
   (* (x+y) * z = x * z + y * z *)
+
 (** #### Other
 We have some other properties:
 *)
@@ -325,6 +391,7 @@ Hint Extern 1 => (rewrite Ropp_mult_distr_r_reverse) :  eq_opp.
   (* x * - y = - (x * y) *)
 Hint Extern 1 => (rewrite Ropp_plus_distr) :  eq_opp. 
   (* - (x + y) = - x + - y. *)
+
 (** #### Other 
 We have some other properties:*)
 Hint Extern 1 => (rewrite Ropp_involutive) :  eq_opp. (* --a = a *)
@@ -332,6 +399,7 @@ Hint Extern 1 => (rewrite Rmult_opp_opp) :  eq_opp. (* -a * -b = a * b *)
 Hint Extern 1 => (rewrite Ropp_div) :  eq_opp. (* - a / b = - (a / b) *)
 Hint Extern 1 => (rewrite Rplus_opp_l) :  eq_opp. (* -a  + a = 0 *)
 Hint Extern 1 => (rewrite Rplus_opp_r) :  eq_opp. (* a  + -a = 0 *)
+
 (** ### **Simple number arithmetic**
 Addition with 0 and multiplication with 0 or 1 is a trivial task, so we use two databases to resolve such simple steps.
 
@@ -351,6 +419,12 @@ Hint Extern 1 => (rewrite Rmult_1_r) :  eq_one. (* x * 1 = x *)
 Hint Extern 1 => (rewrite Rinv_1) :  eq_one. (* x / 1 = x *)
 Hint Extern 1 => (rewrite pow_1) :  eq_one. (* x ^ 1 = x *)
 Hint Extern 1 => (rewrite Rinv_involutive) : eq_one. (* / / x = x *)
+
+
+
+
+
+
 (** ### **Distances and absolute values**
 There are a number of trivial steps regarding distances, or absolute values.
 
@@ -378,6 +452,11 @@ Hint Extern 1 => (rewrite sqrt_Rsqr_abs) :  eq_abs.
   (* sqrt(a^2) = |a| *)
 Hint Extern 1 => (rewrite pow2_abs) :  eq_abs. 
   (* | a |^2 = a^2*)
+
+
+
+
+
 (** ### **Squares**
 There are a number of trivial steps regarding squares.
 We have the following properties:*)
@@ -389,6 +468,11 @@ Hint Extern 1 => (rewrite Rsqr_minus_plus) :  eq_sqr. (* (a-b)*(a+b) = a² - b²
 Hint Extern 1 => (rewrite Rsqr_neg) :  eq_sqr. (* a² = (-a)² *)
 Hint Extern 1 => (rewrite Rsqr_neg_minus) :  eq_sqr. (* (a-b)² = (b-a)² *)
 Hint Extern 1 => (rewrite Rsqr_mult) :  eq_sqr. (* (a*b)² = a² * b² *)
+
+
+
+
+
 (** ### **Exponentials**
 There are a number of trivial steps regarding exponentials. We have the following properties:*)
 Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)

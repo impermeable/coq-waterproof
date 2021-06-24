@@ -1,9 +1,9 @@
-(** * Additional.v
+(** * [Additional.v]
 Authors: 
-    - Tudor Voicu
+    - Tudor Voicu (1339532)
 Creation date: 21 June 2021
 
-Importing this file adds the [AbsoluteValue] database 
+Importing this file adds the [Additional] database 
 to the set of databases used by automated tactics
 (i.e. tactics that rely on [waterprove]).
 
