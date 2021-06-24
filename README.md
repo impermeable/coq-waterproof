@@ -63,7 +63,10 @@ Require Import Waterproof.definitions.set_definitions.
 
 ## Automation
 The more advanced tactics rely on automation.
-This automation employs `auto` and `eauto` (and optionally also `intuition`), together with a customizable set of hint-databases.
+The automation function is called `waterprove`, 
+which employs `auto` and `eauto` (and optionally also `intuition`), 
+together with a customizable set of hint-databases.
+
 ### Configuration
 The baviour of the automated tactics can be configured by imporing specific files.
 
