@@ -1,3 +1,119 @@
--Q theories/ Waterproof
+-R waterproof/ Waterproof
 
-theories/tactics/we_show_both_directions.v
+
+# Files should be compiled in the correct order.
+
+# These do not depend on other files of the Waterproof-library.
+waterproof/auxiliary.v
+waterproof/databases.v
+waterproof/string_auxiliary.v
+waterproof/definitions/set_definitions.v
+
+# These do depend on one other file of the Waterproof-library.
+waterproof/notations/notations.v
+waterproof/notations/set_notations.v
+waterproof/test_auxiliary.v
+
+# These depend multiple other file of the Waterproof-library.
+waterproof/selected_databases.v
+waterproof/waterprove/waterprove.v
+
+# Files used to configure global state.
+waterproof/load_database/AbsoluteValue.v
+waterproof/load_database/Exponential.v
+waterproof/load_database/Multiplication.v
+waterproof/load_database/Other.v
+waterproof/load_database/PlusMinus.v
+waterproof/load_database/SquareRoot.v
+waterproof/load_database/ZeroOne.v
+waterproof/load_database/RealsAndIntegers.v
+waterproof/load_database/Sets.v
+waterproof/load_database/Additional.v
+waterproof/load_database/reals.v
+waterproof/load_database/All.v
+waterproof/set_search_depth/To_1.v
+waterproof/set_search_depth/To_2.v
+waterproof/set_search_depth/To_3.v
+waterproof/set_search_depth/To_4.v
+waterproof/set_search_depth/To_5.v
+waterproof/set_intuition/Enabled.v
+waterproof/set_intuition/Disabled.v
+waterproof/load_database/DisableWildcard.v
+waterproof/load_database/EnableWildcard.v
+
+# Simple tactics
+waterproof/tactics/take.v
+waterproof/tactics/assume.v
+waterproof/tactics/automation_databases/decidability_db.v
+waterproof/tactics/because.v
+waterproof/tactics/choose.v
+waterproof/tactics/choose_such_that.v
+waterproof/tactics/either.v
+waterproof/tactics/sets_tactics/sets_automation_tactics.v
+waterproof/tactics/unfold.v
+waterproof/tactics/we_know.v
+waterproof/tactics/we_need_to_show.v
+waterproof/tactics/we_show_both_directions.v
+waterproof/tactics/we_show_both_statements.v
+waterproof/tactics/goal_to_hint.v
+waterproof/tactics/rewrite_inequalities.v
+waterproof/contradiction_tactics/basic_contradiction.v
+
+# Automated tactics
+waterproof/tactics/forward_reasoning/forward_reasoning_aux.v
+waterproof/tactics/forward_reasoning/rewrite_using.v
+
+waterproof/tactics/forward_reasoning/apply.v
+waterproof/tactics/forward_reasoning/claims.v
+waterproof/tactics/forward_reasoning/define.v
+waterproof/tactics/forward_reasoning/induction.v
+waterproof/tactics/forward_reasoning/it_holds_that.v
+waterproof/tactics/forward_reasoning/it_suffices_to_show.v
+waterproof/tactics/forward_reasoning/proof_finishing_tactics.v
+waterproof/tactics/forward_reasoning/simplify.v
+waterproof/tactics/forward_reasoning/we_conclude_that.v
+waterproof/tactics/forward_reasoning/write_using.v
+waterproof/tactics/forward_reasoning/write_as.v
+
+# This file simply exports all tactics.
+waterproof/AllTactics.v
+
+# These depend on AllTactics.
+waterproof/definitions/subsequences.v
+
+# Testcases. Not needed by the end-user,
+# but used to enforce they all pass for compilation.
+waterproof/test/reverse_engineer/auto_hintdb_arg.v
+waterproof/test/string_auxiliary_test.v
+waterproof/test/test_auxiliary_test.v
+waterproof/test/test_contradiction_tactics/test_basic_contradiction.v
+waterproof/test/test_load_database.v
+waterproof/test/test_set_intuition.v
+waterproof/test/test_set_search_depth.v
+waterproof/test/test_tactics/assume_test.v
+waterproof/test/test_tactics/goal_to_hint_test.v
+waterproof/test/test_tactics/rewrite_inequalities_test.v
+waterproof/test/test_tactics/such_that_test.v
+waterproof/test/test_tactics/take_test.v
+waterproof/test/test_tactics/test_because.v
+waterproof/test/test_tactics/test_choose.v
+waterproof/test/test_tactics/test_choose_such_that.v
+waterproof/test/test_tactics/test_either.v
+waterproof/test/test_tactics/test_forward_reasoning/it_holds_that_test.v
+waterproof/test/test_tactics/test_forward_reasoning/it_suffices_to_show_test.v
+waterproof/test/test_tactics/test_forward_reasoning/proof_finishing_tactics_test.v
+waterproof/test/test_tactics/test_forward_reasoning/rewrite_using_test.v
+waterproof/test/test_tactics/test_forward_reasoning/test_apply.v
+waterproof/test/test_tactics/test_forward_reasoning/test_claims.v
+waterproof/test/test_tactics/test_forward_reasoning/test_define.v
+waterproof/test/test_tactics/test_forward_reasoning/test_induction.v
+waterproof/test/test_tactics/test_forward_reasoning/test_simplify.v
+waterproof/test/test_tactics/test_forward_reasoning/we_conclude_that_test.v
+waterproof/test/test_tactics/test_forward_reasoning/write_as_test.v
+waterproof/test/test_tactics/test_forward_reasoning/write_using_test.v
+waterproof/test/test_tactics/test_sets_tactics/test_sets_automation_tactics.v
+waterproof/test/test_tactics/test_we_know.v
+waterproof/test/test_tactics/test_we_show_both_directions.v
+waterproof/test/test_tactics/test_we_show_both_statements.v
+waterproof/test/test_tactics/unfold_test.v
+waterproof/test/test_tactics/we_need_to_show_test.v
