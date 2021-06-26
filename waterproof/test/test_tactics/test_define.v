@@ -26,7 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 
 
-Require Import Waterproof.tactics.forward_reasoning.define.
+Require Import Waterproof.tactics.define.
 
 (** Test 0: This should work just fine *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).

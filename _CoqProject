@@ -5,7 +5,6 @@
 
 # These do not depend on other files of the Waterproof-library.
 waterproof/auxiliary.v
-waterproof/databases.v
 waterproof/string_auxiliary.v
 waterproof/definitions/set_definitions.v
 
@@ -13,6 +12,7 @@ waterproof/definitions/set_definitions.v
 waterproof/notations/notations.v
 waterproof/notations/set_notations.v
 waterproof/test_auxiliary.v
+waterproof/databases.v
 
 # These depend multiple other file of the Waterproof-library.
 waterproof/selected_databases.v
@@ -42,6 +42,7 @@ waterproof/load_database/DisableWildcard.v
 waterproof/load_database/EnableWildcard.v
 
 # Simple tactics
+waterproof/tactics/apply.v
 waterproof/tactics/take.v
 waterproof/tactics/assume.v
 waterproof/tactics/automation_databases/decidability_db.v
@@ -55,25 +56,29 @@ waterproof/tactics/we_know.v
 waterproof/tactics/we_need_to_show.v
 waterproof/tactics/we_show_both_directions.v
 waterproof/tactics/we_show_both_statements.v
-waterproof/tactics/goal_to_hint.v
-waterproof/tactics/rewrite_inequalities.v
+waterproof/tactics/claims.v
+waterproof/tactics/define.v
+waterproof/tactics/either.v
+waterproof/tactics/induction.v
 waterproof/contradiction_tactics/basic_contradiction.v
+
+# Auxiliary file, currently only used by forward_reasoning_aux.v
+waterproof/tactics/goal_to_hint.v 
 
 # Automated tactics
 waterproof/tactics/forward_reasoning/forward_reasoning_aux.v
 waterproof/tactics/forward_reasoning/rewrite_using.v
 
-waterproof/tactics/forward_reasoning/apply.v
-waterproof/tactics/forward_reasoning/claims.v
-waterproof/tactics/forward_reasoning/define.v
-waterproof/tactics/forward_reasoning/induction.v
 waterproof/tactics/forward_reasoning/it_holds_that.v
 waterproof/tactics/forward_reasoning/it_suffices_to_show.v
-waterproof/tactics/forward_reasoning/proof_finishing_tactics.v
+waterproof/tactics/forward_reasoning/rewrite_inequalities.v
 waterproof/tactics/forward_reasoning/simplify.v
 waterproof/tactics/forward_reasoning/we_conclude_that.v
 waterproof/tactics/forward_reasoning/write_using.v
-waterproof/tactics/forward_reasoning/write_as.v
+waterproof/tactics/forward_reasoning/proof_finishing_tactics.v
+
+# Uses [RewriteError] from rewrite_using.v
+waterproof/tactics/write_as.v
 
 # This file simply exports all tactics.
 waterproof/AllTactics.v
@@ -92,24 +97,23 @@ waterproof/test/test_set_intuition.v
 waterproof/test/test_set_search_depth.v
 waterproof/test/test_tactics/assume_test.v
 waterproof/test/test_tactics/goal_to_hint_test.v
-waterproof/test/test_tactics/rewrite_inequalities_test.v
 waterproof/test/test_tactics/such_that_test.v
 waterproof/test/test_tactics/take_test.v
+waterproof/test/test_tactics/test_apply.v
 waterproof/test/test_tactics/test_because.v
 waterproof/test/test_tactics/test_choose.v
 waterproof/test/test_tactics/test_choose_such_that.v
+waterproof/test/test_tactics/test_claims.v
+waterproof/test/test_tactics/test_define.v
 waterproof/test/test_tactics/test_either.v
 waterproof/test/test_tactics/test_forward_reasoning/it_holds_that_test.v
 waterproof/test/test_tactics/test_forward_reasoning/it_suffices_to_show_test.v
 waterproof/test/test_tactics/test_forward_reasoning/proof_finishing_tactics_test.v
+waterproof/test/test_tactics/test_forward_reasoning/rewrite_inequalities_test.v
 waterproof/test/test_tactics/test_forward_reasoning/rewrite_using_test.v
-waterproof/test/test_tactics/test_forward_reasoning/test_apply.v
-waterproof/test/test_tactics/test_forward_reasoning/test_claims.v
-waterproof/test/test_tactics/test_forward_reasoning/test_define.v
 waterproof/test/test_tactics/test_forward_reasoning/test_induction.v
 waterproof/test/test_tactics/test_forward_reasoning/test_simplify.v
 waterproof/test/test_tactics/test_forward_reasoning/we_conclude_that_test.v
-waterproof/test/test_tactics/test_forward_reasoning/write_as_test.v
 waterproof/test/test_tactics/test_forward_reasoning/write_using_test.v
 waterproof/test/test_tactics/test_sets_tactics/test_sets_automation_tactics.v
 waterproof/test/test_tactics/test_we_know.v
@@ -117,3 +121,4 @@ waterproof/test/test_tactics/test_we_show_both_directions.v
 waterproof/test/test_tactics/test_we_show_both_statements.v
 waterproof/test/test_tactics/unfold_test.v
 waterproof/test/test_tactics/we_need_to_show_test.v
+waterproof/test/test_tactics/write_as_test.v
