@@ -27,8 +27,8 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
 From Ltac2 Require Import Message.
 
-Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.forward_reasoning.rewrite_using.
+Require Import Waterproof.auxiliary.
 
 (** * print_rewrite_success
     Print that the hypothesis identified by [id]

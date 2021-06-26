@@ -26,7 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 
-Require Import Waterproof.tactics.apply.
+Require Import Waterproof.tactics.forward_reasoning.apply.
 
 (** Test 0: This should work just fine, by applying a hypothesis *)
 Goal forall n : nat, exists m : nat, (n = m).
