@@ -49,7 +49,6 @@ waterproof/tactics/because.v
 waterproof/tactics/choose.v
 waterproof/tactics/choose_such_that.v
 waterproof/tactics/either.v
-waterproof/tactics/sets_tactics/sets_automation_tactics.v
 waterproof/tactics/unfold.v
 waterproof/tactics/we_know.v
 waterproof/tactics/we_need_to_show.v
@@ -74,6 +73,7 @@ waterproof/tactics/forward_reasoning/simplify.v
 waterproof/tactics/forward_reasoning/we_conclude_that.v
 waterproof/tactics/forward_reasoning/write_using.v
 waterproof/tactics/forward_reasoning/write_as.v
+waterproof/tactics/sets_tactics/sets_automation_tactics.v
 
 # This file simply exports all tactics.
 waterproof/AllTactics.v

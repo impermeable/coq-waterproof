@@ -28,45 +28,12 @@ From Ltac2 Require Import Message.
 Require Import Reals.
 Require Import Sets.Ensembles.
 Require Import Sets.Classical_sets.
+Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
+Require Import Waterproof.set_intuition.Enabled.
+Require Import Waterproof.set_search_depth.To_5.
+Require Import Waterproof.load_database.Sets.
 
 Hint Constructors Union Intersection Disjoint Full_set : sets.
-
-
-Ltac2 Type exn ::= [ SetAutomationFailure(string) ].
-
-Local Ltac2 fail_automation_in_sets () := 
-        Control.zero (SetAutomationFailure "Waterproof could not find a proof. 
-        If you believe the statement should hold, try making a smaller step.").
-
-(** * set_power
-    Calls the automation tactics [auto], [eauto] and [firstorder], 
-    with the [sets] database.
-
-    Arguments:
-        - no arguments.
-
-    Does:
-        - Calls the automation tactics [auto], [eauto], [firstorder (auto)] and [firstorder (eauto)], 
-          in this order, with the [sets] database.
-        - If no proof is found, print a message conveying the failture.
-
-    Raises exceptions:
-        - [SetAutomationFailure], if no proof of was found.
-*)
-Ltac2 set_power () :=
-    let result () :=
-        first [ solve [auto with sets]
-              | solve [eauto with sets]
-              | ltac1:(solve [firstorder (auto with sets)])
-              | ltac1:(solve [firstorder (eauto with sets)])
-              | print (of_string "Waterproof could not find a proof.")
-              ]
-    in
-    match Control.case result with
-    | Val _ => ()
-    | Err exn => fail_automation_in_sets ()
-    end.
-
 
 
 (** * destruct_sets
@@ -82,13 +49,15 @@ Ltac2 set_power () :=
         - in the first case, it just splits the goal into its respective subcases (i.e. the element
           being contained in every set in the intersecion).
         - in the second case, it just splits the goal into its respective subcases (i.e. the element
-          being containined in one such set from the union), and then tries the [set_power] function.
+          being containined in one such set from the union), and then tries to solve the remaining of the proof.
 *)
 Ltac2 destruct_sets () :=
     lazy_match! goal with
         | [h : In _ (Intersection _ _ _) _ |- _ ] => let h_val := Control.hyp h in destruct $h_val
         | [h : In _ (Union _ _ _) _ |- _ ] => let h_val := Control.hyp h in
-                                              destruct $h_val; try (set_power ())
+                                              destruct $h_val; try (solve_remainder_proof (Control.goal ()) None); 
+                                              try (ltac1:(solve [firstorder (auto with sets)]));
+                                              try (ltac1:(solve [firstorder (eauto with sets)]))
     end.
 
 
@@ -100,11 +69,12 @@ Ltac2 destruct_sets () :=
         - no arguments.
 
     Does:
-        - calls the tactics/functions [intro], [intro], [destruct_sets], [contradiction] and [set_power],
+        - calls the tactics/functions [intro], [intro], [destruct_sets], [contradiction] and various proof finishing functions,
           in this order, in order to automatically prove a set inclusion.
 *)
 Ltac2 trivial_set_inclusion () :=
-    try (intro x); try (intro h); try (destruct_sets ()); ltac1:(try contradiction); try (set_power ()).
+    try (intro x); try (intro h); try (destruct_sets ()); ltac1:(try contradiction); try (solve_remainder_proof (Control.goal ()) None);
+    try (ltac1:(solve [firstorder (auto with sets)])); try (ltac1:(solve [firstorder (eauto with sets)])).
 
 
 

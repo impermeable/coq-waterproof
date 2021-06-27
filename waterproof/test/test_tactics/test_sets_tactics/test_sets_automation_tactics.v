@@ -41,6 +41,9 @@ Require Import micromega.Lra.
 Require Import Omega.
 Require Import Max.
 Require Import Coq.Arith.Wf_nat.
+Require Import Waterproof.set_intuition.Enabled.
+Require Import Waterproof.set_search_depth.To_5.
+Require Import Waterproof.load_database.Sets.
 
 
 Load sets_automation_tactics.
