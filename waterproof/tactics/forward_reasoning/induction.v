@@ -30,14 +30,13 @@ From Ltac2 Require Import Ltac2.
 
     Arguments:
         - [x: ident], the variable to perform the induction on.
-        - [y: ident], the name of the induction hypothesis.
 
     Does:
         - performs induction on [x].
 *)
-Local Ltac2 induction_with_hypothesis_naming (x: ident) :=
+Local Ltac2 induction_without_hypothesis_naming (x: ident) :=
     let x_val := Control.hyp x in induction $x_val.
 
 
 Ltac2 Notation "We" "prove" "by" "induction" "on" x(ident) := 
-    induction_with_hypothesis_naming x.
+    induction_without_hypothesis_naming x.
