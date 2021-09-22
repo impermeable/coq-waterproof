@@ -61,12 +61,13 @@ Definition is_bdd_below (A : ℝ → Prop) :=
 A real number $m : ℝ$ is called the **infimum** of a subset $A : ℝ → \mathsf{Prop}$ if it is the largest lower bound.*)
 Definition is_inf :=
   fun (A : ℝ → Prop) m 
-    => (is_lower_bound A m) ∧ (∀ l : R, is_lower_bound A l ⇒ l ≤ m).
+    ↦ (is_lower_bound A m) ∧ (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m).
 (** ## Reflection of a subset of ℝ in the origin
 
 Before we continue showing properties of the infimum, we first introduce the reflection of subsets of $\mathbb{R}$ in the origin. Given a subset $A : ℝ → \mathsf{Prop}$, we consider the set $-A$ (which we write as $\mathsf{set\_opp} A$), defined by*)
 Definition set_opp (A : ℝ → Prop)  :=
   fun (x : ℝ) ↦ (A (-x)).
+
 Lemma upp_bd_set_to_low_bd_set_opp :
   ∀ (A : ℝ → Prop) (M : ℝ),
     is_upper_bound A M ⇒ 
@@ -80,9 +81,8 @@ Proof.
     Take a : ℝ. 
     Assume min_a_in_A : (-a ∈ A).
     By M_upp_bd it holds that H1 : (-a ≤ M).
-    This concludes the proof.
+    It follows that (-M ≤ a).
 Qed.
-
 
 Lemma low_bd_set_to_upp_bd_set_opp :
   ∀ (A : ℝ → Prop) (m : ℝ),
@@ -97,9 +97,8 @@ Proof.
     Take a : ℝ. 
     Assume min_a_in_A : (-a ∈ A).
     By m_low_bd it holds that H1 : (m ≤ -a).
-    This concludes the proof.
+    It follows that (a ≤ -m).
 Qed.
-
 
 Lemma low_bd_set_opp_to_upp_bd_set :
   ∀ (A : ℝ → Prop) (m : ℝ),
@@ -116,11 +115,10 @@ Proof.
     Write m_low_bd as (∀ a : ℝ, (-a) ∈ A ⇒ m ≤ a).
     We claim that minmin_a_in_A : (--a ∈ A).
     Write goal using (--a = a) as (a ∈ A).
-    This follows immediately.
+    Apply a_in_A.
     By m_low_bd it holds that m_le_min_a : (m ≤ -a).
-    This concludes the proof.
+    It follows that (a ≤ -m).
 Qed.
-
 
 Lemma upp_bd_set_opp_to_low_bd_set :
   ∀ (A : ℝ → Prop) (M : ℝ),
@@ -136,9 +134,9 @@ Proof.
     Assume a_in_A : (a ∈ A).
     We claim that minmin_a_in_A : (--a ∈ A).
     Write goal using (--a = a) as (a ∈ A).
-    This follows immediately.
-    By M_upp_bd it holds that mina_le_M : (-a ≤ M).
-    This concludes the proof.
+    Apply a_in_A.
+    By M_upp_bd it holds that min_a_le_M : (-a ≤ M).
+    It follows that (-M ≤ a).
 Qed.
 
 
@@ -152,11 +150,9 @@ Proof.
     Write A_bdd_below as (∃ m : ℝ, is_lower_bound A m).
     Choose m such that m_low_bd according to A_bdd_below.
     Expand the definition of bound.
-    Expand the definition of set_opp.
     Choose M := (-m).
-    We need to show that (is_upper_bound (set_opp A) (-m)).
-    By low_bd_set_to_upp_bd_set_opp it holds that H_con : (is_upper_bound (set_opp A) (-m)).
-    This concludes the proof.
+    We need to show that (is_upper_bound (set_opp A) M).
+    By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) M).
 Qed.
 
 
@@ -171,9 +167,8 @@ Proof.
     We need to show that (is_lower_bound A (-M) ∧ ∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
     We show both statements.
     Expand the definition of is_lub in M_is_sup.
-    destruct M_is_sup as [M_upp_bd H1].
-    By upp_bd_set_opp_to_low_bd_set it holds that H2 : (is_lower_bound A (-M)).
-    This follows immediately.
+    Choose M_upp_bd such that H1 according to M_is_sup.
+    By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
     We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
     Expand the definition of is_lower_bound.
     Take l : ℝ.
@@ -260,7 +255,7 @@ Lemma inf_is_low_bd :
     ∀ m : ℝ,
       is_inf A m ⇒ is_lower_bound A m.
 Proof.
-    Take A : (R -> Prop), m : R.
+    Take A : (ℝ → Prop), m : R.
     Assume m_is_inf_A : (is_inf A m).
     Because m_is_inf_A both m_is_low_bd and any_low_bd_ge_m.
     Apply m_is_low_bd.
@@ -270,15 +265,14 @@ Qed.
 
 (** ## Any lower bound is less than or equal to the infimum*)
 Lemma any_low_bd_ge_inf :
-  forall A : R -> Prop,
-    forall m l : R,
-      is_inf A m -> is_lower_bound A l -> l <= m.
+  ∀ A : ℝ → Prop,
+    ∀ m l : ℝ,
+      is_inf A m ⇒ is_lower_bound A l ⇒ l ≤ m.
 Proof.
-    Take A : (R -> Prop), m l : R.
+    Take A : (R → Prop), m l : R.
     Assume m_is_inf_A : (is_inf A m) and l_is_low_bd_A : (is_lower_bound A l).
     Because m_is_inf_A both m_low_bd and any_low_bd_le_m.
-    (** We need to show that $l \leq m$.*)
-    This concludes the proof.
+    By any_low_bd_le_m we conclude that (l ≤ m).
 Qed.
 
 
