@@ -1,4 +1,24 @@
-(** # Lim sup, lim inf and Bolzano-Weierstrass*)
+(** * Lim sup, lim inf and Bolzano-Weierstrass
+
+Authors:
+    - Jim Portegies
+
+This file is part of Waterproof-lib.
+
+Waterproof-lib is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Waterproof-lib is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
+*)
+
 Require Import Reals.
 Require Import Lra.
 Require Import Classical.
@@ -11,11 +31,6 @@ Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard.
-
-(* Add LoadPath "./atp_v_files/" as lib.
-
-Load sup_and_inf.
-Load sequential_accumulation_points. *)
 
 Require Import Waterproof.theory.analysis.sequences.
 Require Import Waterproof.theory.analysis.subsequences.
