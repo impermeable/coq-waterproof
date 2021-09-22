@@ -81,6 +81,13 @@ waterproof/AllTactics.v
 # These depend on AllTactics.
 waterproof/definitions/subsequences_definitions.v
 
+# Waterproof theory files
+waterproof/theory/analysis/sup_and_inf.v
+waterproof/theory/analysis/sup_and_inf_new_definitions.v
+waterproof/theory/analysis/sequences.v
+waterproof/theory/analysis/subsequences.v
+waterproof/theory/analysis/series.v
+
 # Testcases. Not needed by the end-user,
 # but used to enforce they all pass for compilation.
 waterproof/test/reverse_engineer/auto_hintdb_arg.v
