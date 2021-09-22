@@ -87,6 +87,8 @@ waterproof/theory/analysis/sup_and_inf_new_definitions.v
 waterproof/theory/analysis/sequences.v
 waterproof/theory/analysis/subsequences.v
 waterproof/theory/analysis/series.v
+waterproof/theory/analysis/sequential_accumulation_points.v
+waterproof/theory/analysis/limsup_liminf_bolzano.v
 
 # Testcases. Not needed by the end-user,
 # but used to enforce they all pass for compilation.
