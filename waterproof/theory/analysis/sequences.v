@@ -39,9 +39,10 @@ Global Hint Resolve Rmult_lt_0_compat : real.
 Global Hint Resolve Rinv_lt_contravar : real.
 
 Open Scope extra.
-(** ## What is a sequence?
+(** ** What is a sequence of real numbers?
 
 A sequence of real numbers is a function from the natural numbers to the real numbers. So a function $a_seq : \mathbb{N} → \mathbb{R}$ is a sequence.*)
+
 (** ### Examples of sequences
 
 Let us give a few examples of sequences of real numbers. The first example is the sequence $a_seq : ℕ → ℝ$ defined by 
@@ -142,7 +143,7 @@ Qed.
 
 
 
-(** From This, it is fairly easy to prove that sequences that are exactly the same also converge to the same limit.
+(** From this, it is fairly easy to prove that sequences that are exactly the same also converge to the same limit.
 We do this by first using the lemma, and then proving that the sequences are indeed eventually equal.*)
 
 Lemma eq_seq_conv_to_same_lim :
