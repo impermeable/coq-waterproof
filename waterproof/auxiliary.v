@@ -226,7 +226,7 @@ Ltac2 get_coerced_type (t : constr) :=
     (* the previous line creates an extra goal, which causes multiple goals to 
     focus. Goal matching panics on this, so we need to refocus on the first goal *)
     let z := Control.focus 1 1 (get_coerced_type_aux) in
-      trivial; (* prove the lemma *)
+      Control.focus 1 1 (fun () => exact (fun x => I)); (* prove the lemma *)
       clear $dummy_hyp; (* clear the resulting hypothesis *)
       z.
 

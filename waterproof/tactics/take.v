@@ -62,9 +62,12 @@ Local Ltac2 raise_take_error (s:string) :=
 Local Ltac2 intro_with_type_matching (s:Std.intro_pattern list) (t:constr) := 
     lazy_match! goal with
     | [ |- forall _ : ?u, _] => 
+        (* Next line aims to deal with case when terms get coerced to types *)
+        let v := Aux.get_coerced_type t in
         let u' := (eval cbv in $u) in
         let t' := (eval cbv in $t) in
-        match Constr.equal u t with
+        (* TODO why are u' and t' not used? *)
+        match Constr.equal u v with
             | true => Std.intros false s
             | false => raise_take_error (
             "The type of the variable must match the type of the 'forall' goal's bound variable.")
