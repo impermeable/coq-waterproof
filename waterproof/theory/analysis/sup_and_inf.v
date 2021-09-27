@@ -34,7 +34,13 @@ Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Enabled.
 Require Import Waterproof.contradiction_tactics.basic_contradiction.
 
-Open Scope analysis_scope.
+Definition is_in {D : Set} := fun (A : (D → Prop)) ↦ (fun (x : D) ↦ A x).
+Notation "x ∈ A" := (@is_in _ A x) (at level 50) : sup_and_inf_scope.
+(** ## Suprema and infima*)
+Notation is_sup := is_lub.
+Notation is_bdd_above := bound.
+Open Scope sup_and_inf_scope.
+
 (** ## Upper bounds
 
 A number $M : ℝ$ is called an **upper bound** of a subset $A : ℝ \to \mathsf{Prop}$ of the real numbers, if for all $a : ℝ$, if $a ∈ A$ then $a ≤ M$.

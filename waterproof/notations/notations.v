@@ -147,9 +147,6 @@ Notation "[ x , y )" := { r : R | x <= r <  y }.
 Notation "( x , y ]" := { r : R | x <  r <= y }.
 Notation "( x , y )" := { r : R | x <  r <  y }.
 
-(** ## Suprema and infima*)
-Notation is_sup := is_lub.
-Notation is_bdd_above := bound.
 (** ## Sums and series*)
 Notation "'Σ' Cn 'equals' x" :=
   (infinite_sum Cn x) (at level 50).
@@ -165,8 +162,6 @@ Definition finite_triangle_inequalty :=
 (*Notation "μ ◦ C" :=
   (fun (n:ℕ) ↦ (μ (C n))) (at level 45).*)
 (** ## Sets*)
-Definition is_in {D : Set} := fun (A : (D → Prop)) ↦ (fun (x : D) ↦ A x).
-Notation "x ∈ A" := (@is_in _ A x) (at level 50) : analysis_scope.
 Notation "b 'seen' 'as' 'element' 'of' A 'by' u" :=
   (mk_element_R (is_in A) b u) (at level 50).
 

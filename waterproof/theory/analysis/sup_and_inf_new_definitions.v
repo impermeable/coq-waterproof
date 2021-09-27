@@ -37,10 +37,6 @@ Require Import Waterproof.load_database.DisableWildcard.
 
 Ltac2 Eval global_database_selection.
 
-
-
-
-Open Scope analysis_scope.
 (** ## Upper bounds
 
 A number $M : ℝ$ is called an **upper bound** of a subset $A : ℝ \to \mathsf{Prop}$ of the real numbers, if for all $a : ℝ$, if $a ∈ A$ then $a ≤ M$.*)
@@ -54,7 +50,7 @@ Definition is_bounded_above (A : subsets_R) :=
 
 A real number $L : ℝ$ is called the **supremum** of a subset $A : ℝ \to \mathsf{Prop}$ if it is the smallest upper bound.
 *)
-Definition is_supp (A : subsets_R) (L : ℝ) :=
+Definition is_sup (A : subsets_R) (L : ℝ) :=
   (is_upper_bound A L) ∧ (∀ M : ℝ, is_upper_bound A M ⇒ (L ≤ M) ).
 (** 
 We have to use `Waterproof.definitions.set_definitions` since `is_in`
@@ -62,7 +58,7 @@ We have to use `Waterproof.definitions.set_definitions` since `is_in`
   [Definition is_in {D : Set} := fun (A : (D → Prop)) 
    ↦ (fun (x : D) ↦ A x).]
 *)
-Notation is_in := Waterproof.definitions.set_definitions.is_in.
+(* Notation is_in := Waterproof.definitions.set_definitions.is_in. *)
 
 Lemma equivalence_upper_bounds :
   ∀ (A : subsets_R) (L : ℝ),
@@ -96,15 +92,15 @@ Qed.
 Lemma equivalence_sup_lub :
   ∀ (A : subsets_R) (M : ℝ),
   is_lub (is_in A) M
-  ⇔ is_supp A M.
+  ⇔ is_sup A M.
 Proof.
     Take A : subsets_R, M : ℝ.
     We show both directions.
 
-    Assume M_is_sup_A : (is_sup (is_in A) M).
+    Assume M_is_sup_A : (is_lub (is_in A) M).
     Expand the definition of is_lub in M_is_sup_A.
     Expand the definition of Raxioms.is_upper_bound in M_is_sup_A.
-    Expand the definition of is_supp.
+    Expand the definition of is_sup.
     We show both statements.
     Expand the definition of is_upper_bound.
     Take a : (subsets_R_to_elements A).
@@ -118,9 +114,9 @@ Proof.
     destruct (equivalence_upper_bounds A M0). 
     Apply (M_is_R_lub_A M0 (H M_is_ub_A)).
 
-    Assume M_is_sup_A : (is_supp A M).
+    Assume M_is_sup_A : (is_sup A M).
     Expand the definition of is_lub.
-    Expand the definition of is_supp in M_is_sup_A.
+    Expand the definition of is_sup in M_is_sup_A.
     We show both statements.
     Expand the definition of Raxioms.is_upper_bound.
     destruct M_is_sup_A. 
@@ -145,7 +141,7 @@ Qed.
 
 The completeness axiom of the real numbers says that when a subset $A$ of the real numbers is bounded from above, and when there exists an element in the set, then there exists an $L$ such that $L$ is the supremum of $A$.*)
 Lemma R_complete : ∀ (A : subsets_R) (x : A),
-  is_bounded_above A ⇒ mk_subset_R (fun M : ℝ => is_supp A M).
+  is_bounded_above A ⇒ mk_subset_R (fun M : ℝ => is_sup A M).
 Proof.
     Take A : subsets_R.
     Take a : (subsets_R_to_elements A).
@@ -333,17 +329,17 @@ Qed.
 
 Lemma sup_set_opp_is_inf_set :
   ∀ (A : subsets_R) (M : ℝ),
-    is_supp (set_opp A) M ⇒ is_inf A (-M).
+    is_sup (set_opp A) M ⇒ is_inf A (-M).
 Proof.
     Take A : (subsets_R), M : ℝ.
-    Assume M_is_sup : (is_supp (set_opp A) M).
+    Assume M_is_sup : (is_sup (set_opp A) M).
     Expand the definition of is_inf.
     We need to show that (is_lower_bound A (-M) ∧ ∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
     We show both statements.
     We claim that H0 : (is_upper_bound (set_opp A) M).
     Expand the definition of is_upper_bound.
     Take a : (subsets_R_to_elements (set_opp A)).
-    Expand the definition of is_supp in M_is_sup.
+    Expand the definition of is_sup in M_is_sup.
     destruct M_is_sup as [Mp1 Mp2].
     Expand the definition of is_upper_bound in Mp1.
     By Mp1 it holds that M_upp_bd : (is_upper_bound (set_opp A) M).
@@ -355,7 +351,7 @@ Proof.
     We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
     Take l : ℝ.
     Assume l_low_bd : (is_lower_bound A l).
-    Expand the definition of is_supp in M_is_sup.
+    Expand the definition of is_sup in M_is_sup.
     Because M_is_sup both Mp1 and Mp2.
     By Mp1 it holds that H1 : (∀ b : ℝ, is_upper_bound (set_opp A) b ⇒ M ≤ b).
     By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
@@ -382,7 +378,7 @@ Proof.
     It holds that min_z_in_B : (is_in (set_opp A) (-z)).
     Define c := (mk_element_R _ (-z) (min_z_in_B)).
     Define L := (R_complete B c B_bdd_above).
-    We claim that L_is_sup_B : (is_supp B L).
+    We claim that L_is_sup_B : (is_sup B L).
     Choose Lel such that witness according to L.
     Apply witness.
     By sup_set_opp_is_inf_set it holds that minL_is_inf_A : (is_inf A (-L)).
@@ -396,11 +392,11 @@ If $M$ is the supremum of a set $A$, it is also an upper bound.*)
 Lemma sup_is_upp_bd :
   ∀ A : (subsets_R),
     ∀ M : ℝ,
-      is_supp A M ⇒ is_upper_bound A M.
+      is_sup A M ⇒ is_upper_bound A M.
 Proof.
     Take A : (subsets_R).
     Take M : ℝ.
-    Assume M_is_sup_A : (is_supp A M).
+    Assume M_is_sup_A : (is_sup A M).
     Write M_is_sup_A as (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b) ).
     Because M_is_sup_A both A_upp_bd and every_upper_bound_smaller.
     It follows that (is_upper_bound A M).
@@ -410,7 +406,7 @@ Qed.
 Lemma any_upp_bd_ge_sup :
   ∀ A : (subsets_R),
     ∀ M L : ℝ,
-      is_supp A M ⇒ (is_upper_bound A L ⇒ M ≤ L).
+      is_sup A M ⇒ (is_upper_bound A L ⇒ M ≤ L).
 Proof.
     Take A : (subsets_R).
     Take M : ℝ.
@@ -456,13 +452,13 @@ Qed.
 (** ### $\varepsilon$-characterizations*)
 Lemma exists_almost_maximizer :
   ∀ (A : subsets_R) (M : ℝ),
-    is_supp A M ⇒
+    is_sup A M ⇒
       ∀ (L : ℝ), L < M ⇒ 
         ∃ a : A, L < a.
 Proof.
     Take A : (subsets_R).
     Take M : ℝ.
-    Assume M_is_sup_A : (is_supp A M).
+    Assume M_is_sup_A : (is_sup A M).
     Take L : ℝ.
     Assume L_lt_M : (L < M).
     We argue by contradiction.
@@ -486,13 +482,13 @@ Qed.
 
 Lemma exists_almost_maximizer_ε :
   ∀ (A : subsets_R) (M : ℝ),
-    is_supp A M ⇒
+    is_sup A M ⇒
       ∀ (ε : ℝ), ε > 0 ⇒ 
         ∃ a : A, M - ε < a.
 Proof.
     Take A : (subsets_R).
     Take M : ℝ.
-    Assume M_is_sup_A : (is_supp A M).
+    Assume M_is_sup_A : (is_sup A M).
     Take ε : ℝ.
     Assume ε_gt_0 : (ε > 0).
     It holds that H1 : (M - ε < M). 
@@ -502,12 +498,12 @@ Qed.
 
 Lemma max_or_strict :
   ∀ (A : subsets_R) (M : ℝ),
-    is_supp A M ⇒ 
+    is_sup A M ⇒ 
       (is_in A M) ∨ (∀ a : A, a < M).
 Proof.
     Take A : (subsets_R).
     Take M : ℝ.
-    Assume M_is_sup_A : (is_supp A M).
+    Assume M_is_sup_A : (is_sup A M).
     We argue by contradiction. 
     By not_or_and it holds that H1 : ((¬ (is_in A M)) ∧ 
       ¬(∀ a : A, a < M) ).
