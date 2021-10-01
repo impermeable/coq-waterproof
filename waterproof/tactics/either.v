@@ -76,11 +76,11 @@ Ltac2 Notation "Either" t1(constr) "or" t2(constr) := either_or t1 t2.
         - [t : constr], case in which the goal is wrapped
 
     Does:
-        - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+        - removes the Case.Wrapper from the goal
 
     Raises Exceptions:
         - [CaseError], if the [goal] is not wrapped in the case [t], i.e. the goal is not of 
-                       the form [Case.Wrapper t G] for some type G.
+                       the form [Case.Wrapper t G] for some type [G].
 *)
 Ltac2 case (t:constr) := lazy_match! goal with
                          | [|- Case.Wrapper ?v _] => 
