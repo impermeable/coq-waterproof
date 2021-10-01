@@ -5,7 +5,7 @@ Creation date: 9 June 2021
 
 File that imports all subfiles under the [tactics] folder of the Waterproof library.
 
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 
 This file is part of Waterproof-lib.
 
