@@ -161,7 +161,7 @@ Proof.
     ltac1:(pose proof (A_bdd_by_M b)).
     This follows by assumption.
     Choose y := a.
-    We prove by induction on y.
+    We use induction on y.
     This follows by assumption.
     Choose M such that M_upp_bd according to H.
 
