@@ -1,8 +1,10 @@
 (** * [either.v]
 Authors: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 
 Creation date: 02 June 2021
+Latest edit:   30 Sept 2021
 
 Tactic for proving by case distinction.
 --------------------------------------------------------------------------------
@@ -24,11 +26,28 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-From Ltac2 Require Import Message.
-
-
-
+(* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.tactics.automation_databases.decidability_db.
+
+Ltac2 Type exn ::= [ CaseError(string) ].
+Ltac2 raise_case_error (s:string) := Control.zero (CaseError s).
+
+
+(** * Wrapper *) 
+Module Case.
+  Private Inductive Wrapper (A G : Type) : Type :=
+    | wrap : G -> Wrapper A G.
+  Definition unwrap (A G : Type) : Wrapper A G -> G 
+             := fun x => match x with wrap _ _ y => y end.
+  (* Computational rules showing that 'wrap' and 'unwrap' are eachother's inverses. *)
+  Definition unwrapwrap {A G : Type} {x : G} : unwrap _ _ (wrap A G x) = x
+             := eq_refl.
+  Definition wrapunwrap {A G : Type} {x : Wrapper A G} : wrap A G (unwrap _ _ x) = x
+             := match x with wrap _ _ y => eq_refl end.
+End Case.
+
+Notation "'Add' '‘Case' (  A ).’ 'to' 'proof' 'script.'" 
+         := (Case.Wrapper A _) (at level 99, only printing).
 
 
 (** * either_case_1_or_case_2
@@ -39,15 +58,38 @@ Require Import Waterproof.tactics.automation_databases.decidability_db.
         - [t2 : constr], the second case.
 
     Does:
-        - splits the proof by case distinction; also prints a recommendation for the user 
-          to specifically write in which case he is working on.
+        - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
-Ltac2 either_case_1_or_case_2 (t1:constr) (t2:constr) :=
-    print (of_string "Recommendation: Please use comments to indicate the case 
-    you are in after writing this line. This helps to keep the proof readable.");
-    ltac1:(t1 t2 |- first [ assert ({t1} + {t2}) as u by auto with decidability nocore; destruct u |
-                            assert ({t2} + {t1}) as u by auto with decidability nocore; destruct u 
-                          ]) (Ltac1.of_constr t1) (Ltac1.of_constr t2).
+Ltac2 either_or (t1:constr) (t2:constr) 
+:= (assert ({$t1} + {$t2}) as u by auto with decidability nocore);
+   destruct u; Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+               Control.focus 2 2 (fun () => apply (Case.unwrap $t2)).
+(* Removed the attempt 'assert t2 + t1' because this switches the ordering specified by the user. *)
 
-Ltac2 Notation "Either" t1(constr) "or" t2(constr) :=
-    either_case_1_or_case_2 t1 t2.
+Ltac2 Notation "Either" t1(constr) "or" t2(constr) := either_or t1 t2.
+
+
+(** *
+    Removes the Case.Wrapper.
+
+    Arguments:
+        - [t : constr], case in which the goal is wrapped
+
+    Does:
+        - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+
+    Raises Exceptions:
+        - [CaseError], if the [goal] is not wrapped in the case [t], i.e. the goal is not of 
+                       the form [Case.Wrapper t G] for some type G.
+*)
+Ltac2 case (t:constr) := lazy_match! goal with
+                         | [|- Case.Wrapper ?v _] => 
+                          match Constr.equal v t with
+                          | true => apply (Case.wrap $v)
+                          | false => raise_case_error("Wrong case specified.")
+                          end
+                         | [|- _] => raise_case_error("No need to specify case.")
+                         end.
+
+Ltac2 Notation "Case" t(constr) := case t.
+

@@ -34,6 +34,11 @@ Local Open Scope R_scope.
 Goal forall x : R, exists n : nat, INR(n) > x.
     intro x.
     Either (x <= 0) or (0 < x).
+    - Case (x <= 0).
+      Fail Case (x <= 0).
+      admit.
+    - Fail Case (x <= 0).
+      Case (0 < x).
 Abort.
 
 
@@ -41,4 +46,9 @@ Abort.
 Goal forall x : R, exists n : nat, INR(n) > x.
     intro x.
     Either (x <= 1) or (1 < x).
+    - Case (x <= 1).
+      Fail Case (x <= 0).
+      admit.
+    - Fail Case (x <= 0).
+      Case (1 < x).
 Abort.

@@ -92,25 +92,27 @@ Lemma archimed_mod :
 Proof.
     Take x : ℝ.
     Either (x <= 0) or (0 < x).
-    Choose n := 1%nat.
-    We claim that H1 : (INR 1 > INR 0).
-    Expand the definition of INR.
-    This follows immediately.
-    Rewrite using (0 = INR(0)) in r.
-    It follows that (INR 1 > x).
-    By archimed it holds that H2 : (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
-    It holds that H3 : (IZR( up x ) > x).
-    It holds that H4 : (0 < IZR( up x )).
-    By lt_0_IZR it holds that H5 : (0 < up x)%Z.
-    It holds that H6 : (0 <= up x)%Z.
-    By IZN it holds that H7 : (∃ k : ℕ, up x = Z.of_nat k).
-    Choose k such that up_x_is_k according to H7.
-    Choose n := k.
-    We need to show that (INR k > x).
-    By INR_IZR_INZ it holds that H8 : (INR k = IZR (Z.of_nat k)).
-    Rewrite using (INR n = IZR (Z.of_nat n)).
-    Rewrite using (Z.of_nat n = up x).
-    This follows by assumption.
+    - Case (x <= 0).
+      Choose n := 1%nat.
+      We claim that H1 : (INR 1 > INR 0).
+      Expand the definition of INR.
+      This follows immediately.
+      Rewrite using (0 = INR(0)) in r.
+      It follows that (INR 1 > x).
+    - Case (0 < x).
+      By archimed it holds that H2 : (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
+      It holds that H3 : (IZR( up x ) > x).
+      It holds that H4 : (0 < IZR( up x )).
+      By lt_0_IZR it holds that H5 : (0 < up x)%Z.
+      It holds that H6 : (0 <= up x)%Z.
+      By IZN it holds that H7 : (∃ k : ℕ, up x = Z.of_nat k).
+      Choose k such that up_x_is_k according to H7.
+      Choose n := k.
+      We need to show that (INR k > x).
+      By INR_IZR_INZ it holds that H8 : (INR k = IZR (Z.of_nat k)).
+      Rewrite using (INR n = IZR (Z.of_nat n)).
+      Rewrite using (Z.of_nat n = up x).
+      This follows by assumption.
 Qed.
 
 
