@@ -194,6 +194,42 @@ Ltac2 ltac2_assert (id: ident) (lemma_content: constr) :=
         (Some (Std.IntroNaming (Std.IntroIdentifier id))) 
         lemma_content None).
 
+(** * Get coerced type on intro
+
+    If t is a term, the following tactics allow to extract what t gets
+    coerced to after an introduction in forall x : t, True.
+    
+    ** Auxiliary function to get a coerced type
+    Returns:
+        - [constr] The coercion of t if the goal is forall x : t, True.
+
+*)
+Ltac2 get_coerced_type_aux () :=
+    match! goal with
+    | [ |- ?c -> True ] =>  c
+    end.
+
+(** ** Get coerced type
+
+    If t is a term, the following tactic allows to extract what t gets
+    coerced to after an introduction in forall x : t, True.
+
+    Arguments:
+        - [t : constr] The term to be coerced
+
+    Returns:
+        - [constr] The coerced term after introduction in forall x : t, True.
+*)
+Ltac2 get_coerced_type (t : constr) :=
+    let dummy_hyp := Fresh.fresh (Fresh.Free.of_goal ()) @dummy_hypothesis in 
+    ltac2_assert (dummy_hyp) constr:(forall _ : $t, True);
+    (* the previous line creates an extra goal, which causes multiple goals to 
+    focus. Goal matching panics on this, so we need to refocus on the first goal *)
+    let z := Control.focus 1 1 (get_coerced_type_aux) in
+      Control.focus 1 1 (fun () => exact (fun x => I)); (* prove the lemma *)
+      clear $dummy_hyp; (* clear the resulting hypothesis *)
+      z.
+
 Ltac2 Type exn ::= [ UnsupportedError(string) ].
 (** * int_to_constr
     Map an Ltac2 [int] to a [constr].

@@ -33,8 +33,13 @@ Load induction.
 Goal forall n : nat, (n = n) -> (S n = S n).
 Proof.
     intro n.
-    We prove by induction on n.
     intro h.
-    reflexivity.
-    reflexivity.
+    We use induction on n.
+    - Fail We first show the base case, namely (2 = 2).
+      We first show the base case, namely (1 = 1).
+      Fail We first show the base case, namely (1 = 1).
+      reflexivity.
+    - We now show the induction step.
+      Fail We now show the induction step.
+      reflexivity.
 Qed.

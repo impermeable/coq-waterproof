@@ -42,12 +42,6 @@ Proof.
     ltac1:(lra).
 Qed.
 
-(* This axiom does not make sense, 
-    but therefore we can be sure that [waterprove]
-    does not know it without *explicitly* being told to use it.*)
-Axiom zero_is_ten: 0 = 10.
-
-
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [We conclude that ... ] *)
 Ltac2 Eval (print (of_string "
@@ -91,14 +85,16 @@ Proof.
 Qed.
 
 (** * Test 5
+    Removed test case because it takes too long.
+
     Error case: Waterprove cannot find proof
     (because the statement is false!).
-*)
+
 Lemma test_we_conclude_5: 0 = 1.
 Proof.
     let result () := We conclude that (0 = 1) in
     assert_raises_error result.
-Abort.
+Abort. *)
 
 (** * Test 6
     Alternative [It follows that ...] notation.
@@ -133,9 +129,10 @@ Qed.
 
 
 (** * Test 2
+    Remove test case as this required axiom.
+
     Base case: should easily be possible to finish the goal,
     but only with the given lemma.
-*)
 Lemma test_by_we_conclude_2: 0 + 0 = 20.
 Proof.
     
@@ -148,7 +145,7 @@ Proof.
     assert_raises_error failure.
     
     By zero_plus_zero_is_twenty we conclude that (0 + 0 = 20).
-Qed.
+Qed.*)
 
 (** * Test 3
     Warning case: provided goal is equivalent, 
@@ -161,15 +158,16 @@ Proof.
 Qed.
 
 (** * Test 4
+    Removed test case as it takes too long.
+
     Error case: Waterprove cannot find proof
     (because the statement is false,
     even with the given lemma).
-*)
 Lemma test_by_we_conclude_4: 0 = 1.
 Proof.
     let result () := By zero_is_ten we conclude that (0 = 1) in
     assert_raises_error result.
-Abort.
+Abort.*)
 
 (** * Test 5
     Shows that [waterprove]

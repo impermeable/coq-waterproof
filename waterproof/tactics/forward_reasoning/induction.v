@@ -1,7 +1,10 @@
 (** * [induction.v]
 Author: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
+
 Creation date: 06 June 2021
+Latest edit:   01 Oct 2021
 
 Tactic for proving by mathematical induction.
 --------------------------------------------------------------------------------
@@ -24,6 +27,43 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.auxiliary.
+
+Ltac2 Type exn ::= [ NaturalInductionError(string) ].
+Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
+
+(* Goal wrappers *)
+Module NaturalInduction.
+
+  Module Base.
+    Private Inductive Wrapper (G : Type) : Type :=
+      | wrap : G -> Wrapper G.
+    Definition unwrap (G : Type) : Wrapper G -> G 
+               := fun x => match x with wrap _ y => y end.
+    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
+               := eq_refl.
+    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
+               := match x with wrap _ y => eq_refl end.
+  End Base.
+
+  Module Step.
+    Private Inductive Wrapper (G : Type) : Type :=
+      | wrap : G -> Wrapper G.
+    Definition unwrap (G : Type) : Wrapper G -> G 
+               := fun x => match x with wrap _ y => y end.
+    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
+               := eq_refl.
+    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
+               := match x with wrap _ y => eq_refl end.
+  End Step.
+
+End NaturalInduction.
+
+Notation "'Add' '‘We' 'first' 'show' 'the' 'base' 'case,' 'i.e.' 'that' (  G ).’ 'to' 'proof' 'script.'" 
+         := (NaturalInduction.Base.Wrapper G) (at level 99, only printing).
+Notation "'Add' '‘We' 'now' 'show' 'the' 'induction' 'step.’' 'to' 'proof' 'script.'"
+         := (NaturalInduction.Step.Wrapper _) (at level 99, only printing).
+
 
 (** * induction_with_hypothesis_naming
     Performs mathematical induction.
@@ -32,11 +72,58 @@ From Ltac2 Require Import Ltac2.
         - [x: ident], the variable to perform the induction on.
 
     Does:
-        - performs induction on [x].
+        - performs induction on [x]. If [x] is a natural number, the first goal is wrapped in 
+          NaturalInduction.Base.Wrapper and the second goal is wrapped in
+          NaturalInduction.Step.Wrapper.
 *)
-Local Ltac2 induction_without_hypothesis_naming (x: ident) :=
-    let x_val := Control.hyp x in induction $x_val.
-
-
-Ltac2 Notation "We" "prove" "by" "induction" "on" x(ident) := 
+Ltac2 induction_without_hypothesis_naming (x: ident) :=
+    let x_val := Control.hyp x in 
+      let type_x := eval cbv in (Aux.type_of $x_val) in
+        match (Constr.equal type_x constr:(nat)) with
+        | true => induction $x_val; Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
+                                    Control.focus 2 2 (fun () => apply (NaturalInduction.Step.unwrap))
+        | false => induction $x_val
+        end.
+Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
     induction_without_hypothesis_naming x.
+
+(** *
+    Removes the NaturalInduction.Base.Wrapper.
+
+    Arguments:
+        - [t : constr], goal that is wrapped
+
+    Does:
+        - removes the NaturalInduction.Base.Wrapper from the goal
+
+    Raises Exceptions:
+        - [NaturalInductionError], if the [goal] is the type [t] wrapped in the base case wrapper, 
+          i.e. the goal is not of the form [NaturalInduction.Base.Wrapper t].
+*)
+Ltac2 base_case (t:constr) := lazy_match! goal with
+                              | [|- NaturalInduction.Base.Wrapper ?v] =>
+                                match Constr.equal v t with
+                                | true => apply (NaturalInduction.Base.wrap)
+                                | false => raise_natind_error("Wrong goal specified.")
+                                end
+                              | [|- _] => raise_natind_error("No need to indicate showing a base case.")
+                              end.
+Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" t(constr) := base_case t.
+
+(** *
+    Removes the NaturalInduction.Step.Wrapper.
+
+    Arguments: none
+
+    Does:
+        - removes the NaturalInduction.Step.Wrapper from the goal
+
+    Raises Exceptions:
+        - [NaturalInductionError], if the [goal] is not wrapped in the induction step case wrapper, 
+          i.e. the goal is not of the form [NaturalInduction.Step.Wrapper G] for some type [G].
+*)
+Ltac2 induction_step () := lazy_match! goal with
+                        | [|- NaturalInduction.Step.Wrapper _] => apply (NaturalInduction.Step.wrap)
+                        | [|- _] => raise_natind_error("No need to indicate showing an induction step.")
+                        end.
+Ltac2 Notation "We" "now" "show" "the" "induction" "step" := induction_step ().
