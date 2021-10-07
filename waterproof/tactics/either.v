@@ -4,7 +4,7 @@ Authors:
     - Jelle Wemmenhove
 
 Creation date: 02 June 2021
-Latest edit:   30 Sept 2021
+Latest edit:   07 Oct 2021
 
 Tactic for proving by case distinction.
 --------------------------------------------------------------------------------
@@ -28,26 +28,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 (* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.tactics.automation_databases.decidability_db.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ CaseError(string) ].
 Ltac2 raise_case_error (s:string) := Control.zero (CaseError s).
-
-
-(** * Wrapper *) 
-Module Case.
-  Private Inductive Wrapper (A G : Type) : Type :=
-    | wrap : G -> Wrapper A G.
-  Definition unwrap (A G : Type) : Wrapper A G -> G 
-             := fun x => match x with wrap _ _ y => y end.
-  (* Computational rules showing that 'wrap' and 'unwrap' are eachother's inverses. *)
-  Definition unwrapwrap {A G : Type} {x : G} : unwrap _ _ (wrap A G x) = x
-             := eq_refl.
-  Definition wrapunwrap {A G : Type} {x : Wrapper A G} : wrap A G (unwrap _ _ x) = x
-             := match x with wrap _ _ y => eq_refl end.
-End Case.
-
-Notation "'Add' '‘Case' (  A ).’ 'to' 'proof' 'script.'" 
-         := (Case.Wrapper A _) (at level 99, only printing).
 
 
 (** * either_case_1_or_case_2

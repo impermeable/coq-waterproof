@@ -42,6 +42,7 @@ waterproof/load_database/DisableWildcard.v
 waterproof/load_database/EnableWildcard.v
 
 # Simple tactics
+waterproof/tactics/goal_wrappers.v
 waterproof/tactics/take.v
 waterproof/tactics/assume.v
 waterproof/tactics/automation_databases/decidability_db.v

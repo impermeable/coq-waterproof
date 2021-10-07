@@ -29,6 +29,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * Unfold
     Rewrite a function by its definition,
@@ -60,37 +61,6 @@ Ltac2 Notation "Unfold" targets(list1(seq(reference, occurrences), ","))
 
 Ltac2 Type exn ::= [ ExpandDefError(string) ].
 Ltac2 raise_expanddef_error (s:string) := Control.zero (ExpandDefError s).
-
-Module ExpandDef.
-
-  Module Goal.
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    Definition unwrap (G : Type) : Wrapper G -> G 
-               := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
-  End Goal.
-
-  Module Hyp.
-    Private Inductive Wrapper (G H : Type) (h : H) : Type :=
-      | wrap : G -> Wrapper G H h.
-    Definition unwrap (G H : Type) (h : H) : Wrapper G H h -> G 
-               := fun x => match x with wrap _ _ _ y => y end.
-    Definition unwrapwrap {G H : Type} {h : H} {x : G} : unwrap _ _ _ (wrap G H h x) = x
-               := eq_refl.
-    Definition wrapunwrap {G H : Type} {h : H} {x : Wrapper G H h} : wrap G H h (unwrap _ _ _ x) = x
-               := match x with wrap _ _ _ y => eq_refl end.
-  End Hyp.
-
-End ExpandDef.
-
-Notation "'Add' '‘That' 'is,' 'write' 'the' 'goal' 'as' (  G ).’ 'to' 'proof' 'script.'" 
-         := (ExpandDef.Goal.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘That' 'is,' 'write' h 'as' (  H ).’ 'to' 'proof' 'script.'" 
-         := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing).
 
 
 Ltac2 ap_goal_unwrap () := apply ExpandDef.Goal.unwrap.

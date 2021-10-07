@@ -27,42 +27,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.auxiliary.
 
 Ltac2 Type exn ::= [ NaturalInductionError(string) ].
 Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
-
-(* Goal wrappers *)
-Module NaturalInduction.
-
-  Module Base.
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    Definition unwrap (G : Type) : Wrapper G -> G 
-               := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
-  End Base.
-
-  Module Step.
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    Definition unwrap (G : Type) : Wrapper G -> G 
-               := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
-  End Step.
-
-End NaturalInduction.
-
-Notation "'Add' '‘We' 'first' 'show' 'the' 'base' 'case,' 'i.e.' 'that' (  G ).’ 'to' 'proof' 'script.'" 
-         := (NaturalInduction.Base.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘We' 'now' 'show' 'the' 'induction' 'step.’' 'to' 'proof' 'script.'"
-         := (NaturalInduction.Step.Wrapper _) (at level 99, only printing).
 
 
 (** * induction_with_hypothesis_naming
