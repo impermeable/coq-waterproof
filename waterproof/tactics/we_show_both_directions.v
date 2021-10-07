@@ -25,16 +25,12 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-From Ltac2 Require Option.
-From Ltac2 Require Import Message.
-
 
 
 Ltac2 Type exn ::= [ BothDirectionsError(string) ].
 
 Ltac2 raise_both_directions_error (s:string) := 
     Control.zero (BothDirectionsError s).
-
 
 
 (** * both_statements_iff
@@ -56,5 +52,7 @@ Ltac2 both_statements_iff () :=
     end.
 
 
-Ltac2 Notation "We" show(opt("show")) prove(opt("prove")) "both" "directions" := 
+Ltac2 Notation "We" "show" "both" "directions" := 
+    both_statements_iff ().
+Ltac2 Notation "We" "prove" "both" "directions" := 
     both_statements_iff ().
