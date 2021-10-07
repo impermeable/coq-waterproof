@@ -82,6 +82,7 @@ waterproof/AllTactics.v
 waterproof/definitions/subsequences_definitions.v
 
 # Waterproof theory files
+waterproof/theory/analysis/metric_spaces.v
 waterproof/theory/analysis/sup_and_inf.v
 waterproof/theory/analysis/sup_and_inf_new_definitions.v
 waterproof/theory/analysis/sequences.v
