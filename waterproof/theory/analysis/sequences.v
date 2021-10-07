@@ -96,6 +96,7 @@ Proof.
       Choose n := 1%nat.
       We claim that H1 : (INR 1 > INR 0).
       Expand the definition of INR.
+      That is, write the goal as ( 1 > 0 ).
       This follows immediately.
       Rewrite using (0 = INR(0)) in r.
       It follows that (INR 1 > x).
@@ -127,6 +128,8 @@ Proof.
     Assume a_b_similar : (evt_eq_sequences a b) and a_to_l : (a ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜(b n) - l ｜ <ε).
     Expand the definition of converges_to.
+    That is, write the goal as (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
+      for all n : ℕ, (n ≥ N)%nat ⇨ ｜ b n - l ｜ < ε ).
     Take ε : ℝ; such that ε_gt_0 : (ε > 0).
     Choose n1 such that a_close_to_l according to (a_to_l ε ε_gt_0).
     Choose k such that an_is_bn_for_n_ge_k according to a_b_similar.
@@ -158,6 +161,8 @@ Proof.
     (** By our lemma, it suffices to prove that (evt_eq_sequences a b) *)
     We need to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
     Expand the definition of evt_eq_sequences.
+    That is, write the goal as (there exists k : ℕ, 
+      for all n : ℕ, (n ≥ k)%nat ⇨ a n = b n ).
     Choose k := O.
     Take n : ℕ; such that n_gt_k : (n ≥ k)%nat.
     This follows immediately.
@@ -178,6 +183,8 @@ Proof.
     Define s := (constant_sequence c).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜(s n) - c｜ < ε).
     Expand the definition of converges_to.
+    That is, write the goal as (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
+      for all n : ℕ, (n ≥ N)%nat ⇨ ｜ s n - c ｜ < ε).
     Take ε : ℝ; such that ε_gt_0 : (ε > 0).
     Choose Nn := O.
     Take n : ℕ; such that n_ge_Nn : (n ≥ Nn)%nat.
@@ -200,8 +207,12 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 
 Lemma lim_d_0 : Un_cv d 0.
 Proof.
-    Expand the definition of d. 
+    Expand the definition of d.
+    That is, write the goal as ( Un_cv (n) ↦ (1 / (n + 1)) 0 ).
     Expand the definition of Un_cv.
+    That is, write the goal as (for all eps : ℝ, eps > 0 
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+      ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
     Take ε : ℝ.
     Assume ε_gt_0 : (ε > 0).
     Choose n1 such that H_large according to (archimed_mod (/ε)).
@@ -209,6 +220,7 @@ Proof.
     Take n : ℕ. 
     Assume n_ge_N : (n ≥ n1)%nat.
     Expand the definition of R_dist.
+    That is, write the goal as ( | 1 / (n + 1) - 0 | < ε ).
     Apply Rabs_def1.
     Rewrite using (1 / (INR n + 1) - 0 = 1 / (INR n + 1)).
     We need to show that (1 / (INR n+1) < ε ).
@@ -239,7 +251,9 @@ Proof.
     By (CV_opp) it holds that H2 : (Un_cv (opp_seq d) (-0)).
     Rewrite using (-0 = 0) in H2.
     Expand the definition of opp_seq in H2.
+    That is, write H2 as ( Un_cv (n) ↦ (- d n) 0 ).
     Expand the definition of d in H2.
+    That is, write H2 as ( Un_cv (n) ↦ (- (1 / (n + 1))) 0 ).
     This follows by assumption.
 Qed.
 
@@ -256,6 +270,9 @@ Proof.
     Assume c_cv_to_l : (c ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜b n - l｜ < ε).
     Expand the definition of converges_to.
+    That is, write the goal as (for all ε : ℝ, ε > 0 
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+      ⇨ ｜ b n - l ｜ < ε ).
     Take ε : ℝ; such that ε_gt_0 : (ε > 0). 
     Choose Na such that a_close_to_l according to (a_cv_to_l ε ε_gt_0).
     Choose Nc such that c_close_to_l according to (c_cv_to_l ε ε_gt_0).
@@ -264,15 +281,18 @@ Proof.
     It holds that n_ge_Na : (n ≥ Na)%nat.
     It holds that d_an_l_lt_ε : (R_dist (a n) l < ε).
     Expand the definition of R_dist in d_an_l_lt_ε.
+    That is, write d_an_l_lt_ε as ( | a n - l | < ε ).
     Rewrite using (Rabs( a n - l  ) = Rabs( l - a n)) in d_an_l_lt_ε.
     By Rabs_def2 it holds that H2 : (l - a n < ε ∧- ε < l - a n).
     It holds that H3 : (- ε < l - a n).
     It holds that n_ge_Nc : (n ≥ Nc)%nat.
     It holds that d_cn_l_lt_ε : (R_dist (c n) l < ε).
     Expand the definition of R_dist in d_cn_l_lt_ε.
+    That is, write d_cn_l_lt_ε as ( | c n - l | < ε ).
     By Rabs_def2 it holds that H4 : (c n - l < ε ∧ - ε < c n - l).
     It holds that H5 : (c n - l < ε).
     Expand the definition of R_dist.
+    That is, write the goal as ( | b n - l | < ε ).
     Apply Rabs_def1. 
     By b_squeezed it holds that H6 : (a n ≤ b n ∧ b n ≤ c n).
     By b_squeezed it holds that H7 : (a n ≤ b n). 
@@ -302,6 +322,9 @@ Proof.
     (** Next, we consider the case $M < L$.*)
     Define ε := (L-M).
     Expand the definition of Un_cv in a_cv_to_L.
+    That is, write a_cv_to_L as (for all eps : ℝ, eps > 0 
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+      ⇨ ｜ a n - L ｜ < eps).
     We claim that H2 : (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
     Apply a_cv_to_L. 
     It holds that H3 : (L - M > 0). 
@@ -310,6 +333,7 @@ Proof.
     Choose Nn such that a_close_to_L according to H2.
     It holds that H4 : (R_dist (a Nn) L < ε).
     Expand the definition of R_dist in H4.
+    That is, write H4 as ( | a Nn - L | < ε ).
     By Rabs_def2 it holds that H5 : (a Nn - L < ε ∧ (- ε < a Nn - L)).
     It holds that H6 : (- ε < a Nn - L).
     It holds that H7 : (a Nn ≤ M).
@@ -330,6 +354,7 @@ Proof.
     Define b := (opp_seq a).
     Assume a_cv_to_L : (Un_cv a L).
     Expand the definition of opp_seq in b.
+    That is, write b as ( ℕ ⇨ ℝ ). (*TODO *)
     We claim that H : (Un_cv b (-L)).
     Apply CV_opp.
     This follows by assumption.
@@ -339,6 +364,7 @@ Proof.
     Take n : ℕ. 
     Rewrite using (b = opp_seq a).
     Expand the definition of opp_seq.
+    That is, write the goal as (-(a n) ≤ -M).
     This follows immediately.
     We need to show that (Un_cv b (-L)).
     This follows immediately.
@@ -365,7 +391,13 @@ Proof.
     (** Next, we consider the case $l < m$.*)
     Define ε := ((m - l)/2).
     Expand the definition of Un_cv in b_cv_to_l.
+    That is, write b_cv_to_l as (for all eps : ℝ, eps > 0 
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
+      ⇨ ｜ b n - l ｜ < eps).
     Expand the definition of Un_cv in a_cv_to_m.
+    That is, write a_cv_to_m as (for all eps : ℝ, eps > 0 
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+      ⇨ ｜ a n - m ｜ < eps ).
     It holds that H2 : (m-l > 0).
     It holds that H3 : ((m-l)/2 > 0).
     It holds that H4 : (ε > 0).
@@ -381,7 +413,9 @@ Proof.
     It holds that H13 : (R_dist (b N3) l < ε).
     It holds that H14 : (R_dist (a N3) m < ε).
     Expand the definition of R_dist in H13.
+    That is, write H13 as ( | b N3 - l | < ε ).
     Expand the definition of R_dist in H14.
+    That is, write H14 as ( | a N3 - m | < ε ).
     By Rabs_def2 it holds that H15 : (a N3 - m < ε ∧ - ε < a N3 - m).
     By Rabs_def2 it holds that H16 : (b N3 - l < ε ∧ - ε < b N3 - l).
     It holds that H17 : (a N3 - m < ε).

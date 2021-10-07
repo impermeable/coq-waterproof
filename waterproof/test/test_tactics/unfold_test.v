@@ -56,21 +56,33 @@ Lemma test_unfold_2: forall (x a:nat), some_function x = a -> 2*x = a.
     exact h.
 Qed.
 
+
+Definition other_function (x: nat) := 2 * x.
 (** * Test 3
-    Same as test 1, but with alternative notation.
+    Unfold functions IN THE GOAL to show that its definition
+    proves the goal.
 *)
-Lemma test_unfold_3: forall (x:nat), some_function x = 2*x.
+Lemma test_unfold_3: forall (x:nat), some_function (other_function x) = 2*(2*x).
     intros x.
     Expand the definition of some_function.
+    Fail That is, write the goal as (0 = 0).
+    That is, write the goal as (2 * other_function x = 2 * (2 * x)).
+    Expand the definition of other_function.
+    That is, write the goal as (2*(2*x) = 2*(2*x)).
     reflexivity.
 Qed.
 
 
-(** * Test 3
-    Same as test 2, but with alternative notation.
+(** * Test 4
+    Unfold functions IN A HYPOTHESIS to show that its definition
+    proves the goal.
 *)
-Lemma test_unfold_4: forall (x a:nat), some_function x = a -> 2*x = a.
+Lemma test_unfold_4: forall (x a:nat), some_function (other_function x) = a -> False.
     intros x a h.
-    Expand the definition of some_function in h.
-    exact h.
-Qed.
+    Fail Expand the definition of some_function, other_function in g.
+    Expand the definition of some_function, other_function in h.
+    Fail That is, write g as (2*(2*x) = a).
+    Fail That is, write x as (2*(2*x) = a).
+    Fail That is, write h as (0 = 0).
+    That is, write h as (2*(2*x) = a).
+Abort.

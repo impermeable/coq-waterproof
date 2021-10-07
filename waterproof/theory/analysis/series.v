@@ -64,6 +64,7 @@ Proof.
     Take a : (ℕ → ℝ).
     Assume terms_pos : (∀ n : ℕ, a n ≥ 0).
     Expand the definition of Un_growing.
+    That is, write the goal as (for all n : ℕ,  partial_sums a n ≤ partial_sums a (S n)).
     We need to show that (for all n : ℕ, partial_sums a n ≤ partial_sums a (S n)).
     Take n : ℕ.
     Rewrite using (partial_sums a (S n) = partial_sums a n + a (S n)).
@@ -105,6 +106,8 @@ Proof.
     apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn) (b := fun Nn ↦ sigma a k Nn).
     Choose M such that H5 according to H3.
     Expand the definition of evt_eq_sequences.
+    That is, write the goal as (there exists k0 : ℕ, for all n : ℕ, (n ≥ k0)%nat 
+      ⇨ sigma a k (l - 1) + sigma a l n = sigma a k n).
     Choose k0 := M.
     Take n : ℕ.
     Assume n_ge_M : (n ≥ M)%nat.
@@ -127,6 +130,8 @@ Proof.
     apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
     Choose M such that H11 according to H9.
     Expand the definition of evt_eq_sequences.
+    That is, write the goal as (there exists k0 : ℕ, for all n : ℕ, (n ≥ k0)%nat 
+      ⇨ sigma a k n - sigma a k (l - 1) = sigma a l n).
     Choose k0 := M.
     Apply H11.
     Apply H8.

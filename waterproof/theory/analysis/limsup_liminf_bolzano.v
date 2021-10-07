@@ -78,6 +78,9 @@ Proof.
     (** second statement *)
     We claim that H2 : (proj1_sig (lim_sup_bdd a pr1 pr2) ≤ sequence_ub a pr1 Nn).
     Expand the definition of lim_sup_bdd.
+    That is, write the goal as 
+      (proj1_sig (decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) pr2) 
+        ≤ sequence_ub a pr1 Nn).
     Define lim_with_proof := (decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) pr2).
     Choose l such that l_is_lim according to lim_with_proof.
     Simplify what we need to show. 
@@ -115,15 +118,22 @@ Proof.
     Take Nn n : ℕ.
     Assume n_ge_N : (n ≥ Nn)%nat.
     Expand the definition of sequence_ub.
+    That is, write the goal as (a n ≤ lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn pr)).
     Expand the definition of lub.
+    That is, write the goal as
+      (a n ≤ (let (a0, _) := ub_to_lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn pr) in a0)).
     Define upp_bd_with_proof := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat)).
     Choose M such that M_is_sup according to upp_bd_with_proof.
     Expand the definition of is_lub in M_is_sup.
+    That is, write M_is_sup as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
+      ∧ (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b)).
     Because M_is_sup both M_is_upp_bd and any_upp_bd_ge_M.
     Expand the definition of is_upper_bound in M_is_upp_bd.
+    That is, write M_is_upp_bd as (for all x : ℝ, EUn (k) ↦ (a (Nn + k)%nat) x ⇨ x ≤ M).
     It holds that H1 : (Nn + (n-Nn) = n)%nat.
     We claim that H2 : (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
     Expand the definition of EUn.
+    That is, write the goal as (there exists i : ℕ, a n = a (Nn + i)%nat).
     We need to show that (∃ i : ℕ, a n = a (Nn + i)%nat).
     Choose i := (n - Nn)%nat.
     Rewrite using (n = (n - Nn) + Nn)%nat.
@@ -209,6 +219,8 @@ Proof.
     Take x : ℝ.
     Assume x_is_acc_pt : (is_seq_acc_pt a x).
     Expand the definition of is_seq_acc_pt in x_is_acc_pt.
+    That is, write x_is_acc_pt as (there exists n : ℕ ⇨ ℕ, is_index_seq n 
+      ∧ Un_cv (k) ↦ (a (n k)) x).
     Choose n such that n_good_ind_seq according to x_is_acc_pt.
     Because n_good_ind_seq both n_ind_seq and ank_cv_to_x.
     Take m : ℕ.
@@ -229,6 +241,7 @@ Proof.
     It holds that H7 : (Nat.max K m ≥ K)%nat.
     It follows that (Nn ≥ K)%nat.
     Expand the definition of R_dist in H6.
+    That is, write H6 as ( | a (n Nn) - x | < ε ).
     By Rabs_def2 it holds that H8 : (a(n Nn) - x < ε ∧ - ε < a(n Nn) - x).
     Because H8 both H9 and H10.
     By index_seq_grows_0 it holds that H14 : (n Nn ≥ Nn)%nat.
@@ -250,8 +263,12 @@ Proof.
     Take pr_lb : (has_lb (sequence_ub a pr_ub)).
     (* TODO: fix that we refer to is_lub here. Moreover, we show both statements should work immediately. *)
     Expand the definition of is_lub.
+    That is, write the goal as 
+      (is_upper_bound (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a pr_ub pr_lb))
+      ∧ (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b ⇨ proj1_sig (lim_sup_bdd a pr_ub pr_lb) ≤ b)).
     We show both statements.
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (lim_sup_bdd a pr_ub pr_lb)).
     Take x : ℝ.
     Assume x_is_acc_pt : (is_seq_acc_pt a x).
     By acc_pt_bds_seq_ub it holds that H0 : (∀ m : ℕ, x ≤ sequence_ub a pr_ub m).
@@ -266,7 +283,10 @@ Proof.
     Take b : ℝ.
     Assume b_upp_bd : (is_upper_bound (is_seq_acc_pt a) b).
     Expand the definition of is_upper_bound in b_upp_bd.
+    That is, write b_upp_bd as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
     Expand the definition of is_seq_acc_pt in b_upp_bd.
+    That is, write b_upp_bd as (for all x : ℝ, 
+      (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) ⇨ x ≤ b).
     Apply b_upp_bd.
     Apply Bolzano_Weierstrass_gen.
 Qed.

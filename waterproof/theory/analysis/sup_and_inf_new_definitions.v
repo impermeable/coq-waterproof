@@ -69,7 +69,9 @@ Proof.
     We show both directions.
     Assume L_upp_bd : (is_upper_bound A L).
     Expand the definition of Raxioms.is_upper_bound.
+    That is, write the goal as (for all x : ℝ, is_in A x ⇨ x ≤ L).
     Expand the definition of is_upper_bound in L_upp_bd.
+    That is, write L_upp_bd as (for all a : A, a ≤ L).
     Take x : ℝ.
     Assume w : (is_in A x).
     Define b := (mk_element_R (is_in A) x w).
@@ -78,7 +80,9 @@ Proof.
 
     Assume L_is_upp_bd : (Raxioms.is_upper_bound (is_in A) L).
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all a : A, a ≤ L).
     Expand the definition of Raxioms.is_upper_bound in L_is_upp_bd.
+    That is, write L_is_upp_bd as (for all x : ℝ, is_in A x ⇨ x ≤ L).
     Take a : (subsets_R_to_elements A).
     Apply L_is_upp_bd.
     (** TODO subsets_elements_satisfy_predicate does not exist??? *)
@@ -98,11 +102,15 @@ Proof.
     We show both directions.
 
     Assume M_is_sup_A : (is_lub (is_in A) M).
-    Expand the definition of is_lub in M_is_sup_A.
-    Expand the definition of Raxioms.is_upper_bound in M_is_sup_A.
+    Expand the definition of is_lub, Raxioms.is_upper_bound in M_is_sup_A.
+    That is, write M_is_sup_A as ((for all x : ℝ, is_in A x ⇨ x ≤ M) 
+      ∧ (for all b : ℝ, (for all x : ℝ, is_in A x ⇨ x ≤ b) ⇨ M ≤ b)).
     Expand the definition of is_sup.
+    That is, write the goal as 
+      (is_upper_bound A M ∧ (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0)).
     We show both statements.
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all a : A, a ≤ M).
     Take a : (subsets_R_to_elements A).
     destruct M_is_sup_A as [Mp1 Mp2].
     By Mp1 it holds that H : (a ≤ M).
@@ -116,11 +124,17 @@ Proof.
 
     Assume M_is_sup_A : (is_sup A M).
     Expand the definition of is_lub.
+    That is, write the goal as (Raxioms.is_upper_bound (is_in A) M 
+      ∧ (for all b : ℝ, Raxioms.is_upper_bound (is_in A) b ⇨ M ≤ b)).
     Expand the definition of is_sup in M_is_sup_A.
+    That is, write M_is_sup_A as (is_upper_bound A M 
+      ∧ (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0)).
     We show both statements.
     Expand the definition of Raxioms.is_upper_bound.
+    That is, write the goal as (for all x : ℝ, is_in A x ⇨ x ≤ M ).
     destruct M_is_sup_A. 
     Expand the definition of is_upper_bound in H.
+    That is, write H as (for all a : A, a ≤ M).
     Take x : ℝ. 
     Assume x_in_A : (is_in A x). 
     Define b := (mk_element_R (is_in A) x x_in_A).
@@ -149,12 +163,16 @@ Proof.
     We claim that H : (sig (is_lub (is_in A))).
     Apply completeness.
     Expand the definition of is_bounded_above in A_bdd_above.
+    That is, write A_bdd_above as (there exists M : ℝ, is_upper_bound A M).
     Expand the definition of is_upper_bound in A_bdd_above.
+    That is, write A_bdd_above as (there exists M : ℝ, for all a0 : A, a0 ≤ M).
     Expand the definition of bound.
+    That is, write the goal as (there exists m : ℝ, Raxioms.is_upper_bound (is_in A) m).
     Choose M such that A_bdd_by_M according to A_bdd_above.
     Choose m := M.
     We need to show that (∀ a : ℝ, is_in A a ⇒ a ≤ M).
     Expand the definition of Raxioms.is_upper_bound.
+    That is, write the goal as (for all x : ℝ, is_in A x ⇨ x ≤ m).
     Take x : ℝ.
     Assume w : (is_in A x).
     Define b := (mk_element_R (is_in A) x w).
@@ -236,6 +254,7 @@ Proof.
     Assume M_upp_bd : (is_upper_bound A M).
     We need to show that (∀ a : (set_opp A),-M ≤ a).
     Expand the definition of is_lower_bound.
+    That is, write the goal as (for all a : set_opp A, -M ≤ a).
     Take opp_a : (subsets_R_to_elements (set_opp A)).
     Define a := (original_elem opp_a).
     It holds that H1 : (is_in A a).
@@ -255,6 +274,7 @@ Proof.
     Assume m_low_bd : (is_lower_bound A m).
     We need to show that (∀ opp_a : (set_opp A), opp_a ≤ -m).
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all a : set_opp A, a ≤ -m).
     Take opp_a : (subsets_R_to_elements (set_opp A)).
     Define a := (original_elem opp_a).
     By m_low_bd it holds that H1 : (m ≤ a).
@@ -272,6 +292,7 @@ Proof.
     Assume m_low_bd : (is_lower_bound (set_opp A) m).
     We need to show that (∀ a : A, a ≤ -m).
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all a : A, a ≤ -m).
     Take a : (subsets_R_to_elements A).
     Write m_low_bd as (∀ b : (set_opp A), m ≤ b).
     We claim that minmin_a_in_A : (is_in A (--a)).
@@ -297,6 +318,7 @@ Proof.
     Assume M_upp_bd : (is_upper_bound (set_opp A) M).
     We need to show that (∀ a : A, -M ≤ a).
     Expand the definition of is_lower_bound.
+    That is, write the goal as (for all a : A, -M ≤ a).
     Take a : (subsets_R_to_elements A).
     We claim that minmin_a_in_A : (is_in A (--a)).
     Write goal using (--a = a) as (is_in A a).
@@ -317,11 +339,14 @@ Proof.
     Assume A_bdd_below : (is_bounded_below A).
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
     Expand the definition of is_bounded_above.
+    That is, write the goal as (there exists M : ℝ, is_upper_bound (set_opp A) M).
     Write A_bdd_below as (∃ m : ℝ, is_lower_bound A m).
     Choose m such that m_low_bd according to A_bdd_below.
+    
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) (-m)).
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all a : set_opp A, a ≤ M).
     By low_bd_set_to_upp_bd_set_opp it holds that H_con : (is_upper_bound (set_opp A) (-m)).
     This concludes the proof.
 Qed.
@@ -334,14 +359,19 @@ Proof.
     Take A : (subsets_R), M : ℝ.
     Assume M_is_sup : (is_sup (set_opp A) M).
     Expand the definition of is_inf.
-    We need to show that (is_lower_bound A (-M) ∧ ∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
+    That is, write the goal as
+      (is_lower_bound A (- M) ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ -M)).
     We show both statements.
     We claim that H0 : (is_upper_bound (set_opp A) M).
     Expand the definition of is_upper_bound.
+    That is, write the goal as (for all a : set_opp A, a ≤ M).
     Take a : (subsets_R_to_elements (set_opp A)).
     Expand the definition of is_sup in M_is_sup.
+    That is, write M_is_sup as (is_upper_bound (set_opp A) M 
+      ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
     destruct M_is_sup as [Mp1 Mp2].
     Expand the definition of is_upper_bound in Mp1.
+    That is, write Mp1 as (for all a0 : set_opp A, a0 ≤ M).
     By Mp1 it holds that M_upp_bd : (is_upper_bound (set_opp A) M).
     This concludes the proof.
 
@@ -352,6 +382,8 @@ Proof.
     Take l : ℝ.
     Assume l_low_bd : (is_lower_bound A l).
     Expand the definition of is_sup in M_is_sup.
+    That is, write M_is_sup as (is_upper_bound (set_opp A) M 
+      ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
     Because M_is_sup both Mp1 and Mp2.
     By Mp1 it holds that H1 : (∀ b : ℝ, is_upper_bound (set_opp A) b ⇒ M ≤ b).
     By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
@@ -541,6 +573,7 @@ Proof.
     Assume b_in_A : (is_in A b).
     Define c := (mk_element_R (is_in A) b b_in_A).
     Expand the definition of is_upper_bound in M_upp_bd.
+    That is, write M_upp_bd as (for all a : A, a ≤ M).
     By M_upp_bd it holds that c_le_M : (c ≤ M).
     We conclude that (b ≤ M).
 Qed.
@@ -558,6 +591,7 @@ Proof.
     Assume b_in_A : (is_in A b).
     Define c := (mk_element_R (is_in A) b b_in_A).
     Expand the definition of is_lower_bound in m_low_bd.
+    That is, write m_low_bd as (for all a : A, m ≤ a).
     By m_low_bd it holds that m_le_c : (m ≤ c).
     We conclude that (m ≤ b).
 Qed.

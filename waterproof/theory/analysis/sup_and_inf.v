@@ -103,6 +103,7 @@ Proof.
     Take M : ℝ.
     Assume M_upp_bd : (is_upper_bound A M).
     Expand the definition of is_lower_bound.
+    That is, write the goal as (for all a : ℝ, a ∈ set_opp A ⇨ -M ≤ a).
     We need to show that (∀ a : ℝ, (-a ∈ A) ⇒ -M ≤ a).
     Take a : ℝ. 
     Assume min_a_in_A : (-a ∈ A).
@@ -119,7 +120,8 @@ Proof.
     Take m : ℝ.
     Assume m_low_bd : (is_lower_bound A m).
     Expand the definition of is_upper_bound.
-    We need to show that (∀ a : ℝ, (-a ∈ A) ⇒ a ≤ -m).
+    That is, write the goal as (for all x : ℝ, set_opp A x ⇨ x ≤ -m).
+    We need to show that (∀ a : ℝ, (-a ∈ A) ⇒ a ≤ -m). (* TODO: goal does not change? *)
     Take a : ℝ. 
     Assume min_a_in_A : (-a ∈ A).
     By m_low_bd it holds that H1 : (m ≤ -a).
@@ -135,7 +137,7 @@ Proof.
     Take m : ℝ.
     Assume m_low_bd : (is_lower_bound (set_opp A) m).
     Expand the definition of is_upper_bound.
-    We need to show that (∀ a : ℝ, a ∈ A ⇒ a ≤ -m).
+    That is, write the goal as (for all x : ℝ, A x ⇨ x ≤ - m).
     Take a : ℝ.
     Assume a_in_A : (a ∈ A).
     Write m_low_bd as (∀ a : ℝ, (-a) ∈ A ⇒ m ≤ a).
@@ -155,7 +157,7 @@ Proof.
     Take M : ℝ.
     Assume M_upp_bd : (is_upper_bound (set_opp A) M).
     Expand the definition of is_lower_bound.
-    We need to show that (∀ a : ℝ, a ∈ A ⇒ -M ≤ a).
+    That is, write the goal as (for all a : ℝ, a ∈ A ⇨ - M ≤ a).
     Take a : ℝ.
     Assume a_in_A : (a ∈ A).
     We claim that minmin_a_in_A : (--a ∈ A).
@@ -176,6 +178,7 @@ Proof.
     Write A_bdd_below as (∃ m : ℝ, is_lower_bound A m).
     Choose m such that m_low_bd according to A_bdd_below.
     Expand the definition of bound.
+    That is, write the goal as (there exists m0 : ℝ , is_upper_bound (set_opp A) m0).
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) M).
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) M).
@@ -190,16 +193,22 @@ Proof.
     Take M : ℝ.
     Assume M_is_sup : (is_sup (set_opp A) M).
     Expand the definition of is_inf.
-    We need to show that (is_lower_bound A (-M) ∧ ∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
+    That is, write the goal as (is_lower_bound A (- M) 
+      ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ - M)).
     We show both statements.
     Expand the definition of is_lub in M_is_sup.
+    That is, write M_is_sup as (is_upper_bound (set_opp A) M 
+      ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
     Choose M_upp_bd such that H1 according to M_is_sup.
     By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
     We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
     Expand the definition of is_lower_bound.
+    That is, write the goal as (for all l : ℝ, (for all a : ℝ, a ∈ A ⇨ l ≤ a) ⇨ l ≤ - M).
     Take l : ℝ.
     Assume l_low_bd : (is_lower_bound A l).
     Expand the definition of is_lub in M_is_sup.
+    That is, write M_is_sup as (is_upper_bound (set_opp A) M 
+      ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
     destruct M_is_sup as [previously_proven H1].
     By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
     By H1 it holds that H3 : (M ≤ -l).
@@ -217,6 +226,7 @@ Proof.
     Assume ex_x : (∃ x : ℝ, x ∈ A).
     Define B := (set_opp A).
     Expand the definition of set_opp in B.
+    That is, write B as (ℝ ⇨ Prop).
     We claim that H : (for all s : ℝ, (A s) -> (B (-s))).
     Take s : ℝ.
     Assume A_s_true : (A s).
@@ -233,6 +243,7 @@ Proof.
     Choose y := (-x).
     We need to show that ((-(-x)) ∈ A).
     Expand the definition of is_in.
+    That is, write the goal as (B y).
     Apply (H x).
     This follows immediately.
     By completeness it holds that exists_sup : ({L | is_sup B L}).
@@ -388,6 +399,8 @@ Proof.
     Take a : (ℕ → ℝ).
     Take pr : (has_ub a). 
     Expand the definition of lub.
+    That is, write the goal as (for all ε : ℝ,  ε > 0 
+      ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a pr in a0) - ε).
     Define sup_with_proof := (ub_to_lub a pr).
     Choose l such that l_is_sup according to sup_with_proof.
     Take ε : ℝ. 
@@ -396,6 +409,7 @@ Proof.
     Choose y such that H2 according to H1.
     Because H2 both y_in_range and y_gt_l_min_ε.
     Expand the definition of EUn in y_in_range.
+    That is, write y_in_range as (there exists i : ℕ , y = a i).
     Choose i such that ai_is_y according to y_in_range.
     Choose k := i.
     We need to show that (a i > l - ε).

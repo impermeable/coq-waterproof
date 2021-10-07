@@ -123,7 +123,9 @@ Lemma incr_loc_to_glob :
 Proof.
     (* There exists already a constant called [f].*) 
     Take g : (ℕ → ℕ).
-    Expand the definition of is_increasing.
+    Expand the definition of is_increasing. (*TODO: the layout of is_increasing is confusing*)
+    That is, write the goal as 
+      ((for all k : ℕ, (g k ≤ g (S k))%nat) ⇨ for all k l : ℕ, (k ≤ l ⇨ g k ≤ g l)%nat ).
     Check family.
     Locate family.
     Check ℕ.
@@ -170,6 +172,7 @@ Proof.
     ltac1:(pose proof (incr_loc_to_glob n)).
     We claim that n_is_increasing : (is_increasing n).
     Expand the definition of is_increasing.
+    That is, write the goal as (for all k : ℕ, (n k ≤ n (S k))%nat).
     Take k : ℕ.
     It holds that temp : (n k ≤ n (k+1))%nat.
     It holds that temp2 : (k+1 = S k)%nat.
