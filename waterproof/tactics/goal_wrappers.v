@@ -1,6 +1,36 @@
+(** * [goal_wrappers.v]
+Authors: 
+    - Jelle Wemmenhove
+
+Creation date: 08 Oct 2021
+
+Contains the wrappers that a goal can be wrapped in to force the user to
+apply a specific tactic.
+The aim of these wrappers is to keep the proof script readable without relying
+on the proofview window.
+Also contains a tactic that throws an exception if the goal is wrapped.
+This is to be used to prevent other tactics from advancing the proof state whilst
+the goal is wrapped.
+
+--------------------------------------------------------------------------------
+
+This file is part of Waterproof-lib.
+
+Waterproof-lib is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Waterproof-lib is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
+*)
+
 From Ltac2 Require Import Ltac2.
-From Ltac2 Require Import Message.
-Ltac2 msg x := print (of_string x).
 
 Module Case.
   Private Inductive Wrapper (A G : Type) : Type :=
@@ -78,6 +108,12 @@ Ltac2 raise_goal_wrapped_error () := Control.zero (GoalWrappedError(
 
 Ltac2 idtac () := ().
 
+
+(** * panic_if_goal_wrapped
+    Throws an error if the goal is wrapped in one of the wrappers above.
+
+    Arguments:  None
+*)
 Ltac2 panic_if_goal_wrapped () 
   := lazy_match! goal with
      | [|- Case.Wrapper _ _]                => raise_goal_wrapped_error ()
@@ -87,32 +123,6 @@ Ltac2 panic_if_goal_wrapped ()
      | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
      | [|- _] => idtac ()
      end.
-
-(*
-Ltac2 panic_and_test () := panic_if_goal_wrapped (); reflexivity.
-Ltac2 Notation testtac := panic_if_goal_wrapped (); reflexivity.
-
-
-Require Import Waterproof.auxiliary.
-Ltac2 induction_without_hypothesis_naming (x: ident) :=
-    let x_val := Control.hyp x in 
-      let type_x := eval cbv in (Aux.type_of $x_val) in
-        match (Constr.equal type_x constr:(nat)) with
-        | true => induction $x_val; Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
-                                    Control.focus 2 2 (fun () => apply (NaturalInduction.Step.unwrap))
-        | false => induction $x_val
-        end.
-Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
-    induction_without_hypothesis_naming x.
-
-(** Test 0: This should work *)
-Goal forall n : nat, n + 0 = n.
-    intro n.
-    We use induction on n.
-    testtac.
-Abort.
-*)
-
 
 
 

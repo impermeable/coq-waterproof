@@ -127,3 +127,4 @@ waterproof/test/test_tactics/test_we_show_both_directions.v
 waterproof/test/test_tactics/test_we_show_both_statements.v
 waterproof/test/test_tactics/unfold_test.v
 waterproof/test/test_tactics/we_need_to_show_test.v
+waterproof/test/test_tactics/test_goal_wrappers.v
