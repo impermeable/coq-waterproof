@@ -29,6 +29,7 @@ Require Import Reals.
 Require Import Sets.Ensembles.
 Require Import Sets.Classical_sets.
 Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
+Require Import Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.set_intuition.Enabled.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.load_database.Sets.
@@ -95,6 +96,7 @@ Ltac2 trivial_set_equality () :=
     try (trivial_set_inclusion ()); try (trivial_set_inclusion ()).
 
 Ltac2 Notation "This" "set" "equality" "is" "trivial" :=
+    panic_if_goal_wrapped ();
     trivial_set_equality ().
 
 
@@ -118,4 +120,5 @@ Ltac2 we_prove_equality_by_proving_two_inclusions () :=
     try (ltac1:(apply Extensionality_Ensembles)); unfold Same_set; unfold Included; split.
 
 Ltac2 Notation "We" "prove" "equality" "by" "proving" "two" "inclusions" :=
+    panic_if_goal_wrapped ();
     we_prove_equality_by_proving_two_inclusions ().

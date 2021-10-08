@@ -24,6 +24,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * apply_lemma
     Applies a lemma to prove the current goal.
@@ -40,4 +41,5 @@ Local Ltac2 apply_lemma (lemma: constr) :=
 
 
 Ltac2 Notation "Apply" t(constr) :=
+    panic_if_goal_wrapped ();
     apply_lemma t.

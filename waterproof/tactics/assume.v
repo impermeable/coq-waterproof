@@ -32,6 +32,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.take.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ AssumeError(string) ].
 
@@ -279,10 +280,12 @@ Ltac2 assume_premise_with_breakdown (x: (ident*constr) list) :=
     Version with type checking.
 *)
 Ltac2 Notation "Assume" x(list1(seq(ident, ":", constr), "and")) := 
+    panic_if_goal_wrapped ();
     assume_premise_with_breakdown x.
 
 (** * such that
     Simply alternative notation for [Assume].
 *)
 Ltac2 Notation "such" "that" x(list1(seq(ident, ":", constr), "and")) := 
+    panic_if_goal_wrapped ();
     assume_premise_with_breakdown x.

@@ -30,6 +30,7 @@ From Ltac2 Require Import Message.
 
 
 From Waterproof Require Import auxiliary.
+Require Import Waterproof.tactics.goal_wrappers.
 
 
 Ltac2 Type exn ::= [ BothStatementsError(string) ].
@@ -57,8 +58,10 @@ Ltac2 both_directions_and () :=
     end.
 
 Ltac2 Notation "We" "show" "both" "statements" := 
+    panic_if_goal_wrapped ();
     both_directions_and ().
 Ltac2 Notation "We" "prove" "both" "statements" := 
+    panic_if_goal_wrapped ();
     both_directions_and ().
 
 
@@ -128,4 +131,5 @@ Ltac2 both_directions_specifically_stated (s: constr) (t:constr) :=
 
 
 Ltac2 Notation "We" "have" "to" "show" "both" s(constr) "and" t(constr) :=
+    panic_if_goal_wrapped ();
     both_directions_specifically_stated s t.

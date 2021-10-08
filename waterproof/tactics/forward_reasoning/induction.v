@@ -4,7 +4,7 @@ Author:
     - Jelle Wemmenhove
 
 Creation date: 06 June 2021
-Latest edit:   01 Oct 2021
+Latest edit:   07 Oct 2021
 
 Tactic for proving by mathematical induction.
 --------------------------------------------------------------------------------
@@ -54,6 +54,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
         | false => induction $x_val
         end.
 Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
+    panic_if_goal_wrapped ();
     induction_without_hypothesis_naming x.
 
 (** *

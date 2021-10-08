@@ -31,6 +31,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.tactics.forward_reasoning.rewrite_using.
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * print_expcted_actual_result
     Print a message showing the expected and actual
@@ -132,6 +133,7 @@ Local Ltac2 write_id_using_prop_as_expected (id: ident) (prop: constr)
             does not equal [expected].
 *)
 Ltac2 Notation "Write" id(ident) "using" prop(constr) "as" expected(constr) :=
+    panic_if_goal_wrapped ();
     write_id_using_prop_as_expected id prop expected.
 
 
@@ -184,4 +186,5 @@ Local Ltac2 write_goal_using_prop_as_expected (prop: constr)
             of goal does not equal [expected].
 *)
 Ltac2 Notation "Write" "goal" "using" prop(constr) "as" expected(constr) :=
+    panic_if_goal_wrapped ();
     write_goal_using_prop_as_expected prop expected.

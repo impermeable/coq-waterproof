@@ -5,7 +5,7 @@ Authors:
     - Jelle Wemmenhove
 
 Creation date: 06 June 2021
-Latest edit: 05 Oct 2021
+Latest edit: 07 Oct 2021
 
 Custom notation for the build-in [unfold] tactic.
 
@@ -53,6 +53,7 @@ Require Import Waterproof.tactics.goal_wrappers.
 *)
 Ltac2 Notation "Unfold" targets(list1(seq(reference, occurrences), ",")) 
                         in_clause(opt(clause)) :=
+    panic_if_goal_wrapped ();
     Std.unfold targets (Notations.default_on_concl in_clause).
 
 
@@ -87,7 +88,8 @@ Ltac2 ap_hyp_unwrap (h : constr) := apply (fun G => ExpandDef.Hyp.unwrap G _ $h)
  
 *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", ident)))
-      := match cl with
+      := panic_if_goal_wrapped ();
+         match cl with
          | None => Std.unfold targets (Notations.default_on_concl None);
                    ap_goal_unwrap ()
          | Some cl => let h_constr := Control.hyp cl in

@@ -24,6 +24,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ GoalHintError(string) ].
 
@@ -68,6 +69,10 @@ You may want to choose a specific variable of type ")
         ( Message.of_string ".
 This can for example be done using 'Choose ... '.").
 
+Local Ltac2 create_goal_wrapped_message () :=
+    Message.of_string "Follow the advice in the goal window.".
+
+
 (** * goal_to_hint
     Give a hint indicating a potential step to proving 
     a given proposition [g].
@@ -90,6 +95,11 @@ Ltac2 goal_to_hint (g:constr) :=
     | context [?a -> ?b] => create_implication_message a
     | context [forall v:?v_type, _]  => create_forall_message v_type
     | context [exists v:?v_type, _] => create_exists_message v_type
+    | context [Case.Wrapper _ _]                => create_goal_wrapped_message ()
+    | context [NaturalInduction.Base.Wrapper _] => create_goal_wrapped_message ()
+    | context [NaturalInduction.Step.Wrapper _] => create_goal_wrapped_message ()
+    | context [ExpandDef.Goal.Wrapper _]        => create_goal_wrapped_message ()
+    | context [ExpandDef.Hyp.Wrapper _ _ _]     => create_goal_wrapped_message ()
     | _ => Control.zero (GoalHintError "No hint available for this goal.")
     end.
 

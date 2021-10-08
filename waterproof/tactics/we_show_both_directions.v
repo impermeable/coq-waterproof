@@ -25,6 +25,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.tactics.goal_wrappers.
 
 
 Ltac2 Type exn ::= [ BothDirectionsError(string) ].
@@ -53,6 +54,8 @@ Ltac2 both_statements_iff () :=
 
 
 Ltac2 Notation "We" "show" "both" "directions" := 
-    both_statements_iff ().
+      panic_if_goal_wrapped ();
+      both_statements_iff ().
 Ltac2 Notation "We" "prove" "both" "directions" := 
-    both_statements_iff ().
+      panic_if_goal_wrapped ();
+      both_statements_iff ().

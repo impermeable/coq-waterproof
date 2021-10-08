@@ -29,6 +29,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.tactics.forward_reasoning.rewrite_using.
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * print_rewrite_success
     Print that the hypothesis identified by [id]
@@ -83,4 +84,5 @@ Local Ltac2 write_as (id: ident) (replacement_term: constr) :=
         - [RewriteError], in case the rewrite fails.
 *)
 Ltac2 Notation "Write" id(ident) "as" replacement_term(constr) :=
+    panic_if_goal_wrapped ();
     write_as id replacement_term.

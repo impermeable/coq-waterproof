@@ -25,6 +25,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * defining
     Defines a variable in an arbitrary goal.
@@ -41,4 +42,5 @@ Local Ltac2 defining (u: ident) (t: constr) :=
 
 
 Ltac2 Notation "Define" u(ident) ":=" t(constr) :=
+    panic_if_goal_wrapped ();
     defining u t.

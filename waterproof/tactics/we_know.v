@@ -31,6 +31,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.test_auxiliary.
+Require Import Waterproof.tactics.goal_wrappers.
 
 
 
@@ -66,9 +67,11 @@ Ltac2 check_hypothesis (s: ident) (t: constr) :=
     end. 
 
 
-Ltac2 Notation "We" "know" s(ident) ":" t(constr) := check_hypothesis s t.
+Ltac2 Notation "We" "know" s(ident) ":" t(constr) := panic_if_goal_wrapped ();
+                                                     check_hypothesis s t.
 
-Ltac2 Notation "By" s(ident) "we" "know" t(constr) := check_hypothesis s t.
+Ltac2 Notation "By" s(ident) "we" "know" t(constr) := panic_if_goal_wrapped ();
+                                                      check_hypothesis s t.
 
 
 

@@ -50,7 +50,9 @@ Ltac2 either_or (t1:constr) (t2:constr)
                Control.focus 2 2 (fun () => apply (Case.unwrap $t2)).
 (* Removed the attempt 'assert t2 + t1' because this switches the ordering specified by the user. *)
 
-Ltac2 Notation "Either" t1(constr) "or" t2(constr) := either_or t1 t2.
+Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
+    panic_if_goal_wrapped ();
+    either_or t1 t2.
 
 
 (** *

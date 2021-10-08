@@ -75,11 +75,44 @@ Notation "'Add' '‘That' 'is,' 'write' h 'as' (  H ).’ 'to' 'proof' 'script.'
 Ltac2 Type exn ::= [ GoalWrappedError(string) ].
 Ltac2 raise_goal_wrapped_error () := Control.zero (GoalWrappedError(
   "You cannot do this right now, follow the advice in the goal window.")).
+
+Ltac2 idtac () := ().
+
 Ltac2 panic_if_goal_wrapped () 
   := lazy_match! goal with
-     | [|- Case.Wrapper _ _]                => raise_goal_wrapped_error
-     | [|- NaturalInduction.Base.Wrapper _] => raise_goal_wrapped_error
-     | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error
-     | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error
-     | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error
+     | [|- Case.Wrapper _ _]                => raise_goal_wrapped_error ()
+     | [|- NaturalInduction.Base.Wrapper _] => raise_goal_wrapped_error ()
+     | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error ()
+     | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
+     | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
+     | [|- _] => idtac ()
      end.
+
+(*
+Ltac2 panic_and_test () := panic_if_goal_wrapped (); reflexivity.
+Ltac2 Notation testtac := panic_if_goal_wrapped (); reflexivity.
+
+
+Require Import Waterproof.auxiliary.
+Ltac2 induction_without_hypothesis_naming (x: ident) :=
+    let x_val := Control.hyp x in 
+      let type_x := eval cbv in (Aux.type_of $x_val) in
+        match (Constr.equal type_x constr:(nat)) with
+        | true => induction $x_val; Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
+                                    Control.focus 2 2 (fun () => apply (NaturalInduction.Step.unwrap))
+        | false => induction $x_val
+        end.
+Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
+    induction_without_hypothesis_naming x.
+
+(** Test 0: This should work *)
+Goal forall n : nat, n + 0 = n.
+    intro n.
+    We use induction on n.
+    testtac.
+Abort.
+*)
+
+
+
+

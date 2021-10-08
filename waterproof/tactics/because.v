@@ -27,6 +27,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.tactics.goal_wrappers.
 
 
 
@@ -63,11 +64,13 @@ Local Ltac2 or_hypothesis_destruct s u v :=
 
 
 Ltac2 Notation "Because" s(ident) "both" u(ident) "and" v(ident) :=
+    panic_if_goal_wrapped ();
     and_hypothesis_destruct s u v.
 
-
 Ltac2 Notation "Because" s(ident) "both" u(ident) ":" t_u(constr) "and" v(ident) ":" t_v(constr) :=
+    panic_if_goal_wrapped ();
     and_hypothesis_destruct s u v.
 
 Ltac2 Notation "Because" s(ident) "either" u(ident) "or" v(ident) :=
+    panic_if_goal_wrapped ();
     or_hypothesis_destruct s u v.
