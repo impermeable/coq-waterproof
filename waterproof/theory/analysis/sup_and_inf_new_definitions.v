@@ -465,7 +465,7 @@ Proof.
     By m_is_low_bd we conclude that (is_lower_bound A m).
 Qed.
 (** ## Any lower bound is less than or equal to the infimum*)
-Lemma any_low_bd_ge_inf :
+Lemma any_low_bd_le_inf :
   ∀ A : (subsets_R),
     ∀ m l : ℝ,
       is_inf A m ⇒ is_lower_bound A l ⇒ l ≤ m.
@@ -512,6 +512,138 @@ Proof.
     Contradiction.
 Qed.
 
+Lemma exists_almost_minimizer :
+  ∀ (A : subsets_R) (m : ℝ),
+    is_inf A m ⇒
+      ∀ (L : ℝ), L > m ⇒ 
+        ∃ a : A, L > a.
+Proof.
+    Take A : (subsets_R).
+    Take m : ℝ.
+    Assume M_is_inf_A : (is_inf A m).
+    Take L : ℝ.
+    Assume L_gt_m : (L > m).
+    We argue by contradiction.
+    We claim that H0 : (∀ x : A, ¬ (L > x)).
+    Apply not_ex_all_not.
+    Apply H.
+    We claim that H1 : (∀ x : A, L ≤ x).
+    Take x : (subsets_R_to_elements A).
+    It holds that H2 : (¬(L > x)).
+    We need to show that (L ≤ x).
+    We conclude that (L ≤ x).
+    By H1 it holds that H3 : (is_lower_bound A L).
+    (** TODO: why can't this be done automatically? *)
+    We claim that H4 : (L ≤ m).
+    Apply (any_low_bd_le_inf A).
+    Apply M_is_inf_A.
+    Apply H3.
+    It holds that H5 : (¬(L ≤ m)).
+    Contradiction.
+Qed.
+
+Lemma if_almost_maximizer_then_every_upp_bd_larger :
+  ∀ (A : subsets_R) (M : ℝ),
+    (∀ (L : ℝ), L < M ⇒ ∃ a : A, L < a)
+       ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
+Proof.
+Take A : subsets_R, M : ℝ.
+Assume exists_almost_max :
+  (∀ L : ℝ, L < M ⇒ there exists a : A ,
+             L < a).
+Take K : ℝ.
+Assume K_upper_bound : (is_upper_bound A K).
+Expand the definition of is_upper_bound in K_upper_bound.
+That is, write K_upper_bound as
+  (∀ a : A, a ≤ K).
+We need to show that (M ≤ K).
+We argue by contradiction.
+It holds that M_gt_K : (M > K).
+By exists_almost_max it holds that exists_a :
+  (∃ a : A, K < a).
+Choose a such that K_lt_a according to exists_a.
+By K_upper_bound it holds that a_le_K : (a ≤ K).
+It holds that K_lt_K : (K < K).
+It holds that not_K_lt_K : (¬ (K < K)).
+Contradiction.
+Qed.
+
+Lemma if_almost_minimizer_then_every_low_bd_smaller :
+  ∀ (A : subsets_R) (m : ℝ),
+    (∀ (L : ℝ), L > m ⇒ ∃ a : A, L > a)
+       ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
+Proof.
+Take A : subsets_R, m : ℝ.
+Assume exists_almost_min :
+  (∀ L : ℝ, L > m ⇒ there exists a : A ,
+             L > a).
+Take K : ℝ.
+Assume K_lower_bound : (is_lower_bound A K).
+Expand the definition of is_lower_bound in K_lower_bound.
+That is, write K_lower_bound as
+  (∀ a : A, K ≤ a).
+We need to show that (K ≤ m).
+We argue by contradiction.
+It holds that K_gt_m : (K > m).
+By exists_almost_min it holds that exists_a :
+  (∃ a : A, K > a).
+Choose a such that K_gt_a according to exists_a.
+By K_lower_bound it holds that K_le_a : (K ≤ a).
+It holds that K_gt_K : (K > K).
+It holds that not_K_lt_K : (¬ (K > K)).
+Contradiction.
+Qed.
+
+Lemma if_almost_maximizer_ε_then_every_upp_bd_larger :
+  ∀ (A : subsets_R) (M : ℝ),
+    (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : A, M - ε < a)
+       ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
+Proof.
+Take A : subsets_R, M : ℝ.
+Assume exists_almost_max_ε : (for all ε : ℝ,
+   ε > 0 ⇨ there exists a : A ,
+             M - ε < a).
+Apply if_almost_maximizer_then_every_upp_bd_larger.
+Take L : ℝ.
+Assume L_lt_M : (L < M).
+It holds that M_min_L_pos : (M - L > 0).
+Define ε1 := (M - L).
+It holds that ε1_pos : (ε1 > 0).
+By exists_almost_max_ε it holds that exists_a :
+  (there exists a : A , M - ε1 < a).
+Choose a0 such that a_gt_M_min_ε1 according to exists_a.
+Choose a := a0.
+(** TODO: due to something with coercions we cannot immediately 
+rewrite the whole inequality *)
+Rewrite inequality L "=" (M - (M - L)) "=" (M - ε1).
+We conclude that (M -ε1 < a0).
+Qed.
+
+Lemma if_almost_minimizer_ε_then_every_low_bd_smaller :
+  ∀ (A : subsets_R) (m : ℝ),
+    (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : A, m + ε > a)
+       ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
+Proof.
+Take A : subsets_R, m : ℝ.
+Assume exists_almost_min_ε : (for all ε : ℝ,
+   ε > 0 ⇨ there exists a : A ,
+             m + ε > a).
+Apply if_almost_minimizer_then_every_low_bd_smaller.
+Take L : ℝ.
+Assume L_gt_m : (L > m).
+It holds that L_min_m_pos : (L - m > 0).
+Define ε1 := (L - m).
+It holds that ε1_pos : (ε1 > 0).
+By exists_almost_min_ε it holds that exists_a :
+  (there exists a : A , m + ε1 > a).
+Choose a0 such that a_lt_m_plus_ε1 according to exists_a.
+Choose a := a0.
+(** TODO: due to something with coercions we cannot immediately 
+rewrite the whole inequality *)
+Rewrite inequality L "=" (m + (L-m)) "=" (m + ε1).
+We conclude that (m + ε1 > a).
+Qed.
+
 Lemma exists_almost_maximizer_ε :
   ∀ (A : subsets_R) (M : ℝ),
     is_sup A M ⇒
@@ -527,6 +659,127 @@ Proof.
     (** TODO: fix this *)
     apply exists_almost_maximizer with (L := M- ε) (M := M); assumption.
 Qed.
+
+Lemma exists_almost_minimizer_ε :
+  ∀ (A : subsets_R) (m : ℝ),
+    is_inf A m ⇒
+      ∀ (ε : ℝ), ε > 0 ⇒ 
+        ∃ a : A, m + ε > a.
+Proof.
+    Take A : (subsets_R).
+    Take m : ℝ.
+    Assume m_is_inf_A : (is_inf A m).
+    Take ε : ℝ.
+    Assume ε_gt_0 : (ε > 0).
+    It holds that H1 : (m + ε > m). 
+    (** TODO: fix this *)
+    apply exists_almost_minimizer with (L := m + ε) (m := m); assumption.
+Qed.
+
+Definition is_sup_alt_char (A : subsets_R) (M : ℝ):=
+  is_upper_bound A M ∧ (∀ (ε : ℝ), ε > 0 ⇒ 
+        ∃ a : A, M - ε < a).
+
+Definition is_inf_alt_char (A : subsets_R) (m : ℝ):=
+  is_lower_bound A m ∧ (∀ (ε : ℝ), ε > 0 ⇒ 
+        ∃ a : A, m + ε > a).
+
+Theorem alt_char_sup :
+  ∀ (A : subsets_R) (M : ℝ),
+    is_sup A M ⇔ is_sup_alt_char A M.
+Proof.
+Take A : subsets_R, M : ℝ.
+We show both directions.
+- Assume M_is_sup_A : (is_sup A M).
+  Expand the definition of is_sup_alt_char.
+  That is, write the goal as (
+  is_upper_bound A M
+  ∧ (for all ε : ℝ,
+     ε > 0 ⇨ there exists a : A ,
+               M - ε < a) ).
+  We show both statements.
+  + Expand the definition of is_sup in M_is_sup_A.
+    That is, write M_is_sup_A as (
+    is_upper_bound A M
+     ∧ (for all M0 : ℝ,
+      is_upper_bound A M0 ⇨ M ≤ M0) ).
+    Because M_is_sup_A both M_is_upp_bd and every_upp_bd_ge_M.
+    It follows that (is_upper_bound A M).
+
+  + By exists_almost_maximizer_ε we conclude that
+   (  for all ε : ℝ,
+      ε > 0 ⇨ there exists a : A ,
+            M - ε < a).
+
+- Assume M_alt_sup : (is_sup_alt_char A M).
+  Expand the definition of is_sup_alt_char in M_alt_sup.
+  That is, write M_alt_sup as (
+  is_upper_bound A M
+   ∧ (for all ε : ℝ,
+     ε > 0 ⇨ there exists a : A ,
+               M - ε < a) ).
+  Because M_alt_sup both M_upp_bd and eps_char.
+
+  Expand the definition of is_sup.
+  That is, write the goal as (
+  is_upper_bound A M
+  ∧ (for all M0 : ℝ,
+     is_upper_bound A M0 ⇨ M ≤ M0) ).
+  We show both statements.
+  + By M_upp_bd we conclude that (is_upper_bound A M).
+  + By if_almost_maximizer_ε_then_every_upp_bd_larger
+    we conclude that (for all M0 : ℝ,
+    is_upper_bound A M0 ⇨ M ≤ M0).
+Qed.
+
+Theorem alt_char_inf :
+  ∀ (A : subsets_R) (m : ℝ),
+    is_inf A m ⇔ is_inf_alt_char A m.
+Proof.
+Take A : subsets_R, m : ℝ.
+We show both directions.
+- Assume m_is_inf_A : (is_inf A m).
+  Expand the definition of is_inf_alt_char.
+  That is, write the goal as (
+  is_lower_bound A m
+  ∧ (for all ε : ℝ,
+     ε > 0 ⇨ there exists a : A ,
+               m + ε > a) ).
+  We show both statements.
+  + Expand the definition of is_inf in m_is_inf_A.
+    That is, write m_is_inf_A as (
+    is_lower_bound A m ∧ (for all l : ℝ,
+                        is_lower_bound A l ⇨ l ≤ m) 
+    ).
+    Because m_is_inf_A both m_is_low_bd and every_low_bd_le_m.
+    It follows that (is_lower_bound A m).
+
+  + By exists_almost_minimizer_ε we conclude that
+    (for all ε : ℝ,
+       ε > 0 ⇨ there exists a : A ,
+            m + ε > a).
+
+- Assume m_alt_inf : (is_inf_alt_char A m).
+  Expand the definition of is_inf_alt_char in m_alt_inf.
+  That is, write m_alt_inf as (
+    is_lower_bound A m
+     ∧ (for all ε : ℝ,
+     ε > 0 ⇨ there exists a : A ,
+               m + ε > a) ).
+  Because m_alt_inf both m_low_bd and eps_char.
+
+  Expand the definition of is_inf.
+  That is, write the goal as (
+    is_lower_bound A m ∧ (for all l : ℝ,
+                        is_lower_bound A l ⇨ l ≤ m)
+   ).
+  We show both statements.
+  + By m_low_bd we conclude that (is_lower_bound A m).
+  + By if_almost_minimizer_ε_then_every_low_bd_smaller
+    we conclude that (for all l : ℝ,
+    is_lower_bound A l ⇨ l ≤ m).
+Qed.
+
 
 Lemma max_or_strict :
   ∀ (A : subsets_R) (M : ℝ),
@@ -598,6 +851,8 @@ Qed.
 
 Global Hint Resolve bounded_by_upper_bound_propform : additional.
 Global Hint Resolve bounded_by_lower_bound_propform : additional.
+Global Hint Resolve alt_char_inf : additional.
+Global Hint Resolve alt_char_sup : additional.
 (** ### **Hints***)
 Hint Extern 1 => (unfold is_sup) : unfolds.
 Hint Extern 1 => (unfold is_inf) : unfolds.
