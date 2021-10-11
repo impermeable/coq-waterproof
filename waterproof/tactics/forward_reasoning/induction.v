@@ -4,7 +4,7 @@ Author:
     - Jelle Wemmenhove
 
 Creation date: 06 June 2021
-Latest edit:   01 Oct 2021
+Latest edit:   07 Oct 2021
 
 Tactic for proving by mathematical induction.
 --------------------------------------------------------------------------------
@@ -27,42 +27,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.auxiliary.
 
 Ltac2 Type exn ::= [ NaturalInductionError(string) ].
 Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
-
-(* Goal wrappers *)
-Module NaturalInduction.
-
-  Module Base.
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    Definition unwrap (G : Type) : Wrapper G -> G 
-               := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
-  End Base.
-
-  Module Step.
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    Definition unwrap (G : Type) : Wrapper G -> G 
-               := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
-  End Step.
-
-End NaturalInduction.
-
-Notation "'Add' '‘We' 'first' 'show' 'the' 'base' 'case,' 'i.e.' 'that' (  G ).’ 'to' 'proof' 'script.'" 
-         := (NaturalInduction.Base.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘We' 'now' 'show' 'the' 'induction' 'step.’' 'to' 'proof' 'script.'"
-         := (NaturalInduction.Step.Wrapper _) (at level 99, only printing).
 
 
 (** * induction_with_hypothesis_naming
@@ -85,6 +54,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
         | false => induction $x_val
         end.
 Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
+    panic_if_goal_wrapped ();
     induction_without_hypothesis_naming x.
 
 (** *

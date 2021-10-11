@@ -24,6 +24,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Notation "Simplify" "what" "we" "need" "to" "show" :=
+    panic_if_goal_wrapped ();
     simpl.

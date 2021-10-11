@@ -5,7 +5,7 @@ Authors:
     - Jelle Wemmenhove
 
 Creation date: 06 June 2021
-Latest edit: 05 Oct 2021
+Latest edit: 07 Oct 2021
 
 Custom notation for the build-in [unfold] tactic.
 
@@ -29,6 +29,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * Unfold
     Rewrite a function by its definition,
@@ -52,6 +53,7 @@ From Ltac2 Require Import Option.
 *)
 Ltac2 Notation "Unfold" targets(list1(seq(reference, occurrences), ",")) 
                         in_clause(opt(clause)) :=
+    panic_if_goal_wrapped ();
     Std.unfold targets (Notations.default_on_concl in_clause).
 
 
@@ -60,37 +62,6 @@ Ltac2 Notation "Unfold" targets(list1(seq(reference, occurrences), ","))
 
 Ltac2 Type exn ::= [ ExpandDefError(string) ].
 Ltac2 raise_expanddef_error (s:string) := Control.zero (ExpandDefError s).
-
-Module ExpandDef.
-
-  Module Goal.
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    Definition unwrap (G : Type) : Wrapper G -> G 
-               := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
-  End Goal.
-
-  Module Hyp.
-    Private Inductive Wrapper (G H : Type) (h : H) : Type :=
-      | wrap : G -> Wrapper G H h.
-    Definition unwrap (G H : Type) (h : H) : Wrapper G H h -> G 
-               := fun x => match x with wrap _ _ _ y => y end.
-    Definition unwrapwrap {G H : Type} {h : H} {x : G} : unwrap _ _ _ (wrap G H h x) = x
-               := eq_refl.
-    Definition wrapunwrap {G H : Type} {h : H} {x : Wrapper G H h} : wrap G H h (unwrap _ _ _ x) = x
-               := match x with wrap _ _ _ y => eq_refl end.
-  End Hyp.
-
-End ExpandDef.
-
-Notation "'Add' '‘That' 'is,' 'write' 'the' 'goal' 'as' (  G ).’ 'to' 'proof' 'script.'" 
-         := (ExpandDef.Goal.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘That' 'is,' 'write' h 'as' (  H ).’ 'to' 'proof' 'script.'" 
-         := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing).
 
 
 Ltac2 ap_goal_unwrap () := apply ExpandDef.Goal.unwrap.
@@ -117,7 +88,8 @@ Ltac2 ap_hyp_unwrap (h : constr) := apply (fun G => ExpandDef.Hyp.unwrap G _ $h)
  
 *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", ident)))
-      := match cl with
+      := panic_if_goal_wrapped ();
+         match cl with
          | None => Std.unfold targets (Notations.default_on_concl None);
                    ap_goal_unwrap ()
          | Some cl => let h_constr := Control.hyp cl in

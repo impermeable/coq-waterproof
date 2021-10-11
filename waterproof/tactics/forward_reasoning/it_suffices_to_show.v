@@ -28,6 +28,7 @@ From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Local Ltac2 fail_suffice_to_show () :=
     Control.zero (AutomationFailure 
@@ -104,9 +105,10 @@ Ltac2 apply_enough_with_waterprove (statement:constr) :=
         - [AutomationFailure], in case no proof is found for the goal,
             even if [statement] is given.
 *)
-Ltac2 Notation "It" "suffices" "to" "show" "that" 
-    statement(constr) := 
+Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr) := 
     apply_enough_with_waterprove statement.
+
+(*
 
 (** * apply_enough_with_tactic
     Take [statement] as a given fact, 
@@ -156,6 +158,11 @@ Ltac2 apply_enough_with_tactic (statement:constr) (tac:unit -> unit) :=
         - [AutomationFailure], in case evaluating [tac] does not prove the goal,
             even if [statement] is given.
 *)
-Ltac2 Notation "It" "suffices" "to" "show" "that" 
-    statement(constr) "by" tac(thunk(tactic)) := 
+
+Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr)
+                "by" tac(thunk(tactic)) := 
+    panic_if_goal_wrapped ();
     apply_enough_with_tactic statement tac.
+
+
+*)

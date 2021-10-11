@@ -68,11 +68,13 @@ Abort.
 (** * Test 1
     Basic case: correct tactic given, but useless statement.
 *)
+
+(*
 Lemma test_it_suffices_by_1: 0 <> 1.
 Proof.
-    let tac := trivial in
-    It suffices to show that (0 = 0) by tac.
-Qed.
+    It suffices to show that (0 = 0) by (trivial).
+Abort.
+
 
 Inductive even : nat -> Prop :=
     even0 : even 0
@@ -95,4 +97,4 @@ Proof.
     let result () := It suffices to show that (1 <> 0) by reflexivity in
     assert_raises_error result.
 Abort.
-
+*)

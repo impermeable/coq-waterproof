@@ -30,6 +30,7 @@ From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.tactics.goal_wrappers.
 
 
 Ltac2 Type exn ::= [ GoalCheckError(string) ].
@@ -73,10 +74,11 @@ Local Ltac2 check_goal := fun (t:constr) =>
     Optional string keywords do need to have a name,
     even though the parser will not populate this name. 
     (That's why it reads "that(opt('that'))" instead of "opt('that')".*)
-Ltac2 Notation "We" "need" "to" "show" that(opt("that")) 
-        column(opt(":")) t(constr) :=
-        check_goal t.
+Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) :=
+      panic_if_goal_wrapped ();
+      check_goal t.
 
-Ltac2 Notation "To" "show" that(opt("that")) column(opt(":")) t(constr) :=
-  check_goal t.
+Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) :=
+      panic_if_goal_wrapped ();
+      check_goal t.
 

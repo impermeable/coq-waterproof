@@ -30,6 +30,7 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (** * By ... it holds that ... : ...
     Introduce a new sublemma and try to prove it immediately,
@@ -84,6 +85,7 @@ try making a smaller step.")
 *)
 Ltac2 Notation "By" lemma(constr) 
                "it" "holds" "that" id(ident) ":" conclusion(constr) := 
+    panic_if_goal_wrapped ();
     assert_and_prove_sublemma id conclusion (Some lemma).
     
     
@@ -105,4 +107,5 @@ Ltac2 Notation "By" lemma(constr)
             but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 Notation "It" "holds" "that" id(ident) ":" conclusion(constr) :=
+    panic_if_goal_wrapped ();
     assert_and_prove_sublemma id conclusion None.

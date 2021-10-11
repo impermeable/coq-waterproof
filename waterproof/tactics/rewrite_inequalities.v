@@ -43,6 +43,7 @@ Require Import Waterproof.tactics.forward_reasoning.rewrite_using.
 Require Import Waterproof.string_auxiliary.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Open Scope R_scope.
 
@@ -555,10 +556,12 @@ Ltac2 rewrite_chain (chain : Chain list) :=
     https://coq.inria.fr/refman/proof-engine/ltac2.html#syntactic-classes
 *)
 Ltac2 Notation "Rewrite" "inequality" head(constr) rest(list0(seq(tactic(0), constr))) := 
+    panic_if_goal_wrapped ();
     let chain := convert_to_chain head (Some rest) []
     in rewrite_chain chain.
 
 (* Just alternative notation for the above. Note that it misses "in-". *)
 Ltac2 Notation "Rewrite" "equality" head(constr) rest(list0(seq(tactic(0), constr))) := 
+    panic_if_goal_wrapped ();
     let chain := convert_to_chain head (Some rest) []
     in rewrite_chain chain.

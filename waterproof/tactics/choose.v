@@ -26,8 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
-
+Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ ChooseError(string) ].
 
@@ -79,7 +78,9 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
 
 
 Ltac2 Notation "Choose" t(constr) :=
+    panic_if_goal_wrapped ();
     choose_variable_in_exists_no_renaming t.
 
 Ltac2 Notation "Choose" s(ident) ":=" t(constr) :=
+    panic_if_goal_wrapped ();
     choose_variable_in_exists_goal_with_renaming s t.

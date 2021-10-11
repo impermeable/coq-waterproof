@@ -64,3 +64,16 @@ Goal exists x:nat, x = 1.
     (* Should print exactly the same:*)
     Help.
 Abort.
+
+
+Load induction.
+(** * Test 4
+    Should print a hint for a wrapped goal twice.
+*)
+Goal forall n, n + 0 = n.
+    intro n.
+    We use induction on n.
+    print (goal_to_hint (Control.goal ())).
+    (* Should print exactly the same:*)
+    Help.
+Abort.

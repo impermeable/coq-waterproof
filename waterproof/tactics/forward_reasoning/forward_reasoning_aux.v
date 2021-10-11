@@ -45,10 +45,6 @@ Require Export Waterproof.waterprove.waterprove.
 Require Import Waterproof.tactics.goal_to_hint.
 Require Import Waterproof.auxiliary.
 
-Lemma dummy_lemma: True.
-Proof.
-    apply I.
-Qed.
 
 (** * waterprove_with_hint
     First print an hint for reaching the target goal,

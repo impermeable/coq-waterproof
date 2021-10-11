@@ -30,6 +30,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ RewriteError(string) ].
 
@@ -153,6 +154,7 @@ Ltac2 rewrite_with_prop_check (proposition: constr)
             rewritten by [prop] in the right-to-left direction.
 *)
 Ltac2 Notation "Rewrite" "using" prop(constr) :=
+    panic_if_goal_wrapped ();
     rewrite_with_prop_check prop None false.
 
 (** * Rewrite using ... in ...
@@ -172,6 +174,7 @@ Ltac2 Notation "Rewrite" "using" prop(constr) :=
             rewritten by [prop] in the right-to-left direction.
 *)
 Ltac2 Notation "Rewrite" "using" prop(constr) "in" target(ident):=
+    panic_if_goal_wrapped ();
     rewrite_with_prop_check prop (Some target) false.
 
 (** * Rewrite <- using ...
@@ -190,6 +193,7 @@ Ltac2 Notation "Rewrite" "using" prop(constr) "in" target(ident):=
             rewritten by [prop] in the left-to-right direction.
 *)
 Ltac2 Notation "Rewrite" "<-" "using" prop(constr) :=
+    panic_if_goal_wrapped ();
     rewrite_with_prop_check prop None true.
 
 (** * Rewrite <- using ... in ...
@@ -209,4 +213,5 @@ Ltac2 Notation "Rewrite" "<-" "using" prop(constr) :=
             rewritten by [prop] in the left-to-right direction.
 *)
 Ltac2 Notation "Rewrite" "<-" "using" prop(constr) "in" target(ident):=
+    panic_if_goal_wrapped ();
     rewrite_with_prop_check prop (Some target) true.

@@ -33,6 +33,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
 Require Import Waterproof.test_auxiliary.
+Require Import Waterproof.tactics.goal_wrappers.
 
     
 (** * This follows by reflexivity
@@ -41,6 +42,7 @@ Require Import Waterproof.test_auxiliary.
 *)
 Ltac2 Type exn ::= [ ReflexivityError(string) ].
 Ltac2 Notation "This" "follows" "by" "reflexivity" :=
+    panic_if_goal_wrapped ();
     let result () := reflexivity in
     match Control.case result with
     | Val _ => ()
@@ -55,6 +57,7 @@ Ltac2 Notation "This" "follows" "by" "reflexivity" :=
 *)
 Ltac2 Type exn ::= [ AssumptionError(string) ].
 Ltac2 Notation "This" "follows" "by" "assumption" :=
+    panic_if_goal_wrapped ();
     let result () := assumption in
     match Control.case result with
     | Val _ => ()
@@ -69,12 +72,14 @@ Ltac2 Notation "This" "follows" "by" "assumption" :=
     but without checking if the user supplied the correct proof.
 *)
 Ltac2 Notation "This" "concludes" "the" "proof" :=
+    panic_if_goal_wrapped ();
     print (of_string "Recommended: make explicit what you conclude,
 by using 'We conclude that ...`.");
     solve_remainder_proof (Control.goal ()) None.
 
 
-Ltac2 Notation "This" "follows" "immediately" := 
+Ltac2 Notation "This" "follows" "immediately" :=
+    panic_if_goal_wrapped ();
     solve_remainder_proof (Control.goal ()) None.
 
 (** * Then ... holds by assumption
@@ -94,7 +99,8 @@ Ltac2 Notation "This" "follows" "immediately" :=
         - [AssumptionError], if there is no hypothesis that has the same
             type as the goal.
 *)
-Ltac2 Notation "Then" target_goal(constr) "holds" "by" "assumption" :=
+Ltac2 Notation "Then" target_goal(constr) "holds" "by" "assumption" :=    
+    panic_if_goal_wrapped ();
     let call_assumption () := This follows by assumption in    
     check_goal_and_call target_goal call_assumption.
 
