@@ -242,8 +242,6 @@ Proof.
     Choose x such that x_in_A according to ex_x.
     Choose y := (-x).
     We need to show that ((-(-x)) ∈ A).
-    Expand the definition of is_in.
-    That is, write the goal as (B y).
     Apply (H x).
     This follows immediately.
     By completeness it holds that exists_sup : ({L | is_sup B L}).

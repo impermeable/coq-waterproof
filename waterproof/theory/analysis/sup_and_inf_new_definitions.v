@@ -171,8 +171,6 @@ Proof.
     Choose M such that A_bdd_by_M according to A_bdd_above.
     Choose m := M.
     We need to show that (∀ a : ℝ, is_in A a ⇒ a ≤ M).
-    Expand the definition of Raxioms.is_upper_bound.
-    That is, write the goal as (for all x : ℝ, is_in A x ⇨ x ≤ m).
     Take x : ℝ.
     Assume w : (is_in A x).
     Define b := (mk_element_R (is_in A) x w).
@@ -346,7 +344,7 @@ Proof.
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) (-m)).
     Expand the definition of is_upper_bound.
-    That is, write the goal as (for all a : set_opp A, a ≤ M).
+    That is, write the goal as (for all a : set_opp A, a ≤ -m).
     By low_bd_set_to_upp_bd_set_opp it holds that H_con : (is_upper_bound (set_opp A) (-m)).
     This concludes the proof.
 Qed.

@@ -111,7 +111,7 @@ Proof.
       Choose n := k.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that H8 : (INR k = IZR (Z.of_nat k)).
-      Rewrite using (INR n = IZR (Z.of_nat n)).
+      Rewrite using (INR k = IZR (Z.of_nat n)).
       Rewrite using (Z.of_nat n = up x).
       This follows by assumption.
 Qed.

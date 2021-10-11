@@ -61,6 +61,31 @@ Local Ltac2 check_goal := fun (t:constr) =>
     | [|-_] => raise_goal_check_error "No such goal"
     end.
 
+(** * check_and_change_goal
+    Check if the type of the goal is convertible to [t],
+    if so, it replaces the goal by t.
+
+    Arguments:
+        - [t: constr], any constr to be compared against the goal.
+
+    Does:
+        - Prints a confirmation that the goal equals the provided type.
+    
+    Raises Exceptions:
+        - [GoalCheckError], if the goal is not convertible to [t].
+*)
+Local Ltac2 check_and_change_goal := fun (t:constr) =>
+    lazy_match! goal with
+    | [ |- ?g] => 
+        match Aux.check_constr_equal g t with
+        | true => print (concat 
+                    (of_string "The goal is indeed: ") (of_constr t));
+                  change $t
+        | false => raise_goal_check_error "No such goal"
+        end
+    | [|-_] => raise_goal_check_error "No such goal"
+    end.
+
 (* Allow different syntax styles:
     - We need to show ...
     - We need to show that ...
@@ -76,9 +101,9 @@ Local Ltac2 check_goal := fun (t:constr) =>
     (That's why it reads "that(opt('that'))" instead of "opt('that')".*)
 Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) :=
       panic_if_goal_wrapped ();
-      check_goal t.
+      check_and_change_goal t.
 
 Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) :=
       panic_if_goal_wrapped ();
-      check_goal t.
+      check_and_change_goal t.
 

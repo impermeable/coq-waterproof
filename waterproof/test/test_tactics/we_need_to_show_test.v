@@ -67,3 +67,17 @@ Proof.
   assert_raises_error (fun () => We need to show (1 = 1)).
   reflexivity.
 Qed.
+
+(** Fourth test: the goal should be rewritten, if not the proof will fail. *)
+Lemma two_is_two_rewrite_goal : 1 + 1 = 1 + 1.
+Proof.
+  set (k := 2).
+  assert (H : k = 2).
+  {
+    trivial.
+  }
+  assert_raises_error (fun () => rewrite H).
+  We need to show that (k = k).
+  rewrite H.
+  trivial.
+Qed.
