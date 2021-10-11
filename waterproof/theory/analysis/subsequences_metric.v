@@ -31,6 +31,8 @@ Require Import Waterproof.contradiction_tactics.basic_contradiction.
 Require Import Waterproof.load_database.All.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
+Require Import Waterproof.theory.analysis.metric_spaces.
+Require Import Waterproof.theory.analysis.sequences_metric.
 
 Open Scope metric_scope.
 Definition is_index_sequence    (n : ℕ → ℕ) := 

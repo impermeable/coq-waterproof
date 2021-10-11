@@ -118,19 +118,6 @@ Definition converges_to (a : ℕ → ℝ) (c : ℝ) :=
 
 Notation "a ⟶ c" := (converges_to a c) (at level 20).
 
-Definition convergence {M : Metric_Space} (a : ℕ → Base M) (c : Base M) :=
-  ∀ ε : ℝ, ε > 0 ⇒
-    ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒
-      dist M (a n) c < ε.
-
-
-Definition bounded {X : Metric_Space} (a : ℕ → Base X) :=
-  ∃ q : Base X,
-    ∃ M : ℝ, M > 0 ⇒
-      ∀ n : ℕ, dist X (a n) q ≤ M.
-
-Notation "a ⟶ c" := (convergence a c) (at level 20) : metric_scope.
-
 Definition cv_implies_cv_abs_to_l_abs :=
   cv_cvabs.
 (** ## Real numbers

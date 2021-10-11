@@ -80,13 +80,14 @@ waterproof/tactics/sets_tactics/sets_automation_tactics.v
 waterproof/AllTactics.v
 
 # These depend on AllTactics.
-waterproof/definitions/subsequences_definitions.v
 
 # Waterproof theory files
 waterproof/theory/analysis/metric_spaces.v
+waterproof/theory/analysis/sequences_metric.v
 waterproof/theory/analysis/sup_and_inf.v
 waterproof/theory/analysis/sup_and_inf_new_definitions.v
 waterproof/theory/analysis/sequences.v
+waterproof/theory/analysis/subsequences_metric.v
 waterproof/theory/analysis/subsequences.v
 waterproof/theory/analysis/series.v
 waterproof/theory/analysis/sequential_accumulation_points.v
