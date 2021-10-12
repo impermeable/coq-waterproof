@@ -29,7 +29,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
-Require Import Waterproof.tactics.goal_wrappers.
+Require Export Waterproof.tactics.goal_wrappers.
 
 (** * Unfold
     Rewrite a function by its definition,

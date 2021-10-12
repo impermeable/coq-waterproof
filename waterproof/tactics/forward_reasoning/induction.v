@@ -27,7 +27,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.tactics.goal_wrappers.
+Require Export Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.auxiliary.
 
 Ltac2 Type exn ::= [ NaturalInductionError(string) ].

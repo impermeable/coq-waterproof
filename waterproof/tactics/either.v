@@ -28,7 +28,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 (* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.tactics.automation_databases.decidability_db.
-Require Import Waterproof.tactics.goal_wrappers.
+Require Export Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ CaseError(string) ].
 Ltac2 raise_case_error (s:string) := Control.zero (CaseError s).
