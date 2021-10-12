@@ -1,8 +1,10 @@
 (** * [we_need_to_show.v]
 Authors: 
     - Lulof Pirée (1363638)
+    - Jelle Wemmenhove
 
 Creation date: 18 May 2021
+Latest edit:   12 Oct  2021
 
 Tactic that checks if the user input matches the goal.
 Does not proceed the proof;
@@ -31,6 +33,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.goal_wrappers.
+Require Import Waterproof.tactics.unfold.
 
 
 Ltac2 Type exn ::= [ GoalCheckError(string) ].
@@ -86,6 +89,30 @@ Local Ltac2 check_and_change_goal := fun (t:constr) =>
     | [|-_] => raise_goal_check_error "No such goal"
     end.
 
+(** * to_show
+    1) If the goal is wrapped in ExpandDef.Goal.Wrapper, attempt to remove the wrapper.
+    2) Else, check if the type of the goal is convertible to [t],
+      if so, it replaces the goal by t.
+
+    Arguments:
+        - [t: constr], 1) type matching the current wrapped goal.
+                       2) any constr to be compared against the goal.
+
+    Does:
+        - 1) Removes the wrapper if the argument matches the wrapped goal, 
+               i.e. the goal is of the form [ExandDef.Goal.Wrapper t].
+          2) Prints a confirmation that the goal equals the provided type.
+    
+    Raises Exceptions:
+        - 1) [ExpandDefError], if the argument [t] does not match the wrapped goal.
+        - 2) [GoalCheckError], if the goal is not convertible to [t].
+*)
+Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
+    lazy_match! goal with
+    | [|- ExpandDef.Goal.Wrapper _] => goal_as t (*[goal_as] is from unfold.v*)
+    | [|- _] => check_and_change_goal t
+    end.
+
 (* Allow different syntax styles:
     - We need to show ...
     - We need to show that ...
@@ -100,10 +127,8 @@ Local Ltac2 check_and_change_goal := fun (t:constr) =>
     even though the parser will not populate this name. 
     (That's why it reads "that(opt('that'))" instead of "opt('that')".*)
 Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) :=
-      panic_if_goal_wrapped ();
-      check_and_change_goal t.
+      unwrap_or_check_and_change_goal t.
 
 Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) :=
-      panic_if_goal_wrapped ();
-      check_and_change_goal t.
+      unwrap_or_check_and_change_goal t.
 

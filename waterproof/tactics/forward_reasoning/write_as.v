@@ -1,7 +1,9 @@
 (** * [write_as.v]
 Authors: 
     - Lulof Pirée (1363638)
+    - Jelle Wemmenhove
 Creation date: 16 June 2021
+Latest edit:   12 Oct  2021
 
 Tactic used to rewrite part of an expression.
 
@@ -30,6 +32,7 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.tactics.forward_reasoning.rewrite_using.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.goal_wrappers.
+Require Import Waterproof.tactics.unfold.
 
 (** * print_rewrite_success
     Print that the hypothesis identified by [id]
@@ -52,19 +55,19 @@ print (concat
     )
 ).
 
-(** * print_rewrite_success
+(** * write_as
     Try to rewrite the definition the hypothesis identified by [id]
-    to [replacement_term].
+    to [replacement].
 
     Arguments:
         - [id: ident], identifier of hypothesis to rewrite.
-        - [replacement_term: constr], term to use for the rewrite.
+        - [replacement: constr], term/type to use for the rewrite.
 
     Raises exceptions:
         - [RewriteError], in case the rewrite fails.
 *)
-Local Ltac2 write_as (id: ident) (replacement_term: constr) :=
-    let result () := change $replacement_term in $id in
+Local Ltac2 write_as (id: ident) (replacement: constr) :=
+    let result () := change $replacement in $id in
     match Control.case result with
     | Val _ => print_rewrite_success id
     | Err exn => Control.zero (
@@ -72,17 +75,28 @@ Local Ltac2 write_as (id: ident) (replacement_term: constr) :=
         "Cannot rewrite the hypothesis with this term.")
     end.
 
-(** * Write ... as ...
-    Try to rewrite the definition the hypothesis identified by [id]
-    to [replacement_term].
+(** * unwrap_or_write_as
+    1) If the goal is wrapped in ExpandDef.Hyp.Wrapper, attempt to remove the wrapper.
+    2) Else, try to rewrite the hypothesis identified by [id]
+        to [replacement].
 
     Arguments:
-        - [id: ident], identifier of hypothesis to rewrite.
-        - [replacement_term: constr], term to use for the rewrite.
+        - [id: ident], 1) identifier in which a definition was unfolded, part of the wrapping;
+                       2) identifier of hypothesis to rewrite.
+        - [replacement: constr], 1) type of [id] after unfolding, part of wrapping;
+                                 2) term/type to use for the rewrite.
 
     Raises exceptions:
-        - [RewriteError], in case the rewrite fails.
+        - 1) [ExpandDefError], if the arguments [id] and [replacement] 
+                                do not match the wrapper.
+        - 2) [RewriteError], in case the rewrite fails.
 *)
-Ltac2 Notation "Write" id(ident) "as" replacement_term(constr) :=
-    panic_if_goal_wrapped ();
-    write_as id replacement_term.
+Local Ltac2 unwrap_or_write_as (id : ident) (replacement : constr) :=
+    lazy_match! goal with
+    | [|- ExpandDef.Hyp.Wrapper _ _ _] => hyp_as id replacement (*[hyp_as] is from unfold.v*)
+    | [|- _] => write_as id replacement
+    end.
+
+
+Ltac2 Notation "Write" id(ident) "as" replacement(constr) :=
+    unwrap_or_write_as id replacement.

@@ -1,8 +1,10 @@
 (** * Testcases for [unfold.v]
 Authors: 
     - Lulof Pirée (1363638)
+    - Jelle Wemmenhove
 
 Creation date: 14 June 2021
+Latest edit:   12 Oct  2021
 
 These tests are quite superfluous, 
 as the implementation is EXACTLY the same as the definition
@@ -31,7 +33,6 @@ From Ltac2 Require Import Option.
 
 Require Import Waterproof.test_auxiliary.
 Load unfold.
-
 
 Definition some_function (x: nat) := 2 * x.
 
@@ -74,10 +75,23 @@ Qed.
 
 
 (** * Test 4
+    Unfold functions IN THE GOAL to show that its definition
+    proves the goal, using we_need_to_show notation.
+*)
+Load we_need_to_show.
+Lemma test_unfold_4: forall (x:nat), some_function (other_function x) = 2*(2*x).
+    intros x.
+    Expand the definition of some_function.
+    We need to show (2 * other_function x = 2 * (2 * x)).
+    reflexivity.
+Qed.
+
+
+(** * Test 5
     Unfold functions IN A HYPOTHESIS to show that its definition
     proves the goal.
 *)
-Lemma test_unfold_4: forall (x a:nat), some_function (other_function x) = a -> False.
+Lemma test_unfold_5: forall (x a:nat), some_function (other_function x) = a -> False.
     intros x a h.
     Fail Expand the definition of some_function, other_function in g.
     Expand the definition of some_function, other_function in h.
@@ -85,4 +99,15 @@ Lemma test_unfold_4: forall (x a:nat), some_function (other_function x) = a -> F
     Fail That is, write x as (2*(2*x) = a).
     Fail That is, write h as (0 = 0).
     That is, write h as (2*(2*x) = a).
+Abort.
+
+(** * Test 6
+    Unfold functions IN A HYPOTHESIS to show that its definition
+    proves the goal, using the write_as notation.
+*)
+Load write_as.
+Lemma test_unfold_6: forall (x a:nat), some_function (other_function x) = a -> False.
+    intros x a h.
+    Expand the definition of some_function, other_function in h.
+    Write h as ( 2 * (2 * x) = a ).
 Abort.
