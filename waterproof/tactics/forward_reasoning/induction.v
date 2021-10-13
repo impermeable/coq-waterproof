@@ -46,13 +46,13 @@ Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
           NaturalInduction.Step.Wrapper.
 *)
 Ltac2 induction_without_hypothesis_naming (x: ident) :=
-    let x_val := Control.hyp x in 
-      let type_x := eval cbv in (Aux.type_of $x_val) in
-        match (Constr.equal type_x constr:(nat)) with
-        | true => induction $x_val; Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
-                                    Control.focus 2 2 (fun () => apply (NaturalInduction.Step.unwrap))
-        | false => induction $x_val
-        end.
+    let x_hyp := Control.hyp x in
+    let type_x := (Aux.get_value_of_hyp x_hyp) in
+    match (Constr.equal type_x constr:(nat)) with
+    | true => induction $x_hyp; Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
+                                Control.focus 2 2 (fun () => apply (NaturalInduction.Step.unwrap))
+    | false => induction $x_hyp
+    end.
 Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
     panic_if_goal_wrapped ();
     induction_without_hypothesis_naming x.

@@ -135,12 +135,12 @@ Ltac2 Notation "That" "is," "write" "the" "goal" "as" t(constr) := goal_as t.
  
 *)
 Ltac2 hyp_as (h : ident) (t:constr)
-:= let h_constr := Control.hyp h in
+:= let h_hyp := Control.hyp h in
    lazy_match! goal with
    | [|- ExpandDef.Hyp.Wrapper _ ?s ?g] =>
      match Constr.equal s t with
      | true => 
-       match Constr.equal g h_constr with
+       match Constr.equal g h_hyp with
        | true => apply (fun G => ExpandDef.Hyp.wrap G $s $g)
        | false => raise_expanddef_error("Wrong identifier specified.")
        end
