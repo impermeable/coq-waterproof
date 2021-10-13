@@ -317,9 +317,9 @@ Proof.
     Assume a_cv_to_L : (Un_cv a L).
     By Rle_or_lt it holds that H : (L ≤ M ∨ M < L).
     Because H either L_le_M or M_lt_L.
-    (** We first consider the case that $L \leq M$. *)
+    Case (L ≤ M).
     It follows that (L ≤ M).
-    (** Next, we consider the case $M < L$.*)
+    Case (M < L).
     Define ε := (L-M).
     Expand the definition of Un_cv in a_cv_to_L.
     That is, write a_cv_to_L as (for all eps : ℝ, eps > 0 
@@ -386,9 +386,9 @@ Proof.
     Assume a_b_ordered : (∀ n : ℕ, a n ≤ b n).
     By Rle_or_lt it holds that H1 : (m ≤ l ∨ l < m).
     Because H1 either m_le_l or l_lt_m.
-    (** We first consider the case $m \leq l$.*)
+    Case (m ≤ l).
     Apply m_le_l.
-    (** Next, we consider the case $l < m$.*)
+    Case (l < m).
     Define ε := ((m - l)/2).
     Expand the definition of Un_cv in b_cv_to_l.
     That is, write b_cv_to_l as (for all eps : ℝ, eps > 0 

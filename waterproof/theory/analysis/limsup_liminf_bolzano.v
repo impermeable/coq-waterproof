@@ -227,8 +227,9 @@ Proof.
     Define L := (sequence_ub a pr_ub m).
     By Rle_or_lt it holds that H : (x ≤ L ∨ L < x).
     Because H either x_le_L or L_lt_x.
+    Case ( x ≤ L ).
     We conclude that (x ≤ L).
-    (** We consider the case $L < x$.*)
+    Case ( L < x ).
     Define ε := (x - L).
     We claim that H1 : (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε).
     Apply ank_cv_to_x.

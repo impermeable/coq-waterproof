@@ -1,8 +1,10 @@
 (** * [because.v]
 Authors: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 
 Creation date: 23 May 2021
+Latest edit:   12 oct 2021
 
 Version of the [Because ... both/either ...] tactic.
 This tactic uses an already existing result to prove that more results hold.
@@ -27,8 +29,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.tactics.goal_wrappers.
-
+Require Import Waterproof.auxiliary.
+Require Export Waterproof.tactics.goal_wrappers.
 
 
 (** * and_hypothesis_destruct
@@ -47,30 +49,13 @@ Local Ltac2 and_hypothesis_destruct (s:ident) (u:ident) (v:ident) :=
 
 
 
-(** * or_hypothesis_destruct
-    Destruct an OR hypothesis into its respective two parts.
-
-    Arguments:
-        - [s: ident], the [ident] of the OR hypothesis.
-        - [u: ident], the name of the first part of [s].
-        - [v: ident], the name of the second part of [s].
-
-    Does:
-        - splits [s] into its two respective parts.
-*)
-Local Ltac2 or_hypothesis_destruct s u v :=
-    let s_val := Control.hyp s in (destruct $s_val as [$u | $v]).
-
 
 
 Ltac2 Notation "Because" s(ident) "both" u(ident) "and" v(ident) :=
     panic_if_goal_wrapped ();
     and_hypothesis_destruct s u v.
 
-Ltac2 Notation "Because" s(ident) "both" u(ident) ":" t_u(constr) "and" v(ident) ":" t_v(constr) :=
-    panic_if_goal_wrapped ();
+Ltac2 Notation "Because" s(ident) "both" u(ident) ":" tu(constr) "and" v(ident) ":" tv(constr) 
+:=  panic_if_goal_wrapped ();
     and_hypothesis_destruct s u v.
 
-Ltac2 Notation "Because" s(ident) "either" u(ident) "or" v(ident) :=
-    panic_if_goal_wrapped ();
-    or_hypothesis_destruct s u v.

@@ -1,10 +1,11 @@
 (** * Testcases for [either.v]
 Authors: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 
 Creation date: 08 June 2021
 
-Testcases for the [Either] tactic.
+Testcases for the [Either ... or ...] and [Because ... either ... or ...] tactics.
 Tests pass if they can be run without unhandled errors.
 --------------------------------------------------------------------------------
 
@@ -51,4 +52,29 @@ Goal forall x : R, exists n : nat, INR(n) > x.
       admit.
     - Fail Case (x <= 0).
       Case (1 < x).
+Abort.
+Close Scope R_scope.
+
+(** Test 2: Tests the 'Because ... either ... or ...' tactic without specifying types of the 
+              alternative hypotheses. *)
+Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro H.
+    Because H either n_eq_n or n_plus_1_eq_n_plus_1.
+    - Case (n = n).
+      admit.
+    - Case (n+1 = n+1).
+Abort.
+
+(** Test 2: Tests the 'Because ... either ... or ...' tactic with types of the 
+              alternative hypotheses. *)
+Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro H.
+    Fail Because H either Hn : (n = 0) or HSn : (n+1 = n+1).
+    Fail Because H either Hn : (n = n) or HSn : (n+1 = 0).
+    Because H either Hn : (n = n) or HSn : (n+1 = n+1).
+    - Case (n = n).
+      admit.
+    - Case (n+1 = n+1).
 Abort.

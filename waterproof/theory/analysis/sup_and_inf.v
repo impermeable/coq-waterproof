@@ -334,9 +334,9 @@ Proof.
     By not_and_or it holds that H_logic3 : (forall a : R, (¬(A a) ∨ ¬(L < a))).
     Define needed_assumption := (H_logic3 x).
     Because needed_assumption either part1 or part2.
-    (** case 1 *)
+    Case (¬ A x).
     Contradiction.
-    (** case 2 *)
+    Case (¬ L < x).
     This concludes the proof.
     It holds that H3 : (is_upper_bound A L).
     By any_upp_bd_ge_sup it holds that H4 : (M ≤ L).

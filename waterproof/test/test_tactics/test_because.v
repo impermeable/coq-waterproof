@@ -26,7 +26,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 Load because.
-Load induction.
 
 (** Test 0: This should work *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
@@ -36,7 +35,7 @@ Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
 Abort.
 
 
-(** Test 1: This should also work *)
+(** Test 1: This should ~not~ work *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     intro H.
@@ -44,9 +43,3 @@ Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
 Abort.
 
 
-(** Test 2: This should also just work *)
-Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
-    intro n.
-    intro H.
-    Because H either n_eq_n or n_plus_1_eq_n_plus_1.
-Abort.
