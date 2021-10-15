@@ -30,10 +30,11 @@ From Ltac2 Require Import Message.
 
 
 From Waterproof Require Import auxiliary.
-Require Import Waterproof.tactics.goal_wrappers.
+Require Export Waterproof.tactics.goal_wrappers.
+Require Export Waterproof.tactics.we_need_to_show. (* Enable the unwrapping of the StateGoal wrapper *)
 
 
-Ltac2 Type exn ::= [ BothStatementsError(string) ].
+Ltac2 Type exn ::= [ BothStatementsError(string) | InputError(message) ].
 
 Ltac2 raise_both_statements_error (s:string) := 
     Control.zero (BothStatementsError s).
@@ -53,7 +54,7 @@ Ltac2 raise_both_statements_error (s:string) :=
 *)
 Ltac2 both_directions_and () :=
     lazy_match! goal with 
-        | [ |- _ /\ _] => split
+        | [ |- _ /\ _] => split; Control.enter (fun () => apply StateGoal.unwrap)
         | [ |- _ ] => raise_both_statements_error("This is not an 'and' statement, so try another tactic.")
     end.
 
@@ -64,6 +65,11 @@ Ltac2 Notation "We" "prove" "both" "statements" :=
     panic_if_goal_wrapped ();
     both_directions_and ().
 
+
+
+Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr)
+ := concat (concat (concat (of_string "You need to show  ") (of_constr correct))
+                   (concat (of_string " instead of ") (of_constr wrong))) (of_string ".").
 
 (** * both_directions_specifically_stated
     Split the proof of a conjuction statement into two specified parts, but also verifies that the parts wrote
@@ -83,53 +89,37 @@ Ltac2 Notation "We" "prove" "both" "statements" :=
 *)
 Ltac2 both_directions_specifically_stated (s: constr) (t:constr) :=
     lazy_match! goal with
-        | [ |- ?u /\ ?v] => match (Aux.check_constr_equal s u) with
-                                | true => match (Aux.check_constr_equal t v) with
-                                              | true => split
-                                              | false => print( (Message.concat 
-                                                                                (Message.concat (Message.of_string "You need to show ") 
-                                                                                                (Message.of_constr v))
-                                                                                (Message.concat (Message.of_string " instead of ")
-                                                                                                (Message.of_constr t))
-                                                                 ) 
-                                                              )
-                                          end
-                                | false => match (Aux.check_constr_equal s v) with 
-                                              | true => match (Aux.check_constr_equal t u) with 
-                                                            | true => split
-                                                            | false => print( (Message.concat 
-                                                                                (Message.concat (Message.of_string "You need to show ") 
-                                                                                                (Message.of_constr u))
-                                                                                (Message.concat (Message.of_string " instead of ")
-                                                                                                (Message.of_constr t))
-                                                                              )
-                                                                           )
-                                                        end
-                                              | false => match (Aux.check_constr_equal t u) with 
-                                                            | true => print( (Message.concat 
-                                                                                (Message.concat (Message.of_string "You need to show ") 
-                                                                                                (Message.of_constr v))
-                                                                                (Message.concat (Message.of_string " instead of ")
-                                                                                                (Message.of_constr s))
-                                                                             )
-                                                                           )
-                                                            | false => match (Aux.check_constr_equal t v) with 
-                                                                           | true => print( (Message.concat
-                                                                                                            (Message.concat (Message.of_string "You need to show ") 
-                                                                                                            (Message.of_constr u))
-                                                                                            (Message.concat (Message.of_string " instead of ")
-                                                                                                            (Message.of_constr s))
-                                                                                            )
-                                                                                          )
-                                                                           | false => raise_both_statements_error("None of these two statements are what you need to show.")
-                                                                       end
-                                                        end
-                                           end
+        | [ |- ?u /\ ?v] => (* Check if s matches the first part *)
+                            match (Aux.check_constr_equal s u) with
+                            | true  => match (Aux.check_constr_equal t v) with
+                                       | true  => split
+                                       | false => Control.zero (InputError (need_to_show_instead_of_msg v t))
+                                       end
+                            (* Otherwise, check if it matches the second part *)
+                            | false => match (Aux.check_constr_equal s v) with 
+                                       | true => match (Aux.check_constr_equal t u) with 
+                                                 | true  => apply and_comm; (* i.e. switch order *)
+                                                            split
+                                                 | false => Control.zero (InputError (need_to_show_instead_of_msg u t))
+                                                 end
+                                       | false => (* If s does not match anything, check if t matches something *)
+                                                  match (Aux.check_constr_equal t u) with 
+                                                  | true  => Control.zero (InputError (need_to_show_instead_of_msg v s))
+                                                  | false => match (Aux.check_constr_equal t v) with 
+                                                             | true  => Control.zero (InputError (need_to_show_instead_of_msg u s))
+                                                             | false => Control.zero (InputError (of_string "None of these two statements are what you need to show."))
+                                                             end
+                                                  end
+                                       end
                             end
         | [ |- _ ] => raise_both_statements_error("This is not an 'and' statement, so try another tactic.")
     end.
 
 
 Ltac2 Notation "We" "have" "to" "show" "both" s(constr) "and" t(constr) :=
+    panic_if_goal_wrapped ();
+    both_directions_specifically_stated s t.
+
+Ltac2 Notation "We" "have" "to" "prove" "both" s(constr) "and" t(constr) :=
     panic_if_goal_wrapped ();
     both_directions_specifically_stated s t.

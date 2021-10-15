@@ -73,26 +73,26 @@ Proof.
     Choose n such that n_good according to H1.
     Choose k := n.
     We show both statements.
-    (** first statement *)
-    This follows immediately. 
-    (** second statement *)
-    We claim that H2 : (proj1_sig (lim_sup_bdd a pr1 pr2) ≤ sequence_ub a pr1 Nn).
-    Expand the definition of lim_sup_bdd.
-    That is, write the goal as 
-      (proj1_sig (decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) pr2) 
-        ≤ sequence_ub a pr1 Nn).
-    Define lim_with_proof := (decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) pr2).
-    Choose l such that l_is_lim according to lim_with_proof.
-    Simplify what we need to show. 
-    We need to show that (l ≤ sequence_ub a pr1 Nn).
-    By Wn_decreasing it holds that H3 : (Un_decreasing (sequence_ub a pr1)).
-    apply decreasing_ineq with (Un := (sequence_ub a pr1)) (l := l) (n := Nn).
-    This follows by assumption.
-    This follows immediately.
-    Because n_good both part1 and part2.
-    It holds that H3 : (proj1_sig (lim_sup_bdd a pr1 pr2) - 1 / (m + 1) ≤ a n).
-    Rewrite using (k = n).
-    This concludes the proof.
+    - We need to show that (Nn ≤ k)%nat.
+      This follows immediately.
+    - We need to show that (a k > proj1_sig (lim_sup_bdd a pr1 pr2) - 1 / (m + 1)).
+      We claim that H2 : (proj1_sig (lim_sup_bdd a pr1 pr2) ≤ sequence_ub a pr1 Nn).
+      Expand the definition of lim_sup_bdd.
+      That is, write the goal as 
+        (proj1_sig (decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) pr2) 
+          ≤ sequence_ub a pr1 Nn).
+      Define lim_with_proof := (decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) pr2).
+      Choose l such that l_is_lim according to lim_with_proof.
+      Simplify what we need to show. 
+      We need to show that (l ≤ sequence_ub a pr1 Nn).
+      By Wn_decreasing it holds that H3 : (Un_decreasing (sequence_ub a pr1)).
+      apply decreasing_ineq with (Un := (sequence_ub a pr1)) (l := l) (n := Nn).
+      This follows by assumption.
+      This follows immediately.
+      Because n_good both part1 and part2.
+      It holds that H3 : (proj1_sig (lim_sup_bdd a pr1 pr2) - 1 / (m + 1) ≤ a n).
+      Rewrite using (k = n).
+      This concludes the proof.
 Qed.
 
 
@@ -161,33 +161,40 @@ Proof.
                 ∧ 
      ∀ k : ℕ, 
       a (m k) > L - 1 / (INR(k) + 1)).
-    Choose m_seq such that m_seq_props according to (exists_subseq_to_limsup_bdd a pr_ub pr_lb).
-    Because m_seq_props both m_seq_ind_seq and m_seq_prop_for_k.
-    Choose m := m_seq.
-    We show both statements.
-    We conclude that (is_index_seq m).
-    We conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
+    {
+      Choose m_seq such that m_seq_props according to (exists_subseq_to_limsup_bdd a pr_ub pr_lb).
+      Because m_seq_props both m_seq_ind_seq and m_seq_prop_for_k.
+      Choose m := m_seq.
+      We show both statements.
+      - We need to show that (is_index_seq m).
+        We conclude that (is_index_seq m).
+      - We need to show that (for all k : ℕ, a (m k) > L - 1 / (k + 1)).
+        We conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
+    }
     Choose m such that m_props according to H1.
     Because m_props both m_ind_seq and amk_large.
     Choose n := m.
     We need to show that (is_index_seq m ∧ Un_cv (k) ↦ (a (m k)) L).
     We show both statements.
-    By m_ind_seq we conclude that (is_index_seq n).
-    We need to show that (Un_cv (k) ↦ (a (n k)) L).
-    (** TODO: an equivalent to "apply with" would be nice here *)
-    Apply (squeeze_theorem (fun (k : ℕ) ↦ L - 1 / (INR k + 1)) 
-      (fun (k : ℕ) ↦ (a (n k)))
-      (sequence_ub a pr_ub)).
-    (* apply squeeze_theorem with (c := sequence_ub a pr_ub)
-     (a := fun (k : ℕ) ↦ L - 1 / (INR k + 1)).*)
-    Take k : ℕ.
-    We show both statements.
-    By amk_large it holds that amk_large_spec : (a (m k) > L - 1 / (k+1)).
-    We conclude that (L - 1 / (k + 1) ≤ a (n k)).
-    By index_seq_grows_0 it holds that H1 : (m k ≥ k)%nat.
-    Apply sequence_ub_bds; assumption.
-    Apply lim_const_min_1_over_n_plus_1.
-    Apply sequence_ub_cv_to_L.
+    - We need to show that (is_index_seq m).
+      By m_ind_seq we conclude that (is_index_seq n).
+    - We need to show that (Un_cv (k) ↦ (a (n k)) L).
+      (** TODO: an equivalent to "apply with" would be nice here *)
+      Apply (squeeze_theorem (fun (k : ℕ) ↦ L - 1 / (INR k + 1)) 
+        (fun (k : ℕ) ↦ (a (n k)))
+        (sequence_ub a pr_ub)).
+      + (* apply squeeze_theorem with (c := sequence_ub a pr_ub)
+        (a := fun (k : ℕ) ↦ L - 1 / (INR k + 1)).*)
+        Take k : ℕ.
+        We show both statements.
+        * We need to show that (L - 1 / (k + 1) ≤ a (n k)).
+          By amk_large it holds that amk_large_spec : (a (m k) > L - 1 / (k+1)).
+          We conclude that (L - 1 / (k + 1) ≤ a (n k)).
+        * We need to show that (a (n k) ≤ sequence_ub a pr_ub k).
+          By index_seq_grows_0 it holds that H1 : (m k ≥ k)%nat.
+          Apply sequence_ub_bds; assumption.
+      + Apply lim_const_min_1_over_n_plus_1.
+      + Apply sequence_ub_cv_to_L.
 Qed.
 
 (** ## The Bolzano-Weierstrass Theorem*)
@@ -268,28 +275,30 @@ Proof.
       (is_upper_bound (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a pr_ub pr_lb))
       ∧ (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b ⇨ proj1_sig (lim_sup_bdd a pr_ub pr_lb) ≤ b)).
     We show both statements.
-    Expand the definition of is_upper_bound.
-    That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (lim_sup_bdd a pr_ub pr_lb)).
-    Take x : ℝ.
-    Assume x_is_acc_pt : (is_seq_acc_pt a x).
-    By acc_pt_bds_seq_ub it holds that H0 : (∀ m : ℕ, x ≤ sequence_ub a pr_ub m).
-    Define L_with_proof := (lim_sup_bdd a pr_ub pr_lb).
-    Choose L such that sequence_ub_cv_to_L according to L_with_proof.
-    (* TODO: fix *)
-    simpl.
-    By (low_bd_seq_is_low_bd_lim (sequence_ub a pr_ub))
-        it holds that H1 : (L ≥ x).
-    We conclude that (x ≤ L).
-    (** We now need to show that if $b \in \mathbb{R}$ is an upper bound for the set of accumulation points, then the lim_sup_bdd is less than or equal to $b$.*)
-    Take b : ℝ.
-    Assume b_upp_bd : (is_upper_bound (is_seq_acc_pt a) b).
-    Expand the definition of is_upper_bound in b_upp_bd.
-    That is, write b_upp_bd as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
-    Expand the definition of is_seq_acc_pt in b_upp_bd.
-    That is, write b_upp_bd as (for all x : ℝ, 
-      (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) ⇨ x ≤ b).
-    Apply b_upp_bd.
-    Apply Bolzano_Weierstrass_gen.
+    - We need to show that (is_upper_bound (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a pr_ub pr_lb))).
+      Expand the definition of is_upper_bound.
+      That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (lim_sup_bdd a pr_ub pr_lb)).
+      Take x : ℝ.
+      Assume x_is_acc_pt : (is_seq_acc_pt a x).
+      By acc_pt_bds_seq_ub it holds that H0 : (∀ m : ℕ, x ≤ sequence_ub a pr_ub m).
+      Define L_with_proof := (lim_sup_bdd a pr_ub pr_lb).
+      Choose L such that sequence_ub_cv_to_L according to L_with_proof.
+      (* TODO: fix *)
+      simpl.
+      By (low_bd_seq_is_low_bd_lim (sequence_ub a pr_ub))
+          it holds that H1 : (L ≥ x).
+      We conclude that (x ≤ L).
+    - We need to show that (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b 
+        ⇨ proj1_sig (lim_sup_bdd a pr_ub pr_lb) ≤ b).
+      Take b : ℝ.
+      Assume b_upp_bd : (is_upper_bound (is_seq_acc_pt a) b).
+      Expand the definition of is_upper_bound in b_upp_bd.
+      That is, write b_upp_bd as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
+      Expand the definition of is_seq_acc_pt in b_upp_bd.
+      That is, write b_upp_bd as (for all x : ℝ, 
+        (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) ⇨ x ≤ b).
+      Apply b_upp_bd.
+      Apply Bolzano_Weierstrass_gen.
 Qed.
 
 (** ## Some attempts to get nicer subsequences*)
@@ -328,7 +337,9 @@ Proof.
     By imply_to_and it holds that H4 : ((n1 ≥ m)%nat ∧ ¬(a n1 < L) ).
     Because H4 both H5 and H6.
     We show both statements.
-    By H5 we conclude that (n ≥ m)%nat.
-    By H6 it holds that H7: (a n1 ≥ L).
-    We conclude that (a n ≥ L).
+    - We need to show that (n ≥ m)%nat.
+      By H5 we conclude that (n ≥ m)%nat.
+    - We need to show that (a n ≥ L).
+      By H6 it holds that H7: (a n1 ≥ L).
+      We conclude that (a n ≥ L).
 Qed.

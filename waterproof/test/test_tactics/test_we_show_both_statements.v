@@ -34,8 +34,10 @@ Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
     We show both statements.
-    reflexivity.
-    reflexivity.
+    - We need to show (n = n).
+      reflexivity.
+    - We need to show (n+1 = n+1).
+      reflexivity.
 Qed.
 
 
@@ -44,7 +46,9 @@ Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
     We prove both statements.
-    reflexivity.
+    - We need to show (n = n).
+      reflexivity.
+    - We need to show (n+1 = n+1).
     reflexivity.
 Qed.
 
@@ -80,7 +84,7 @@ Qed.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    We have to show both (n = n) and (n + 2 = n + 2).
+    Fail We have to show both (n = n) and (n + 2 = n + 2).
 Abort.
 
 
@@ -88,7 +92,7 @@ Abort.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    We have to show both (n + 2 = n + 2) and (n + 1 = n + 1).
+    Fail We have to show both (n + 2 = n + 2) and (n + 1 = n + 1).
 Abort.
 
 
@@ -96,7 +100,7 @@ Abort.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    We have to show both (n + 2 = n + 2) and (n = n).
+    Fail We have to show both (n + 2 = n + 2) and (n = n).
 Abort.
 
 

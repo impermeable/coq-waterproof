@@ -59,9 +59,9 @@ Local Ltac2 check_goal := fun (t:constr) =>
         match Aux.check_constr_equal g t with
         | true => print (concat 
                     (of_string "The goal is indeed: ") (of_constr t))
-        | false => raise_goal_check_error "No such goal"
+        | false => raise_goal_check_error "Wrong goal specified."
         end
-    | [|-_] => raise_goal_check_error "No such goal"
+    | [|-_] => raise_goal_check_error "Wrong goal specified."
     end.
 
 (** * check_and_change_goal
@@ -84,10 +84,21 @@ Local Ltac2 check_and_change_goal := fun (t:constr) =>
         | true => print (concat 
                     (of_string "The goal is indeed: ") (of_constr t));
                   change $t
-        | false => raise_goal_check_error "No such goal"
+        | false => raise_goal_check_error "Wrong goal specified."
         end
-    | [|-_] => raise_goal_check_error "No such goal"
+    | [|-_] => raise_goal_check_error "Wrong goal specified."
     end.
+
+Local Ltac2 idtac () := ().
+
+Local Ltac2 unwrap_state_goal (t : constr) :=
+  lazy_match! goal with
+  | [|- StateGoal.Wrapper ?g] => match (Aux.check_constr_equal g t) with
+                                 | true  => apply StateGoal.wrap
+                                 | false => raise_goal_check_error "Wrong goal specified."
+                                 end
+  | [|- _] => idtac ()
+  end.
 
 (** * to_show
     1) If the goal is wrapped in ExpandDef.Goal.Wrapper, attempt to remove the wrapper.
@@ -110,6 +121,7 @@ Local Ltac2 check_and_change_goal := fun (t:constr) =>
 Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
     lazy_match! goal with
     | [|- ExpandDef.Goal.Wrapper _] => goal_as t (*[goal_as] is from unfold.v*)
+    | [|- StateGoal.Wrapper _] => unwrap_state_goal t
     | [|- _] => check_and_change_goal t
     end.
 

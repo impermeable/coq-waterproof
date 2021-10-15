@@ -196,23 +196,24 @@ Proof.
     That is, write the goal as (is_lower_bound A (- M) 
       ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ - M)).
     We show both statements.
-    Expand the definition of is_lub in M_is_sup.
-    That is, write M_is_sup as (is_upper_bound (set_opp A) M 
-      ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
-    Choose M_upp_bd such that H1 according to M_is_sup.
-    By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
-    We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
-    Expand the definition of is_lower_bound.
-    That is, write the goal as (for all l : ℝ, (for all a : ℝ, a ∈ A ⇨ l ≤ a) ⇨ l ≤ - M).
-    Take l : ℝ.
-    Assume l_low_bd : (is_lower_bound A l).
-    Expand the definition of is_lub in M_is_sup.
-    That is, write M_is_sup as (is_upper_bound (set_opp A) M 
-      ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
-    destruct M_is_sup as [previously_proven H1].
-    By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
-    By H1 it holds that H3 : (M ≤ -l).
-    This concludes the proof.
+    - We need to show that ( is_lower_bound A (- M) ).
+      Expand the definition of is_lub in M_is_sup.
+      That is, write M_is_sup as (is_upper_bound (set_opp A) M 
+        ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
+      Choose M_upp_bd such that H1 according to M_is_sup.
+      By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
+    - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
+      Expand the definition of is_lower_bound.
+      That is, write the goal as (for all l : ℝ, (for all a : ℝ, a ∈ A ⇨ l ≤ a) ⇨ l ≤ - M).
+      Take l : ℝ.
+      Assume l_low_bd : (is_lower_bound A l).
+      Expand the definition of is_lub in M_is_sup.
+      That is, write M_is_sup as (is_upper_bound (set_opp A) M 
+        ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
+      destruct M_is_sup as [previously_proven H1].
+      By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
+      By H1 it holds that H3 : (M ≤ -l).
+      This concludes the proof.
 Qed.
 
 Ltac2 Eval global_database_selection.

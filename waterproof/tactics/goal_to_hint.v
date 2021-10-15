@@ -100,6 +100,7 @@ Ltac2 goal_to_hint (g:constr) :=
     | context [NaturalInduction.Step.Wrapper _] => create_goal_wrapped_message ()
     | context [ExpandDef.Goal.Wrapper _]        => create_goal_wrapped_message ()
     | context [ExpandDef.Hyp.Wrapper _ _ _]     => create_goal_wrapped_message ()
+    | context [StateGoal.Wrapper _]             => create_goal_wrapped_message ()
     | _ => Control.zero (GoalHintError "No hint available for this goal.")
     end.
 

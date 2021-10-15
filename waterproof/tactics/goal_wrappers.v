@@ -101,6 +101,19 @@ Notation "'Add' '‘That' 'is,' 'write' 'the' 'goal' 'as' (  G ).’ 'to' 'proof
 Notation "'Add' '‘That' 'is,' 'write' h 'as' (  H ).’ 'to' 'proof' 'script.'" 
          := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing).
 
+Module StateGoal.
+  Private Inductive Wrapper (G : Type) : Type :=
+    | wrap : G -> Wrapper G.
+  Definition unwrap (G : Type) : Wrapper G -> G 
+             := fun x => match x with wrap _ y => y end.
+  Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
+             := eq_refl.
+  Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
+             := match x with wrap _ y => eq_refl end.
+End StateGoal.
+Notation "'Add' '‘We' 'need' 'to' 'show' 'that' (  G ).’ 'to' 'proof' 'script.'" 
+         := (StateGoal.Wrapper G) (at level 99, only printing).
+
 
 Ltac2 Type exn ::= [ GoalWrappedError(string) ].
 Ltac2 raise_goal_wrapped_error () := Control.zero (GoalWrappedError(
@@ -121,6 +134,7 @@ Ltac2 panic_if_goal_wrapped ()
      | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error ()
      | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
      | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
+     | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
      | [|- _] => idtac ()
      end.
 
