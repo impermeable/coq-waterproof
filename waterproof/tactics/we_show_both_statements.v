@@ -41,13 +41,14 @@ Ltac2 raise_both_statements_error (s:string) :=
 
 
 (** * both_directions_and
-    Split the proof of a conjuction statement into both of its parts.
+    Split the proof of a conjuction statement into both of its parts, wraps both the resulting goals in a [StateGoal.Wrapper].
 
     Arguments:
         - no arguments
 
     Does:
         - splits the conjunction statement into its both parts.
+        - wraps both goals in a [StateGoal.Wrapper].
 
     Raises Exceptions:
         - [BothStatementsError], if the [goal] is not a conjunction of statments.
@@ -83,6 +84,7 @@ Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr)
         - splits the [goal] into [s /\ t] or [t /\ s], if the goal can be written as such a conjuction.
         If it cannot be written, it prints a statement saying what the respective part that does not match
         should actually be.
+        - If the goal is of the form [t /\ s], it is changed to [s /\ t] before splitting.
 
     Raises Exceptions:
         - [BothStatementsError], if the [goal] is not a conjunction of the specified statments.
@@ -107,7 +109,7 @@ Ltac2 both_directions_specifically_stated (s: constr) (t:constr) :=
                                                   | true  => Control.zero (InputError (need_to_show_instead_of_msg v s))
                                                   | false => match (Aux.check_constr_equal t v) with 
                                                              | true  => Control.zero (InputError (need_to_show_instead_of_msg u s))
-                                                             | false => Control.zero (InputError (of_string "None of these two statements are what you need to show."))
+                                                             | false => Control.zero (InputError (of_string "Neiher of these two statements are what you need to show."))
                                                              end
                                                   end
                                        end

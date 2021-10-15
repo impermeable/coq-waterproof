@@ -91,6 +91,19 @@ Local Ltac2 check_and_change_goal := fun (t:constr) =>
 
 Local Ltac2 idtac () := ().
 
+(** * unwrap_state_goal
+    Attempts to remove the [StateGoal.Wrapper] wrapper from the goal.
+    
+    Arguments:
+        - [t : constr], type matching the wrapped goal.
+    
+    Does: 
+        - Removes the wrapper if the argument matches the wrapped goal, 
+               i.e. the goal is of the form [StateGoal.Wrapper t].
+
+    Raises Exceptions:
+        - [GoalCheckError], if the argument [t] does not match the wrapped goal.
+*)
 Local Ltac2 unwrap_state_goal (t : constr) :=
   lazy_match! goal with
   | [|- StateGoal.Wrapper ?g] => match (Aux.check_constr_equal g t) with
@@ -101,22 +114,24 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
   end.
 
 (** * to_show
-    1) If the goal is wrapped in ExpandDef.Goal.Wrapper, attempt to remove the wrapper.
-    2) Else, check if the type of the goal is convertible to [t],
+    1) If the goal is wrapped in [ExpandDef.Goal.Wrapper], attempt to remove the wrapper.
+    2) Else if the goal is wrapped in [State.Goal.Wrapper], attempt to remove it.
+    3) Else, check if the type of the goal is convertible to [t],
       if so, it replaces the goal by t.
 
     Arguments:
-        - [t: constr], 1) type matching the current wrapped goal.
-                       2) any constr to be compared against the goal.
+        - [t: constr], 1,2) type matching the wrapped goal.
+                       3) any constr to be compared against the goal.
 
     Does:
-        - 1) Removes the wrapper if the argument matches the wrapped goal, 
-               i.e. the goal is of the form [ExandDef.Goal.Wrapper t].
-          2) Prints a confirmation that the goal equals the provided type.
+        - 1,2) Removes the wrapper if the argument matches the wrapped goal, 
+               i.e. the goal is of the form [ExandDef.Goal.Wrapper t] ([StateGoal.Wrapper t] resp.).
+          3) Prints a confirmation that the goal equals the provided type.
     
     Raises Exceptions:
         - 1) [ExpandDefError], if the argument [t] does not match the wrapped goal.
-        - 2) [GoalCheckError], if the goal is not convertible to [t].
+        - 2) [GoalCheckError], if the argument [t] does not match the wrapped goal.
+        - 3) [GoalCheckError], if the goal is not convertible to [t].
 *)
 Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
     lazy_match! goal with

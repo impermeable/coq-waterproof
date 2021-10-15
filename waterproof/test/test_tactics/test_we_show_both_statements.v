@@ -70,7 +70,7 @@ Proof.
 Qed.
 
 
-(** Test 4: This should also work just fine *)
+(** Test 4: This should also work just fine, the order has to be swapped. *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
