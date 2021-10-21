@@ -1,6 +1,8 @@
 (** * [we_show_both_statements.v]
 Authors: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
+
 Creation date: 22 May 2021
 
 Version of [We show/prove both statements] tactic.
@@ -72,7 +74,7 @@ Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr)
  := concat (concat (concat (of_string "You need to show  ") (of_constr correct))
                    (concat (of_string " instead of ") (of_constr wrong))) (of_string ".").
 
-(** * both_directions_specifically_stated
+(** * both_directions_and_with_types
     Split the proof of a conjuction statement into two specified parts, but also verifies that the parts wrote
     by the user, in which the goal should split into, are the correct ones.
 
@@ -89,7 +91,9 @@ Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr)
     Raises Exceptions:
         - [BothStatementsError], if the [goal] is not a conjunction of the specified statments.
 *)
-Ltac2 both_directions_specifically_stated (s: constr) (t:constr) :=
+(* Remark Jelle (TODO): the order of the parts does not need to be correct, but I question whether this is really needed.
+    Other tactics require the order to be correct and this does not seem to bother the user. *)
+Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
     lazy_match! goal with
         | [ |- ?u /\ ?v] => (* Check if s matches the first part *)
                             match (Aux.check_constr_equal s u) with
@@ -120,8 +124,10 @@ Ltac2 both_directions_specifically_stated (s: constr) (t:constr) :=
 
 Ltac2 Notation "We" "have" "to" "show" "both" s(constr) "and" t(constr) :=
     panic_if_goal_wrapped ();
-    both_directions_specifically_stated s t.
+    both_directions_and_with_types s t.
 
 Ltac2 Notation "We" "have" "to" "prove" "both" s(constr) "and" t(constr) :=
     panic_if_goal_wrapped ();
-    both_directions_specifically_stated s t.
+    both_directions_and_with_types s t.
+
+
