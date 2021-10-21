@@ -102,6 +102,7 @@ waterproof/test/test_contradiction_tactics/test_basic_contradiction.v
 waterproof/test/test_load_database.v
 waterproof/test/test_set_intuition.v
 waterproof/test/test_set_search_depth.v
+waterproof/test/test_set_definitions.v
 waterproof/test/test_tactics/assume_test.v
 waterproof/test/test_tactics/goal_to_hint_test.v
 waterproof/test/test_tactics/rewrite_inequalities_test.v

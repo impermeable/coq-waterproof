@@ -111,87 +111,70 @@ Global Hint Resolve true_Req : reals.
 
 
 (** ** Subsets: lemmas for subsets of elements*)
-Lemma subset_elements_satisfy_predicate :
-    forall V : subsets_R,
-        forall x : V, 
-            Waterproof.definitions.set_definitions.is_in V x.
+Global Hint Resolve witness_R : additional. (* for all (V : subset_R) (x : V), V x *)
+
+Lemma exists_and_implies_exists_subset_R (A : subset_R) (P : R -> Prop) : 
+  (exists a : R, (A a) /\ (P a)) -> (exists a : A, P a).
 Proof.
-    intro V.
-    induction x.
-    assumption.
-Qed.
-
-Global Hint Resolve subset_elements_satisfy_predicate : additional.
-
-Lemma elements_satisfy_other_pred :
-    ∀ (A : subsets_R) (pred : ℝ → Prop),
-        (∀ a : A, pred a) ⇒
-            ∀ b : ℝ, 
-            Waterproof.definitions.set_definitions.is_in 
-                A b ⇒ pred b.
-Proof.
-    intros A pred A_satisfies b b_in_A.
-    set (c := (mk_element_R (Waterproof.definitions.set_definitions.is_in A) b b_in_A)).
-    assert (pred_c : (pred c)) by eauto using A_satisfies with *.
-    eauto with *.
-Qed.
-
+  intro H. destruct H as [a [ainA Ha]]. exists (mk_elem_R A a ainA). exact Ha. 
+Defined.
+Hint Resolve exists_and_implies_exists_subset_R : additional.
 
 (** ### Intervals : definitions of intervals *)
 Definition int_cc_prop {x y : R} :
     forall r : [x, y], x <= r <= y
-    := subset_elements_satisfy_predicate [x,y].
+    := witness_R [x,y].
 
 Definition int_co_prop {x y : R} :
     forall r : [x, y), x <= r < y
-    := subset_elements_satisfy_predicate [x,y).
+    := witness_R [x,y).
 
 Definition int_oc_prop {x y : R}:
     forall r : (x, y], x < r <= y
-    := subset_elements_satisfy_predicate (x,y].
+    := witness_R (x,y].
 
 Definition int_oo_prop {x y : R}:
     forall r : (x, y), x < r < y
-    := subset_elements_satisfy_predicate (x,y).
+    := witness_R (x,y).
 
 Definition int_cc_prop1 {x y : R} : forall r : [x,y], x <= r.
     intro r. 
-    apply (subset_elements_satisfy_predicate [x,y]).
+    apply (witness_R [x,y]).
 Qed.
 
 Definition int_cc_prop2 {x y : R} : forall r : [x, y], r <= y.
     intro r.
-    apply (subset_elements_satisfy_predicate [x,y]).
+    apply (witness_R [x,y]).
 Qed.
 
 Definition int_co_prop1 {x y : R} : forall r : [x,y), x <= r.
     intro r.
-    apply (subset_elements_satisfy_predicate [x,y)).
+    apply (witness_R [x,y)).
 Qed.
 
 Definition int_co_prop2 {x y : R} : forall r : [x,y), r < y.
     intro r.
-    apply (subset_elements_satisfy_predicate [x,y)).
+    apply (witness_R [x,y)).
 Qed.
 
 Definition int_oc_prop1 {x y : R} : forall r : (x,y], x < r.
     intro r.
-    apply (subset_elements_satisfy_predicate (x,y]).
+    apply (witness_R (x,y]).
 Qed.
 
 Definition int_oc_prop2 {x y : R} : forall r : (x,y], r <= y.
     intro r.
-    apply (subset_elements_satisfy_predicate (x,y]).
+    apply (witness_R (x,y]).
 Qed.
 
 Definition int_oo_prop1 {x y : R} : forall r : (x,y), x < r.
     intro r.
-    apply (subset_elements_satisfy_predicate (x,y)).
+    apply (witness_R (x,y)).
 Qed.
 
 Definition int_oo_prop2 {x y : R} : forall r : (x,y), r < y.
     intro r.
-    apply (subset_elements_satisfy_predicate (x,y)).
+    apply (witness_R (x,y)).
 Qed.
 
 Global Hint Resolve int_cc_prop : additional.

@@ -1,6 +1,7 @@
 (** * [set_definitions.v]
 Authors:
   - Jim Portegies
+  - Jelle Wemmenhove
 Creation date: 17 June 2021
 
 --------------------------------------------------------------------------------
@@ -26,19 +27,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 Open Scope R_scope.
 (** The following line automatically generates induction schemes for Records.*)
-Set Nonrecursive Elimination Schemes.
-Record elements_R_satisfying (pred : R -> Prop)
-  := mk_element_R {
-  element :> R;
-  witness : pred element;
-}.
-Record subsets_R :=
-  mk_subset_R {
-  is_in : R -> Prop;
-  elements := elements_R_satisfying is_in;
-}.
-Coercion subsets_R_to_elements :=
-  (fun A : subsets_R => elements A).
-
-
+(*Set Nonrecursive Elimination Schemes. *)
+Record     subset_R := mk_subset_R { pred_R :> R -> Prop }.
+Record     elements_R (A : subset_R) := mk_elem_R { elem_R :> R; witness_R : A elem_R }.
+Definition subset_to_elements_R := fun A : subset_R => elements_R A.
+Coercion   subset_to_elements_R : subset_R >-> Sortclass.
 

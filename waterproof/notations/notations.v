@@ -1,6 +1,7 @@
 (** * [notations.v]
 Authors:
   - Jim Portegies
+  - Jelle Wemmenhove
 Creation date: 17 June 2021
 
 --------------------------------------------------------------------------------
@@ -126,13 +127,12 @@ We have to take care with the associative level.
 When using this in rewrites, $<$, $>$, etc. should bind stronger.*)
 Notation "| x |" := (Rabs x) (at level 69, x at level 200).
 Notation "｜ x - y ｜" := (R_dist x y) (at level 69, x at level 48, y at level 48) : extra.
-(** ## Subsets and intervals*)
-Notation "{ x : R | P }" := (mk_subset_R (fun x : R => P)).
 
-Notation "[ x , y ]" := { r : R | x <= r <= y }.
-Notation "[ x , y )" := { r : R | x <= r <  y }.
-Notation "( x , y ]" := { r : R | x <  r <= y }.
-Notation "( x , y )" := { r : R | x <  r <  y }.
+(** ## Subsets and intervals*)
+Notation "[ x , y ]" := (mk_subset_R (fun r : R => (x <= r <= y))).
+Notation "[ x , y )" := (mk_subset_R (fun r : R => (x <= r <  y))).
+Notation "( x , y ]" := (mk_subset_R (fun r : R => (x <  r <= y))).
+Notation "( x , y )" := (mk_subset_R (fun r : R => (x <  r <  y))).
 
 (** ## Sums and series*)
 Notation "'Σ' Cn 'equals' x" :=
@@ -150,7 +150,7 @@ Definition finite_triangle_inequalty :=
   (fun (n:ℕ) ↦ (μ (C n))) (at level 45).*)
 (** ## Sets*)
 Notation "b 'seen' 'as' 'element' 'of' A 'by' u" :=
-  (mk_element_R (is_in A) b u) (at level 50).
+  (mk_elem_R A b u) (at level 50).
 
 
 (* We might want a notation like the following to clean
