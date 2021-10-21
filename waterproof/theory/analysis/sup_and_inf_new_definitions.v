@@ -157,7 +157,7 @@ Qed.
 
 The completeness axiom of the real numbers says that when a subset $A$ of the real numbers is bounded from above, and when there exists an element in the set, then there exists an $L$ such that $L$ is the supremum of $A$.*)
 Lemma R_complete : ∀ (A : subset_R) (x : A),
-  is_bounded_above A ⇒ sig (fun M : R => is_sup A M).
+  is_bounded_above A ⇒ exists M : R, is_sup A M.
 Proof.
     Take A : subset_R.
     Take a : A.
@@ -394,7 +394,7 @@ Qed.
 
 Lemma exists_inf :
   ∀ (A : (subset_R)) (x : A), is_bounded_below A ⇒
-    sig (fun (m : ℝ) ↦ is_inf A m).
+    exists (m : ℝ), is_inf A m.
 Proof.
     Take A : (subset_R).
     Take z : A.
@@ -412,7 +412,7 @@ Proof.
     Define H := (R_complete B c B_bdd_above).
     Choose L such that L_is_sup_B according to H.
     By sup_set_opp_is_inf_set it holds that minL_is_inf_A : (is_inf A (-L)).
-    exists (- L). (* TODO: remove this exists *)
+    Choose (- L).
     This concludes the proof.
 Qed.
 

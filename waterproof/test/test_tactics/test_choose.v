@@ -65,11 +65,3 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     assert_raises_error (fun() => Choose m := n).
 Abort.
-
-(** Test 5: This should choose m equal to n, here the goal is not 'exists' but a general sigma type 'sig _' *)
-Goal forall n : nat, sig (fun m : nat => n = m).
-Proof.
-  intros.
-  Choose m := n.
-  reflexivity.
-Qed.

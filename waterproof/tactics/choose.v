@@ -52,7 +52,6 @@ Local Ltac2 raise_choose_error (s:string) :=
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     lazy_match! goal with
         | [ |- exists _ : _, _] => pose ($s := $t); let id := Control.hyp s in exists $id
-        | [ |- sig _ ]          => pose ($s := $t); let id := Control.hyp s in exists $id
         | [ |- _ ] => raise_choose_error("'Choose' can only be applied to 'exists' goals")
     end.
 
@@ -74,7 +73,6 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
 Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
     lazy_match! goal with
         | [ |- exists _ : _, _] => exists $t
-        | [ |- sig _ ]          => exists $t
         | [ |- _ ] => raise_choose_error("'Choose' can only be applied to 'exists' goals")
     end.
 
