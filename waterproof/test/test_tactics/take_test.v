@@ -101,20 +101,19 @@ Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
 Abort.
 
 Require Import Waterproof.definitions.set_definitions.
-Notation is_in := Waterproof.definitions.set_definitions.is_in.
 
 (** Test 11: Introduciing set variables
     For some reason, if [A] is a set,
     then the set of its elements isn't called [A]
-    but [subsets_R_to_elements A].
+    but [elements_R A].
     Anyway, that last thing works.
 *)
-Lemma test_with_sets : forall (A : subsets_R), forall (a : A), a = a -> True.
-    Take A : subsets_R.
-    Take a : (subsets_R_to_elements A).
+Lemma test_with_sets : forall (A : subset_R), forall (a : A), a = a -> True.
+    Take A : subset_R.
+    Take a : A.
 
-    assert_hyp_has_type @A constr:(subsets_R).
-    assert_hyp_has_type @a constr:(elements_R_satisfying (is_in A)).
+    assert_hyp_has_type @A constr:(subset_R).
+    assert_hyp_has_type @a constr:(elements_R A).
     trivial.
 Qed.
 
