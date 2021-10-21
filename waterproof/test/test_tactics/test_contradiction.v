@@ -26,7 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 
-Load basic_contradiction.
+Load contradiction.
 
 
 

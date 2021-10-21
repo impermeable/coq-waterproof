@@ -25,7 +25,6 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.contradiction_tactics.basic_contradiction.
 Require Import Waterproof.load_database.All.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.

@@ -1,6 +1,5 @@
 Require Import Reals.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.contradiction_tactics.basic_contradiction.
 Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
 Require Import Waterproof.databases. (* Req_true is in here *)

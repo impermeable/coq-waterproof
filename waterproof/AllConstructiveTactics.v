@@ -1,4 +1,4 @@
-(** * [AllTactics.v]
+(** * [AllConstructiveTactics.v]
 Authors: 
     - Lulof Pirée (1363638)
     - Jelle Wemmenhove
@@ -35,7 +35,6 @@ Require Export Waterproof.tactics.unfold.
 Require Export Waterproof.tactics.we_know.
 Require Export Waterproof.tactics.choose.
 Require Export Waterproof.tactics.choose_such_that.
-Require Export Waterproof.tactics.contradiction.
 Require Export Waterproof.tactics.either.
 Require Export Waterproof.tactics.we_need_to_show.
 Require Export Waterproof.tactics.we_show_both_directions.

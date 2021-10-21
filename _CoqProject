@@ -49,6 +49,7 @@ waterproof/tactics/automation_databases/decidability_db.v
 waterproof/tactics/because.v
 waterproof/tactics/choose.v
 waterproof/tactics/choose_such_that.v
+waterproof/tactics/contradiction.v
 waterproof/tactics/either.v
 waterproof/tactics/unfold.v
 waterproof/tactics/we_know.v
@@ -57,7 +58,6 @@ waterproof/tactics/we_show_both_directions.v
 waterproof/tactics/we_show_both_statements.v
 waterproof/tactics/goal_to_hint.v
 waterproof/tactics/rewrite_inequalities.v
-waterproof/contradiction_tactics/basic_contradiction.v
 
 # Automated tactics
 waterproof/tactics/forward_reasoning/forward_reasoning_aux.v
@@ -78,6 +78,7 @@ waterproof/tactics/sets_tactics/sets_automation_tactics.v
 
 # This file simply exports all tactics.
 waterproof/AllTactics.v
+waterproof/AllConstructiveTactics.v
 
 # These depend on AllTactics.
 
@@ -98,7 +99,6 @@ waterproof/theory/analysis/limsup_liminf_bolzano.v
 waterproof/test/reverse_engineer/auto_hintdb_arg.v
 waterproof/test/string_auxiliary_test.v
 waterproof/test/test_auxiliary_test.v
-waterproof/test/test_contradiction_tactics/test_basic_contradiction.v
 waterproof/test/test_load_database.v
 waterproof/test/test_set_intuition.v
 waterproof/test/test_set_search_depth.v
@@ -111,6 +111,7 @@ waterproof/test/test_tactics/take_test.v
 waterproof/test/test_tactics/test_because.v
 waterproof/test/test_tactics/test_choose.v
 waterproof/test/test_tactics/test_choose_such_that.v
+waterproof/test/test_tactics/test_contradiction.v
 waterproof/test/test_tactics/test_either.v
 waterproof/test/test_tactics/test_forward_reasoning/it_holds_that_test.v
 waterproof/test/test_tactics/test_forward_reasoning/it_suffices_to_show_test.v
