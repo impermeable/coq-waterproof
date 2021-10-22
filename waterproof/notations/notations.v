@@ -106,12 +106,6 @@ Coercion INR: nat >-> R.
 Coercion IZR: Z >-> R.
 Coercion Q2R: Q >-> R.
 
-(** Add field and lra to tactics to try automatically *)
-Hint Extern 3 ( _ = _ ) => field : real.
-Hint Extern 3 ( _ <= _ ) => lra : real.
-Hint Extern 3 ( _ >= _ ) => lra : real.
-Hint Extern 3 ( _ < _ ) => lra : real.
-Hint Extern 3 ( _ > _ ) => lra : real.
 (** ## **Sequences***)
 Definition converges_to (a : ℕ → ℝ) (c : ℝ) :=
   ∀ ε : ℝ, ε > 0 ⇒

@@ -193,8 +193,17 @@ Global Hint Resolve int_oo_prop2 : additional.
 
 
 
-
-
+(** *** The real database *)
+(** Add field, lra and nra to tactics to try automatically *)
+Global Hint Extern 3 ( _ = _ ) => field : real.
+Global Hint Extern 3 ( _ <= _ ) => lra : real.
+Global Hint Extern 3 ( _ >= _ ) => lra : real.
+Global Hint Extern 3 ( _ < _ ) => lra : real.
+Global Hint Extern 3 ( _ > _ ) => lra : real.
+Global Hint Extern 3 ( _ <= _ ) => nra : real.
+Global Hint Extern 3 (_ >= _ ) => nra : real.
+Global Hint Extern 3 ( _ < _ ) => nra : real.
+Global Hint Extern 3 ( _ > _ ) => nra : real.
 
 
 (** ### ** The reals database ***)
