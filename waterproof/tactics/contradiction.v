@@ -63,6 +63,7 @@ Ltac2 contradiction () :=
 Ltac2 Notation "We" "argue" "by" "contradiction" :=
   contra ().
 
-
 Ltac2 Notation "Contradiction" :=
     contradiction ().
+
+Ltac2 Notation "↯" := contradiction ().

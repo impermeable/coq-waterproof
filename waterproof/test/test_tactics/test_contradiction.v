@@ -48,3 +48,12 @@ Proof.
     Assume H : (n ≠ n).
     Contradiction.
 Qed.
+
+(** Test 2: this should work and completely finish the proof. *)
+Goal forall n : nat, n = n.
+Proof.
+    intro n.
+    We argue by contradiction.
+    Assume n_neq_n : (n ≠ n).
+    It holds that n_en_n : (n = n). ↯.
+Qed.

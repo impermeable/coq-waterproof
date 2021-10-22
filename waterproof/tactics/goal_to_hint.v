@@ -86,7 +86,7 @@ Local Ltac2 create_contradiction_message () :=
     Message.of_string "The goal is to show a contradiction. 
 Show two properties that contradict eachother, i.e. prove P and (¬ P) for some P.
 Initiate the proof of a new property by using ‘We claim that ...’.
-Use ‘Contradiction.’ after you have shown two contradictory properties.".
+Use ‘Contradiction.’ or ‘↯.’ after you have shown two contradictory properties.".
 
 (** * goal_to_hint
     Give a hint indicating a potential step to proving 
