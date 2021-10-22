@@ -51,7 +51,12 @@ Local Ltac2 raise_choose_error (s:string) :=
 *)
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     lazy_match! goal with
-        | [ |- exists _ : _, _] => pose ($s := $t); let id := Control.hyp s in exists $id
+        | [ |- exists _ : _, _] =>
+            pose ($s := $t);
+            let v := Control.hyp s in
+            let w := Fresh.fresh (Fresh.Free.of_goal ()) @add_eq in
+              exists $v;
+              assert ($w : $v = $t) by reflexivity
         | [ |- _ ] => raise_choose_error("'Choose' can only be applied to 'exists' goals")
     end.
 

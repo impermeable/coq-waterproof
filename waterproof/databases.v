@@ -205,6 +205,10 @@ Global Hint Extern 3 (_ >= _ ) => nra : real.
 Global Hint Extern 3 ( _ < _ ) => nra : real.
 Global Hint Extern 3 ( _ > _ ) => nra : real.
 
+Global Hint Resolve Rmin_l : real.
+Global Hint Resolve Rmin_r : real.
+Global Hint Resolve Rmin_glb : real.
+Global Hint Resolve Rmin_glb_lt : real.
 
 (** ### ** The reals database ***)
 
@@ -299,6 +303,7 @@ Global Hint Resolve Rabs_pos : reals.
 Global Hint Resolve Rle_abs_min : reals.
 Global Hint Resolve Rge_min_abs : reals.
 Global Hint Resolve Rmax_abs : reals.
+Global Hint Resolve Rmin_glb_lt : reals.
 
 
 Hint Extern 1 => rewrite Rabs_zero : reals.
@@ -364,7 +369,7 @@ Hint Extern 1 => (rewrite Rmult_plus_distr_r) :  eq_mult eq_plus.
 (** #### Other
 We have some other properties:
 *)
-Hint Extern 1 => (unfold Rminus) : eq_minus.
+Hint Extern 0 => (unfold Rminus) : eq_minus.
 (** ### **Opposite rewriters**
 In this database, we will add properties with the additive inverse.*)
 (** #### Distributitivity

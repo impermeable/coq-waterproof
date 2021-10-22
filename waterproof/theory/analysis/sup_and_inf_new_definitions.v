@@ -862,6 +862,9 @@ Global Hint Resolve bounded_by_upper_bound_propform : additional.
 Global Hint Resolve bounded_by_lower_bound_propform : additional.
 Global Hint Resolve alt_char_inf : additional.
 Global Hint Resolve alt_char_sup : additional.
+Global Hint Resolve <- alt_char_inf : additional.
+Global Hint Resolve <- alt_char_sup : additional.
+
 (** ### **Hints***)
 Hint Extern 1 => (unfold is_sup) : unfolds.
 Hint Extern 1 => (unfold is_inf) : unfolds.
