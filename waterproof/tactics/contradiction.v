@@ -1,4 +1,4 @@
-(** * [basic_contradiction.v]
+(** * [contradiction.v]
 Author: 
     - Cosmin Manea (1298542)
 Creation date: 09 June 2021
@@ -27,15 +27,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Message.
 
-Require Import Rbase.
-Require Import Rfunctions.
-Require Import SeqSeries.
-Require Import Rtrigo.
-Require Import Ranalysis.
-Require Import Integration.
-Require Import micromega.Lra.
-Require Import Omega.
-Require Import Max.
 Require Import Classical.
 
 
@@ -46,11 +37,11 @@ Require Import Classical.
         - no arguments.
 
     Does:
-        - starts a proof by contradiction.
+        - Replaces the goal [G] by its double negation [¬ ¬ G].
 *)
 Ltac2 contra () :=
     lazy_match! goal with
-        | [ |- ?x] => destruct (classic $x); try (assumption)
+        | [ |- ?x] => apply (NNPP $x)
         | [ |- _] => print(of_string "Failed to start a proof by contradiction.")
     end.
 
@@ -63,6 +54,7 @@ Ltac2 contra () :=
 
     Does:
         - calls the Ltac1 [contradiction] tactic, as this tactic does not exist in Ltac2.
+          Tries to find contradictory hypotheses to show the goal.
 *)
 Ltac2 contradiction () :=
     ltac1:(contradiction).

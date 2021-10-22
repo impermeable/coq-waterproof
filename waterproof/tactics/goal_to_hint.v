@@ -32,46 +32,61 @@ Local Ltac2 create_forall_message (v_type: constr) :=
 Message.concat 
     (Message.concat
             (Message.concat
-                (Message.of_string "The goal has a forall-quantifier (∀).
-You may need to introduce an arbitrary variable of type ")
+                (Message.of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable of type ")
                 (Message.of_constr v_type)
             )
             ( Message.of_string ".
-This can for example be done using 'Take ... : ...'.")
+Use ‘Take ... : ...’.")
     )
     (Message.concat
         (Message.concat 
             (Message.of_string "
-Or you may need to make an assumption stating ")
+Or make an assumption stating ")
             (Message.of_constr v_type)
         )
         ( Message.of_string ".
-This can for example be done using 'Assume ... : ...'.")
+Use ‘Assume ... : ...’.")
     ).
 
 Local Ltac2 create_implication_message (premise: constr) :=
     Message.concat
         (Message.concat
-            (Message.of_string "The goal has an implication (⇒).
-You may need to assume the premise ")
+            (Message.of_string "The goal is to show an implication (⇒).
+Assume the premise ")
             (Message.of_constr premise)
         )
         ( Message.of_string ".
-This can for example be done using 'Assume ... : ...'.").
+Use ‘Assume ... : ...’.").
 
 Local Ltac2 create_exists_message (premise: constr) :=
     Message.concat
         (Message.concat
-            (Message.of_string "The goal has an existential quantifier (∃).
-You may want to choose a specific variable of type ")
+            (Message.of_string "The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable of type ")
                 (Message.of_constr premise)
         )
         ( Message.of_string ".
-This can for example be done using 'Choose ... '.").
+Use ‘Choose ... ’.").
 
 Local Ltac2 create_goal_wrapped_message () :=
     Message.of_string "Follow the advice in the goal window.".
 
+Local Ltac2 create_not_message (negated_type : constr) := 
+  Message.concat
+     (Message.concat
+         (Message.concat
+             (Message.of_string "The goal is to show a negation (¬).
+Assume that the negated expression ") (Message.of_constr negated_type)) 
+(Message.of_string " holds, then show a contradiction."))
+(Message.of_string "
+Use ‘Assume ... : ...’ to do the first step.").
+
+Local Ltac2 create_contradiction_message () :=
+    Message.of_string "The goal is to show a contradiction. 
+Show two properties that contradict eachother, i.e. prove P and (¬ P) for some P.
+Initiate the proof of a new property by using ‘We claim that ...’.
+Use ‘Contradiction.’ after you have shown two contradictory properties.".
 
 (** * goal_to_hint
     Give a hint indicating a potential step to proving 
@@ -94,13 +109,15 @@ Ltac2 goal_to_hint (g:constr) :=
     lazy_match! g with
     | context [?a -> ?b] => create_implication_message a
     | context [forall v:?v_type, _]  => create_forall_message v_type
-    | context [exists v:?v_type, _] => create_exists_message v_type
+    | context [exists v:?v_type, _]  => create_exists_message v_type
     | context [Case.Wrapper _ _]                => create_goal_wrapped_message ()
     | context [NaturalInduction.Base.Wrapper _] => create_goal_wrapped_message ()
     | context [NaturalInduction.Step.Wrapper _] => create_goal_wrapped_message ()
     | context [ExpandDef.Goal.Wrapper _]        => create_goal_wrapped_message ()
     | context [ExpandDef.Hyp.Wrapper _ _ _]     => create_goal_wrapped_message ()
     | context [StateGoal.Wrapper _]             => create_goal_wrapped_message ()
+    | context [not ?g] => create_not_message g
+    | context [False]  => create_contradiction_message ()
     | _ => Control.zero (GoalHintError "No hint available for this goal.")
     end.
 

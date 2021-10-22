@@ -1,10 +1,10 @@
-(** * Testcases for [basic_contradiction.v]
+(** * Testcases for [contradiction.v]
 Authors: 
     - Cosmin Manea (1298542)
 
 Creation date: 09 June 2021
 
-Testcases for the [basic_contradiction.v] file.
+Testcases for the [contradiction.v] file.
 Tests pass if they can be run without unhandled errors.
 --------------------------------------------------------------------------------
 
@@ -24,16 +24,19 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-From Ltac2 Require Import Ltac2.
 
 Load contradiction.
 
+Require Import Waterproof.notations.notations.
+Require Import Waterproof.AllConstructiveTactics.
 
 
-(** Test 0: this should start wiht the proof by contradicition. *)
+
+(** Test 0: this should start with the proof by contradicition. *)
 Goal forall n : nat, n = n.
 Proof.
     We argue by contradiction.
+    Assume H : (¬ (for all n : ℕ, n = n)).
 Abort.
 
 
@@ -42,5 +45,6 @@ Goal forall n : nat, n = n.
 Proof.
     intro n.
     We argue by contradiction.
+    Assume H : (n ≠ n).
     Contradiction.
 Qed.

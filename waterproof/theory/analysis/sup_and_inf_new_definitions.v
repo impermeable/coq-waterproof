@@ -491,6 +491,7 @@ Proof.
     Take L : ℝ.
     Assume L_lt_M : (L < M).
     We argue by contradiction.
+    Assume H : (¬ (there exists a : A, L < a)).
     We claim that H0 : (∀ x : A, ¬ (L < x)).
     Apply not_ex_all_not.
     Apply H.
@@ -521,6 +522,7 @@ Proof.
     Take L : ℝ.
     Assume L_gt_m : (L > m).
     We argue by contradiction.
+    Assume H : (¬ (there exists a : A, L > a)).
     We claim that H0 : (∀ x : A, ¬ (L > x)).
     Apply not_ex_all_not.
     Apply H.
@@ -555,6 +557,7 @@ That is, write K_upper_bound as
   (∀ a : A, a ≤ K).
 We need to show that (M ≤ K).
 We argue by contradiction.
+Assume H : (¬ M ≤ K).
 It holds that M_gt_K : (M > K).
 By exists_almost_max it holds that exists_a :
   (∃ a : A, K < a).
@@ -581,6 +584,7 @@ That is, write K_lower_bound as
   (∀ a : A, K ≤ a).
 We need to show that (K ≤ m).
 We argue by contradiction.
+Assume H : (¬ K ≤ m).
 It holds that K_gt_m : (K > m).
 By exists_almost_min it holds that exists_a :
   (∃ a : A, K > a).
@@ -795,29 +799,28 @@ Proof.
     Take A : (subset_R).
     Take M : ℝ.
     Assume M_is_sup_A : (is_sup A M).
-    We argue by contradiction. 
+    We argue by contradiction.
+    Assume H : (¬ (A M ∨ (for all a : A, a < M))).
     By not_or_and it holds that H1 : ((¬ (A M)) ∧ 
       ¬(∀ a : A, a < M) ).
     Because H1 both H2 and H3.
-    (** TODO: fix *)
-    (** We only show the proposition on the *)
-    right
-    (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
-    .
-    Take a : A.
-    By sup_is_upp_bd it holds that M_upp_bd : (is_upper_bound A M).
-    It holds that a_le_M : (a ≤ M).
-    We claim that M_is_not_a : (M ≠ a).
-    We argue by contradiction.
-    We claim that H4 : ((M = a) ⇒ False).
-    Assume M_eq_a : (M = a).
-    We claim that M_in_A : (A M).
-    Rewrite using (M = a).
-    We conclude that (A a).
+    We claim that all_a_lt_M : (for all a : A, a < M).
+    { 
+      Take a : A.
+      By sup_is_upp_bd it holds that M_upp_bd : (is_upper_bound A M).
+      It holds that a_le_M : (a ≤ M).
+      We claim that M_is_not_a : (M ≠ a).
+      {
+        Assume M_eq_a : (M = a).
+        We claim that M_in_A : (A M).
+        { Rewrite using (M = a). We conclude that (A a). }
+        Contradiction.
+      }
+      We conclude that (a < M).
+    }
     Contradiction.
-    We conclude that (M ≠ a).
-    We conclude that (a < M).
 Qed.
+
 (** * Lemmas for convenience*)
 Lemma bounded_by_upper_bound_propform :
   ∀ (A : subset_R) (M : ℝ) (b : ℝ),

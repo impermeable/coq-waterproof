@@ -21,9 +21,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 Require Import Lra.
+(*
 Require Import Classical.
 Require Import Classical_Prop.
 Require Import Classical_Pred_Type.
+*)
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.selected_databases.
@@ -314,29 +316,32 @@ Require Import Waterproof.load_database.EnableWildcard.
 
 (** ### $\varepsilon$-characterizations*)
 Lemma exists_almost_maximizer :
-  ∀ (A : ℝ → Prop) (M : ℝ),
+  ∀ (A : ℝ -> Prop) (M : ℝ),
     is_sup A M ⇒
       ∀ (L : ℝ), L < M ⇒ 
         ∃ a : ℝ, A a ∧ L < a.
 Proof.
-    Take A : (ℝ → Prop), M : ℝ.
+    Take A : (ℝ -> Prop), M : ℝ.
     Assume M_is_sup_A : (is_sup A M).
     Take L : ℝ. 
     Assume L_lt_M : (L < M).
     We argue by contradiction.
+    Assume no_a_lt_L : (¬ (there exists a : ℝ, A a ∧ L < a)).
     We claim that H1 : (∀ x : ℝ, A x ⇒ x ≤ L).
-    Take x : ℝ.
-    Assume x_in_A : (A x).
-    We claim that H_logic1 : (¬(exists a : R, (A a ∧ L < a)) -> (forall a : R, ¬((A a ∧ L < a)))).
-    Apply (@not_ex_all_not ℝ (fun a : ℝ => (A a ∧ L < a))).
-    By H_logic1 it holds that H_logic2 : (forall a : R, ¬((A a ∧ L < a))).
-    By not_and_or it holds that H_logic3 : (forall a : R, (¬(A a) ∨ ¬(L < a))).
-    Define needed_assumption := (H_logic3 x).
-    Because needed_assumption either part1 or part2.
-    Case (¬ A x).
-    Contradiction.
-    Case (¬ L < x).
-    This concludes the proof.
+    {
+      Take x : ℝ.
+      Assume x_in_A : (A x).
+      We claim that H_logic1 : (¬(exists a : R, (A a ∧ L < a)) -> (forall a : R, ¬((A a ∧ L < a)))).
+      { Apply (@not_ex_all_not ℝ (fun a : ℝ => (A a ∧ L < a))). }
+      By H_logic1 it holds that H_logic2 : (forall a : R, ¬(A a ∧ L < a)).
+      By not_and_or it holds that H_logic3 : (forall a : R, (¬(A a) ∨ ¬(L < a))).
+      Define needed_assumption := (H_logic3 x).
+      Because needed_assumption either part1 or part2.
+      - Case (¬ A x).
+        Contradiction.
+      - Case (¬ L < x).
+        This concludes the proof.
+    }
     It holds that H3 : (is_upper_bound A L).
     By any_upp_bd_ge_sup it holds that H4 : (M ≤ L).
     It holds that H5 : (¬(M ≤ L)).
@@ -345,12 +350,12 @@ Qed.
 
 
 Lemma exists_almost_maximizer_ε :
-  ∀ (A : ℝ → Prop) (M : ℝ),
+  ∀ (A : ℝ -> Prop) (M : ℝ),
     is_sup A M ⇒
       ∀ (ε : ℝ), ε > 0 ⇒ 
         ∃ a : ℝ, A a ∧ M - ε < a.
 Proof.
-    Take A : (ℝ → Prop), M : ℝ.
+    Take A : (ℝ -> Prop), M : ℝ.
     Assume M_is_sup_A : (is_sup A M ). 
     Take ε : ℝ. 
     Assume ε_gt_0 : (ε > 0).
@@ -368,23 +373,27 @@ Lemma max_or_strict :
 Proof.
     Take A : (ℝ → Prop), M : ℝ. 
     Assume M_is_sup_A : (is_sup A M). 
-    We argue by contradiction. 
+    We argue by contradiction.
+    Assume H : ( ¬ (A M ∨ (for all a : ℝ, A a ⇨ a < M))).
     By not_or_and it holds that H1 : ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M) ).
     Because H1 both H2 and H3.
     (** We only show the proposition on the *)
     (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
-    right.
+    We claim that H4 : (∀ a : ℝ, A a ⇒ a < M).
+    {
     Take a : ℝ. 
     Assume a_in_A : (A a).
     By sup_is_upp_bd it holds that M_upp_bd : (is_upper_bound A M).
     It holds that a_le_M : (a ≤ M).
     We claim that a_is_not_M : (¬(a = M)).
-    We argue by contradiction.
+    Assume a_eq_M : (a = M).
     We claim that M_in_A : (A M).
     Rewrite using (M = a).
-    This follows by assumption. 
-    Contradiction. 
+    This follows by assumption.
+    Contradiction.
     This concludes the proof.
+    }
+    Contradiction.
 Qed.
 
 

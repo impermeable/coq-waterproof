@@ -83,6 +83,7 @@ Notation "x ⇨ y" := (x -> y)
 Notation "x ↔ y" := (x <-> y) (at level 95, no associativity): type_scope.
 Notation "x ⇔ y" := (x <-> y) (at level 95, no associativity): type_scope.
 Notation "¬ x" := (~x) (at level 75, right associativity) : type_scope.
+Notation "'contradiction'" := (False).
 (* TODO: the below definition doesn't work very nicely *)
 Notation "x ↦ y" := (fun x => y) (at level 0).
 (** ## **(In)equalities**

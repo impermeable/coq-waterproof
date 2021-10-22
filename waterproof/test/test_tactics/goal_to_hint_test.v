@@ -1,8 +1,12 @@
 (** * Testcases for [goal_to_hint.v].
 Authors: 
     - Lulof Pirée (1363638)
+    - Jelle Wemmenhove
 Creation date: 2 June 2021
 
+Testcases for the [contradiction.v] file.
+Tests pass if they can be run without unhandled errors.
+(* TODO: check that the correct hints are given.*)
 --------------------------------------------------------------------------------
 
 This file is part of Waterproof-lib.
@@ -77,3 +81,22 @@ Goal forall n, n + 0 = n.
     (* Should print exactly the same:*)
     Help.
 Abort.
+
+(** * Test 5
+    Should print a hint for a wrapped goal twice.
+*)
+Goal not (0 = 1).
+    print (goal_to_hint (Control.goal ())).
+    (* Should print exactly the same:*)
+    Help.
+Abort.
+
+(** * Test 6
+    Should print a hint for a wrapped goal twice.
+*)
+Goal False.
+    print (goal_to_hint (Control.goal ())).
+    (* Should print exactly the same:*)
+    Help.
+Abort.
+

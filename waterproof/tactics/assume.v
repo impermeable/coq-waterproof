@@ -222,11 +222,10 @@ Ltac2 rec assume_breakdown (x: (ident*constr) list) :=
 (* Subroutine of  [assume_premise_with_breakdown] *)
 Local Ltac2 intro_one_premise_and_recurse (x: (ident*constr) list) :=
     let h := (Fresh.in_goal @h) in
-    (intros $h; 
+    intros $h; 
     Aux.print_bool (hyp_is_in_list x h);
     elim_hyp_from_list x h; 
-    print (of_string "Hypotheses successfully assumed")
-    ).
+    print (of_string "Hypotheses successfully assumed").
 
 (* Subroutine of  [assume_premise_with_breakdown] *)
 Ltac2 intro_two_premises_and_recurse (x: (ident*constr) list) :=
@@ -271,7 +270,8 @@ Ltac2 assume_premise_with_breakdown (x: (ident*constr) list) :=
         intro_two_premises_and_recurse x
     | [ |- ?premise->?conclusion] => 
         intro_one_premise_and_recurse x
-        
+    | [ |- not ?premise] =>
+        intro_one_premise_and_recurse x
     | [|- _] => raise_assume_error "Cannot assume premise: 
                                     goal is not an implication"
     end.
