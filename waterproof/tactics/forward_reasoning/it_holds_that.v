@@ -54,15 +54,13 @@ Ltac2 assert_and_prove_sublemma (id: ident) (conclusion: constr)
                                 (proving_lemma: constr option) :=
     let help_lemma := unwrap_optional_lemma proving_lemma
     in
-    let by_arg () := waterprove_with_hint conclusion help_lemma
+    let by_arg () := waterprove_without_hint conclusion help_lemma
     in
     let proof_attempt () := Aux.ltac2_assert_with_by id conclusion by_arg
     in
     match Control.case proof_attempt with
     | Val _ => print (of_string ("New sublemma successfully added."))
-    | Err exn => Control.zero (AutomationFailure "Could not prove the given sublemma.
-If you believe the statement should hold, 
-try making a smaller step.")
+    | Err exn => Control.zero exn
     end.
 
 (** * By ... it holds that ... : ...

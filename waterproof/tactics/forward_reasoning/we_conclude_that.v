@@ -149,7 +149,7 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
 *)
 Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
     let lemma := unwrap_optional_lemma lemma in
-    let finish_proof () := waterprove_with_hint target_goal lemma in
+    let finish_proof () := waterprove_without_hint target_goal lemma in
     check_goal_and_call target_goal finish_proof.
 
 
