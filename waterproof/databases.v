@@ -207,6 +207,12 @@ Global Hint Extern 3 ( _ > _ ) => nra : real.
 
 Global Hint Resolve Rmin_l : real.
 Global Hint Resolve Rmin_r : real.
+Global Hint Resolve Rmax_l : real.
+Global Hint Resolve Rmax_r : real.
+Global Hint Resolve Rle_max_compat_l : real.
+Global Hint Resolve Rle_max_compat_r : real.
+Global Hint Resolve Rmax_lub : real.
+Global Hint Resolve Rmax_lub_lt : real.
 Global Hint Resolve Rmin_glb : real.
 Global Hint Resolve Rmin_glb_lt : real.
 
