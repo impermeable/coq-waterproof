@@ -45,7 +45,8 @@ Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
           NaturalInduction.Base.Wrapper and the second goal is wrapped in
           NaturalInduction.Step.Wrapper.
 *)
-Ltac2 induction_without_hypothesis_naming (x: ident) :=
+Ltac2 induction_without_hypothesis_naming (x: ident) :=    
+    intro $x;
     let x_hyp := Control.hyp x in
     let type_x := (Aux.get_value_of_hyp x_hyp) in
     match (Constr.equal type_x constr:(nat)) with

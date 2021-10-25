@@ -30,13 +30,11 @@ Load induction.
 
 
 (** Test 0: This should work fine *)
-Goal forall n : nat, (n = n) -> (S n = S n).
+Goal forall n : nat, (n = n).
 Proof.
-    intro n.
-    intro h.
     We use induction on n.
     - Fail We first show the base case, namely (2 = 2).
-      We first show the base case, namely (1 = 1).
+      We first show the base case, namely (0 = 0).
       Fail We first show the base case, namely (1 = 1).
       reflexivity.
     - We now show the induction step.
