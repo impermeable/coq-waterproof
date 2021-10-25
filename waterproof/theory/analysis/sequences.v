@@ -26,7 +26,7 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
@@ -223,6 +223,7 @@ Proof.
     Apply Rabs_def1.
     Rewrite using (1 / (INR n + 1) - 0 = 1 / (INR n + 1)).
     We need to show that (1 / (INR n+1) < ε ).
+    It holds that Rininv_eps : (/ / ε = ε). 
     Rewrite using (ε = / / ε).
     We need to show that (1 / (INR n+1) < / / ε ).
     Rewrite using (1/(INR n+1) = /(INR n+1)).

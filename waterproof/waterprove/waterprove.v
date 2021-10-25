@@ -81,8 +81,8 @@ Local Ltac2 run_automation_with_intuition (search_depth: int option)
 Local Ltac2 run_automation_without_intuition (search_depth: int option)
                                           (databases: ident list option)
                                           (lemmas: (unit -> constr) list) :=
-    first [
-    solve [Std.auto Std.Off search_depth lemmas databases]
+    first [ solve [Std.auto Std.Off (Some 2) lemmas databases]
+    | solve [Std.auto Std.Off search_depth lemmas databases]
     | solve [Std.new_auto Std.Off search_depth lemmas databases]
     | solve [Std.eauto Std.Off search_depth search_depth lemmas databases]
     | fail_automation ()

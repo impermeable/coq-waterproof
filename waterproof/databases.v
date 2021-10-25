@@ -42,6 +42,7 @@ Require Import Waterproof.notations.notations.
 Require Import Reals.
 Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
+Require Import Coq.micromega.Lia.
 
 
 
@@ -194,16 +195,39 @@ Global Hint Resolve int_oo_prop2 : additional.
 
 (** *** The real database *)
 (** Add field, lra and nra to tactics to try automatically *)
-Global Hint Extern 3 ( _ = _ ) => field : real.
-Global Hint Extern 3 ( _ <= _ ) => lra : real.
-Global Hint Extern 3 ( _ >= _ ) => lra : real.
-Global Hint Extern 3 ( _ < _ ) => lra : real.
-Global Hint Extern 3 ( _ > _ ) => lra : real.
-Global Hint Extern 3 ( _ <= _ ) => nra : real.
-Global Hint Extern 3 (_ >= _ ) => nra : real.
-Global Hint Extern 3 ( _ < _ ) => nra : real.
-Global Hint Extern 3 ( _ > _ ) => nra : real.
+Global Hint Extern 3 ( @eq R _ _ ) => field : reals.
 
+Global Hint Extern 3 ( Rle _ _ ) => lra : reals.
+Global Hint Extern 3 ( Rge _ _ ) => lra : reals.
+Global Hint Extern 3 ( Rlt _ _ ) => lra : reals.
+Global Hint Extern 3 ( Rgt _ _ ) => lra : reals.
+Global Hint Extern 3 ( Rle _ _ ) => nra : reals.
+Global Hint Extern 3 ( Rge _ _ ) => nra : reals.
+Global Hint Extern 3 ( Rlt _ _ ) => nra : reals.
+Global Hint Extern 3 ( Rgt ) => nra : reals.
+
+Global Hint Extern 3 ( _ = _ ) => ring : additional.
+Global Hint Extern 3 ( @eq nat _  _) => lia : additional.
+Global Hint Extern 3 ( le _ _ ) => lia : additional.
+Global Hint Extern 3 ( ge _ _ ) => lia : additional.
+Global Hint Extern 3 ( lt _ _ ) => lia : additional.
+Global Hint Extern 3 ( gt _ _ ) => lia : additional.
+
+
+Global Hint Resolve Rmin_l : reals.
+Global Hint Resolve Rmin_r : reals.
+Global Hint Resolve Rmax_l : reals.
+Global Hint Resolve Rmax_r : reals.
+Global Hint Resolve Rle_max_compat_l : reals.
+Global Hint Resolve Rle_max_compat_r : reals.
+Global Hint Resolve Rmax_lub : reals.
+Global Hint Resolve Rmax_lub_lt : reals.
+Global Hint Resolve Rmax_left : reals.
+Global Hint Resolve Rmax_right : reals.
+Global Hint Resolve Rmin_left : reals.
+Global Hint Resolve Rmin_right : reals.
+Global Hint Resolve Rmin_glb : reals.
+Global Hint Resolve Rmin_glb_lt : reals.
 
 (** ### ** The reals database ***)
 
@@ -288,6 +312,7 @@ Qed.
 Global Hint Resolve div_sign_flip : reals.
 Global Hint Resolve div_pos : reals.
 Global Hint Resolve inv_remove : reals.
+Global Hint Resolve Rinv_involutive : reals.
 Global Hint Resolve Rabs_left : reals.
 Global Hint Resolve Rabs_right : reals.
 Global Hint Resolve Rabs_left1 : reals.
