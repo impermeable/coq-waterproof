@@ -53,4 +53,10 @@ Goal forall x : R, exists n : nat, INR(n) > x.
     - Fail Case (x <= 0).
       Case (1 < x).
 Abort.
+
+(** Test 2: This tests to see what error is thrown if we try a nonsense case analysis. *)
+Goal forall x : R, exists n : nat, INR(n) > x.
+    intro x.
+    Fail Either (x <= 1) or (0 = 0).
+Abort.
 Close Scope R_scope.

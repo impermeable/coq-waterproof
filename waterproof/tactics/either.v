@@ -69,9 +69,12 @@ Ltac2 Notation "Case" t(constr) := case t.
         - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) 
-:= (assert ({$t1} + {$t2}) as u by auto with decidability nocore);
-   destruct u; Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
-               Control.focus 2 2 (fun () => apply (Case.unwrap $t2)).
+:= let attempt_t1_or_t2 () := (assert ({$t1} + {$t2}) as u by auto with decidability nocore) in
+   match Control.case attempt_t1_or_t2 with
+    | Val _   => destruct u; Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                 Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
+    | Err exn => Control.zero (CaseError "Could not find a proof that the either the first or the second statement holds.")
+    end.
 (* Removed the attempt 'assert t2 + t1' because this switches the ordering specified by the user. *)
 
 Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
