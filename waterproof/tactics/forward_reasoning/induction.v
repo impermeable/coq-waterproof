@@ -33,6 +33,9 @@ Require Import Waterproof.auxiliary.
 Ltac2 Type exn ::= [ NaturalInductionError(string) ].
 Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
 
+(* Lemma to write Sn in goal induction step as n+1. *)
+Lemma Sn_eq_nplus1 : forall n, S n = n + 1.
+Proof. intro n. induction n. reflexivity. simpl. rewrite IHn. reflexivity. Qed.
 
 (** * induction_with_hypothesis_naming
     Performs mathematical induction.
@@ -51,7 +54,8 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
     let type_x := (Aux.get_value_of_hyp x_hyp) in
     match (Constr.equal type_x constr:(nat)) with
     | true => induction $x_hyp; Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
-                                Control.focus 2 2 (fun () => apply (NaturalInduction.Step.unwrap))
+                                Control.focus 2 2 (fun () => rewrite (Sn_eq_nplus1 $x_hyp);
+                                                             apply (NaturalInduction.Step.unwrap))
     | false => induction $x_hyp
     end.
 Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
