@@ -44,10 +44,39 @@ Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
 Require Import Coq.micromega.Lia.
 
+(** ** Additional database *)
+
+(* This is currently just a placeholder *)
+
+Global Hint Resolve Rmax_l : additional.
+
+(** ** Intuition database *)
+
+Global Hint Extern 3 => intuition (auto with core) : intuition.
+
+(** ** Firstorder database *)
+
+Global Hint Extern 3 => firstorder (auto with core) : firstorder.
+
+(** ** Logic database *) 
+
+(** ## De Morgan laws for quantifiers according to classical logic *)
+Require Import Classical_Pred_Type.
+
+Global Hint Resolve not_ex_all_not : constructive_logic.
+Global Hint Resolve ex_not_not_all : constructive_logic.
+Global Hint Resolve all_not_not_ex : constructive_logic.
+
+Global Hint Resolve not_ex_all_not : classical_logic.
+Global Hint Resolve ex_not_not_all : classical_logic.
+Global Hint Resolve all_not_not_ex : classical_logic.
+Global Hint Resolve not_all_not_ex : classical_logic.
+Global Hint Resolve not_all_ex_not : classical_logic.
+(* not_ex_not_all cannot be used as a hint. *)
+(* Global Hint Resolve not_ex_not_all : classical_logic. *)
 
 
-(** ### ** The additional database ***)
-
+(** ** Subsets: lemmas for subsets of elements *)
 (** ### Various lemmas *)
 Lemma base_same : forall C : Type,
     forall P : C -> Prop,
@@ -69,57 +98,17 @@ Proof.
     trivial.
 Qed.
 
-Global Hint Resolve base_same : additional.
-Global Hint Resolve same_base : additional.
+Global Hint Resolve base_same : subsets.
+Global Hint Resolve same_base : subsets.
 
-Lemma Req_true : forall x y : R, x = y -> Reqb x y = true.
-Proof.
-    intros. 
-    destruct (Reqb_eq x y). 
-    apply (H1 H).
-Qed.
-
-Lemma true_Req : forall x y : R, Reqb x y = true -> x = y.
-Proof.
-    intros.
-    destruct (Reqb_eq x y). 
-    apply (H0 H).
-Qed.
-
-Lemma Req_false : forall x y : R, x <> y -> Reqb x y = false.
-Proof.
-    intros. 
-    unfold Reqb. 
-    destruct Req_dec. 
-    contradiction. 
-    trivial.
-Qed.
-
-Lemma false_Req : forall x y : R, Reqb x y = false -> x <> y.
-Proof.
-    intros. 
-    destruct (Req_dec x y). 
-    rewrite (Req_true x y e) in H. 
-    assert (H1 : true <> false). 
-    auto with *. 
-    contradiction.
-    apply n.
-Qed.
-
-Global Hint Resolve (eq_sym) : reals.
-Global Hint Resolve false_Req : reals.
-Global Hint Resolve true_Req : reals.
-
-
-(** ** Subsets: lemmas for subsets of elements*)
-Global Hint Resolve witness_R : additional. (* for all (V : subset_R) (x : V), V x *)
+Global Hint Resolve witness_R : subsets. (* for all (V : subset_R) (x : V), V x *)
 
 Lemma exists_and_implies_exists_subset_R (A : subset_R) (P : R -> Prop) : 
   (exists a : R, (A a) /\ (P a)) -> (exists a : A, P a).
 Proof.
   intro H. destruct H as [a [ainA Ha]]. exists (mk_elem_R A a ainA). exact Ha. 
 Defined.
-Hint Resolve exists_and_implies_exists_subset_R : additional.
+Hint Resolve exists_and_implies_exists_subset_R : subsets.
 
 (** ### Intervals : definitions of intervals *)
 Definition int_cc_prop {x y : R} :
@@ -178,23 +167,60 @@ Definition int_oo_prop2 {x y : R} : forall r : (x,y), r < y.
     apply (witness_R (x,y)).
 Qed.
 
-Global Hint Resolve int_cc_prop : additional.
-Global Hint Resolve int_co_prop : additional.
-Global Hint Resolve int_oc_prop : additional.
-Global Hint Resolve int_oo_prop : additional.
+Global Hint Resolve int_cc_prop : subsets.
+Global Hint Resolve int_co_prop : subsets.
+Global Hint Resolve int_oc_prop : subsets.
+Global Hint Resolve int_oo_prop : subsets.
 
-Global Hint Resolve int_cc_prop1 : additional.
-Global Hint Resolve int_cc_prop2 : additional.
-Global Hint Resolve int_co_prop1 : additional.
-Global Hint Resolve int_co_prop2 : additional.
-Global Hint Resolve int_oc_prop1 : additional.
-Global Hint Resolve int_oc_prop2 : additional.
-Global Hint Resolve int_oo_prop1 : additional.
-Global Hint Resolve int_oo_prop2 : additional.
+Global Hint Resolve int_cc_prop1 : subsets.
+Global Hint Resolve int_cc_prop2 : subsets.
+Global Hint Resolve int_co_prop1 : subsets.
+Global Hint Resolve int_co_prop2 : subsets.
+Global Hint Resolve int_oc_prop1 : subsets.
+Global Hint Resolve int_oc_prop2 : subsets.
+Global Hint Resolve int_oo_prop1 : subsets.
+Global Hint Resolve int_oo_prop2 : subsets.
 
 
-(** *** The real database *)
-(** Add field, lra and nra to tactics to try automatically *)
+(** *** The reals database *)
+Lemma Req_true : forall x y : R, x = y -> Reqb x y = true.
+Proof.
+    intros. 
+    destruct (Reqb_eq x y). 
+    apply (H1 H).
+Qed.
+
+Lemma true_Req : forall x y : R, Reqb x y = true -> x = y.
+Proof.
+    intros.
+    destruct (Reqb_eq x y). 
+    apply (H0 H).
+Qed.
+
+Lemma Req_false : forall x y : R, x <> y -> Reqb x y = false.
+Proof.
+    intros. 
+    unfold Reqb. 
+    destruct Req_dec. 
+    contradiction. 
+    trivial.
+Qed.
+
+Lemma false_Req : forall x y : R, Reqb x y = false -> x <> y.
+Proof.
+    intros. 
+    destruct (Req_dec x y). 
+    rewrite (Req_true x y e) in H. 
+    assert (H1 : true <> false). 
+    auto with *. 
+    contradiction.
+    apply n.
+Qed.
+
+Global Hint Resolve (eq_sym) : reals.
+Global Hint Resolve false_Req : reals.
+Global Hint Resolve true_Req : reals.
+
 Global Hint Extern 3 ( @eq R _ _ ) => field : reals.
 
 Global Hint Extern 3 ( Rle _ _ ) => lra : reals.
@@ -206,12 +232,12 @@ Global Hint Extern 3 ( Rge _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rlt _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rgt ) => nra : reals.
 
-Global Hint Extern 3 ( _ = _ ) => ring : additional.
-Global Hint Extern 3 ( @eq nat _  _) => lia : additional.
-Global Hint Extern 3 ( le _ _ ) => lia : additional.
-Global Hint Extern 3 ( ge _ _ ) => lia : additional.
-Global Hint Extern 3 ( lt _ _ ) => lia : additional.
-Global Hint Extern 3 ( gt _ _ ) => lia : additional.
+Global Hint Extern 3 ( _ = _ ) => ring : waterproof_integers.
+Global Hint Extern 3 ( @eq nat _  _) => lia : waterproof_integers.
+Global Hint Extern 3 ( le _ _ ) => lia : waterproof_integers.
+Global Hint Extern 3 ( ge _ _ ) => lia : waterproof_integers.
+Global Hint Extern 3 ( lt _ _ ) => lia : waterproof_integers.
+Global Hint Extern 3 ( gt _ _ ) => lia : waterproof_integers.
 
 
 Global Hint Resolve Rmin_l : reals.
@@ -228,9 +254,6 @@ Global Hint Resolve Rmin_left : reals.
 Global Hint Resolve Rmin_right : reals.
 Global Hint Resolve Rmin_glb : reals.
 Global Hint Resolve Rmin_glb_lt : reals.
-
-(** ### ** The reals database ***)
-
 
 (** ## Lemmas regarding identities for absolute values and inverses*)
 Lemma div_sign_flip : forall r1 r2 : R, r1 > 0 -> r2 > 0 -> r1 > 1 / r2 -> 1 / r1 < r2.
@@ -323,6 +346,7 @@ Global Hint Resolve Rabs_pos : reals.
 Global Hint Resolve Rle_abs_min : reals.
 Global Hint Resolve Rge_min_abs : reals.
 Global Hint Resolve Rmax_abs : reals.
+Global Hint Resolve Rinv_0_lt_compat : reals.
 
 
 Hint Extern 1 => rewrite Rabs_zero : reals.
@@ -340,25 +364,6 @@ Local Open Scope R_scope.
 From Ltac2 Require Import Ltac2 Ident.
 Require Import Ltac.
 Require Import Ltac2.Init.
-
-
-
-
-
-
-
-Hint Extern 0 => reflexivity : 
-  eq_opp eq_zero eq_one
-  eq_abs eq_sqr eq_exp eq_other 
-  eq_plus eq_minus eq_mult.
-
-Hint Extern 1 (_ = _) => lra :
-  
-  eq_abs eq_sqr eq_exp.
-
-
-
-
 
 (** ### ** Plus, minus and multiplication rewriters**
 In this database, we will add commutative, associative and distributative properties of numbers in combination with 

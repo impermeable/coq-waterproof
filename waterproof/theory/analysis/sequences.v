@@ -32,12 +32,13 @@ Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard.
 
-Global Hint Resolve Rabs_Rabsolu.
-Global Hint Resolve Rabs_minus_sym.
-Global Hint Resolve Rmult_lt_0_compat : real.
-Global Hint Resolve Rinv_lt_contravar : real.
+Global Hint Resolve Rabs_Rabsolu : reals.
+Global Hint Resolve Rabs_minus_sym : reals.
+Global Hint Resolve Rmult_lt_0_compat : reals.
+Global Hint Resolve Rinv_lt_contravar : reals.
 
 Open Scope extra.
+
 (** ** What is a sequence of real numbers?
 
 A sequence of real numbers is a function from the natural numbers to the real numbers. So a function $a_seq : \mathbb{N} → \mathbb{R}$ is a sequence.*)
@@ -188,9 +189,9 @@ Proof.
     Choose Nn := O.
     Take n : ℕ; such that n_ge_Nn : (n ≥ Nn)%nat.
     It holds that H : (s n = c).
-    It holds that H1 : (｜c - c｜ = 0).
     Rewrite using (s n = c).
-    This concludes the proof.
+    By R_dist_eq it holds that H2 : (｜c - c｜ = 0).
+    We conclude that (｜c - c｜ < ε).
 Qed.
 
 (** #### **Another simple limit**

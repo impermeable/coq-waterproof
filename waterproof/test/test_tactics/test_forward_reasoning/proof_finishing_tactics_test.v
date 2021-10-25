@@ -69,7 +69,6 @@ Goal forall A B : Prop, ((A /\ B) -> A).
 Proof.
   intros.
   auto 1 with *.
-  destruct H.
 Abort.
 
 (** * Test 2:

@@ -270,7 +270,7 @@ Abort.
 (* Empty the database *)
 Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBSquareRoot)::old_selection.
+    (WaterproofDBReals)::old_selection.
 Ltac2 Eval print (of_string "Current database selection is:").
 Ltac2 Eval global_database_selection.
 
@@ -360,8 +360,6 @@ Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBSquareRoot)::old_selection.
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBAbsoluteValue)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBOther)::old_selection.
 
 (** * Test 19
     This test should not be solved, since it has all 
@@ -396,8 +394,6 @@ Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBSquareRoot)::old_selection.
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBExponential)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBOther)::old_selection.
 Ltac2 Eval print (of_string "Current database selection is:").
 Ltac2 Eval global_database_selection.
 
@@ -423,7 +419,7 @@ Goal forall a:R, Rabs(a) = Rabs(-a).
     waterprove (Control.goal ()) [].
 Abort.
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBSquareRoot)::old_selection.
+    (WaterproofDBReals)::old_selection.
 
 (** * Test 23
     Another test that uses two databases, for good measure.

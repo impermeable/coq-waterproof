@@ -120,7 +120,7 @@ Definition cv_implies_cv_abs_to_l_abs :=
 
 We have to take care with the associative level.
 When using this in rewrites, $<$, $>$, etc. should bind stronger.*)
-Notation "| x |" := (Rabs x) (at level 69, x at level 200).
+Notation "| x |" := (Rabs x) (at level 69, x at next level).
 Notation "｜ x - y ｜" := (R_dist x y) (at level 69, x at level 48, y at level 48) : extra.
 
 (** ## Subsets and intervals*)

@@ -26,7 +26,8 @@ Require Import Classical_Pred_Type.
 
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.load_database.Subsets.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.definitions.set_definitions.
 Require Import Waterproof.set_search_depth.To_5.
