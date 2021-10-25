@@ -97,19 +97,20 @@ Qed.
 Lemma index_seq_equiv (n : ℕ → ℕ) : is_index_seq n ⇔ is_index_sequence n.
 Proof. 
     We show both directions.
-    intro.
-    unfold is_index_sequence. 
-    Take k : ℕ. 
-    unfold is_index_seq in H. 
-    rewrite successor_is_plus_one.
-    Apply H.
-
-    intro.
-    unfold is_index_seq. 
-    Take k : ℕ. 
-    unfold is_index_sequence in H. 
-    rewrite <- successor_is_plus_one.
-    Apply H.
+    - We need to show that (is_index_seq n ⇨ is_index_sequence n).
+      intro.
+      unfold is_index_sequence. 
+      Take k : ℕ. 
+      unfold is_index_seq in H. 
+      rewrite successor_is_plus_one.
+      Apply H.
+    - We need to show that (is_index_sequence n ⇨ is_index_seq n).
+      intro.
+      unfold is_index_seq. 
+      Take k : ℕ. 
+      unfold is_index_sequence in H. 
+      rewrite <- successor_is_plus_one.
+      Apply H.
 Qed.
 
 

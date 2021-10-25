@@ -66,30 +66,29 @@ Lemma equivalence_upper_bounds :
 Proof.
     Take A : subset_R, L : ℝ.
     We show both directions.
-    Assume L_upp_bd : (is_upper_bound A L).
-    Expand the definition of Raxioms.is_upper_bound.
-    That is, write the goal as (for all x : ℝ, A x ⇨ x ≤ L).
-    Expand the definition of is_upper_bound in L_upp_bd.
-    That is, write L_upp_bd as (for all a : A, a ≤ L).
-    Take x : ℝ.
-    Assume w : (A x).
-    Define b := (mk_elem_R A x w).
-    By L_upp_bd it holds that H : (b ≤ L).
-    Apply H.
-
-    Assume L_is_upp_bd : (Raxioms.is_upper_bound A L).
-    Expand the definition of is_upper_bound.
-    That is, write the goal as (for all a : A, a ≤ L).
-    Expand the definition of Raxioms.is_upper_bound in L_is_upp_bd.
-    That is, write L_is_upp_bd as (for all x : ℝ, A x ⇨ x ≤ L).
-    Take a : A.
-    Apply L_is_upp_bd.
-    (** TODO subsets_elements_satisfy_predicate does not exist??? *)
-    (* By subset_elements_satisfy_predicate it holds that h2: (is_in A a). *)
-    (* By L_is_upp_bd it holds that (a ≤ L). *)
-
-    
-    This concludes the proof.
+    - We need to show that (is_upper_bound A L ⇨ Raxioms.is_upper_bound A L).
+      Assume L_upp_bd : (is_upper_bound A L).
+      Expand the definition of Raxioms.is_upper_bound.
+      That is, write the goal as (for all x : ℝ, A x ⇨ x ≤ L).
+      Expand the definition of is_upper_bound in L_upp_bd.
+      That is, write L_upp_bd as (for all a : A, a ≤ L).
+      Take x : ℝ.
+      Assume w : (A x).
+      Define b := (mk_elem_R A x w).
+      By L_upp_bd it holds that H : (b ≤ L).
+      Apply H.
+    - We need to show that ( Raxioms.is_upper_bound A L ⇨ is_upper_bound A L ).
+      Assume L_is_upp_bd : (Raxioms.is_upper_bound A L).
+      Expand the definition of is_upper_bound.
+      That is, write the goal as (for all a : A, a ≤ L).
+      Expand the definition of Raxioms.is_upper_bound in L_is_upp_bd.
+      That is, write L_is_upp_bd as (for all x : ℝ, A x ⇨ x ≤ L).
+      Take a : A.
+      Apply L_is_upp_bd.
+      (** TODO subsets_elements_satisfy_predicate does not exist??? *)
+      (* By subset_elements_satisfy_predicate it holds that h2: (is_in A a). *)
+      (* By L_is_upp_bd it holds that (a ≤ L). *)
+      This concludes the proof.
 Qed.
 
 Lemma equivalence_sup_lub :
@@ -99,8 +98,8 @@ Lemma equivalence_sup_lub :
 Proof.
     Take A : subset_R, M : ℝ.
     We show both directions.
-
-    - Assume M_is_sup_A : (is_lub A M).
+    - We need to show that (is_lub A M ⇨ is_sup A M).
+      Assume M_is_sup_A : (is_lub A M).
       Expand the definition of is_lub, Raxioms.is_upper_bound in M_is_sup_A.
       That is, write M_is_sup_A as ((for all x : ℝ, A x ⇨ x ≤ M) 
         ∧ (for all b : ℝ, (for all x : ℝ, A x ⇨ x ≤ b) ⇨ M ≤ b)).
@@ -121,8 +120,8 @@ Proof.
         destruct M_is_sup_A as [M_is_R_ub_A M_is_R_lub_A].
         destruct (equivalence_upper_bounds A M0). 
         Apply (M_is_R_lub_A M0 (H M_is_ub_A)).
-
-    - Assume M_is_sup_A : (is_sup A M).
+    - We need to show that (is_sup A M ⇨ is_lub A M).
+      Assume M_is_sup_A : (is_sup A M).
       Expand the definition of is_lub.
       That is, write the goal as (Raxioms.is_upper_bound A M 
         ∧ (for all b : ℝ, Raxioms.is_upper_bound A b ⇨ M ≤ b)).
@@ -690,7 +689,8 @@ Theorem alt_char_sup :
 Proof.
 Take A : subset_R, M : ℝ.
 We show both directions.
-- Assume M_is_sup_A : (is_sup A M).
+- We need to show that (is_sup A M ⇨ is_sup_alt_char A M).
+  Assume M_is_sup_A : (is_sup A M).
   Expand the definition of is_sup_alt_char.
   That is, write the goal as (
   is_upper_bound A M
@@ -713,7 +713,8 @@ We show both directions.
       ε > 0 ⇨ there exists a : A ,
             M - ε < a).
 
-- Assume M_alt_sup : (is_sup_alt_char A M).
+- We need to show that (is_sup_alt_char A M ⇨ is_sup A M).
+  Assume M_alt_sup : (is_sup_alt_char A M).
   Expand the definition of is_sup_alt_char in M_alt_sup.
   That is, write M_alt_sup as (
   is_upper_bound A M
@@ -742,7 +743,8 @@ Theorem alt_char_inf :
 Proof.
 Take A : subset_R, m : ℝ.
 We show both directions.
-- Assume m_is_inf_A : (is_inf A m).
+- We need to show that (is_inf A m ⇨ is_inf_alt_char A m).
+  Assume m_is_inf_A : (is_inf A m).
   Expand the definition of is_inf_alt_char.
   That is, write the goal as (
   is_lower_bound A m
@@ -766,7 +768,8 @@ We show both directions.
        ε > 0 ⇨ there exists a : A ,
             m + ε > a).
 
-- Assume m_alt_inf : (is_inf_alt_char A m).
+- We need to show that (is_inf_alt_char A m ⇨ is_inf A m).
+  Assume m_alt_inf : (is_inf_alt_char A m).
   Expand the definition of is_inf_alt_char in m_alt_inf.
   That is, write m_alt_inf as (
     is_lower_bound A m

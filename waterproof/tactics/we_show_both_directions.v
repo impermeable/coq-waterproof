@@ -1,6 +1,7 @@
 (** * [we_show_both_directions.v]
 Authors: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 Creation date: 22 May 2021
 
 Version of [We show/prove both directions] tactic.
@@ -25,8 +26,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.tactics.goal_wrappers.
-
+Require Export Waterproof.tactics.goal_wrappers.
+Require Export Waterproof.tactics.we_need_to_show. (* Enable the unwrapping of the StateGoal wrapper *)
 
 Ltac2 Type exn ::= [ BothDirectionsError(string) ].
 
@@ -35,21 +36,24 @@ Ltac2 raise_both_directions_error (s:string) :=
 
 
 (** * both_statements_iff
-    Split the proof of an if and only if statement into both of its directions.
+    Split the proof of an if and only if statement into both of its directions, 
+    wraps both resulting goals in a [StateGoal.Wrapper].
 
     Arguments:
         - no arguments
 
     Does:
         - splits the if and only if statement into its both directions.
+        - wraps both goals in a [StateGoal.Wrapper].
 
     Raises Exceptions:
         - [BothDirectionsError], if the [goal] is not an if and only if [goal].
 *)
 Ltac2 both_statements_iff () :=
     lazy_match! goal with 
-        | [ |- _ <-> _] => split
-        | [ |- _ ] => raise_both_directions_error("This is not an if and only if, so try another tactic.")
+        | [ |- _ <-> _] => split; Control.enter (fun () => apply StateGoal.unwrap)
+        | [ |- _ ] => raise_both_directions_error("The goal is not to show an ‘if and only if’-statement,
+try another tactic.")
     end.
 
 
