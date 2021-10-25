@@ -177,9 +177,8 @@ Proof.
     Define b := (mk_elem_R A x w).
     ltac1:(pose proof (A_bdd_by_M b)).
     This follows by assumption.
-    Choose y := a.
-    We use induction on y.
-    This follows by assumption.
+    Choose (a).
+    We conclude that (A a).
     Choose M such that M_upp_bd according to H.
 
     destruct (equivalence_sup_lub A M) as [M_is_sup_A H2]. 

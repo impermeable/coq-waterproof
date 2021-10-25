@@ -75,7 +75,6 @@ Load induction.
     Should print a hint for a wrapped goal twice.
 *)
 Goal forall n, n + 0 = n.
-    intro n.
     We use induction on n.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)

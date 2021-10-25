@@ -50,7 +50,6 @@ Close Scope R_scope.
 Load induction.
 Load claims.
 Goal forall n, n + 0 = n.
-    intro n.
     We use induction on n.
     - Fail We claim that m : nat.
       admit.

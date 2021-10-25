@@ -192,7 +192,6 @@ Global Hint Resolve int_oo_prop1 : additional.
 Global Hint Resolve int_oo_prop2 : additional.
 
 
-
 (** *** The real database *)
 (** Add field, lra and nra to tactics to try automatically *)
 Global Hint Extern 3 ( _ = _ ) => field : real.
@@ -205,16 +204,6 @@ Global Hint Extern 3 (_ >= _ ) => nra : real.
 Global Hint Extern 3 ( _ < _ ) => nra : real.
 Global Hint Extern 3 ( _ > _ ) => nra : real.
 
-Global Hint Resolve Rmin_l : real.
-Global Hint Resolve Rmin_r : real.
-Global Hint Resolve Rmax_l : real.
-Global Hint Resolve Rmax_r : real.
-Global Hint Resolve Rle_max_compat_l : real.
-Global Hint Resolve Rle_max_compat_r : real.
-Global Hint Resolve Rmax_lub : real.
-Global Hint Resolve Rmax_lub_lt : real.
-Global Hint Resolve Rmin_glb : real.
-Global Hint Resolve Rmin_glb_lt : real.
 
 (** ### ** The reals database ***)
 
@@ -309,7 +298,6 @@ Global Hint Resolve Rabs_pos : reals.
 Global Hint Resolve Rle_abs_min : reals.
 Global Hint Resolve Rge_min_abs : reals.
 Global Hint Resolve Rmax_abs : reals.
-Global Hint Resolve Rmin_glb_lt : reals.
 
 
 Hint Extern 1 => rewrite Rabs_zero : reals.
@@ -375,7 +363,7 @@ Hint Extern 1 => (rewrite Rmult_plus_distr_r) :  eq_mult eq_plus.
 (** #### Other
 We have some other properties:
 *)
-Hint Extern 0 => (unfold Rminus) : eq_minus.
+Hint Extern 1 => (unfold Rminus) : eq_minus.
 (** ### **Opposite rewriters**
 In this database, we will add properties with the additive inverse.*)
 (** #### Distributitivity
@@ -484,11 +472,7 @@ Hint Extern 1 => (rewrite exp_plus) :  eq_exp. (* exp(a+b) = exp(a) * exp(b) *)
 Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
 
 
-
-
-
-
-
+Close Scope R_scope.
 
 
 

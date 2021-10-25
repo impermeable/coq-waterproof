@@ -4,6 +4,8 @@ Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
 Require Import Waterproof.databases. (* Req_true is in here *)
 
+Open Scope R_scope.
+
 Section Definitions.
 Context (X : Metric_Space).
 
