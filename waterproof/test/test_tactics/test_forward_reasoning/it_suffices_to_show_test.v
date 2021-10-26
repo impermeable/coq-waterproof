@@ -60,6 +60,27 @@ Proof.
     assert_raises_error result.
 Abort.
 
+Require Import Waterproof.load_database.Integers.
+
+Variable f : nat -> nat.
+Parameter f_increasing : forall m n : nat, m <= n -> f m <= f n.
+
+Lemma test_it_suffices_3: f 1 <= f 2.
+    By f_increasing it suffices to show that (1 <= 2).
+    assert_goal_is constr:(1 <= 2).
+Abort.
+
+(** * Test 2
+    Error case: give a statement does not suffice to complete the proof.
+*)
+Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
+Proof.
+    intros A B.
+    (* Clearly this statement isn't helpful in proving the goal! *)
+    let result () := By (f_increasing) it suffices to show that (1 + 1 = 2) in
+    assert_raises_error result.
+Abort.
+
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [It suffices to show that ... by ...] 
     Variant with the [by] clause.
