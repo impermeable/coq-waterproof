@@ -53,11 +53,9 @@ Local Open Scope R_scope.
 
 Create HintDb decidability.
 Global Hint Resolve Req_EM_T : decidability.
-Global Hint Resolve Rlt_dec Rle_dec Rgt_dec Rge_dec : decidability.
-Global Hint Resolve Rlt_le_dec Rle_lt_dec Rgt_ge_dec Rge_gt_dec : decidability.
 
-
-(** The following lemmas are necessary to write e.g. `{r1 ≤ r2} + {r2 < r1}`.*)
+Global Hint Resolve Rlt_dec Rgt_dec Rge_dec : decidability. (* standard *)
+(** The following four lemmas are necessary to write e.g. `{r1 ≤ r2} + {r2 < r1}`.*)
 Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
 Proof.
     intros.
@@ -77,10 +75,11 @@ Proof.
     ltac1:(apply (right (Req_le r1 r2 e))). 
     ltac1:(apply (left r)).
 Qed.
-
 Global Hint Resolve Rlt_ge_dec Rgt_le_dec : decidability.
 
-(** Finally, we add four more lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
+
+Global Hint Resolve Rlt_le_dec Rle_lt_dec Rgt_ge_dec Rge_gt_dec : decidability. (* standard *)
+(** Four more lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
 Lemma Rlt_gt_dec : forall r1 r2, {r1 < r2} + {~ r2 > r1}.
 Proof.
     intros.
@@ -120,5 +119,41 @@ Proof.
     ltac1:(apply (left (Req_ge r1 r2 e))).
     ltac1:(apply (left (Rgt_ge r1 r2 r))).
 Qed.
-
 Global Hint Resolve Rlt_gt_dec Rgt_lt_dec Rle_ge_dec Rge_le_dec : decidability.
+
+
+(** Four lemmas to split e.g. `{r1 <= r2} into {r1 < r2} + {r1 = r2}`.*)
+Lemma Rle_impl_eq_lt_dec : forall r1 r2, (r1 <= r2) -> {r1 = r2} + {r1 < r2}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2).
+    - destruct s.
+      + right. exact r.
+      + left. exact e.
+    - ltac1:(exfalso).
+      exact (Rlt_not_le _ _ r H).
+Qed.
+Lemma Rle_impl_gt_eq_dec : forall r1 r2, (r1 <= r2) -> {r1 = r2} + {r2 > r1}.
+Proof. apply Rle_impl_eq_lt_dec. Qed.
+
+Lemma Rge_impl_eq_gt_dec : forall r1 r2, (r1 >= r2) -> {r1 = r2} + {r1 > r2}.
+Proof.
+    intros.
+    destruct (total_order_T r2 r1).
+    - destruct s.
+      + right. exact r.
+      + left. symmetry. exact e.
+    - ltac1:(exfalso).
+      exact (Rlt_not_ge _ _ r H).
+Qed.
+Lemma Rge_impl_eq_lt_dec : forall r1 r2, (r1 >= r2) -> {r1 = r2} + {r2 < r1}.
+Proof. apply Rge_impl_eq_gt_dec. Qed.
+Global Hint Resolve Rle_impl_eq_lt_dec Rle_impl_gt_eq_dec Rge_impl_eq_gt_dec Rge_impl_eq_lt_dec : decidability.
+
+Global Hint Resolve total_order_T : decidability. (* x < y, x = y or y < x*)
+Lemma total_order_T_lt_gt : forall r1 r2 : R, {r1 < r2} + {r1 = r2} + {r1 > r2}.
+Proof. apply total_order_T. Qed.
+Lemma total_order_T_gt_gt : forall r1 r2 : R, {r2 > r1} + {r1 = r2} + {r1 > r2}.
+Proof. apply total_order_T. Qed.
+Global Hint Resolve total_order_T_lt_gt total_order_T_gt_gt : decidability.
+

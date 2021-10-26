@@ -48,7 +48,7 @@ Ltac2 Type exn ::= [ CaseError(string) | InputError(message) ].
 *)
 Ltac2 case (t:constr) := lazy_match! goal with
                          | [|- Case.Wrapper ?v _] => 
-                          match Constr.equal v t with
+                          match Aux.check_constr_equal v t with
                           | true => apply (Case.wrap $v)
                           | false => Control.zero (CaseError "Wrong case specified.")
                           end
@@ -57,6 +57,9 @@ Ltac2 case (t:constr) := lazy_match! goal with
 Ltac2 Notation "Case" t(constr) := case t.
 
 
+(* Switch order of decidable goal. *)
+Local Lemma sumbool_comm (A B : Prop) : {A} + {B} -> {B} + {A}.
+Proof. intro H. induction H. right; exact a. left; exact b. Qed.
 
 (** * either_case_1_or_case_2
     Split the proof by case distinction.
@@ -69,15 +72,130 @@ Ltac2 Notation "Case" t(constr) := case t.
         - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) 
-:= let attempt_t1_or_t2 () := (assert ({$t1} + {$t2}) as u by auto with decidability nocore) in
-   match Control.case attempt_t1_or_t2 with
-    | Val _   => destruct u; Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+:= let h := Fresh.in_goal @h in
+   (* Try to find a proof of t1 + t2. *)
+   let attempt_proof1 () := (assert ({$t1} + {$t2}) as $h 
+        by (auto with decidability nocore)) in
+   match Control.case attempt_proof1 with
+    | Val _   => destruct h; 
+                 Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
                  Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-    | Err exn => Control.zero (CaseError "Could not find a proof that the either the first or the second statement holds.")
+    | Err exn => (* If not found, try to find a proof of t2 + t1. *)
+                 let attempt_proof2 () := (assert ({$t1} + {$t2}) as $h 
+                      by (apply sumbool_comm; auto with decidability nocore)) in
+                 match Control.case attempt_proof2 with
+                 | Val _   => destruct h; 
+                              Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                              Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
+                 | Err exn => Control.zero exn (*(CaseError "Could not find a proof that at least the first or the second statement holds.")*)
+                 end
     end.
-(* Removed the attempt 'assert t2 + t1' because this switches the ordering specified by the user. *)
 
 Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
     panic_if_goal_wrapped ();
     either_or t1 t2.
 
+
+
+
+(* Type that enables a three-case distiction to be solved with three bullets that are of the same level. *)
+Inductive sumtriad (A B C : Prop) : Set :=
+  | left   : A -> sumtriad A B C
+  | middle : B -> sumtriad A B C
+  | right  : C -> sumtriad A B C.
+Arguments left   {A B C} _.
+Arguments middle {A B C} _.
+Arguments right  {A B C} _.
+
+(* Lemmas that enable the searching of hints whose cases are ordered differently than the user's input. *)
+Local Lemma double_sumbool_sumtriad_abc (A B C : Prop) : {A} + {B} + {C} -> sumtriad A B C.
+  Proof. intro H. induction H as [[a | b] | c]. exact (left a). exact (middle b). exact (right c). Qed.
+Local Lemma double_sumbool_sumtriad_acb (A B C : Prop) : {A} + {C} + {B} -> sumtriad A B C.
+  Proof. intro H. induction H as [[a | c] | b]. exact (left a). exact (right c). exact (middle b). Qed.
+Local Lemma double_sumbool_sumtriad_bac (A B C : Prop) : {B} + {A} + {C} -> sumtriad A B C.
+  Proof. intro H. induction H as [[b | a] | c]. exact (middle b). exact (left a). exact (right c). Qed.
+Local Lemma double_sumbool_sumtriad_bca (A B C : Prop) : {B} + {C} + {A} -> sumtriad A B C.
+  Proof. intro H. induction H as [[b | c] | a]. exact (middle b). exact (right c). exact (left a). Qed.
+Local Lemma double_sumbool_sumtriad_cab (A B C : Prop) : {C} + {A} + {B} -> sumtriad A B C.
+  Proof. intro H. induction H as [[c | a] | b]. exact (right c). exact (left a). exact (middle b). Qed.
+Local Lemma double_sumbool_sumtriad_cba (A B C : Prop) : {C} + {B} + {A} -> sumtriad A B C.
+  Proof. intro H. induction H as [[c | b] | a]. exact (right c). exact (middle b). exact (left a). Qed.
+
+
+(** * either_case_1_or_case_2_or_case3
+    Split the proof by case distinction.
+
+    Arguments:
+        - [t1 : constr], the first case.
+        - [t2 : constr], the second case.
+        - [t3 : constr], the third case.
+
+    Does:
+        - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+*)
+Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr)
+:= let h := Fresh.in_goal @h in
+   (* Try to find a proof of t1 + t2 + t3. *)
+   let attempt_proof_abc () := (assert (sumtriad $t1 $t2 $t3) as $h 
+        by (apply double_sumbool_sumtriad_abc; auto with decidability nocore)) in
+   match Control.case attempt_proof_abc with
+    | Val _ => destruct h; 
+               Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+               Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
+               Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
+    | Err exn
+      => (* Try to find a proof of t1 + t3 + t2. *)
+          let attempt_proof_acb () := (assert (sumtriad $t1 $t2 $t3) as $h 
+              by (apply double_sumbool_sumtriad_acb; auto with decidability nocore)) in
+          match Control.case attempt_proof_acb with
+          | Val _ => destruct h; 
+                     Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                     Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
+                     Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
+          | Err exn
+            => (* Try to find a proof of t2 + t1 + t3. *)
+                let attempt_proof_bac () := (assert (sumtriad $t1 $t2 $t3) as $h 
+                    by (apply double_sumbool_sumtriad_bac; auto with decidability nocore)) in
+                match Control.case attempt_proof_bac with
+                | Val _ => destruct h; 
+                           Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                           Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
+                           Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
+                | Err exn
+                  => (* Try to find a proof of t2 + t3 + t1. *)
+                let attempt_proof_bca () := (assert (sumtriad $t1 $t2 $t3) as $h 
+                          by (apply double_sumbool_sumtriad_bca; auto with decidability nocore)) in
+                      match Control.case attempt_proof_bca with
+                      | Val _ => destruct h; 
+                                 Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                                 Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
+                                 Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
+                      | Err exn
+                        => (* Try to find a proof of t3 + t1 + t2. *)
+                            let attempt_proof_cab () := (assert (sumtriad $t1 $t2 $t3) as $h 
+                                by (apply double_sumbool_sumtriad_cab; auto with decidability nocore)) in
+                            match Control.case attempt_proof_cab with
+                            | Val _ => destruct h; 
+                                       Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                                       Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
+                                       Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
+                            | Err exn
+                              => (* Try to find a proof of t3 + t2 + t1. *)
+                                  let attempt_proof_cba () := (assert (sumtriad $t1 $t2 $t3) as $h 
+                                      by (apply double_sumbool_sumtriad_cba; auto with decidability nocore)) in
+                                  match Control.case attempt_proof_cba with
+                                  | Val _ => destruct h; 
+                                             Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+                                             Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
+                                             Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
+                                  | Err exn => Control.zero (CaseError "Could not find a proof that at least the first, the second or the third statement holds.")
+                                  end
+                            end
+                      end
+                end
+          end
+    end.
+
+Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) := 
+    panic_if_goal_wrapped ();
+    either_or_or t1 t2 t3.
