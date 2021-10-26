@@ -41,6 +41,8 @@ Ltac2 Type exn ::= [ GoalCheckError(string) ].
 Ltac2 raise_goal_check_error (s:string) := 
     Control.zero (GoalCheckError s).
 
+Local Ltac2 idtac () := ().
+
 (** * check_goal
     Check if the type of the goal is syntactically equal to [t].
 
@@ -57,8 +59,8 @@ Local Ltac2 check_goal := fun (t:constr) =>
     lazy_match! goal with
     | [ |- ?g] => 
         match Aux.check_constr_equal g t with
-        | true => print (concat 
-                    (of_string "The goal is indeed: ") (of_constr t))
+        | true => idtac ()
+                  (* print (concat (of_string "The goal is indeed: ") (of_constr t))*)
         | false => raise_goal_check_error "Wrong goal specified."
         end
     | [|-_] => raise_goal_check_error "Wrong goal specified."
@@ -81,15 +83,14 @@ Local Ltac2 check_and_change_goal := fun (t:constr) =>
     lazy_match! goal with
     | [ |- ?g] => 
         match Aux.check_constr_equal g t with
-        | true => print (concat 
-                    (of_string "The goal is indeed: ") (of_constr t));
+        | true => idtac ();
+                  (* print (concat (of_string "The goal is indeed: ") (of_constr t))*)
                   change $t
         | false => raise_goal_check_error "Wrong goal specified."
         end
     | [|-_] => raise_goal_check_error "Wrong goal specified."
     end.
 
-Local Ltac2 idtac () := ().
 
 (** * unwrap_state_goal
     Attempts to remove the [StateGoal.Wrapper] wrapper from the goal.

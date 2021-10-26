@@ -32,6 +32,8 @@ Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.tactics.goal_wrappers.
 
+Local Ltac2 idtac () := ().
+
 (** * By ... it holds that ... : ...
     Introduce a new sublemma and try to prove it immediately,
     optionally using a given lemma.
@@ -59,7 +61,7 @@ Ltac2 assert_and_prove_sublemma (id: ident) (conclusion: constr)
     let proof_attempt () := Aux.ltac2_assert_with_by id conclusion by_arg
     in
     match Control.case proof_attempt with
-    | Val _ => print (of_string ("New sublemma successfully added."))
+    | Val _ => idtac () (*print (of_string ("New sublemma successfully added."))*)
     | Err exn => Control.zero exn
     end.
 
