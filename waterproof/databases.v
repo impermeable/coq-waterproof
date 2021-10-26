@@ -52,11 +52,11 @@ Global Hint Resolve Rmax_l : additional.
 
 (** ** Intuition database *)
 
-Global Hint Extern 3 => intuition (auto with core) : intuition.
+Global Hint Extern 3 => intuition (auto 2 with core) : intuition.
 
 (** ** Firstorder database *)
 
-Global Hint Extern 3 => firstorder (auto with core) : firstorder.
+Global Hint Extern 3 => firstorder (auto 2 with core) : firstorder.
 
 (** ** Logic database *) 
 
