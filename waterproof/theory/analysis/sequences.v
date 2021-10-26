@@ -427,3 +427,69 @@ Proof.
     It holds that H20 : (ε = (m - l)/2).
     It follows that (m ≤ l).
 Qed.
+
+Definition is_bounded (a : ℕ → ℝ) := 
+  ∃ q : ℝ,
+    ∃ M : ℝ, M ≥ 0 ∧
+      ∀ n : ℕ, 
+        |a n - q| ≤ M.
+Definition is_bounded_equivalent (a : ℕ → ℝ) :=
+  ∃ M : ℝ, M ≥ 0 ∧ 
+    ∀ n : ℕ, |a n| ≤ M.
+    
+Lemma is_bounded_equivalence : 
+  ∀ (a : ℕ → ℝ),
+    is_bounded a ⇔ 
+      is_bounded_equivalent a.
+Proof.
+Take a : (ℕ → ℝ).
+We show both directions.
+- We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
+  Assume a_is_bounded : (is_bounded a).
+  Choose q such that q_bounds_a according to a_is_bounded.
+  Choose M1 such that M_bounds_a according to q_bounds_a.
+  destruct M_bounds_a.
+  We need to show that (
+    there exists M : ℝ ,
+      M ≥ 0 ∧ (for all n : ℕ,
+        | a n | ≤ M)).
+  Choose M := (M1 + |q|).
+  We show both statements.
+  + We need to show that (M ≥ 0).
+    It holds that H1 : (0 ≤ |q|).
+    Rewrite inequality M "=" (M1 + |q|) "≥" 0.
+
+  + We need to show that (
+      for all n : ℕ,
+        | a n | ≤ M ).
+    Take n : ℕ.
+    Write goal using (|a n| = |a n - q + q|) as (| a n - q + q | ≤ M).
+
+By Rabs_triang it holds that triangle : (|a n - q + q| ≤ |a n - q| + |q|).
+Rewrite inequality
+  (|a n - q + q|) "≤" (|a n - q| + |q|)
+                  "≤" (M1 + |q|)
+                  "=" M.
+
+- We need to show that (
+    is_bounded_equivalent a ⇨ is_bounded a).
+  Assume a_n_bounded : (there exists M : ℝ, M ≥ 0 ∧ ∀ n : ℕ, |a n| ≤ M).
+  (* Expand the definition of is_bounded. *)
+  We need to show that (
+there exists q M : ℝ ,
+M ≥ 0 ∧ (for all n : ℕ,
+| a n - q | ≤ M)
+).
+  Choose q := 0.
+  Choose M1 such that H according to a_n_bounded.
+  destruct H.
+  Choose M := M1. 
+  We show both statements.
+  + We need to show that (M ≥ 0).
+    It follows that (M ≥ 0).
+  + We need to show that (
+for all n : ℕ,
+| a n - q | ≤ M ).
+  Take n : ℕ.
+  Rewrite inequality (|a n - q|) "=" (|a n|) "≤" (M).
+Qed.
