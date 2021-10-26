@@ -1,9 +1,9 @@
-(** * [reals.v]
+(** * [Subsets.v]
 Authors: 
-    - Tudor Voicu (1339532)
-Creation date: 21 June 2021
+    - Jim Portegies
+Creation date: 25 Oct 2021
 
-Importing this file adds the [reals] database 
+Importing this file adds the integer related databases 
 to the set of databases used by automated tactics
 (i.e. tactics that rely on [waterprove]).
 
@@ -30,4 +30,4 @@ Require Import Waterproof.selected_databases.
 
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBReals)::old_selection.
+    (WaterproofDBIntegers)::old_selection.

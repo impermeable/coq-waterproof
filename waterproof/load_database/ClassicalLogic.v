@@ -1,12 +1,9 @@
-(** * [All.v]
+(** * [Subsets.v]
 Authors: 
-    - Lulof Pirée (1363638)
-    - Cosmin Manea (1298542)
-    - Tudor Voicu (1339532)
-    - Adrian Vrămuleţ (1284487)
-Creation date: 15 June 2021
+    - Jim Portegies
+Creation date: 25 Oct 2021
 
-Importing this file adds all Waterproof hint databases 
+Importing this file adds the [classical_logic] and [constructive_logic] databases 
 to the set of databases used by automated tactics
 (i.e. tactics that rely on [waterprove]).
 
@@ -27,19 +24,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
+
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.selected_databases.
 
 
-Require Export Waterproof.load_database.Multiplication.
-Require Export Waterproof.load_database.ZeroOne.
-Require Export Waterproof.load_database.AbsoluteValue.
-Require Export Waterproof.load_database.Exponential.
-Require Export Waterproof.load_database.PlusMinus.
-Require Export Waterproof.load_database.SquareRoot.
-Require Export Waterproof.load_database.RealsAndIntegers.
-Require Export Waterproof.load_database.Sets.
-Require Export Waterproof.load_database.Additional.
-Require Export Waterproof.load_database.RealNumbers.
-Require Export Waterproof.load_database.Subsets.
-Require Export Waterproof.load_database.ClassicalLogic.
+Ltac2 Set global_database_selection as old_selection :=
+    (WaterproofDBClassicalLogic)::old_selection.

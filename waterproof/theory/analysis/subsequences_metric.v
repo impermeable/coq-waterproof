@@ -27,7 +27,7 @@ along with Waterproof-lib.    If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.theory.analysis.metric_spaces.
@@ -197,3 +197,51 @@ Proof.
 Qed.
 
 Global Hint Resolve double_is_even : subsequences.
+
+Lemma subsequence_of_convergent_sequence : ∀ a : (ℕ → X), ∀ p : X, a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
+Proof.
+Take a : (ℕ → X), p : X.
+Assume a_converges_to_p : (a ⟶ p).
+Take n : (ℕ → ℕ).
+Assume n_is_index_sequence : (is_index_sequence n).
+It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (a (n k)) p < ε).
+
+Take ε : ℝ. Assume ε_pos : (ε > 0).
+Choose K such that k_le_K_a_k_to_p according to (a_converges_to_p ε ε_pos).
+Choose N3 := K.
+Take k : ℕ. Assume k_ge_N : (k ≥ N3)%nat.
+By index_sequence_property2 it holds that H : (n k ≥ n K)%nat.
+By index_sequence_property it holds that H2 : (n K ≥ K)%nat.
+assert (H3 : (n k ≥ K)%nat) by auto with zarith.
+We conclude that (dist (a (n k)) p < ε).
+Qed.
+
+Lemma equivalent_subsequence_convergence : 
+  ∀ (x y : ℕ → X), is_subsequence y x ⇒ 
+    ∀ p : X, x ⟶ p ⇒
+      y ⟶ p.
+Proof.
+Take x, y : (ℕ → X).
+Assume y_subsequence_of_x : (is_subsequence y x).
+Take p : X.
+Assume x_converges_to_p : (x ⟶ p).
+
+We need to show that (y ⟶ p).
+It holds that y_sub_x : (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
+Choose m such that m_is_index_and_y_eq_x_m according to y_sub_x.
+Because m_is_index_and_y_eq_x_m both m_is_index and y_eq_x_m.
+
+It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
+
+Take ε : ℝ. Assume ε_pos : (ε > 0).
+Choose K such that k_le_K_x_k_to_p according to (x_converges_to_p ε ε_pos).
+Choose N3 := K.
+Take k : ℕ. Assume k_ge_N : (k ≥ N3)%nat.
+It holds that y_k_eq_x_m_k : (y k = x (m k)).
+Write goal using (y k = x (m k)) as (dist (x (m k)) p < ε).
+
+By index_sequence_property2 it holds that H : (m k ≥ m K)%nat.
+By index_sequence_property it holds that H2 : (m K ≥ K)%nat.
+assert (H3 : (m k ≥ K)%nat ) by auto with zarith.
+We conclude that (dist (x (m k)) p < ε).
+Qed.

@@ -20,7 +20,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 Require Import Reals.
-Require Import Lra.
 (*
 Require Import Classical.
 Require Import Classical_Prop.
@@ -28,11 +27,10 @@ Require Import Classical_Pred_Type.
 *)
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.selected_databases.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Enabled.
+Require Import Waterproof.load_database.Intuition.
 
 Definition is_in {D : Set} := fun (A : (D → Prop)) ↦ (fun (x : D) ↦ A x).
 Notation "x ∈ A" := (@is_in _ A x) (at level 50) : sup_and_inf_scope.
@@ -216,8 +214,6 @@ Proof.
       This concludes the proof.
 Qed.
 
-Ltac2 Eval global_database_selection.
-
 Lemma exists_inf :
   ∀ A : (ℝ →  Prop), is_bdd_below A ⇒
     ((∃ x : ℝ, x ∈ A) ⇒ { m : ℝ | is_inf A m }).
@@ -310,9 +306,6 @@ Proof.
     Because m_is_inf_A both m_low_bd and any_low_bd_le_m.
     By any_low_bd_le_m we conclude that (l ≤ m).
 Qed.
-
-
-Require Import Waterproof.load_database.EnableWildcard.
 
 (** ### $\varepsilon$-characterizations*)
 Lemma exists_almost_maximizer :
@@ -433,9 +426,12 @@ Proof.
     Take m : ℕ.
     Apply seq_ex_almost_maximizer_ε.
     (** We need to show that $1/(m+1) > 0$.*)
-     Rewrite using (1 / (INR m + 1) = / (INR m + 1)). 
+     Rewrite using (1 / (INR m + 1) = / (INR m + 1)).
+    It holds that m_plus_1_pos : (m >= 0)%R.
+    It holds that m_plus_1_gt_0 : (0 < m + 1)%R. SearchPattern (0 < / _) .
     (** We need to show that $(m+1) > 0$. *)
-    This follows immediately. 
+    By Rinv_0_lt_compat it holds that H : (0 < / (m+1)).
+    We conclude that (/ (m+1) > 0). 
 Qed.
 
 

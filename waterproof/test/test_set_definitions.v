@@ -39,7 +39,7 @@ Abort.
 
 (* Test 2: check if we can automatically deduce that for a term of a subset, 
            the characteristic function of that subset hold for that term.  *)
-Require Import Waterproof.load_database.Additional.
+Require Import Waterproof.load_database.Subsets.
 Require Import Waterproof.AllTactics.
 Goal forall b : B, B b.
   intro b.
@@ -65,14 +65,14 @@ Record     elements_X (A : subset_X) := mk_elem_X { elem_X :> X; witness_X : A e
 Definition subset_to_elements_X := fun A : subset_X => elements_X A.
 Coercion   subset_to_elements_X : subset_X >-> Sortclass.
 
-Global Hint Resolve witness_X : additional. (* for all (V : subset_X) (x : V), V x *)
+Global Hint Resolve witness_X : subsets. (* for all (V : subset_X) (x : V), V x *)
 
 Lemma exists_and_implies_exists_subset_X (A : subset_X) (P : X -> Prop) : 
   (exists a : X, (A a) /\ (P a)) -> (exists a : A, P a).
 Proof.
   intro H. destruct H as [a [ainA Ha]]. exists (mk_elem_X A a ainA). exact Ha. 
 Defined.
-Hint Resolve exists_and_implies_exists_subset_X : additional.
+Hint Resolve exists_and_implies_exists_subset_X : subsets.
 
 
 (* Tests for subsets of the set X *)

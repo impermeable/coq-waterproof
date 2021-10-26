@@ -26,7 +26,8 @@ Require Import Classical_Pred_Type.
 
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.load_database.Subsets.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.definitions.set_definitions.
 Require Import Waterproof.set_search_depth.To_5.
@@ -860,13 +861,15 @@ Proof.
     We conclude that (m ≤ b).
 Qed.
 
-Global Hint Resolve bounded_by_upper_bound_propform : additional.
-Global Hint Resolve bounded_by_lower_bound_propform : additional.
-Global Hint Resolve alt_char_inf : additional.
-Global Hint Resolve alt_char_sup : additional.
-Global Hint Resolve <- alt_char_inf : additional.
-Global Hint Resolve <- alt_char_sup : additional.
+Global Hint Resolve bounded_by_upper_bound_propform : reals.
+Global Hint Resolve bounded_by_lower_bound_propform : reals.
+Global Hint Resolve alt_char_inf : reals.
+Global Hint Resolve alt_char_sup : reals.
+Global Hint Resolve <- alt_char_inf : reals.
+Global Hint Resolve <- alt_char_sup : reals.
 
 (** ### **Hints***)
-Hint Extern 1 => (unfold is_sup) : unfolds.
-Hint Extern 1 => (unfold is_inf) : unfolds.
+Global Hint Unfold is_sup : reals.
+Global Hint Unfold is_inf : reals.
+Global Hint Unfold is_upper_bound : reals.
+Global Hint Unfold is_lower_bound :reals.

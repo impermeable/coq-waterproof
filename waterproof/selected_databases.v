@@ -31,7 +31,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
 From Ltac2 Require Import Message.
-Require Import Reals.
+Require Import Coq.Reals.Reals.
 Require Import ZArith.
 Require Import Classical.
 Require Import Waterproof.auxiliary.
@@ -48,8 +48,12 @@ Ltac2 Type WaterproofDatabase := [
     | WaterproofDBSets
     | WaterproofDBAdditional
     | WaterproofDBReals
-    | WaterproofDBOther
-
+    | WaterproofDBSubsets
+    | WaterproofDBClassicalLogic
+    | WaterproofDBConstructiveLogic
+    | WaterproofDBIntegers
+    | WaterproofDBIntuition
+    | WaterproofDBFirstorder
 ].
 
 (** * global_database_selection
@@ -123,11 +127,16 @@ Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     | WaterproofDBSquareRoot =>      (@eq_sqr)::[]
     | WaterproofDBExponential =>     (@eq_exp)::[]
     | WaterproofDBAbsoluteValue =>   (@eq_abs)::[]
-    | WaterproofDBOther =>           (@eq_other)::[]
-    | WaterproofDBRealsAndIntegers =>(@zarith)::(@real)::(@arith)::(@reals)::(@eq_minus)::(@rorders)::(@eq_abs)::[]
+    | WaterproofDBRealsAndIntegers =>(@zarith)::(@waterproof_integers)::(@arith)::(@real)::(@reals)::[]
     | WaterproofDBSets =>            (@sets)::[]
+    | WaterproofDBSubsets =>         (@subsets)::[]
     | WaterproofDBAdditional =>      (@additional)::[]
-    | WaterproofDBReals =>           (@reals)::[]
+    | WaterproofDBReals =>           (@real)::(@reals)::[]
+    | WaterproofDBClassicalLogic =>  (@classical_logic)::[]
+    | WaterproofDBConstructiveLogic => (@constructive_logic)::(@classical_logic)::[]
+    | WaterproofDBIntegers =>        (@zarith)::(@waterproof_integers)::(@arith)::[]
+    | WaterproofDBIntuition =>       (@intuition)::[]
+    | WaterproofDBFirstorder =>      (@firstorder)::[]
     | _ => Aux.cannot_happen ""
     end.
 
