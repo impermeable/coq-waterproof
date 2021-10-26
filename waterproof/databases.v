@@ -102,6 +102,7 @@ Global Hint Resolve base_same : subsets.
 Global Hint Resolve same_base : subsets.
 
 Global Hint Resolve witness_R : subsets. (* for all (V : subset_R) (x : V), V x *)
+Global Hint Unfold pred_R : subsets.
 
 Lemma exists_and_implies_exists_subset_R (A : subset_R) (P : R -> Prop) : 
   (exists a : R, (A a) /\ (P a)) -> (exists a : A, P a).
@@ -347,7 +348,6 @@ Global Hint Resolve Rle_abs_min : reals.
 Global Hint Resolve Rge_min_abs : reals.
 Global Hint Resolve Rmax_abs : reals.
 Global Hint Resolve Rinv_0_lt_compat : reals.
-
 
 Hint Extern 1 => rewrite Rabs_zero : reals.
 
