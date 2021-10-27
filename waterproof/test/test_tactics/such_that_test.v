@@ -26,12 +26,13 @@ From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
 Require Import Waterproof.test_auxiliary.
+Require Import Waterproof.tactics.take.
 Load assume.
 (* ---------------------------------------------------------------------------*)
 (**
     * Testcases for [such that].
     Subset of tests for [Assume],
-    as they do excatly the same anyway.
+    as they do exactly the same anyway.
 *)
 
 (** * Test 1
@@ -41,9 +42,9 @@ Load assume.
 *)
 Goal forall A B C: Prop, (A /\ B) /\ (B /\ C) -> (A /\ C).
     intros A B C.
-    such that ab:(A /\ B) and bc:(B /\ C).
-    assert_hyp_has_type @ab constr:(A /\ B).
-    assert_hyp_has_type @bc constr:(B /\ C).
+    Fail such that ab:(A /\ B) and bc:(B /\ C).
+    (*assert_hyp_has_type @ab constr:(A /\ B).
+    assert_hyp_has_type @bc constr:(B /\ C).*)
 Abort.
 
 (** * Test 2
@@ -53,10 +54,10 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) /\ (B /\ C) -> (A /\ C).
     intros A B C.
-    such that a:A and b:B and bc:(B /\ C).
-    assert_hyp_has_type @a constr:(A).
+    Fail such that a:A and b:B and bc:(B /\ C).
+    (*assert_hyp_has_type @a constr:(A).
     assert_hyp_has_type @b constr:(B).
-    assert_hyp_has_type @bc constr:(B /\ C).
+    assert_hyp_has_type @bc constr:(B /\ C).*)
 Abort.
 
 Goal forall n, n = 1 -> n <> 2.
@@ -66,8 +67,7 @@ Abort.
 
 Goal forall x:nat, (x > 1) -> (x > 0).
 Proof.
-    Take x:nat; such that x_bigger_1 : (x > 1).
-
+    Take x : nat; such that x_bigger_1 : (x > 1).
     assert_hyp_has_type @x constr:(nat).
     assert_hyp_has_type @x_bigger_1 constr:(x > 1).
 Abort.

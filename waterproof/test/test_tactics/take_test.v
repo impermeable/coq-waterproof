@@ -2,6 +2,7 @@
 Authors: 
     - Lulof Pirée (1363638)
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 Creation date: 17 May 2021
 
 Testcases for the [Take] tactic.
