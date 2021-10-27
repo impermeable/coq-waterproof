@@ -34,7 +34,6 @@ Require Import Rtrigo.
 Require Import Ranalysis.
 Require Import Integration.
 Require Import micromega.Lra.
-Require Import Omega.
 Require Import Max.
 
 Require Export Waterproof.definitions.set_definitions.
