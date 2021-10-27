@@ -47,8 +47,8 @@ Variable M : Metric_Space.
 Definition X := Base M.
 Definition dist := dist M.
 
-Notation "a ◦ n" := (fun (k : nat) => a (n k)) (right associativity, at level 20).
-Notation "a ◦ n ◦ m" := (fun (k : nat) => a (n (m k))) (right associativity, at level 21).
+Notation "a ◦ n" := (fun (k : nat) => a (n k)) (right associativity, at level 11).
+Notation "a ◦ n ◦ m" := (fun (k : nat) => a (n (m k))) (right associativity, at level 12).
 
 Definition is_subsequence (b : ℕ → X) (a : ℕ → X) := 
     ∃ m : (ℕ → ℕ),

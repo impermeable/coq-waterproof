@@ -1,6 +1,7 @@
 (** * [it_suffices_to_show.v]
 Authors: 
     - Lulof Pirée (1363638)
+    - Jim Portegies
 Creation date: 6 June 2021
 
 Tactic [It suffices to show that ...].
@@ -75,16 +76,19 @@ Local Ltac2 try_enough_expression (f: unit -> unit)
     Arguments:
         - [statement: constr], statement to assume to hold
             (and to be proven later).
+        - [proving_lemma: constr], lemma that can help in the proof
     
     Raises exceptions:
         - [AutomationFailure], in case [waterprove] fails to prove the goal,
             even if [statement] is given.
 *)
-Ltac2 apply_enough_with_waterprove (statement:constr) :=
+Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr option) :=
+    let help_lemma := unwrap_optional_lemma proving_lemma
+    in
     let g := Control.goal () in
     let hyp_name := Fresh.in_goal @h in
     let f () := enough ($hyp_name : $statement) 
-                by (waterprove_with_hint g constr:(dummy_lemma))
+                by (waterprove_with_hint g help_lemma)
     in
     try_enough_expression f statement.
 
@@ -106,7 +110,23 @@ Ltac2 apply_enough_with_waterprove (statement:constr) :=
             even if [statement] is given.
 *)
 Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr) := 
-    apply_enough_with_waterprove statement.
+    apply_enough_with_waterprove statement None.
+
+(** * By ... it suffices to show that ...
+    Same as "It suffices to show that" except it adds an additional lemma 
+    temporarily to the underlying automation.
+
+    Arguments:
+        - [statement: constr], statement to assume to hold
+            (and to be proven later).
+        - [lemma: constr], lemma that can help in the proof
+    
+    Raises exceptions:
+        - [AutomationFailure], in case no proof is found for the goal,
+            even if [statement] is given.
+*)
+Ltac2 Notation "By" lemma(constr) "it" "suffices" "to" "show" "that" statement(constr) :=
+    apply_enough_with_waterprove statement (Some lemma).
 
 (*
 
