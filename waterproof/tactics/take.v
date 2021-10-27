@@ -2,6 +2,7 @@
 Authors: 
     - Lulof Pirée (1363638)
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 Creation date: 17 May 2021
 
 Version of [Take] tactic that accepts any number of arguments.
@@ -35,47 +36,25 @@ Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ TakeError(message) ].
 
-(** * intro_with_type_matching
-    Check if the goal is a ∀-quantifier over a bound variable
-    of type [t]. 
-    In case it is, introduce such a variable with ident [s].
-    If it is not, raise an error.
-
-    Arguments:
-        - [s:Std.intro_pattern list], name for variable to introduce.
-            Despite being of type [list], this can simply be a single name
-            as parsed by [Ltac2 Notation].
-        - [t:constr], the type of the variable to introduce.
-
-    Does:
-        - perform ∀-elim by introducing s as a variable of type [t].
-            (Call [intros $s])
-
-    Raises Exceptions:
-        - [TakeError], if the type [t] 
-            does not match the type of the bound variable in the ∀-goal.
-        - [TakeError], if the top-level connective in the goal 
-            is not a ∀-quantifier.
-*)
-
-(** * intro_list_with_typematching
-    Introduce for each name in the list [x] a new variable of type [t].
-
-    Arguments:
-        - [x]: a list of intropatterns
-        - [t: constr], the type of the variables to introduce.
-    Does:
-        - call [intro_with_type_matching v t] for each [v] ∈ [x].
-
-    Raises Exceptions:
-        - [TakeError], if the top-level connective in the goal 
-            is not a ∀-quantifier, or if the variables of [x]
-            cannot all be introduced as of type [t].
-*)
 
 Local Ltac2 too_many_of_type_message (t : constr) := 
   Message.concat (Message.concat (of_string "Tried to introduce too many variables of type ") (of_constr t)) (of_string ".").
 
+(** * introduce_idents
+    Attempts to recursively introduce variables of one type.
+
+    Arguments:
+        - [x : ident list]: list of variables to introduce. 
+        - [t: constr]: type of the variables in [x].
+        - [ct : constr]: coercion of type [t].
+    Does:
+        - If possible, introduces the first variable in [x]. 
+          Proceeds to call itself with the remaining variables in [x] as a new list [x'].
+
+    Raises Exceptions:
+        - [TakeError], if the current goal does not require the introduction of any more variables 
+                       in general or of type [t].
+*)
 Local Ltac2 rec introduce_idents (x : ident list) (t : constr) (ct : constr) :=
   match x with
   | head::tail 
@@ -94,28 +73,26 @@ Local Ltac2 rec introduce_idents (x : ident list) (t : constr) (ct : constr) :=
   | [] => () (*done*)
   end.
 
-(** * take_multiarg
 
-    Takes a list of [(name_list, type)] tuples, and introduces each
-    name in each [name_list] as a new variable of type [type].
-
-    Arguments:
-        - x: a list of (v, t) pairs, where each [t: constr]
-            and each [v : Std.intro_pattern list list].
-    Does:
-        - call [intro_list_with_typematching (v, t)] for each (v, t) ∈ x
-
-    Raises Exceptions:
-        - [TakeError], if the top-level connective in the goal 
-            is not a ∀-quantifier, or if the variables of the given type
-            cannot all be introduced (in the given order).
-
-*)
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
   Message.concat (Message.concat 
     (Message.concat (of_string "Expected variables of type ") (of_constr e))
     (Message.concat (of_string " instead of ") (of_constr t))) (of_string ".").
 
+(** * process_identlist_type_pairs
+    Attempts to recursively introduce a list of (variables of a specific type).
+
+    Arguments:
+        - [x : (ident list * constr) list)]: list of (variables paired with a specific type).
+    Does:
+        - For the first pair of (variables coupled with a type) in [x], 
+            calls [introduce_idents] to introduce these variables.
+          Proceeds to call itself with the remaining pairs in [x] as a new list [x'].
+
+    Raises Exceptions:
+        - [TakeError], if the current goal does not require the introduction of any more variables 
+                       in general or of type [t], where [t] is the type from the first pair in [x].
+*)
 Local Ltac2 rec process_identlist_type_pairs (x : (ident list * constr) list) :=
     match x with
     | head::tail =>
@@ -137,6 +114,10 @@ Local Ltac2 rec process_identlist_type_pairs (x : (ident list * constr) list) :=
     | [] => () (* Done. *)
     end.
 
+(** * take
+    Checks whether the 'Take' tactic can be applied to the current goal, 
+    attempts to introduce a list of (variables of a specific type).
+*)
 Local Ltac2 take (x : (ident list * constr) list) := 
   lazy_match! goal with
     | [ |- forall _ , _ ] => process_identlist_type_pairs x
