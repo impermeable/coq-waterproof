@@ -200,7 +200,7 @@ Global Hint Resolve double_is_even : subsequences.
 
 Lemma subsequence_of_convergent_sequence : ∀ a : (ℕ → X), ∀ p : X, a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
 Proof.
-Take a : (ℕ → X), p : X.
+Take a : (ℕ → X) and p : X.
 Assume a_converges_to_p : (a ⟶ p).
 Take n : (ℕ → ℕ).
 Assume n_is_index_sequence : (is_index_sequence n).

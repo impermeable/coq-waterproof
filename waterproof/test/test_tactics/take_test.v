@@ -55,29 +55,49 @@ Abort.
 
 (** Test 4: Multi argument testcase *)
 Goal forall n : nat, forall m : nat, n + m <= 2*n + m.
-    Take n : nat, m : nat.
+    Take n : nat and m : nat.
 Abort.
 
 (** Test 5: Two sets of multiple variables of the same type. *)
-Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    Take n, m, k : nat, b1, b2: bool.
+Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
+    Take n, m, k : nat and b1, b2: bool.
+Abort.
+
+(** Test 5.1: Too few variables of the same type. *)
+Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
+    Take n, m : nat.
+Abort.
+
+(** Test 5.2: Too many variables of the same type. *)
+Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
+    Fail Take n, m, k, l : nat.
+Abort.
+
+(** Test 5.3: Too many variables (of the same type). *)
+Goal forall (n m k: nat), Nat.odd (n + m + k) = false.
+    Fail Take n, m, k, l : nat.
+Abort.
+
+(** Test 5.4: Too many variables (of different types). *)
+Goal forall (n m k: nat), Nat.odd (n + m + k) = false.
+    Fail Take n, m, k : nat and l : bool.
 Abort.
 
 (** Test 6: Two sets of multiple variables of the same type,
     but with different names *)
-Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    Take a, b, c : nat, d, e: bool.
+Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
+    Take a, b, c : nat and d, e: bool.
 Abort.
 
 (** Test 7: not allowed to introduce so many bools *)
-Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
+Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
     assert_raises_error (fun () => Take a, b, c, d, e: bool).
 Abort.
 
 (** Test 8: look how crazy many vars we can introduce*)
 Goal forall (a b c d e f g: nat) (b1 b2: bool), 
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
-    Take a, b, c, d, e, f, g : nat, b1, b2: bool.
+    Take a, b, c, d, e, f, g : nat and b1, b2: bool.
 Abort.
 
 (** Test 9: This should give a helpful error.
@@ -88,7 +108,7 @@ Abort.
     *)
 Goal forall (a b c d e f g: nat) (b1 b2: bool), 
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
-    assert_raises_error (fun() => Take a, b, c, d, e, f, g : nat, a, h: bool).
+    assert_raises_error (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool).
 Abort.
 
 (** Test 10: Two sets of multiple variables of the same type.
@@ -97,7 +117,7 @@ Abort.
     This should raise an error, as the order of introducing variables is different.
 *)
 Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    assert_raises_error (fun() => Take y, u: bool, a, b, c : nat).
+    assert_raises_error (fun() => Take y, u: bool and a, b, c : nat).
 Abort.
 
 Require Import Waterproof.definitions.set_definitions.

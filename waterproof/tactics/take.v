@@ -33,10 +33,7 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.goal_wrappers.
 
-Ltac2 Type exn ::= [ TakeError(string) ].
-
-Local Ltac2 raise_take_error (s:string) := 
-    Control.zero (TakeError s).
+Ltac2 Type exn ::= [ TakeError(message) ].
 
 (** * intro_with_type_matching
     Check if the goal is a ∀-quantifier over a bound variable
@@ -60,22 +57,7 @@ Local Ltac2 raise_take_error (s:string) :=
         - [TakeError], if the top-level connective in the goal 
             is not a ∀-quantifier.
 *)
-Local Ltac2 intro_with_type_matching (s:Std.intro_pattern list) (t:constr) := 
-    lazy_match! goal with
-    | [ |- forall _ : ?u, _] => 
-        (* Next line aims to deal with case when terms get coerced to types *)
-        let v := Aux.get_coerced_type t in
-        let u' := (eval cbv in $u) in
-        let t' := (eval cbv in $t) in
-        (* TODO why are u' and t' not used? *)
-        match Constr.equal u v with
-            | true => Std.intros false s
-            | false => raise_take_error (
-            "The type of the variable must match the type of the 'forall' goal's bound variable.")
-        end
-    | [|- _] => raise_take_error("'Take' can only be applied to 'forall' goals")
-    end.
-    
+
 (** * intro_list_with_typematching
     Introduce for each name in the list [x] a new variable of type [t].
 
@@ -90,13 +72,27 @@ Local Ltac2 intro_with_type_matching (s:Std.intro_pattern list) (t:constr) :=
             is not a ∀-quantifier, or if the variables of [x]
             cannot all be introduced as of type [t].
 *)
-Local Ltac2 rec intro_list_with_typematching (x: Std.intro_pattern list list)
-     (t:constr) :=
-    match x with
-    | head::tail => intro_with_type_matching head t; 
-                    intro_list_with_typematching tail t
-    | [] => ()
-    end.
+
+Local Ltac2 too_many_of_type_message (t : constr) := 
+  Message.concat (Message.concat (of_string "Tried to introduce too many variables of type ") (of_constr t)) (of_string ".").
+
+Local Ltac2 rec introduce_idents (x : ident list) (t : constr) (ct : constr) :=
+  match x with
+  | head::tail 
+    => (* Check whether we still need variables of coerced type [ct]. *)
+       lazy_match! goal with
+       | [ |- forall _ : ?u, _] 
+         => match Aux.check_constr_equal u ct with
+            | true  => (* Introduce head *)
+                       Std.intros false [Std.IntroNaming (Std.IntroIdentifier head)];
+                       (* Attempt to introduce remaining variables. *)
+                       introduce_idents tail t ct
+            | false => Control.zero (TakeError (too_many_of_type_message t))
+            end
+       | [ |- _] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+       end
+  | [] => () (*done*)
+  end.
 
 (** * take_multiarg
 
@@ -115,18 +111,38 @@ Local Ltac2 rec intro_list_with_typematching (x: Std.intro_pattern list list)
             cannot all be introduced (in the given order).
 
 *)
-Local Ltac2 rec take_multiarg x :=
+Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
+  Message.concat (Message.concat 
+    (Message.concat (of_string "Expected variables of type ") (of_constr e))
+    (Message.concat (of_string " instead of ") (of_constr t))) (of_string ".").
+
+Local Ltac2 rec process_identlist_type_pairs (x : (ident list * constr) list) :=
     match x with
     | head::tail =>
-        match head with
-        | (v, t) => intro_list_with_typematching v t
-        | _ => Control.zero (Aux.CannotHappenError "Cannot happen")
-        end; take_multiarg tail
-    | [] => ()
+            match head with
+            | (v, t) => (* Check whether we need variabled of type t. *)
+                        lazy_match! goal with
+                        | [ |- forall _ : ?u, _] => 
+                            let ct := Aux.get_coerced_type t in
+                            match Aux.check_constr_equal u ct with
+                            | true  => introduce_idents v t ct
+                            | false => Control.zero (TakeError (expected_of_type_instead_of_message u t))
+                            end
+                        | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+                        end
+            | _ => Control.zero (Aux.CannotHappenError "Cannot happen.")
+            end;
+            (* Attempt to introduce remaining variables of (different) types. *)
+            process_identlist_type_pairs tail
+    | [] => () (* Done. *)
     end.
 
+Local Ltac2 take (x : (ident list * constr) list) := 
+  lazy_match! goal with
+    | [ |- forall _ , _ ] => process_identlist_type_pairs x
+    | [ |- _ ] => Control.zero (TakeError (of_string "‘Take’ can only be used to prove a ‘for all’-statement (∀) or to construct a map (→)."))
+  end.
 
-Ltac2 Notation "Take" x(list1(seq(list1(intropatterns, ","), 
-                        ":", constr), ",")) := 
+Ltac2 Notation "Take" x(list1(seq(list1(ident, ","), ":", constr), "and")) := 
     panic_if_goal_wrapped ();
-    take_multiarg x.
+    take x.

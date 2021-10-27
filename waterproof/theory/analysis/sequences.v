@@ -124,7 +124,7 @@ Definition evt_eq_sequences (a b : ℕ → ℝ) := (∃ k : ℕ,
 Lemma conv_evt_eq_seq :
   ∀ (a b : ℕ → ℝ) (l : ℝ), (evt_eq_sequences a b) ⇒ (a ⟶ l) ⇒ (b ⟶ l).
 Proof.
-    Take a, b : (ℕ → ℝ), l : ℝ.
+    Take a, b : (ℕ → ℝ) and l : ℝ.
     Assume a_b_similar : (evt_eq_sequences a b) and a_to_l : (a ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜(b n) - l ｜ <ε).
     Expand the definition of converges_to.
@@ -155,7 +155,7 @@ Lemma eq_seq_conv_to_same_lim :
   ∀ (a : ℕ → ℝ) (b : ℕ → ℝ) (l : ℝ),
     (∀ n : ℕ, a n = b n) ⇒ a ⟶ l ⇒ b ⟶ l.
 Proof.
-    Take a, b : (ℕ → ℝ), l : R.
+    Take a, b : (ℕ → ℝ) and l : R.
     Take seq_eq : (for all n : ℕ, a n = b n).
     Apply conv_evt_eq_seq.
     (** By our lemma, it suffices to prove that (evt_eq_sequences a b) *)
@@ -266,7 +266,7 @@ Theorem squeeze_theorem :
     (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) ⇒
       a ⟶ l ⇒ c ⟶ l ⇒ b ⟶ l.
 Proof.
-    Take a, b, c : (ℕ ⇨ ℝ), l : ℝ.
+    Take a, b, c : (ℕ ⇨ ℝ) and l : ℝ.
     Assume b_squeezed : (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and a_cv_to_l : (a ⟶ l).
     Assume c_cv_to_l : (c ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜b n - l｜ < ε).

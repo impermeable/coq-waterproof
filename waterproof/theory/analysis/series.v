@@ -44,7 +44,7 @@ Lemma sigma_split_v2 :
     (k < l)%nat ⇒ (l ≤ N)%nat 
       ⇒ sigma a k N = sigma a k (l - 1)%nat + sigma a l N.
 Proof.
-    Take a : (ℕ → ℝ), k l Nn : ℕ.
+    Take a : (ℕ → ℝ) and k, l, Nn : ℕ.
     Assume k_lt_N : (k < l)%nat and l_le_N : (l ≤ Nn)%nat.
     It holds that H1 : (l = S (l - 1)%nat ).
     rewrite H1 at 2.
@@ -89,7 +89,7 @@ Theorem mouse_tail :
         ⇔ 
       (Un_cv (fun Nn ↦ sigma a k Nn) ((sigma a k (l-1)) + L))).
 Proof.
-    Take a : (ℕ → ℝ), k l : ℕ, L : ℝ.
+    Take a : (ℕ → ℝ) and k, l : ℕ and L : ℝ.
     split.
     Take sigma_l_cv : (Un_cv (Nn) ↦ (sigma a l Nn) L).
     We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)).

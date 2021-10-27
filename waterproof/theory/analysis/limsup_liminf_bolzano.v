@@ -67,7 +67,7 @@ Proof.
     Take a : (ℕ → ℝ). 
     Take pr1 : (has_ub a). 
     Take pr2 : (has_lb (sequence_ub a pr1)). 
-    Take m Nn : ℕ.
+    Take m, Nn : ℕ.
     By exists_almost_lim_sup_aux it holds that H1 : (∃ k : ℕ, (k ≥ Nn)%nat ∧ a k > sequence_ub a pr1 Nn - 1 / (INR(m) + 1)).
     Choose n such that n_good according to H1.
     Choose k := n.
@@ -114,7 +114,7 @@ Lemma sequence_ub_bds :
 Proof.
     Take a : (ℕ → ℝ). 
     Take pr : (has_ub a).
-    Take Nn n : ℕ.
+    Take Nn, n : ℕ.
     Assume n_ge_N : (n ≥ Nn)%nat.
     Expand the definition of sequence_ub.
     That is, write the goal as (a n ≤ lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn pr)).

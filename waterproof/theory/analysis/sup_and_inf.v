@@ -257,7 +257,7 @@ Lemma sup_is_upp_bd :
     ∀ M : ℝ,
       is_sup A M ⇒ is_upper_bound A M.
 Proof.
-    Take A : (ℝ → Prop), M : ℝ. 
+    Take A : (ℝ → Prop) and M : ℝ. 
     Assume M_is_sup_A : (is_sup A M).
     Write M_is_sup_A as (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b) ).
     Because M_is_sup_A both part1 and part2.
@@ -271,7 +271,7 @@ Lemma any_upp_bd_ge_sup :
     ∀ M L : ℝ,
       is_sup A M ⇒ (is_upper_bound A L ⇒ M ≤ L).
 Proof.
-    Take A : (ℝ → Prop), M l : ℝ.
+    Take A : (ℝ → Prop) and M, l : ℝ.
     Assume A_is_sup_M : (is_sup A M) and L_is_upp_bd_A : (is_upper_bound A l).
     Because A_is_sup_M both M_is_upp_bd and any_upp_bd_le_M.
     (** We need to show that $M \leq L$.*)
@@ -287,7 +287,7 @@ Lemma inf_is_low_bd :
     ∀ m : ℝ,
       is_inf A m ⇒ is_lower_bound A m.
 Proof.
-    Take A : (ℝ → Prop), m : R.
+    Take A : (ℝ → Prop) and m : R.
     Assume m_is_inf_A : (is_inf A m).
     Because m_is_inf_A both m_is_low_bd and any_low_bd_ge_m.
     Apply m_is_low_bd.
@@ -301,7 +301,7 @@ Lemma any_low_bd_ge_inf :
     ∀ m l : ℝ,
       is_inf A m ⇒ is_lower_bound A l ⇒ l ≤ m.
 Proof.
-    Take A : (R → Prop), m l : R.
+    Take A : (R → Prop) and m, l : R.
     Assume m_is_inf_A : (is_inf A m) and l_is_low_bd_A : (is_lower_bound A l).
     Because m_is_inf_A both m_low_bd and any_low_bd_le_m.
     By any_low_bd_le_m we conclude that (l ≤ m).
@@ -314,7 +314,7 @@ Lemma exists_almost_maximizer :
       ∀ (L : ℝ), L < M ⇒ 
         ∃ a : ℝ, A a ∧ L < a.
 Proof.
-    Take A : (ℝ -> Prop), M : ℝ.
+    Take A : (ℝ -> Prop) and M : ℝ.
     Assume M_is_sup_A : (is_sup A M).
     Take L : ℝ. 
     Assume L_lt_M : (L < M).
@@ -348,7 +348,7 @@ Lemma exists_almost_maximizer_ε :
       ∀ (ε : ℝ), ε > 0 ⇒ 
         ∃ a : ℝ, A a ∧ M - ε < a.
 Proof.
-    Take A : (ℝ -> Prop), M : ℝ.
+    Take A : (ℝ -> Prop) and M : ℝ.
     Assume M_is_sup_A : (is_sup A M ). 
     Take ε : ℝ. 
     Assume ε_gt_0 : (ε > 0).
@@ -364,7 +364,7 @@ Lemma max_or_strict :
     is_sup A M ⇒ 
       (A M) ∨ (∀ a : ℝ, A a ⇒ a < M).
 Proof.
-    Take A : (ℝ → Prop), M : ℝ. 
+    Take A : (ℝ → Prop) and M : ℝ. 
     Assume M_is_sup_A : (is_sup A M). 
     We argue by contradiction.
     Assume H : ( ¬ (A M ∨ (for all a : ℝ, A a ⇨ a < M))).
@@ -441,7 +441,7 @@ Lemma exists_almost_lim_sup_aux :
 Proof.
     Take a : (ℕ → ℝ). 
     Take pr : (has_ub a). 
-    Take m Nn : ℕ.
+    Take m, Nn : ℕ.
     We claim that H1 : (∃ i : ℕ, a (Nn + i)%nat > sequence_ub a pr Nn - 1 / (INR m + 1)).
     Apply seq_ex_almost_maximizer_m.
     Choose i such that i_good according to H1.

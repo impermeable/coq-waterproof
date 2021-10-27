@@ -65,7 +65,7 @@ Lemma equivalence_upper_bounds :
     is_upper_bound A L ⇔
     Raxioms.is_upper_bound A L.
 Proof.
-    Take A : subset_R, L : ℝ.
+    Take A : subset_R and L : ℝ.
     We show both directions.
     - We need to show that (is_upper_bound A L ⇨ Raxioms.is_upper_bound A L).
       Assume L_upp_bd : (is_upper_bound A L).
@@ -97,7 +97,7 @@ Lemma equivalence_sup_lub :
   is_lub A M
   ⇔ is_sup A M.
 Proof.
-    Take A : subset_R, M : ℝ.
+    Take A : subset_R and M : ℝ.
     We show both directions.
     - We need to show that (is_lub A M ⇨ is_sup A M).
       Assume M_is_sup_A : (is_lub A M).
@@ -248,7 +248,7 @@ Lemma upp_bd_set_to_low_bd_set_opp :
     is_upper_bound A M ⇒ 
       is_lower_bound (set_opp A) (-M).
 Proof.
-    Take A : subset_R, M : ℝ.
+    Take A : subset_R and M : ℝ.
     Assume M_upp_bd : (is_upper_bound A M).
     We need to show that (∀ a : (set_opp A),-M ≤ a).
     Expand the definition of is_lower_bound.
@@ -268,7 +268,7 @@ Lemma low_bd_set_to_upp_bd_set_opp :
     is_lower_bound A m ⇒
       is_upper_bound (set_opp A) (-m).
 Proof.
-    Take A : subset_R, m : ℝ.
+    Take A : subset_R and m : ℝ.
     Assume m_low_bd : (is_lower_bound A m).
     We need to show that (∀ opp_a : (set_opp A), opp_a ≤ -m).
     Expand the definition of is_upper_bound.
@@ -286,7 +286,7 @@ Lemma low_bd_set_opp_to_upp_bd_set :
     is_lower_bound (set_opp A) m ⇒ 
       is_upper_bound A (-m).
 Proof.
-    Take A : (subset_R), m : ℝ.
+    Take A : (subset_R) and m : ℝ.
     Assume m_low_bd : (is_lower_bound (set_opp A) m).
     We need to show that (∀ a : A, a ≤ -m).
     Expand the definition of is_upper_bound.
@@ -312,7 +312,7 @@ Lemma upp_bd_set_opp_to_low_bd_set :
     is_upper_bound (set_opp A) M ⇒
       is_lower_bound A (-M).
 Proof.
-    Take A : (subset_R), M : ℝ.
+    Take A : (subset_R) and M : ℝ.
     Assume M_upp_bd : (is_upper_bound (set_opp A) M).
     We need to show that (∀ a : A, -M ≤ a).
     Expand the definition of is_lower_bound.
@@ -354,7 +354,7 @@ Lemma sup_set_opp_is_inf_set :
   ∀ (A : subset_R) (M : ℝ),
     is_sup (set_opp A) M ⇒ is_inf A (-M).
 Proof.
-    Take A : (subset_R), M : ℝ.
+    Take A : (subset_R) and M : ℝ.
     Assume M_is_sup : (is_sup (set_opp A) M).
     Expand the definition of is_inf.
     That is, write the goal as
@@ -545,7 +545,7 @@ Lemma if_almost_maximizer_then_every_upp_bd_larger :
     (∀ (L : ℝ), L < M ⇒ ∃ a : A, L < a)
        ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
 Proof.
-Take A : subset_R, M : ℝ.
+Take A : subset_R and M : ℝ.
 Assume exists_almost_max :
   (∀ L : ℝ, L < M ⇒ there exists a : A ,
              L < a).
@@ -572,7 +572,7 @@ Lemma if_almost_minimizer_then_every_low_bd_smaller :
     (∀ (L : ℝ), L > m ⇒ ∃ a : A, L > a)
        ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
 Proof.
-Take A : subset_R, m : ℝ.
+Take A : subset_R and m : ℝ.
 Assume exists_almost_min :
   (∀ L : ℝ, L > m ⇒ there exists a : A ,
              L > a).
@@ -599,7 +599,7 @@ Lemma if_almost_maximizer_ε_then_every_upp_bd_larger :
     (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : A, M - ε < a)
        ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
 Proof.
-Take A : subset_R, M : ℝ.
+Take A : subset_R and M : ℝ.
 Assume exists_almost_max_ε : (for all ε : ℝ,
    ε > 0 ⇨ there exists a : A ,
              M - ε < a).
@@ -624,7 +624,7 @@ Lemma if_almost_minimizer_ε_then_every_low_bd_smaller :
     (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : A, m + ε > a)
        ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
 Proof.
-Take A : subset_R, m : ℝ.
+Take A : subset_R and m : ℝ.
 Assume exists_almost_min_ε : (for all ε : ℝ,
    ε > 0 ⇨ there exists a : A ,
              m + ε > a).
@@ -688,7 +688,7 @@ Theorem alt_char_sup :
   ∀ (A : subset_R) (M : ℝ),
     is_sup A M ⇔ is_sup_alt_char A M.
 Proof.
-Take A : subset_R, M : ℝ.
+Take A : subset_R and M : ℝ.
 We show both directions.
 - We need to show that (is_sup A M ⇨ is_sup_alt_char A M).
   Assume M_is_sup_A : (is_sup A M).
@@ -742,7 +742,7 @@ Theorem alt_char_inf :
   ∀ (A : subset_R) (m : ℝ),
     is_inf A m ⇔ is_inf_alt_char A m.
 Proof.
-Take A : subset_R, m : ℝ.
+Take A : subset_R and m : ℝ.
 We show both directions.
 - We need to show that (is_inf A m ⇨ is_inf_alt_char A m).
   Assume m_is_inf_A : (is_inf A m).
