@@ -1,6 +1,7 @@
 (** * Testcases for [induction.v]
 Authors: 
     - Cosmin Manea (1298542)
+    - Jelle Wemmenhove
 
 Creation date: 06 June 2021
 
@@ -39,6 +40,7 @@ Proof.
       reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
+      intro IHn.
       reflexivity.
 Qed.
 
@@ -46,12 +48,13 @@ Qed.
 Goal (0 = 0) -> forall n : nat, (n = n).
 Proof.
     intro n.
-    We use induction on n0.
+    We use induction on k.
     - Fail We first show the base case, namely (2 = 2).
       We first show the base case, namely (0 = 0).
       Fail We first show the base case, namely (1 = 1).
       reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
+      intro IHk.
       reflexivity.
 Qed.
