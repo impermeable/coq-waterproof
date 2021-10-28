@@ -33,7 +33,6 @@ Require Import Rtrigo.
 Require Import Ranalysis.
 Require Import Integration.
 Require Import micromega.Lra.
-Require Import Omega.
 Require Import Max.
 
 Require Import Waterproof.test_auxiliary.

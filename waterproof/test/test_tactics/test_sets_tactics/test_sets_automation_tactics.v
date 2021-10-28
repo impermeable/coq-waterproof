@@ -38,7 +38,6 @@ Require Import Rtrigo.
 Require Import Ranalysis.
 Require Import Integration.
 Require Import micromega.Lra.
-Require Import Omega.
 Require Import Max.
 Require Import Coq.Arith.Wf_nat.
 Require Import Waterproof.set_intuition.Enabled.

@@ -78,8 +78,7 @@ Either (x = y) or (x ≠ y).
   Apply n.
 Qed.
 
-Hint Resolve d'_eq_0 : reals.
-Hint Resolve d'_eq_1 : reals.
-Hint Extern 1 => lra : reals.
-Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : reals.
-Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : reals.
+Global Hint Resolve d'_eq_0 : reals.
+Global Hint Resolve d'_eq_1 : reals.
+Global Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : reals.
+Global Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : reals.
