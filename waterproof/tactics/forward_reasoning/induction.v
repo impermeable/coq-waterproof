@@ -83,7 +83,7 @@ Ltac2 base_case (t:constr) := lazy_match! goal with
                                 end
                               | [|- _] => raise_natind_error("No need to indicate showing a base case.")
                               end.
-Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" t(constr) := base_case t.
+Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" that(opt("that")) t(constr) := base_case t.
 
 (** *
     Removes the NaturalInduction.Step.Wrapper.

@@ -136,7 +136,7 @@ Local Ltac2 assume (x : (ident * constr) list) :=
 (** * Assume
     Version with type checking.
 *)
-Ltac2 Notation "Assume" x(list1(seq(ident, ":", constr), "and")) := 
+Ltac2 Notation "Assume" that(opt("that")) x(list1(seq(ident, ":", constr), "and")) := 
     panic_if_goal_wrapped ();
     assume x.
 

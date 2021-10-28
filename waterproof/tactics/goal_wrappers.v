@@ -68,7 +68,7 @@ Module NaturalInduction.
                := match x with wrap _ y => eq_refl end.
   End Step.
 End NaturalInduction.
-Notation "'Add' '‘We' 'first' 'show' 'the' 'base' 'case,' 'namely' 'that' (  G ).’ 'to' 'proof' 'script.'" 
+Notation "'Add' '‘We' 'first' 'show' 'the' 'base' 'case,' 'namely' (  G ).’ 'to' 'proof' 'script.'" 
          := (NaturalInduction.Base.Wrapper G) (at level 99, only printing).
 Notation "'Add' '‘We' 'now' 'show' 'the' 'induction' 'step.’' 'to' 'proof' 'script.'"
          := (NaturalInduction.Step.Wrapper _) (at level 99, only printing).

@@ -41,3 +41,17 @@ Proof.
       Fail We now show the induction step.
       reflexivity.
 Qed.
+
+(** Test 1: This should work fine *)
+Goal (0 = 0) -> forall n : nat, (n = n).
+Proof.
+    intro n.
+    We use induction on n0.
+    - Fail We first show the base case, namely (2 = 2).
+      We first show the base case, namely (0 = 0).
+      Fail We first show the base case, namely (1 = 1).
+      reflexivity.
+    - We now show the induction step.
+      Fail We now show the induction step.
+      reflexivity.
+Qed.
