@@ -27,7 +27,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
-Require Export Rbase.
+(*Require Export Rbase
 Require Export Qreals.
 Require Export Rfunctions.
 Require Export SeqSeries.
@@ -39,7 +39,7 @@ Require Export Omega.
 Require Export Max.
 
 Require Export Sets.Ensembles.
-Require Export Sets.Classical_sets.
+Require Export Sets.Classical_sets.*)
 
 Require Export Waterproof.waterprove.waterprove.
 Require Import Waterproof.tactics.goal_to_hint.

@@ -31,6 +31,8 @@ Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.load_database.Intuition.
+Require Import Waterproof.load_database.ClassicalLogic.
+Require Import Coq.Logic.Classical.
 
 Definition is_in {D : Set} := fun (A : (D → Prop)) ↦ (fun (x : D) ↦ A x).
 Notation "x ∈ A" := (@is_in _ A x) (at level 50) : sup_and_inf_scope.

@@ -3,6 +3,7 @@ Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
 Require Import Waterproof.databases. (* Req_true is in here *)
+Require Import micromega.Lra.
 
 Open Scope R_scope.
 

@@ -27,6 +27,8 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
+Require Import micromega.Lra.
+
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
