@@ -91,7 +91,7 @@ Local Ltac2 rewrite_attempt (lemma: constr)
         end
     in
     match Control.case f with
-    | Val _ => print_rewrote_goal_success lemma
+    | Val _ => () (* print_rewrote_goal_success lemma *)
     | Err exn => fail_goal_rewrite ()
     end.
 

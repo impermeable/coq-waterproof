@@ -54,7 +54,7 @@ Local Ltac2 fail_suffice_to_show () :=
 Local Ltac2 try_enough_expression (f: unit -> unit) 
                            (statement: constr):=
     match Control.case f with
-    | Val _ => 
+    | Val _ => () (*
     print (
         concat
             (of_string "It indeed suffices to show that '")
@@ -62,7 +62,7 @@ Local Ltac2 try_enough_expression (f: unit -> unit)
                 (of_constr statement)
                 (of_string "'.")
             )
-    )
+    ) *)
     | Err exn => fail_suffice_to_show ()
     end.
 
