@@ -91,7 +91,7 @@ Theorem mouse_tail :
 Proof.
     Take a : (ℕ → ℝ) and k, l : ℕ and L : ℝ.
     split.
-    Take sigma_l_cv : (Un_cv (Nn) ↦ (sigma a l Nn) L).
+    Assume sigma_l_cv : (Un_cv (Nn) ↦ (sigma a l Nn) L).
     We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)).
     Apply lim_const_seq.
     By CV_plus it holds that H2 : (Un_cv (fun Nn ↦ sigma a k (l-1)%nat + sigma a l Nn) (sigma a k (l-1)%nat + L)).

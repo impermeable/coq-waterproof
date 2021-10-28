@@ -121,9 +121,19 @@ Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
     assert_raises_error (fun() => Take y, u: bool and a, b, c : nat).
 Abort.
 
+(** Test 11: Attempting to show an implication should be rejected. *)
+Goal (0 = 1) -> False.
+  Fail Take p : (0 = 1).
+Abort.
+
+(** Test 12: Attempting to show a negation should be rejected. *)
+Goal not (0 = 1).
+  Fail Take p : (0 = 1).
+Abort.
+
 Require Import Waterproof.definitions.set_definitions.
 
-(** Test 11: Introduciing set variables
+(** Test 13: Introduciing set variables
     For some reason, if [A] is a set,
     then the set of its elements isn't called [A]
     but [elements_R A].

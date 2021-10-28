@@ -97,16 +97,23 @@ Local Ltac2 rec process_identlist_type_pairs (x : (ident list * constr) list) :=
     match x with
     | head::tail =>
             match head with
-            | (v, t) => (* Check whether we need variabled of type t. *)
-                        lazy_match! goal with
-                        | [ |- forall _ : ?u, _] => 
-                            let ct := Aux.get_coerced_type t in
-                            match Aux.check_constr_equal u ct with
-                            | true  => introduce_idents v t ct
-                            | false => Control.zero (TakeError (expected_of_type_instead_of_message u t))
-                            end
-                        | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+            | (v, t) => 
+                  lazy_match! goal with
+                  | [ |- forall _ : ?u, _] => 
+                        (* Check whether the type is not a proposition *)
+                        let sort_u := Aux.get_value_of_hyp u in
+                        match Aux.check_constr_equal sort_u constr:(Prop) with
+                        | false => 
+                             (* Check whether we need variables of type t. *)
+                             let ct := Aux.get_coerced_type t in
+                             match Aux.check_constr_equal u ct with
+                             | true  => introduce_idents v t ct
+                             | false => Control.zero (TakeError (expected_of_type_instead_of_message u t))
+                             end
+                        | true  => Control.zero (TakeError (of_string "‘Take’ cannot be used to prove an implication (⇨). Use ‘Assume’ instead."))
                         end
+                  | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+                  end
             | _ => Control.zero (Aux.CannotHappenError "Cannot happen.")
             end;
             (* Attempt to introduce remaining variables of (different) types. *)

@@ -219,7 +219,7 @@ Lemma exists_inf :
     ((∃ x : ℝ, x ∈ A) ⇒ { m : ℝ | is_inf A m }).
 Proof.
     Take A : (ℝ → Prop).
-    Take A_bdd_below : (is_bdd_below A).
+    Assume A_bdd_below : (is_bdd_below A).
     Assume ex_x : (∃ x : ℝ, x ∈ A).
     Define B := (set_opp A).
     Expand the definition of set_opp in B.
@@ -396,7 +396,7 @@ Lemma seq_ex_almost_maximizer_ε :
     ε > 0 ⇒ ∃ k : ℕ, a k > lub a pr - ε.
 Proof.
     Take a : (ℕ → ℝ).
-    Take pr : (has_ub a). 
+    Assume pr : (has_ub a). 
     Expand the definition of lub.
     That is, write the goal as (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a pr in a0) - ε).
@@ -422,7 +422,7 @@ Lemma seq_ex_almost_maximizer_m :
     ∃ k : ℕ, a k > lub a pr - 1 / (INR(m) + 1).
 Proof.
     Take a : (ℕ → ℝ). 
-    Take pr : (has_ub a). 
+    Assume pr : (has_ub a). 
     Take m : ℕ.
     Apply seq_ex_almost_maximizer_ε.
     (** We need to show that $1/(m+1) > 0$.*)
@@ -440,7 +440,7 @@ Lemma exists_almost_lim_sup_aux :
     ∃ k : ℕ, (k ≥ N)%nat ∧ a k > sequence_ub a pr N - 1 / (INR(m) + 1).
 Proof.
     Take a : (ℕ → ℝ). 
-    Take pr : (has_ub a). 
+    Assume pr : (has_ub a). 
     Take m, Nn : ℕ.
     We claim that H1 : (∃ i : ℕ, a (Nn + i)%nat > sequence_ub a pr Nn - 1 / (INR m + 1)).
     Apply seq_ex_almost_maximizer_m.

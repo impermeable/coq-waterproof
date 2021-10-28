@@ -65,8 +65,8 @@ Lemma exists_almost_lim_sup :
     ∃ k : ℕ, (N ≤ k)%nat ∧ a k > proj1_sig (lim_sup_bdd a pr1 pr2) - 1 / (INR(m) + 1).
 Proof.
     Take a : (ℕ → ℝ). 
-    Take pr1 : (has_ub a). 
-    Take pr2 : (has_lb (sequence_ub a pr1)). 
+    Assume pr1 : (has_ub a). 
+    Assume pr2 : (has_lb (sequence_ub a pr1)). 
     Take m, Nn : ℕ.
     By exists_almost_lim_sup_aux it holds that H1 : (∃ k : ℕ, (k ≥ Nn)%nat ∧ a k > sequence_ub a pr1 Nn - 1 / (INR(m) + 1)).
     Choose n such that n_good according to H1.
@@ -100,8 +100,8 @@ Lemma exists_subseq_to_limsup_bdd :
     ∃ n : ℕ → ℕ, is_index_seq n ∧ ∀ k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a pr1 pr2) - 1 / (INR(k) + 1).
 Proof.
     Take a : (ℕ → ℝ). 
-    Take pr1 : (has_ub a). 
-    Take pr2 : (has_lb (sequence_ub a pr1)).
+    Assume pr1 : (has_ub a). 
+    Assume pr2 : (has_lb (sequence_ub a pr1)).
     apply exists_good_subseq with (P := fun (m : ℕ) (y :ℝ) ↦ y > proj1_sig (lim_sup_bdd a pr1 pr2) - 1 / (INR(m) + 1) ).
     Apply exists_almost_lim_sup.
 Qed.
@@ -113,7 +113,7 @@ Lemma sequence_ub_bds :
     (n ≥ N)%nat ⇒ a n ≤ sequence_ub a pr N.
 Proof.
     Take a : (ℕ → ℝ). 
-    Take pr : (has_ub a).
+    Assume pr : (has_ub a).
     Take Nn, n : ℕ.
     Assume n_ge_N : (n ≥ Nn)%nat.
     Expand the definition of sequence_ub.
@@ -151,8 +151,8 @@ Theorem Bolzano_Weierstrass_gen :
     ∃ (n : ℕ → ℕ), is_index_seq n ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a pr_ub pr_lb)).
 Proof.
     Take a : (ℕ → ℝ).
-    Take pr_ub : (has_ub a).
-    Take pr_lb : (has_lb (sequence_ub a pr_ub)).
+    Assume pr_ub : (has_ub a).
+    Assume pr_lb : (has_lb (sequence_ub a pr_ub)).
     Define L_with_proof := (lim_sup_bdd a pr_ub pr_lb).
     Define L := (proj1_sig L_with_proof).
     Define sequence_ub_cv_to_L := (proj2_sig L_with_proof).
@@ -203,8 +203,8 @@ Theorem Bolzano_Weierstrass :
       Un_cv (fun (k : ℕ) ↦ a (n k)) l ).
 Proof.
     Take a : (ℕ → ℝ).
-    Take pr_ub : (has_ub a).
-    Take pr_lb : (has_lb a).
+    Assume pr_ub : (has_ub a).
+    Assume pr_lb : (has_lb a).
     Define pr2 := (maj_min a pr_ub pr_lb).
     We claim that H :
       (∃ (n : ℕ → ℕ), is_index_seq n
@@ -221,7 +221,7 @@ Lemma acc_pt_bds_seq_ub :
     is_seq_acc_pt a x ⇒ ∀ m : ℕ, x ≤ sequence_ub a pr_ub m.
 Proof.
     Take a : (ℕ → ℝ).
-    Take pr_ub : (has_ub a).
+    Assume pr_ub : (has_ub a).
     Take x : ℝ.
     Assume x_is_acc_pt : (is_seq_acc_pt a x).
     Expand the definition of is_seq_acc_pt in x_is_acc_pt.
@@ -266,8 +266,8 @@ Lemma lim_sup_bdd_is_sup_seq_acc_pts :
     is_sup (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a pr_ub pr_lb)).
 Proof.
     Take a : (ℕ → ℝ).
-    Take pr_ub : (has_ub a).
-    Take pr_lb : (has_lb (sequence_ub a pr_ub)).
+    Assume pr_ub : (has_ub a).
+    Assume pr_lb : (has_lb (sequence_ub a pr_ub)).
     (* TODO: fix that we refer to is_lub here. Moreover, we show both statements should work immediately. *)
     Expand the definition of is_lub.
     That is, write the goal as 

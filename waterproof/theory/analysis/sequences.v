@@ -156,7 +156,7 @@ Lemma eq_seq_conv_to_same_lim :
     (∀ n : ℕ, a n = b n) ⇒ a ⟶ l ⇒ b ⟶ l.
 Proof.
     Take a, b : (ℕ → ℝ) and l : R.
-    Take seq_eq : (for all n : ℕ, a n = b n).
+    Assume seq_eq : (for all n : ℕ, a n = b n).
     Apply conv_evt_eq_seq.
     (** By our lemma, it suffices to prove that (evt_eq_sequences a b) *)
     We need to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
@@ -314,7 +314,7 @@ Proof.
     Take a : (ℕ → ℝ).
     Take L : ℝ.
     Take M : ℝ.
-    Take a_bdd_by_M : (∀ n : ℕ, (a n) ≤ M).
+    Assume a_bdd_by_M : (∀ n : ℕ, (a n) ≤ M).
     Assume a_cv_to_L : (Un_cv a L).
     By Rle_or_lt it holds that H : (L ≤ M ∨ M < L).
     Because H either L_le_M or M_lt_L.
@@ -351,7 +351,7 @@ Proof.
     Take a : (ℕ → ℝ).
     Take L : ℝ.
     Take M : ℝ.
-    Take a_bdd_by_M : (∀ n : ℕ, a n ≥ M).
+    Assume a_bdd_by_M : (∀ n : ℕ, a n ≥ M).
     Define b := (opp_seq a).
     Assume a_cv_to_L : (Un_cv a L).
     Expand the definition of opp_seq in b.

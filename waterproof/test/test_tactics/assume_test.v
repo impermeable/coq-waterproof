@@ -114,3 +114,17 @@ Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
   Assume nnnP : (not (not (not P))) and H : P.
 Abort.
+
+(** * Test 11: should reject trying to construct a map.
+*)
+Goal nat -> nat.
+  Fail Assume n : nat.
+Abort.
+
+(** * Test 12: should reject trying to construct a map.
+*)
+Goal (0 = 0) -> nat -> nat.
+  Fail Assume p : (0 = 0) and n : nat.
+  Assume p : (0 = 0).
+  Fail Assume n : nat.
+Abort.

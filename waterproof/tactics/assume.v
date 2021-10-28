@@ -61,18 +61,18 @@ Local Ltac2 assume_negation (x : (ident * constr) list) :=
     | head::tail => 
             match head with
             | (v, t) => (* Check whether the right negated expression is assumed. *)
-                        lazy_match! goal with
-                        | [ |- not ?u ] => 
+                    lazy_match! goal with
+                    | [ |- not ?u ] => 
                             match Aux.check_constr_equal u t with
                             | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
                             | true  => (* Check whether this was the only assumption made.*)
-                                       match tail with
-                                       | h::t => Control.zero (AssumeError (of_string "Nothing left to assume after the negated expression."))
-                                       | [] => (* Assume negation *) Std.intros false [Std.IntroNaming (Std.IntroIdentifier v)]
-                                       end
+                                   match tail with
+                                   | h::t => Control.zero (AssumeError (of_string "Nothing left to assume after the negated expression."))
+                                   | [] => (* Assume negation *) Std.intros false [Std.IntroNaming (Std.IntroIdentifier v)]
+                                   end
                             end
-                        | [ |- _ ] => Control.zero (Aux.CannotHappenError "Cannot happen.")
-                        end
+                    | [ |- _ ] => Control.zero (Aux.CannotHappenError "Cannot happen.")
+                    end
             | _ => Control.zero (Aux.CannotHappenError "Cannot happen.")
             end
     end.
@@ -97,16 +97,22 @@ Local Ltac2 rec process_ident_type_pairs (x : (ident * constr) list) :=
     | head::tail =>
             match head with
             | (v, t) => lazy_match! goal with
-                        (* Check whether next assumption is that of a negated expression. *)
-                        | [ |- not _ ]   => assume_negation x (* If so, switch to different subroutine. *)
-                        (* Check whether we need variabled of type t. *)
-                        | [ |- ?u -> _ ] => 
-                            match Aux.check_constr_equal u t with
-                            | true  => Std.intros false [Std.IntroNaming (Std.IntroIdentifier v)]
-                            | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
+                    (* Check whether next assumption is that of a negated expression. *)
+                    | [ |- not _ ]   => assume_negation x (* If so, switch to different subroutine. *)
+                    | [ |- ?u -> _ ] => 
+                            (* Check whether the domain is a proposition. *)
+                            let sort_u := Aux.get_value_of_hyp u in
+                            match Aux.check_constr_equal sort_u constr:(Prop) with
+                            | true => 
+                                (* Check whether we need variabled of type t. *)
+                                match Aux.check_constr_equal u t with
+                                | true  => Std.intros false [Std.IntroNaming (Std.IntroIdentifier v)]
+                                | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
+                                end
+                            | false => Control.zero (AssumeError (of_string "‘Assume’ cannot be used to construct a map (→). Use ‘Take’ instead."))
                             end
-                        | [ |- _ ] => Control.zero (AssumeError (of_string "Tried to assume too many properties."))
-                        end
+                    | [ |- _ ] => Control.zero (AssumeError (of_string "Tried to assume too many properties."))
+                    end
             | _ => Control.zero (Aux.CannotHappenError "Cannot happen.")
             end;
             (* Attempt to introduce remaining variables of (different) types. *)
