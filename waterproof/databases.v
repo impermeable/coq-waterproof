@@ -232,7 +232,7 @@ Global Hint Extern 3 ( Rgt _ _ ) => lra : reals.
 Global Hint Extern 3 ( Rle _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rge _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rlt _ _ ) => nra : reals.
-Global Hint Extern 3 ( Rgt ) => nra : reals.
+Global Hint Extern 3 ( Rgt _ _ ) => nra : reals.
 
 Global Hint Extern 3 ( _ = _ ) => ring : waterproof_integers.
 Global Hint Extern 3 ( @eq nat _  _) => lia : waterproof_integers.
