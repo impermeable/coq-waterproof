@@ -25,19 +25,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
-(*Require Export Rbase.
-Require Export Qreals.
-Require Export Rfunctions.
-Require Export SeqSeries.
-Require Export Rtrigo.
-Require Export Ranalysis.
-Require Export Integration.
-Require Export micromega.Lra.
-Require Export Omega.
-Require Export Max.
-
-Require Export Sets.Ensembles.
-Require Export Sets.Classical_sets. *)
+Require Import Reals.
 
 Require Import Waterproof.tactics.forward_reasoning.rewrite_using.
 Require Import Waterproof.string_auxiliary.

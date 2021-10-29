@@ -26,7 +26,7 @@ From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
 Require Import Waterproof.test_auxiliary.
-Load assume.
+Load "Waterproof/tactics/assume.v".
 
 
 (** * Test 1: single hypothesis.

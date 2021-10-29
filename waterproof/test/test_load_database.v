@@ -33,6 +33,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
+Require Import Reals.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
@@ -289,7 +290,7 @@ Ltac2 Eval global_database_selection.
 
 
 (** * Test 14
-    Similarly, this can be slved with the WaterproofDBGeneral, 
+    Similarly, this can be solved with the WaterproofDBGeneral, 
     since it contains all databases.
 *)
 Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
@@ -445,8 +446,13 @@ Lemma lm_abs_srq : forall x:R, Rabs(x^2) = x^2.
 Qed.
 
 
-
-
+(** * Test 25
+    The reals database should be able to solve for all x : R, ~( x > x).
+*)
+Goal forall x : R, ~ (x > x).
+intro x.
+solve [auto with reals].
+Qed.
 
 
 
