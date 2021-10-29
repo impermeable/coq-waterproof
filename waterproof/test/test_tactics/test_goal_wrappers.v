@@ -39,6 +39,8 @@ Require Import Reals.
 Local Open Scope R_scope.
 Goal R -> False.
     intro x.
+    (*assert ({x < 0} + {x >= 0}).
+    unfold Rge, Rgt.*)
     Either (x < 0) or (x >= 0).
     Fail Expand the definition of Rlt.
 Abort.

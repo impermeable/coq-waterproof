@@ -116,6 +116,8 @@ Abort.
 (** Test 9: This tests to see if 0 < x, x = 0 or x > 0, (flipped sign). *)
 Goal forall x : R, exists n : nat, INR(n) > x.
     intro x.
+    (*assert (sumtriad (x < 0) (x = 0) (x > 0)).
+    unfold Rgt. *)
     Either (x < 0), (x = 0) or (x > 0).
     - Case (x < 0).
       admit.
