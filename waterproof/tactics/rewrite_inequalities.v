@@ -439,7 +439,7 @@ Local Ltac2 rewrite_equality_link (h: ident) :=
 Local Ltac2 rewrite_single_inequality (link : constr * Inequality * constr) :=
     let prop := gen_prop_from_link link in
     let h := Fresh.in_goal @h in
-    let by_arg () := waterprove_without_hint prop constr:(dummy_lemma)
+    let by_arg () := waterprove_without_hint prop constr:(dummy_lemma) true
     in
     let verify_prop () := Aux.ltac2_assert_with_by h prop by_arg
     in

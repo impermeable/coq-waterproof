@@ -36,6 +36,9 @@ Require Import Reals.
 
 Open Scope nat_scope.
 
+(* Disable not automatically proving quantifiers. *)
+Ltac2 Set Waterproof.waterprove.waterprove.global_limited_automation := false.
+
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [Rewrite using ...] 
     Variant without the [in] clause.

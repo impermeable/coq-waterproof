@@ -40,7 +40,7 @@ Require Import Waterproof.waterprove.waterprove.
 *)
 Require Import Waterproof.set_intuition.Disabled.
 Lemma test_1: forall A B: Prop, A /\ B -> B /\ A.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 
@@ -49,5 +49,6 @@ Abort.
 *)
 Require Import Waterproof.set_intuition.Enabled.
 Lemma test_2: forall A B: Prop, A /\ B -> B /\ A.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.

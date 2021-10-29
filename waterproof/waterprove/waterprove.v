@@ -61,6 +61,13 @@ Ltac2 mutable global_enable_intuition := false.
 *)
 Ltac2 mutable global_use_all_databases := false.
 
+(** * global_use_all_databases
+    Flag whether [run_automation] and [waterprove]
+    should use ALL databases that Coq can find via the [*] wildcard.
+    This may include more databases than can be imported individually!
+*)
+Ltac2 mutable global_limited_automation := true.
+
 (* Subroutine of [run_automation] *)
 Local Ltac2 run_automation_with_intuition (search_depth: int option)
                                           (databases: ident list option)
@@ -210,12 +217,34 @@ Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list)
     [Std.new_auto] takes the same arguments as [auto],
     and is available as the tactic [new auto].
 *)
-Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) :=
-    let databases :=
-        match global_use_all_databases with
-        | true => None
-        | false => Some (load_databases global_database_selection) 
-        end
-    in
-    run_automation prop lemmas global_search_depth 
-                   databases global_enable_intuition.
+Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield_quant:bool) :=
+    let attempt () := first [
+            run_automation prop lemmas 3 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
+            (*solve [auto 2 with classical_logic core]*)
+          | match shield_quant with
+            | true => match global_limited_automation with
+                       | true => (* Match goal with basic logical operators *)
+                               lazy_match! goal with
+                               | [ |- forall _, _ ] => fail_automation ()
+                               | [ |- exists _, _ ] => fail_automation ()
+                               | [ |- _] => ()
+                               end
+                       | false => ()
+                       end
+            | false => ()
+            end;
+            let databases :=
+                match global_use_all_databases with
+                | true => None
+                | false => Some (load_databases global_database_selection) 
+                end
+            in
+            run_automation prop lemmas global_search_depth 
+                           databases global_enable_intuition
+          ]
+    in 
+    match Control.case attempt with
+    | Val _ => ()
+    | Err exn => fail_automation ()
+    end.
+

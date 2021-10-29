@@ -61,7 +61,7 @@ Ltac2 Eval global_database_selection.
     Lemma that should be proveable with [nocore].
 *)
 Lemma load_db_test_1a: True.
-    waterprove (Control.goal ()) [].
+    waterprove (Control.goal ()) [] true.
 Qed.
 
 Ltac2 Set global_database_selection as old_selection := [].
@@ -74,7 +74,7 @@ Ltac2 Eval global_database_selection.
     Lemma that should be NOT proveable with [nocore].
 *)
 Lemma load_db_test_1b: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -97,7 +97,8 @@ Ltac2 Eval global_database_selection.
     Passes if the goal can be solved by the specified database alone.
 *)
 Lemma load_db_test_2a: forall x y:R, (x + y)*x = x*x + x*y.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.
 
 (** * Test 2b
@@ -107,7 +108,7 @@ Qed.
     when an error is raised.
 *)
 Lemma load_db_test_2b: forall x y:R, x + y = y + x.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -128,7 +129,7 @@ Ltac2 Eval global_database_selection.
     the specified database is missing. 
 *)
 Lemma load_db_test_2c: forall x y:R, (x + y)*x = x*x + x*y.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -157,7 +158,8 @@ Ltac2 Eval global_database_selection.
     Passes if the goal can be solved by the specified database alone.
 *)
 Lemma load_db_test_3a: forall x y:R, x + x + y = x + y + x.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.
 
 (** * Test 3b
@@ -167,7 +169,7 @@ Qed.
     when an error is raised.
 *)
 Lemma load_db_test_3b: forall x y:R, x*y = y *x.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -188,7 +190,7 @@ Ltac2 Eval global_database_selection.
     the specified database is missing. 
 *)
 Lemma load_db_test_3c: forall x y:R, x + x + y = x + y + x.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -215,7 +217,8 @@ Ltac2 Eval global_database_selection.
     Passes if the goal can be solved by the specified database alone.
 *)
 Lemma load_db_test_4a: forall x y:R, x*1 + 1 + 0 = x +1.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.
 
 (** * Test 4b
@@ -225,7 +228,7 @@ Qed.
     when an error is raised.
 *)
 Lemma load_db_test_4b: forall x y:R, x*y = y *x.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -246,7 +249,7 @@ Ltac2 Eval global_database_selection.
     the specified database is missing. 
 *)
 Lemma load_db_test_4c: forall x y:R, x*1 + 1 + 0 = x +1.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 
 Abort.
@@ -264,7 +267,7 @@ Ltac2 Eval global_database_selection.
     Same as test 2, but now the WRONG database is loaded.
 *)
 Lemma load_db_test_12: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 
@@ -279,7 +282,8 @@ Ltac2 Eval global_database_selection.
     Same as test 2, but now the REQUIRED database is loaded.
 *)
 Lemma load_db_test_13: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.
 
 (*Empty the database*)
@@ -294,7 +298,8 @@ Ltac2 Eval global_database_selection.
     since it contains all databases.
 *)
 Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.
 
 (*Empty the database*)
@@ -307,7 +312,7 @@ Ltac2 Set global_database_selection as old_selection :=[].
 *)
 Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 
-    waterprove (Control.goal ()) [(fun() => constr:(load_db_test_13))].
+    waterprove (Control.goal ()) [(fun() => constr:(load_db_test_13))] true.
 Qed.
 
 Ltac2 Set global_database_selection as old_selection :=
@@ -318,14 +323,14 @@ Ltac2 Set global_search_depth := 4.
 *)
 Goal forall x y, x * y = y * x + 0.
 Proof.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
     Ltac2 Set global_database_selection as old_selection :=[].
     Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBZeroOne)::old_selection.
     Ltac2 Eval print (of_string "Current database selection is:").
     Ltac2 Eval global_database_selection.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 
@@ -342,7 +347,7 @@ Ltac2 Set global_search_depth := 1.
 *)
 Goal forall x y, x * y = y * x + 0 .
 Proof.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 Ltac2 Set global_search_depth := 3.
@@ -353,7 +358,8 @@ Ltac2 Set global_search_depth := 3.
 *)
 Goal forall x y, x * y = y * x + 0 .
 Proof.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Qed.
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBPlusMinus)::old_selection.
@@ -369,7 +375,7 @@ Ltac2 Set global_database_selection as old_selection :=
 Ltac2 Eval print (of_string "Current database selection is:").
 Ltac2 Eval global_database_selection.
 Goal forall a:R, ln(exp a) = a.
-    let result () := waterprove (Control.goal ()) [] in
+    let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 
@@ -382,7 +388,8 @@ Ltac2 Eval global_database_selection.
     This test should work just fine now.
 *)
 Goal forall a:R, ln(exp a) = a.
-    waterprove (Control.goal ()) [].
+    intros.
+    waterprove (Control.goal ()) [] true.
 Abort.
 
 Ltac2 Set global_database_selection as old_selection :=
@@ -403,7 +410,7 @@ Ltac2 Eval global_database_selection.
     databases except the required one.
 *)
 Goal forall a:R, Rabs(a) = Rabs(-a).
-  let result () := waterprove (Control.goal ()) [] in
+  let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 
@@ -417,7 +424,8 @@ Ltac2 Eval global_database_selection.
     This test should work just fine now.
 *)
 Goal forall a:R, Rabs(a) = Rabs(-a).
-    waterprove (Control.goal ()) [].
+    intro a.
+    waterprove (Control.goal ()) [] true.
 Abort.
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBReals)::old_selection.
@@ -426,7 +434,8 @@ Ltac2 Set global_database_selection as old_selection :=
     Another test that uses two databases, for good measure.
 *)
 Goal forall x y:R, (x+y)^2 = Rabs(x)^2 + 2*x*y + y^2.
-  waterprove (Control.goal ()) [].
+  intros.
+  waterprove (Control.goal ()) [] true.
 Qed.
 
 (** * Test 24
@@ -435,7 +444,7 @@ Qed.
     Therefore, this test will fail.
 *)
 Goal forall x y:R, (x+y)^2 = Rabs(x^2) + 2*x*y + y^2.
-  let result () := waterprove (Control.goal ()) [] in
+  let result () := waterprove (Control.goal ()) [] true in
     assert_raises_error result.
 Abort.
 

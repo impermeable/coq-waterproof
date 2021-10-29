@@ -42,10 +42,10 @@ Require Import Waterproof.auxiliary.
             to [waterprove] for automatically
             proving the [target_goal].
 *)
-Ltac2 waterprove_with_hint (target_goal:constr) (lemma:constr) :=
+Ltac2 waterprove_with_hint (target_goal:constr) (lemma:constr) (shield_quant:bool) :=
     print_goal_hint (Some target_goal);
     let lemmas := (fun () => lemma)::[] in
-    waterprove target_goal lemmas.
+    waterprove target_goal lemmas shield_quant.
 
 (** * waterprove_without_hint
     Try to prove the goal directly using the function [waterprove].
@@ -56,9 +56,9 @@ Ltac2 waterprove_with_hint (target_goal:constr) (lemma:constr) :=
             to [waterprove] for automatically
             proving the [target_goal].
 *)
-Ltac2 waterprove_without_hint (target_goal:constr) (lemma:constr) :=
+Ltac2 waterprove_without_hint (target_goal:constr) (lemma:constr) (shield_quant:bool) :=
     let lemmas := (fun () => lemma)::[] in
-    waterprove target_goal lemmas.
+    waterprove target_goal lemmas shield_quant.
 
 Ltac2 print_failure () :=
     print (of_string "Waterproof could not find a proof. 

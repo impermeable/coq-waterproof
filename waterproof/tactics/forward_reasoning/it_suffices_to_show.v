@@ -88,7 +88,7 @@ Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr opt
     let g := Control.goal () in
     let hyp_name := Fresh.in_goal @h in
     let f () := enough ($hyp_name : $statement) 
-                by (waterprove_with_hint g help_lemma)
+                by (waterprove_with_hint g help_lemma true)
     in
     try_enough_expression f statement.
 

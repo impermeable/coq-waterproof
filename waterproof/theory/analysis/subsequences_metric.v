@@ -41,7 +41,7 @@ Definition is_index_sequence    (n : ℕ → ℕ) :=
 
 (** The next definition captures what it means to be an index sequence.*)
 Definition is_index_seq (n : ℕ → ℕ) :=
-    ∀ k : ℕ, (n k < n (S k))%nat.
+    ∀ k : ℕ, (n k < n (k + 1))%nat.
     
 Variable M : Metric_Space.
 Definition X := Base M.
@@ -88,12 +88,6 @@ Global Hint Extern 1 => (unfold ge) : subsequences.
 
 Require Import Arith.
 
-
-Lemma successor_is_plus_one: forall k: nat, (k + 1)%nat = S k.
-    This follows immediately.
-Qed.
-
-
 Lemma index_seq_equiv (n : ℕ → ℕ) : is_index_seq n ⇔ is_index_sequence n.
 Proof. 
     We show both directions.
@@ -101,15 +95,13 @@ Proof.
       intro.
       unfold is_index_sequence. 
       Take k : ℕ. 
-      unfold is_index_seq in H. 
-      rewrite successor_is_plus_one.
+      unfold is_index_seq in H.
       Apply H.
     - We need to show that (is_index_sequence n ⇨ is_index_seq n).
       intro.
       unfold is_index_seq. 
       Take k : ℕ. 
-      unfold is_index_sequence in H. 
-      rewrite <- successor_is_plus_one.
+      unfold is_index_sequence in H.
       Apply H.
 Qed.
 

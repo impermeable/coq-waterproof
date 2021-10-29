@@ -58,7 +58,7 @@ Ltac2 assert_and_prove_sublemma (id: ident) (conclusion: constr)
                                 (proving_lemma: constr option) :=
     let help_lemma := unwrap_optional_lemma proving_lemma
     in
-    let by_arg () := waterprove_without_hint conclusion help_lemma
+    let by_arg () := waterprove_without_hint conclusion help_lemma true
     in
     let proof_attempt () := Aux.ltac2_assert_with_by id conclusion by_arg
     in

@@ -27,20 +27,6 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
-Require Import Rbase.
-Require Import Qreals.
-Require Import Rfunctions.
-Require Import SeqSeries.
-Require Import Rtrigo.
-Require Import Ranalysis.
-Require Import Integration.
-Require Import micromega.Lra.
-Require Import Max.
-
-Require Import Sets.Ensembles.
-Require Import Sets.Classical_sets.
-
-
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.tactics.goal_wrappers.
@@ -148,7 +134,7 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
 *)
 Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
     let lemma := unwrap_optional_lemma lemma in
-    let finish_proof () := waterprove_without_hint target_goal lemma in
+    let finish_proof () := waterprove_without_hint target_goal lemma true in
     check_goal_and_call target_goal finish_proof.
 
 

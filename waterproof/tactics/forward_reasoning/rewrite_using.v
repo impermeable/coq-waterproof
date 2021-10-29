@@ -127,7 +127,7 @@ Ltac2 rewrite_with_prop_check (proposition: constr)
         then do the rewrite,
         and then remove this hypothesis again.*)
     let u := Fresh.in_goal @u in
-    let by_arg () := waterprove_without_hint proposition constr:(dummy_lemma)
+    let by_arg () := waterprove_without_hint proposition constr:(dummy_lemma) false
     in
     let verify_prop () := Aux.ltac2_assert_with_by u proposition by_arg
     in

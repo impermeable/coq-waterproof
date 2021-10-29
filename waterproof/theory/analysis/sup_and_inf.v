@@ -328,7 +328,7 @@ Proof.
       Assume x_in_A : (A x).
       We claim that H_logic1 : (¬(exists a : R, (A a ∧ L < a)) -> (forall a : R, ¬((A a ∧ L < a)))).
       { Apply (@not_ex_all_not ℝ (fun a : ℝ => (A a ∧ L < a))). }
-      By H_logic1 it holds that H_logic2 : (forall a : R, ¬(A a ∧ L < a)).
+      It holds that H_logic2 : (forall a : R, ¬(A a ∧ L < a)).
       By not_and_or it holds that H_logic3 : (forall a : R, (¬(A a) ∨ ¬(L < a))).
       Define needed_assumption := (H_logic3 x).
       Because needed_assumption either part1 or part2.
