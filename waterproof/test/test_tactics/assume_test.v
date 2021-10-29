@@ -28,7 +28,6 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.test_auxiliary.
 Load assume.
 
-
 (** * Test 1: single hypothesis.
 *)
 Goal forall n, n = 1 /\ n = 2 -> False.

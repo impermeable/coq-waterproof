@@ -32,6 +32,7 @@ Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Load rewrite_using.
 Require Import Waterproof.load_database.DisableWildcard.
+Require Import Reals.
 
 Open Scope nat_scope.
 

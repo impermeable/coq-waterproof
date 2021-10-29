@@ -229,6 +229,13 @@ Global Hint Extern 3 ( Rle _ _ ) => lra : reals.
 Global Hint Extern 3 ( Rge _ _ ) => lra : reals.
 Global Hint Extern 3 ( Rlt _ _ ) => lra : reals.
 Global Hint Extern 3 ( Rgt _ _ ) => lra : reals.
+
+Global Hint Extern 3 (~ (Rle _ _) ) => lra : reals.
+Global Hint Extern 3 (~ (Rge _ _) ) => lra : reals.
+Global Hint Extern 3 (~ (Rlt _ _) ) => lra : reals.
+Global Hint Extern 3 (~ (Rgt _ _) ) => lra : reals.
+Global Hint Extern 3 (~ (@eq R _ _ ) ) => lra : reals.
+
 Global Hint Extern 3 ( Rle _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rge _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rlt _ _ ) => nra : reals.

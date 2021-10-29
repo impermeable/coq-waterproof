@@ -25,7 +25,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
-
+Require Import Reals.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
