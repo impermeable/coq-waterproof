@@ -29,7 +29,7 @@ Require Import Reals.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
-Load "Waterproof/tactics/forward_reasoning/it_holds_that".
+Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.load_database.All.
