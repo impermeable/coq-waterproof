@@ -43,7 +43,8 @@ An inductive type that records which comparison relation to use.
 Inductive comp_rel :=
 | comp_eq
 | comp_lt
-| comp_le.
+| comp_le
+| comp_nil.
 
 (** ** comp_rel_to_rel
 Get the corresponding relation from a comp_rel record.
@@ -59,6 +60,7 @@ match crel with
 | comp_eq => (fun x y => eq x y)
 | comp_lt => (fun x y => lt x y)
 | comp_le => (fun x y => le x y)
+| comp_nil => (fun x y => True)
 end.
 
 (** ** ineq_chain
@@ -103,6 +105,102 @@ match ineq with
 | chain_ineq rel m l => ineq_to_tail l
 end.
 
+(** 
+Extract a list of all relations from an inequality chain.
+
+    Arguments:
+        - [ineq: ineq_chain] the (in)equality chain
+
+    Returns:
+        - [list comp_rel] a list of comparison relations.
+*)
+Fixpoint ineq_to_list (ineq : ineq_chain) : (list (comp_rel)).
+induction ineq.
+- exact nil.
+- exact ((ineq_to_list ineq1)++(cons c nil)++(ineq_to_list ineq2))%list.
+Defined.
+
+(** 
+Helper function for the algorithm that determines the global relation in 
+an (in)equality chain.
+
+    Arguments:
+        - [crel1 : comp_rel] the comparison relation on the left
+        - [crel2 : comp_rel] the comparison relation on the right
+
+    Returns:
+        - [comp_rel] the comparison relation that you get when combining the two
+*)
+Definition relation_flow (crel1: comp_rel) (crel2 : comp_rel) 
+  : comp_rel :=
+match crel1 with 
+| comp_eq =>
+  match crel2 with 
+  | comp_eq => comp_eq
+  | comp_lt => comp_lt
+  | comp_le => comp_le
+  | comp_nil => comp_eq
+  end
+| comp_lt =>
+  match crel2 with
+  | comp_eq => comp_lt
+  | comp_lt => comp_lt
+  | comp_le => comp_lt
+  | comp_nil => comp_lt
+  end
+| comp_le =>
+  match crel2 with
+  | comp_eq => comp_le
+  | comp_lt => comp_lt
+  | comp_le => comp_le
+  | comp_nil => comp_le
+  end
+| comp_nil => crel2
+end.
+
+(**
+Find the global relation from a list of comparison relations.
+
+    Arguments:
+        - [rel_list : list comp_rel] the list of comparison relations
+
+    Returns:
+        - [comp_rel] the encoding of the comparison relation
+*)
+Fixpoint find_global_comp_rel (rel_list : list comp_rel) : (comp_rel)
+  :=
+match rel_list with
+| nil => comp_nil
+| cons crel crel_list =>
+  relation_flow (find_global_comp_rel crel_list)
+                crel 
+end.
+
+(** ** find_global_statement
+Find the corresponding global statement from an (in)equality chain.
+For instance, find_global_statement (3 &< 5 &= 5 &<= 8) should give (3 < 8).
+
+    Arguments:
+        - [ineq : ineq_chain] the (in)equality chain
+
+    Returns:
+        - [Prop] the global statement
+*)
+Definition find_global_statement (ineq : ineq_chain): Prop :=
+comp_rel_to_rel (find_global_comp_rel (ineq_to_list ineq)) (( ineq_to_head ineq)) (ineq_to_tail ineq).
+
+(** ** prop_list_and
+Combine the propositions in a prop list to a big 'and' statement.
+A list containing (3 < 5) and (5 = 2 + 3) gets converted to
+    (3 < 5) /\ (5 = 2 + 3).
+TODO: should we use a standard library function instead?
+*)
+Fixpoint prop_list_and (prop_list : list Prop) : Prop.
+induction prop_list.
+exact True.
+exact (and a (prop_list_and prop_list)).
+Defined.
+
 (** ** ineq_to_prop_list
 Get the list of the propositions contained in an (in)equality chain.
 For instance, ineq_to_prop_list (& 3 <& 5 &= 2 + 3) should give a list containing
@@ -122,17 +220,6 @@ exact ((ineq_to_prop_list ineq1)++
       ++(ineq_to_prop_list ineq2))%list.
 Defined.
 
-(** ** prop_list_and
-Combine the propositions in a prop list to a big 'and' statement.
-A list containing (3 < 5) and (5 = 2 + 3) gets converted to
-    (3 < 5) /\ (5 = 2 + 3).
-TODO: should we use a standard library function instead?
-*)
-Fixpoint prop_list_and (prop_list : list Prop) : Prop.
-induction prop_list.
-exact True.
-exact (and a (prop_list_and prop_list)).
-Defined.
 
 (** ** ineq_to_prop
 Get the proposition corresponding to a chain of (in)equalities. These are 

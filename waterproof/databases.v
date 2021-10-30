@@ -225,6 +225,7 @@ Global Hint Extern 0 (ineq_to_prop _) => repeat split; simpl : reals.
 Global Hint Extern 0 (R_as_OT.lt _ _) => unfold R_as_OT.lt : reals.
 Global Hint Extern 0 (R_as_OT.le _ _) => unfold R_as_OT.le : reals.
 Global Hint Extern 0 (R_as_OT.eq _ _) => unfold R_as_OT.eq : reals.
+Global Hint Extern 0 (find_global_statement _) => unfold find_global_statement : reals.
 
 Global Hint Transparent R_as_OT.lt : reals.
 Global Hint Transparent R_as_OT.le : reals.

@@ -31,7 +31,7 @@ Require Import Waterproof.selected_databases.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.load_database.All.
-Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
+Load we_conclude_that.
 Require Import Waterproof.load_database.DisableWildcard.
 
 
@@ -249,6 +249,13 @@ Proof.
     By even0 we conclude that (even 0).
 Qed.
 
+Require Import Waterproof.definitions.inequality_chains.
 
+(** * Test 4
+We make an exception on the goal check when the argument is a chain of inequalities
+*)
+Goal (3 < 5).
+We conclude that (& 3 &< 4 &< 5).
+Qed.
 
 

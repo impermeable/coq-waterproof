@@ -29,6 +29,7 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.waterprove.waterprove.
+Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 warn_equivalent_goal_given () :=
@@ -94,11 +95,16 @@ Ltac2 target_equals_goal_judgementally (target:constr) :=
 Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
     (* First check if the given target equals the goal directly,
     without applying any rewrite. *)
-    match Constr.equal target_goal (Control.goal ()) with
+    let conv_goal := lazy_match! target_goal with
+    | (ineq_to_prop ?u) => constr:(find_global_statement $u)
+    | (?v) => v
+    end
+    in
+    match Constr.equal conv_goal (Control.goal ()) with
     | false => 
-        match target_equals_goal_judgementally target_goal with
+        match target_equals_goal_judgementally conv_goal with
         | false => 
-            warn_wrong_goal_given (target_goal); 
+            warn_wrong_goal_given (conv_goal); 
             Control.zero (AutomationFailure 
         "Given goal not equivalent to actual goal.")
         | true => 
@@ -106,8 +112,10 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
             but written differently. 
             Try to rewrite the real goal to match user input.*)
             warn_equivalent_goal_given ();
-            let g := Control.goal () in
-            change $target_goal;
+            lazy_match! target_goal with
+            | (ineq_to_prop _) => ()
+            | _ => change $target_goal
+            end;
             callback ()
         end
     | true => callback ()
@@ -115,7 +123,7 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
     
 (** * solve_remainder_proof
     Check if the given [target_goal] equals the actual goal under focus.
-    If they are different, raise an error.
+    If they are different, raise an error (except in the case of (in)equality chains).
     If they are equivalent after rewriting, raise an error and continue.
     If the [target_goal] is equivalent to the goal under focus,
     finish the proof automatically with the given lemma.
@@ -134,7 +142,13 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
 *)
 Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
     let lemma := unwrap_optional_lemma lemma in
-    let finish_proof () := waterprove_without_hint target_goal lemma true in
+    let finish_proof () := 
+      lazy_match! target_goal with
+      |  (ineq_to_prop _ ) => 
+         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(dummy_lemma) false));
+         waterprove_without_hint target_goal lemma true
+      |  _ => waterprove_without_hint target_goal lemma true
+      end in
     check_goal_and_call target_goal finish_proof.
 
 
