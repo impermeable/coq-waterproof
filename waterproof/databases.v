@@ -38,6 +38,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Coq.Logic.PropExtensionality.
 Require Import Waterproof.definitions.set_definitions.
+Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.notations.notations.
 Require Import Reals.
 Require Import Reals.ROrderedType.
@@ -218,6 +219,17 @@ Proof.
     contradiction.
     apply n.
 Qed.
+
+(* TODO: should these be placed in a different database ? *)
+Global Hint Extern 0 (ineq_to_prop _) => repeat split; simpl : reals. 
+Global Hint Extern 0 (R_as_OT.lt _ _) => unfold R_as_OT.lt : reals.
+Global Hint Extern 0 (R_as_OT.le _ _) => unfold R_as_OT.le : reals.
+Global Hint Extern 0 (R_as_OT.eq _ _) => unfold R_as_OT.eq : reals.
+
+Global Hint Transparent R_as_OT.lt : reals.
+Global Hint Transparent R_as_OT.le : reals.
+Global Hint Transparent R_as_OT.eq : reals.
+
 
 Global Hint Resolve eq_sym : reals.
 Global Hint Resolve false_Req : reals.

@@ -154,7 +154,3 @@ Notation "x &<= y" := (chain_ineq comp_le x y) (at level 71, right associativity
 Notation "x &< y" := (chain_ineq comp_lt x y) (at level 71, right associativity).
 Notation "x &= y" := (chain_ineq comp_eq x y) (at level 71, right associativity).
 Notation "& y" := (ineq_to_prop y) (at level 98).
-
-Hint Extern 0 (ineq_to_prop _) => repeat split; simpl : reals. 
-Hint Extern 0 (R_as_OT.lt _ _) => unfold R_as_OT.lt : reals.
-Hint Extern 0 (R_as_OT.le _ _) => unfold R_as_OT.le : reals.
