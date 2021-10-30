@@ -8,6 +8,7 @@ waterproof/auxiliary.v
 waterproof/databases.v
 waterproof/string_auxiliary.v
 waterproof/definitions/set_definitions.v
+waterproof/definitions/inequality_chains.v
 
 # These do depend on one other file of the Waterproof-library.
 waterproof/notations/notations.v
