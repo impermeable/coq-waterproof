@@ -32,8 +32,8 @@ Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Local Ltac2 fail_suffice_to_show () :=
-    Control.zero (AutomationFailure 
-"Waterproof could not verify that this statement is enough to prove the goal.").
+    Control.zero (AutomationFailure (of_string
+"Waterproof could not verify that this statement is enough to prove the goal.")).
 
 (** * try_enough_expression
     Execute a function [f] (assuming it contains

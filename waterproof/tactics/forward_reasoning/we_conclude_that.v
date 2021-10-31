@@ -105,8 +105,8 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
         match target_equals_goal_judgementally conv_goal with
         | false => 
             warn_wrong_goal_given (conv_goal); 
-            Control.zero (AutomationFailure 
-        "Given goal not equivalent to actual goal.")
+            Control.zero (AutomationFailure (of_string
+        "Given goal not equivalent to actual goal."))
         | true => 
             (* User provided an equivalent goal, 
             but written differently. 
