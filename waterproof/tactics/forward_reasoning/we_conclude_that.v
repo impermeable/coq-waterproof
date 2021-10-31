@@ -96,7 +96,9 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
     (* First check if the given target equals the goal directly,
     without applying any rewrite. *)
     let conv_goal := lazy_match! target_goal with
+    (** TODO this needs to be done in a more structured way *)
     | (inequality_chains_R.ineq_to_prop ?u) => constr:(inequality_chains_R.find_global_statement $u)
+    | (inequality_chains_nat.ineq_to_prop ?u) => constr:(inequality_chains_nat.find_global_statement $u)
     | (?v) => v
     end
     in
@@ -111,10 +113,12 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
             (* User provided an equivalent goal, 
             but written differently. 
             Try to rewrite the real goal to match user input.*)
-            warn_equivalent_goal_given ();
+            
             lazy_match! target_goal with
             | (inequality_chains_R.ineq_to_prop _) => ()
-            | _ => change $target_goal
+            | (inequality_chains_nat.ineq_to_prop _) => ()
+            | _ => warn_equivalent_goal_given ();
+                   change $target_goal
             end;
             callback ()
         end
@@ -145,6 +149,9 @@ Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
     let finish_proof () := 
       lazy_match! target_goal with
       |  (inequality_chains_R.ineq_to_prop _ ) => 
+         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(dummy_lemma) false));
+         waterprove_without_hint target_goal lemma true
+      |  (inequality_chains_nat.ineq_to_prop _ ) => 
          (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(dummy_lemma) false));
          waterprove_without_hint target_goal lemma true
       |  _ => waterprove_without_hint target_goal lemma true

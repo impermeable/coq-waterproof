@@ -269,3 +269,10 @@ assert (& Rmin (eps/2) 1 &<= eps/2 &<= eps).
 auto with reals.
 auto with reals.
 Qed.
+
+Close Scope R_scope.
+
+(** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &< 5) for (3<5).*)
+Goal (3 < 5).
+We conclude that (& 3 &< 4 &< 5).
+Qed.

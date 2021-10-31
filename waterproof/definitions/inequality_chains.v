@@ -261,15 +261,22 @@ Definition form_chain_ineq : comp_rel -> my_ineq_chain -> my_ineq_chain -> my_in
 End ChainImplementations.
 
 Module inequality_chains_R := ChainImplementations(R_as_OT).
-
-Check inequality_chains_R.form_chain_ineq.
+Module inequality_chains_nat := ChainImplementations(Nat).
 
 (** ** embeddings
 Create embeddings of datatypes into (in)equality chains
 *)
 Coercion inequality_chains_R.embed : R >-> inequality_chains_R.my_ineq_chain.
+Coercion inequality_chains_nat.embed : nat >-> inequality_chains_nat.my_ineq_chain.
 
-Notation "x &<= y" := (inequality_chains_R.form_chain_ineq comp_le x y) (at level 71, right associativity).
-Notation "x &< y" := (inequality_chains_R.form_chain_ineq comp_lt x y) (at level 71, right associativity).
-Notation "x &= y" := (inequality_chains_R.form_chain_ineq comp_eq x y) (at level 71, right associativity).
-Notation "& y" := (inequality_chains_R.ineq_to_prop y) (at level 98).
+Notation "x &<= y" := (inequality_chains_R.form_chain_ineq comp_le x y) (at level 71, right associativity) : R_scope.
+Notation "x &< y" := (inequality_chains_R.form_chain_ineq comp_lt x y) (at level 71, right associativity) : R_scope.
+Notation "x &= y" := (inequality_chains_R.form_chain_ineq comp_eq x y) (at level 71, right associativity) : R_scope.
+Notation "& y" := (inequality_chains_R.ineq_to_prop y) (at level 98) : R_scope.
+
+
+Notation "x &<= y" := (inequality_chains_nat.form_chain_ineq comp_le x y) (at level 71, right associativity) : nat_scope.
+Notation "x &< y" := (inequality_chains_nat.form_chain_ineq comp_lt x y) (at level 71, right associativity) : nat_scope.
+Notation "x &= y" := (inequality_chains_nat.form_chain_ineq comp_eq x y) (at level 71, right associativity) : nat_scope.
+Notation "& y" := (inequality_chains_nat.ineq_to_prop y) (at level 98) : nat_scope.
+

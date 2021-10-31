@@ -39,10 +39,16 @@ Writes out an inequality chain as a big conjunction.
 Ltac2 simpl_ineq_chains () :=
     repeat (
         match! goal with
+(** TODO: do this in a more structured way *)
         | [ h : inequality_chains_R.ineq_to_prop _ |- _ ] => 
             unfold inequality_chains_R.ineq_to_prop in $h;
             unfold inequality_chains_R.ineq_to_prop in $h;
             unfold inequality_chains_R.prop_list_and in $h;
+            simpl in $h
+        | [ h : inequality_chains_nat.ineq_to_prop _ |- _ ] => 
+            unfold inequality_chains_nat.ineq_to_prop in $h;
+            unfold inequality_chains_nat.ineq_to_prop in $h;
+            unfold inequality_chains_nat.prop_list_and in $h;
             simpl in $h
         | [ |- _ ] => ()
         end
