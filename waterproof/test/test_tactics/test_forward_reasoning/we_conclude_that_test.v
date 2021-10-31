@@ -30,7 +30,7 @@ Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Load we_conclude_that.
 Require Import Waterproof.load_database.DisableWildcard.
 
@@ -258,4 +258,14 @@ Goal (3 < 5).
 We conclude that (& 3 &< 4 &< 5).
 Qed.
 
+Goal (3 = 3).
+We conclude that (& 3 &= 3).
+Qed.
 
+Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
+intro eps.
+intro eps_gt_0.
+assert (& Rmin (eps/2) 1 &<= eps/2 &<= eps).
+auto with reals.
+auto with reals.
+Qed.

@@ -32,10 +32,13 @@ Goal (& 3 &< 4 &<= 5).
 auto with reals.
 Qed.
 
+Goal (& 3 &= 3).
+auto with reals.
+Qed.
+Open Scope R_scope.
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
-Goal (& 3 &< 5 &= 2 + 3) -> (3 < 5) /\ (5 = 2 + 3).
+Goal forall x : R, (& x &< 5 &= 2 + 3) -> (x < 5).
+intro x.
 intro H.
-split.
-- auto with reals.
-- auto with reals.
+auto with reals.
 Qed.

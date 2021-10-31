@@ -1,9 +1,10 @@
-(** * Testcases for [inequality_chains.v]
+(** * Testcases for [take.v]
 Authors: 
     - Jim Portegies
-Creation date: 30 Oct 2021
+Creation date: 31 Oct 2021
 
-Testcases for (in)equality chains.
+Testcases for the [simplify_chains] tactic.
+Tests pass if they can be run without unhandled errors.
 --------------------------------------------------------------------------------
 
 This file is part of Waterproof-lib.
@@ -22,32 +23,22 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-(* Tests for (in)equality chains *)
+From Ltac2 Require Import Ltac2.
+From Ltac2 Require Option.
+From Ltac2 Require Import Message.
 
-Load inequality_chains.
+Require Import Waterproof.test_auxiliary.
+Require Import Waterproof.definitions.inequality_chains.
+Load simplify_chains.
+Require Import Reals.
+Require Import micromega.Lra.
+Open Scope R_scope.
 
-(* Test 0: check if notations work. *)
-
-Goal (& 3 &< 4 &<= 5).
-Abort.
-
-(* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
-Goal (3 < 5) /\ (5 = 2 + 3) <-> (& 3 &< 5 &= 2 + 3).
-split.
-- intro H.
-  unfold inequality_chains_R.ineq_to_prop.
-  simpl.
-  destruct H.
-  repeat split.
-  + assumption.
-  + assumption.
-
-- intro H.
-  unfold inequality_chains_R.ineq_to_prop in H.
-  simpl in H.
-  destruct H.
-  destruct H0.
-  split.
-  + assumption.
-  + assumption.
+(** Test 0: Go from a chain of inequalities to the statement *)
+Goal forall x : R, (& x &< 4 &<= 5 &= 2 + 3 &< 10) -> (x < 10).
+intro x.
+intro H.
+Fail ltac1:(lra). (* at this stage, lra does not work yet *)
+simpl_ineq_chains ().
+ltac1:(lra).
 Qed.

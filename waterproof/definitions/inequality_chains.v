@@ -46,6 +46,22 @@ Inductive comp_rel :=
 | comp_le
 | comp_nil.
 
+Module Type INEQUALITY_CHAINS.
+Declare Module M : OrderedTypeFull.
+
+Parameter comp_rel_to_rel : comp_rel -> M.t -> M.t -> Prop.
+Parameter my_ineq_chain : Type.
+Parameter find_global_statement : my_ineq_chain -> Prop.
+Parameter ineq_to_prop : my_ineq_chain -> Prop.
+Parameter embed : M.t -> my_ineq_chain.
+Parameter form_chain_ineq : comp_rel -> my_ineq_chain -> my_ineq_chain -> my_ineq_chain.
+
+End INEQUALITY_CHAINS.
+
+Module ChainImplementations (M : OrderedTypeFull) <: INEQUALITY_CHAINS with Module M := M.
+Module M := M.
+Import M.
+
 (** ** comp_rel_to_rel
 Get the corresponding relation from a comp_rel record.
 
@@ -71,11 +87,12 @@ Inductive ineq_chain :=
   | embed_t : t -> ineq_chain
   | chain_ineq : comp_rel -> ineq_chain -> ineq_chain -> ineq_chain.
 
-(** ** embeddings
-Create embeddings of datatypes into (in)equality chains
-*)
-Definition embed_R (x : R) := embed_t x.
-Coercion embed_R : R >-> ineq_chain.
+Definition my_ineq_chain := ineq_chain.
+
+
+
+
+
 
 (** ** ineq_to_head
 Get the first term in an (in)equality chain
@@ -212,7 +229,7 @@ For instance, ineq_to_prop_list (& 3 <& 5 &= 2 + 3) should give a list containin
     Returns:
         - [list Prop] a list of the propositions contained in an (in)equality chain.
 *)
-Fixpoint ineq_to_prop_list (ineq : ineq_chain) : (list Prop).
+Fixpoint ineq_to_prop_list (ineq : my_ineq_chain) : (list Prop).
 induction ineq.
 exact nil.
 exact ((ineq_to_prop_list ineq1)++
@@ -237,7 +254,22 @@ Definition ineq_to_prop (ineq : ineq_chain ) : Prop :=
 (** Coerce (in)equality chains to propositions if necessary *)
 Coercion ineq_to_prop : ineq_chain >-> Sortclass.
 
-Notation "x &<= y" := (chain_ineq comp_le x y) (at level 71, right associativity).
-Notation "x &< y" := (chain_ineq comp_lt x y) (at level 71, right associativity).
-Notation "x &= y" := (chain_ineq comp_eq x y) (at level 71, right associativity).
-Notation "& y" := (ineq_to_prop y) (at level 98).
+Definition embed (el : M.t): my_ineq_chain := embed_t el.
+
+Definition form_chain_ineq : comp_rel -> my_ineq_chain -> my_ineq_chain -> my_ineq_chain := chain_ineq.
+
+End ChainImplementations.
+
+Module inequality_chains_R := ChainImplementations(R_as_OT).
+
+Check inequality_chains_R.form_chain_ineq.
+
+(** ** embeddings
+Create embeddings of datatypes into (in)equality chains
+*)
+Coercion inequality_chains_R.embed : R >-> inequality_chains_R.my_ineq_chain.
+
+Notation "x &<= y" := (inequality_chains_R.form_chain_ineq comp_le x y) (at level 71, right associativity).
+Notation "x &< y" := (inequality_chains_R.form_chain_ineq comp_lt x y) (at level 71, right associativity).
+Notation "x &= y" := (inequality_chains_R.form_chain_ineq comp_eq x y) (at level 71, right associativity).
+Notation "& y" := (inequality_chains_R.ineq_to_prop y) (at level 98).
