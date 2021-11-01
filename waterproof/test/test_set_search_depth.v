@@ -54,7 +54,7 @@ Open Scope R_scope.
     Lemma that should be proveable with a search depth of 1.
 *)
 Lemma search_depth_test_1: True.
-    waterprove (Control.goal ()) [] true.
+    waterprove (Control.goal ()) [] false.
 Qed.
 
 
@@ -63,7 +63,7 @@ Qed.
     (Nor with intuition, which has a larger search depth!)
 *)
 Lemma search_depth_test_2: forall x: R, (x = 1) -> x = 2 -> (x <> x).
-    let result () := waterprove (Control.goal ()) [] true in
+    let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
 Abort.
 
@@ -80,5 +80,5 @@ Ltac2 Eval global_search_depth.
     Same as test 2, but now search depth should be sufficient.
 *)
 Lemma search_depth_test_3: forall x: R, (x = 1) -> (x = x).
-    waterprove (Control.goal ()) [] true.
+    waterprove (Control.goal ()) [] false.
 Qed.

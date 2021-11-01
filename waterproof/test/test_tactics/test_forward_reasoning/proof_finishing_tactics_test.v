@@ -73,10 +73,11 @@ Abort.
 
 (** * Test 2:
     Base case: a transitivity step is enough  *)
-    Goal forall A B C: Prop, (A -> B) /\ (B -> C) -> (A -> C).
+Goal forall A B C: Prop, (A -> B) /\ (B -> C) -> (A -> C).
     intros A B C.
     intros h.
     destruct h as [h1 h2].
+    intro a.
     This concludes the proof.
 Qed.
 

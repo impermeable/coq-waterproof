@@ -66,7 +66,7 @@ Ltac2 mutable global_use_all_databases := false.
     should use ALL databases that Coq can find via the [*] wildcard.
     This may include more databases than can be imported individually!
 *)
-Ltac2 mutable global_limited_automation := true.
+Ltac2 mutable global_shield_automation := true.
 
 (* Subroutine of [run_automation] *)
 Local Ltac2 run_automation_with_intuition (search_depth: int option)
@@ -217,12 +217,12 @@ Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list)
     [Std.new_auto] takes the same arguments as [auto],
     and is available as the tactic [new auto].
 *)
-Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield_quant:bool) :=
+Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
     let attempt () := first [
-            run_automation prop lemmas 3 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
+            run_automation prop lemmas 2 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
             (*solve [auto 2 with classical_logic core]*)
-          | match shield_quant with
-            | true => match global_limited_automation with
+          | match shield with
+            | true => match global_shield_automation with
                        | true => (* Match goal with basic logical operators *)
                                lazy_match! goal with
                                | [ |- forall _, _ ] => fail_automation ()

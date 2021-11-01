@@ -105,54 +105,7 @@ Proof.
 Qed.
 
 
-(** * Test 7: show that we cannot conclude an implication. 
-*)
-Goal (0 = 0) -> (0 < 1).
-  Fail We conclude that ((0 = 0) -> (0 < 1)).
-Abort.
 
-(** * Test 8: show that we cannot conclude a for all statement. 
-*)
-Goal forall x : R, (x^2 >= 0).
-  Fail We conclude that (forall x : R, (x^2 >= 0)).
-Abort.
-
-(** * Test 9: show that we cannot conclude a there exists statement. 
-*)
-Goal exists y : R, y > 0.
-  Fail We conclude that (exists y : R, y > 0).
-Abort.
-
-(* Disable not automatically proving quantifiers. *)
-Ltac2 Set Waterproof.waterprove.waterprove.global_limited_automation := false.
-
-(** * Test 10: show that we cannot conclude an implication. 
-*)
-Goal (0 = 0) -> (0 < 1).
-  We conclude that ((0 = 0) -> (0 < 1)).
-Qed.
-
-(** * Test 11: show that we cannot conclude a for all statement. 
-*)
-Goal forall x : R, (x^2 >= 0).
-  We conclude that (forall x : R, (x^2 >= 0)).
-Qed.
-
-(** * Test 12: show that we cannot conclude a there exists statement. 
-*)
-Goal exists y : R, y > 0.
-  We conclude that (exists y : R, y > 0).
-Fail Qed. (*Some other issue..? TODO: investigate. *)
-Abort.
-
-(* Enable not automatically proving quantifiers. *)
-Ltac2 Set Waterproof.waterprove.waterprove.global_limited_automation := true.
-
-(** * Test 13: show that we cannot conclude an implication. 
-*)
-Goal (0 = 0) -> (0 < 1).
-  Fail We conclude that ((0 = 0) -> (0 < 1)).
-Abort.
 
 
 (* -------------------------------------------------------------------------- *)
