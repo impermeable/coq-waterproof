@@ -444,9 +444,13 @@ Proof.
     Take a : (ℕ → ℝ). 
     Assume pr : (has_ub a). 
     Take m, Nn : ℕ.
-    We claim that H1 : (∃ i : ℕ, a (Nn + i)%nat > sequence_ub a pr Nn - 1 / (INR m + 1)).
-    Apply seq_ex_almost_maximizer_m.
+    By seq_ex_almost_maximizer_m it holds that
+      H1 : (∃ i : ℕ, a (Nn + i)%nat > sequence_ub a pr Nn - 1 / (INR m + 1)).
     Choose i such that i_good according to H1.
     Choose k := (Nn+i)%nat.
-    This concludes the proof.
+    We show both statements.
+    - We need to show that ( (k ≥ Nn)%nat ).
+      We conclude that ((k ≥ Nn)%nat).
+    - We need to show that ( a k > sequence_ub a pr Nn - 1 / (m + 1) ).
+      We conclude that ( a k > sequence_ub a pr Nn - 1 / (m + 1) ).
 Qed.

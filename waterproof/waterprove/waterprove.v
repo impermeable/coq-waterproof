@@ -227,6 +227,8 @@ Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
                                lazy_match! goal with
                                | [ |- forall _, _ ] => fail_automation ()
                                | [ |- exists _, _ ] => fail_automation ()
+                               | [ |- _ /\ _] => fail_automation ()
+                               | [ |- _ \/ _] => fail_automation ()
                                | [ |- _] => ()
                                end
                        | false => ()
