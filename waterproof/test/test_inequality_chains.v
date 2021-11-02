@@ -28,7 +28,7 @@ Load inequality_chains.
 
 (* Test 0: check if notations work. *)
 
-Goal (& 3 &< 4 &<= 5).
+Goal (& 3 &< 4 &<= 5 &≤ 7).
 Abort.
 
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
