@@ -39,9 +39,9 @@ Local Ltac2 fail_goal_rewrite () :=
             "Could not rewrite goal with this expression").
 
 Ltac2 fail_verify_prop () :=
-    Control.zero (AutomationFailure 
+    Control.zero (AutomationFailure (of_string 
         "Could not verify that the proposition used for the rewrite holds.
-You may need to prove this proposition first before rewriting others with it.").
+You may need to prove this proposition first before rewriting others with it.")).
 
 Local Ltac2 print_rewrote_goal_success (proposition: constr) :=
     let prop := Aux.get_value_of_hyp proposition in

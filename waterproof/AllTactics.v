@@ -53,3 +53,4 @@ Require Export Waterproof.tactics.forward_reasoning.we_conclude_that.
 Require Export Waterproof.tactics.forward_reasoning.write_as.
 Require Export Waterproof.tactics.forward_reasoning.write_using.
 Require Export Waterproof.tactics.forward_reasoning.simplify.
+Require Export Waterproof.definitions.inequality_chains.

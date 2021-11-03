@@ -38,11 +38,13 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Coq.Logic.PropExtensionality.
 Require Import Waterproof.definitions.set_definitions.
+Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.notations.notations.
 Require Import Reals.
 Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
 Require Import Coq.micromega.Lia.
+Require Import Waterproof.tactics.simplify_chains.
 
 (** ** Additional database *)
 
@@ -219,35 +221,50 @@ Proof.
     apply n.
 Qed.
 
+(* TODO: should these be placed in a different database ? *)
+Global Hint Extern 0 (inequality_chains_R.ineq_to_prop _) => repeat split; simpl : reals. 
+Global Hint Extern 0 (inequality_chains_R.find_global_statement _) => unfold inequality_chains_R.find_global_statement : reals.
+
+Global Hint Extern 0 (inequality_chains_nat.ineq_to_prop _) => repeat split; simpl : waterproof_integers. 
+Global Hint Extern 0 (inequality_chains_nat.find_global_statement _) => unfold inequality_chains_R.find_global_statement : waterproof_integers.
+
+Global Hint Transparent inequality_chains_R.ineq_to_prop : reals.
+Global Hint Transparent inequality_chains_R.ineq_to_prop_list : reals.
+Global Hint Transparent inequality_chains_R.prop_list_and : reals.
+
+Global Hint Transparent inequality_chains_nat.ineq_to_prop : waterproof_integers.
+Global Hint Transparent inequality_chains_nat.ineq_to_prop_list : waterproof_integers.
+Global Hint Transparent inequality_chains_nat.prop_list_and : waterproof_integers.
+
 Global Hint Resolve eq_sym : reals.
 Global Hint Resolve false_Req : reals.
 Global Hint Resolve true_Req : reals.
 
-Global Hint Extern 3 ( @eq R _ _ ) => field : reals.
+(** TODO: find a different solution for the simplification of inequality chains? *)
+Global Hint Extern 3 ( @eq R _ _ ) => ltac2:(simpl_ineq_chains ()); field : reals.
 
-Global Hint Extern 3 ( Rle _ _ ) => lra : reals.
-Global Hint Extern 3 ( Rge _ _ ) => lra : reals.
-Global Hint Extern 3 ( Rlt _ _ ) => lra : reals.
-Global Hint Extern 3 ( Rgt _ _ ) => lra : reals.
+Global Hint Extern 3 ( Rle _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rge _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rlt _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rgt _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
 
-Global Hint Extern 3 (~ (Rle _ _) ) => lra : reals.
-Global Hint Extern 3 (~ (Rge _ _) ) => lra : reals.
-Global Hint Extern 3 (~ (Rlt _ _) ) => lra : reals.
-Global Hint Extern 3 (~ (Rgt _ _) ) => lra : reals.
-Global Hint Extern 3 (~ (@eq R _ _ ) ) => lra : reals.
+Global Hint Extern 3 (~ (Rle _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rge _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rlt _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rgt _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (@eq R _ _ ) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
 
 Global Hint Extern 3 ( Rle _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rge _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rlt _ _ ) => nra : reals.
 Global Hint Extern 3 ( Rgt _ _ ) => nra : reals.
 
-Global Hint Extern 3 ( _ = _ ) => ring : waterproof_integers.
-Global Hint Extern 3 ( @eq nat _  _) => lia : waterproof_integers.
-Global Hint Extern 3 ( le _ _ ) => lia : waterproof_integers.
-Global Hint Extern 3 ( ge _ _ ) => lia : waterproof_integers.
-Global Hint Extern 3 ( lt _ _ ) => lia : waterproof_integers.
-Global Hint Extern 3 ( gt _ _ ) => lia : waterproof_integers.
-
+Global Hint Extern 3 ( _ = _ ) => ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
+Global Hint Extern 3 ( @eq nat _  _) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( le _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( ge _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( lt _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( gt _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
 
 Global Hint Resolve Rmin_l : reals.
 Global Hint Resolve Rmin_r : reals.

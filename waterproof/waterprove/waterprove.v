@@ -34,13 +34,22 @@ From Ltac2 Require Import Message.
 
 Require Import Waterproof.selected_databases.
 
-Ltac2 Type exn ::= [ AutomationFailure(string) ].
+Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
-Local Ltac2 fail_automation () := 
-        Control.zero (AutomationFailure 
-        "Waterproof could not find a proof. 
-If you believe the statement should hold, 
-try making a smaller step.").
+Local Ltac2 fail_automation (t : constr option):= 
+        let first_part_message :=
+            match t with
+            | Some s => concat (of_string ("Waterproof could not find a proof of "))
+                               (of_constr s)
+            | None => of_string ("Waterproof could not find a proof")
+            end
+        in 
+        let fail_message :=
+            concat first_part_message
+                   (of_string ("  ... If you believe the statement should hold, 
+try making a smaller step."))
+        in
+        Control.zero (AutomationFailure fail_message).
 
 Lemma dummy_lemma: True.
 Proof.
@@ -75,12 +84,11 @@ Local Ltac2 run_automation_with_intuition (search_depth: int option)
                                           (lemmas: (unit -> constr) list) :=
     first [
     solve [Std.auto Std.Off search_depth lemmas databases]
-    | solve [Std.new_auto Std.Off search_depth lemmas databases]
     | solve [ltac1:(lemma |- intuition (auto using lemma with *)) 
         (Ltac1.of_constr first_lemma)]
     | solve [ltac1:(lemma|- intuition (eauto using lemma with *)) 
         (Ltac1.of_constr first_lemma)] 
-    | fail_automation ()
+    | fail_automation (Some (Control.goal()))
     ].
 
 (* Subroutine of [run_automation] *)
@@ -89,9 +97,8 @@ Local Ltac2 run_automation_without_intuition (search_depth: int option)
                                           (lemmas: (unit -> constr) list) :=
     first [ solve [Std.auto Std.Off (Some 2) lemmas databases]
     | solve [Std.auto Std.Off search_depth lemmas databases]
-    | solve [Std.new_auto Std.Off search_depth lemmas databases]
     | solve [Std.eauto Std.Off search_depth search_depth lemmas databases]
-    | fail_automation ()
+    | fail_automation (Some (Control.goal()))
     ].
 
 (** * run_automation
@@ -174,10 +181,7 @@ Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list)
     match Control.case result with
     | Val _ => ()
     | Err exn => 
-        print (concat 
-            (of_string "Waterproof could not find a proof of ") 
-            (of_constr prop));
-        fail_automation ()
+        fail_automation (Some (Control.goal()))
     end.
 
 (** * waterprove
@@ -217,18 +221,19 @@ Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list)
     [Std.new_auto] takes the same arguments as [auto],
     and is available as the tactic [new auto].
 *)
+
 Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
-    let attempt () := first [
-            run_automation prop lemmas 2 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
-            (*solve [auto 2 with classical_logic core]*)
-          | match shield with
+    let first_attempt () := run_automation prop lemmas 3 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
+    in
+    let second_attempt () := 
+        match shield with
             | true => match global_shield_automation with
                        | true => (* Match goal with basic logical operators *)
                                lazy_match! goal with
-                               | [ |- forall _, _ ] => fail_automation ()
-                               | [ |- exists _, _ ] => fail_automation ()
-                               | [ |- _ /\ _] => fail_automation ()
-                               | [ |- _ \/ _] => fail_automation ()
+                               | [ |- forall _, _ ] => fail_automation None
+                               | [ |- exists _, _ ] => fail_automation None
+                               | [ |- _ /\ _] => fail_automation None
+                               | [ |- _ \/ _] => fail_automation None
                                | [ |- _] => ()
                                end
                        | false => ()
@@ -243,10 +248,13 @@ Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
             in
             run_automation prop lemmas global_search_depth 
                            databases global_enable_intuition
-          ]
     in 
-    match Control.case attempt with
+    match Control.case first_attempt with
     | Val _ => ()
-    | Err exn => fail_automation ()
+    | Err exn => 
+        match Control.case second_attempt with
+        | Val _ => ()
+        | Err exn => fail_automation (Some (Control.goal()))
+        end
     end.
 
