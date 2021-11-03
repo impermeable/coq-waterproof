@@ -5,7 +5,7 @@ Require Import Rfunctions.
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Import Waterproof.load_database.All.
 
 
 Local Open Scope R_scope.
@@ -63,7 +63,7 @@ Goal forall x : R, (x^2 >= 0).
   We conclude that (forall x : R, (x^2 >= 0)).
 Qed.
 
-(* Test removed because this statement was too difficult for waterproof. *)
+(* Test removed because this statement was too difficult for waterproof.
 (** * Test 7: show that we can now conclude the there exists statement. 
 *)
 Goal exists y : R, y^2 > 0.
@@ -111,3 +111,51 @@ Abort.
 
 
 (* Testing de Morgan laws. *)
+
+(* Level 1 *)
+Variable P1 : R -> Prop.
+Goal ~ (forall x : R, P1 x) -> (exists x : R, ~ (P1 x)).
+Proof.
+  intro H.
+  We conclude that (there exists x : ℝ, ¬ P1 x).
+Qed.
+
+(* Level 2 *)
+Variable P2 : R -> R -> Prop.
+Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
+Proof.
+  intro H.
+  We conclude that (there exists x : ℝ, ~ (exists y : R, P2 x y)).
+Qed.
+
+Goal (exists x : R, ~ (exists y : R, P2 x y)) -> (exists x : R, forall y : R, ~ P2 x y).
+Proof.
+  intro H.
+  Fail We conclude that (exists x : R, forall y : R, ~ P2 x y).
+Abort.
+
+
+
+(* Level 3 *)
+Variable P3 : R -> R -> R -> Prop.
+Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (forall y : R, P2 x y)).
+Proof.
+  intro H.
+  Fail We conclude that (there exists x : ℝ, ~ (forall y : R, P2 x y)).
+Abort.
+
+(* Test with assumptions on variables, like forall \eps > 0. *)
+Definition Rdist (x y : R) := Rabs (x - y).
+Variable (f : R -> R) (a L : R).
+Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
+          0 < Rdist x a < delta -> Rdist (f x) L < eps)
+      ->
+     (exists eps : R, eps > 0 /\ ~(exists delta : R, delta > 0 -> forall x : R, 
+          0 < Rdist x a < delta -> Rdist (f x) L < eps)).
+Proof.
+  intro H.
+  Fail
+  We conclude that (there exists eps : ℝ , eps > 0
+    ∧ ¬ (there exists delta : ℝ, delta > 0 ⇨ for all x : ℝ,
+                       0 < Rdist x a < delta ⇨ Rdist (f x) L < eps)).
+Abort.
