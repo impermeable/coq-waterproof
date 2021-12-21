@@ -13,7 +13,7 @@ waterproof/definitions/inequality_chains.v
 waterproof/notations/notations.v
 waterproof/notations/set_notations.v
 waterproof/test_auxiliary.v
-waterproof/tactics/propagate_negation_backwards.v
+waterproof/tactics/manipulate_negation.v
 
 # These depend multiple other file of the Waterproof-library.
 waterproof/databases.v
@@ -144,5 +144,5 @@ waterproof/test/test_tactics/unfold_test.v
 waterproof/test/test_tactics/we_need_to_show_test.v
 waterproof/test/test_tactics/test_goal_wrappers.v
 waterproof/test/test_shield_automation.v
-waterproof/test/test_tactics/test_propagate_negation_backwards.v
+waterproof/test/test_tactics/test_manipulate_negation.v
 waterproof/test/test_tactics/test_simplify_chains.v
