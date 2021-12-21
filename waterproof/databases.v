@@ -45,6 +45,7 @@ Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
 Require Import Coq.micromega.Lia.
 Require Import Waterproof.tactics.simplify_chains.
+Require Import Waterproof.tactics.manipulate_negation.
 
 (** ** Additional database *)
 
@@ -76,6 +77,7 @@ Global Hint Resolve not_all_not_ex : classical_logic.
 Global Hint Resolve not_all_ex_not : classical_logic.
 (* not_ex_not_all cannot be used as a hint. *)
 (* Global Hint Resolve not_ex_not_all : classical_logic. *)
+Global Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : classical_logic.
 
 
 (** ** Subsets: lemmas for subsets of elements *)

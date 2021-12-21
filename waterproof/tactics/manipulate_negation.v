@@ -205,7 +205,7 @@ Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
   end.
 
 
-Local Ltac2 solve_by_manipulating_negation () :=
+Ltac2 solve_by_manipulating_negation () :=
   match! goal with
   | [ h : _ |- _ ] => solve_by_manipulating_negation_in h
   end.
