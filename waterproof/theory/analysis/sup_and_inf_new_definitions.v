@@ -491,9 +491,7 @@ Proof.
     Assume L_lt_M : (L < M).
     We argue by contradiction.
     Assume H : (¬ (there exists a : A, L < a)).
-    We claim that H0 : (∀ x : A, ¬ (L < x)).
-    Apply not_ex_all_not.
-    Apply H.
+    It holds that H0 : (∀ x : A, ¬ (L < x)).
     We claim that H1 : (∀ x : A, x ≤ L).
     Take x : A.
     It holds that H2 : (¬(L < x)).
@@ -522,9 +520,7 @@ Proof.
     Assume L_gt_m : (L > m).
     We argue by contradiction.
     Assume H : (¬ (there exists a : A, L > a)).
-    We claim that H0 : (∀ x : A, ¬ (L > x)).
-    Apply not_ex_all_not.
-    Apply H.
+    It holds that H0 : (∀ x : A, ¬ (L > x)).
     We claim that H1 : (∀ x : A, L ≤ x).
     Take x : A.
     It holds that H2 : (¬(L > x)).
@@ -804,7 +800,7 @@ Proof.
     Assume M_is_sup_A : (is_sup A M).
     We argue by contradiction.
     Assume H : (¬ (A M ∨ (for all a : A, a < M))).
-    By not_or_and it holds that H1 : ((¬ (A M)) ∧ 
+    It holds that H1 : ((¬ (A M)) ∧ 
       ¬(∀ a : A, a < M) ).
     Because H1 both H2 and H3.
     We claim that all_a_lt_M : (for all a : A, a < M).

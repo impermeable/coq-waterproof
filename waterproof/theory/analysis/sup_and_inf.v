@@ -322,22 +322,14 @@ Proof.
     Assume L_lt_M : (L < M).
     We argue by contradiction.
     Assume no_a_lt_L : (¬ (there exists a : ℝ, A a ∧ L < a)).
-    We claim that H1 : (∀ x : ℝ, A x ⇒ x ≤ L).
-    {
-      Take x : ℝ.
+    It holds that H0 : (∀ x : ℝ, A x ⇒ ¬(L < x)).
+    We claim that H3 : (is_upper_bound A L).
+    { We need to show that (∀ x : ℝ, A x ⇒ (x <= L)).
+      Take x : R.
       Assume x_in_A : (A x).
-      We claim that H_logic1 : (¬(exists a : R, (A a ∧ L < a)) -> (forall a : R, ¬((A a ∧ L < a)))).
-      { Apply (@not_ex_all_not ℝ (fun a : ℝ => (A a ∧ L < a))). }
-      It holds that H_logic2 : (forall a : R, ¬(A a ∧ L < a)).
-      By not_and_or it holds that H_logic3 : (forall a : R, (¬(A a) ∨ ¬(L < a))).
-      Define needed_assumption := (H_logic3 x).
-      Because needed_assumption either part1 or part2.
-      - Case (¬ A x).
-        Contradiction.
-      - Case (¬ L < x).
-        This concludes the proof.
+      It holds that not_L_lt_x : (~ L < x).
+      We conclude that (x ≤ L).
     }
-    It holds that H3 : (is_upper_bound A L).
     By any_upp_bd_ge_sup it holds that H4 : (M ≤ L).
     It holds that H5 : (¬(M ≤ L)).
     Contradiction.
@@ -370,7 +362,7 @@ Proof.
     Assume M_is_sup_A : (is_sup A M). 
     We argue by contradiction.
     Assume H : ( ¬ (A M ∨ (for all a : ℝ, A a ⇨ a < M))).
-    By not_or_and it holds that H1 : ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M) ).
+    It holds that H1 : ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M) ).
     Because H1 both H2 and H3.
     (** We only show the proposition on the *)
     (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
