@@ -90,18 +90,6 @@ waterproof/AllConstructiveTactics.v
 
 # These depend on AllTactics.
 
-# Waterproof theory files
-waterproof/theory/analysis/metric_spaces.v
-waterproof/theory/analysis/sequences_metric.v
-waterproof/theory/analysis/sup_and_inf.v
-waterproof/theory/analysis/sup_and_inf_new_definitions.v
-waterproof/theory/analysis/sequences.v
-waterproof/theory/analysis/subsequences_metric.v
-waterproof/theory/analysis/subsequences.v
-waterproof/theory/analysis/series.v
-waterproof/theory/analysis/sequential_accumulation_points.v
-waterproof/theory/analysis/limsup_liminf_bolzano.v
-
 # Testcases. Not needed by the end-user,
 # but used to enforce they all pass for compilation.
 waterproof/test/reverse_engineer/auto_hintdb_arg.v
@@ -146,3 +134,15 @@ waterproof/test/test_tactics/test_goal_wrappers.v
 waterproof/test/test_shield_automation.v
 waterproof/test/test_tactics/test_manipulate_negation.v
 waterproof/test/test_tactics/test_simplify_chains.v
+
+# Waterproof theory files
+waterproof/theory/analysis/metric_spaces.v
+waterproof/theory/analysis/sequences_metric.v
+waterproof/theory/analysis/sup_and_inf.v
+waterproof/theory/analysis/sup_and_inf_new_definitions.v
+waterproof/theory/analysis/sequences.v
+waterproof/theory/analysis/subsequences_metric.v
+waterproof/theory/analysis/subsequences.v
+waterproof/theory/analysis/series.v
+waterproof/theory/analysis/sequential_accumulation_points.v
+waterproof/theory/analysis/limsup_liminf_bolzano.v
