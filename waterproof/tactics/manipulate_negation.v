@@ -102,6 +102,28 @@ Proof.
   left; exact (c_to_na c). right; exact (d_to_nb d).
 Qed.
 
+Lemma not_and_impl_func (A B C : Prop) :
+  (~B -> C) -> ~(A /\ B) -> (A -> C).
+Proof. 
+  intros nb_to_c nab.
+  ltac1:(cut (~A \/ C)).
+  apply or_to_imply.
+  ltac1:(cut (~A \/ ~B)).
+  apply or_func. exact id. exact nb_to_c.
+  apply not_and_or. exact nab.
+Qed.
+(* reverse *)
+Lemma impl_not_and_func (A B C : Prop) :
+  (C -> ~B) -> (A -> C) -> ~(A /\ B).
+Proof. 
+  intros c_to_nb a_to_c.
+  ltac1:(cut (~A \/ ~B)).
+  apply (or_not_and).
+  ltac1:(cut (~A \/ C)).
+  apply or_func. exact id. exact c_to_nb.
+  apply imply_to_or. exact a_to_c.
+Qed.
+
 Lemma not_impl_and_func (A B C : Prop) :
   (~B -> C) -> ~(A -> B) -> (A /\ C).
 Proof.
@@ -175,28 +197,51 @@ Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
   | true => 
       let attempt () :=
         revert $h_id;
-        solve[ repeat (first [ (* finish proof *)
-                               exact (fun x => x) 
-                             | (* without negation *)
-                               apply or_func
-                             | apply and_func
-                             | apply impl_func
-                             | apply all_func; let x_id := Fresh.in_goal @x in intro $x_id
-                             | apply ex_func; let x_id := Fresh.in_goal @x in intro $x_id
-                             | (* with negation *)
-                               apply not_or_and_func
-                             | apply and_not_or_func
-                             | apply not_and_or_func
-                             | apply or_not_and_func
-                             | apply not_impl_and_func
-                             | apply and_not_impl_func
-                             | apply not_all_ex_func; let x_id := Fresh.in_goal @x in intro $x_id
-                             | apply ex_not_all_func; let x_id := Fresh.in_goal @x in intro $x_id
-                             | apply not_ex_all_func; let x_id := Fresh.in_goal @x in intro $x_id
-                             | apply all_not_ex_func; let x_id := Fresh.in_goal @x in intro $x_id
-                             | apply not_neg_pos_func
-                             | apply pos_not_neg_func
-                             ])]
+        solve[ repeat (
+          first [ (* finish proof *)
+                  exact id 
+                | lazy_match! goal with
+                  (* without negation *)
+                  | [ |- (?a \/ ?b) -> (?c \/ ?d)]
+                    => apply (or_func $a $b $c $d)
+                  | [ |- (?a /\ ?b) -> (?c /\ ?d)]
+                    => apply (and_func $a $b $c $d)
+                  | [ |- (?a -> ?b) -> (?c -> ?d)]
+                    => apply (impl_func $a $b $c $d)
+                  | [ |- (forall x, @?p x) -> (forall x, @?q x)] (* matching on a forall statement !!! *)
+                    => apply (all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                  | [ |- (exists x, @?p x) -> (exists x, @?q x)]
+                    => apply (ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                  (* with negation *)
+                  | [ |- ~(?a \/ ?b) -> (?c /\ ?d)]
+                    => apply (not_or_and_func $a $b $c $d)
+                  | [ |- (?c /\ ?d) -> ~(?a \/ ?b)]
+                    => apply (not_or_and_func $a $b $c $d)
+                  | [ |- ~(?a /\ ?b) -> (?c \/ ?d)]
+                    => apply (not_and_or_func $a $b $c $d)
+                  | [ |- (?c \/ ?d) -> ~(?a /\ ?b)]
+                    => apply (or_not_and_func $a $b $c $d)
+                  | [ |- ~(?a /\ ?b) -> (?a -> ?c)]
+                    => apply (not_and_impl_func $a $b $c)
+                  | [ |- (?a -> ?c) -> ~(?a /\ ?b)]
+                    => apply (impl_not_and_func $a $b $c)
+                  | [ |- ~(?a -> ?b) -> (?a /\ ?c)]
+                    => apply (not_impl_and_func $a $b $c)
+                  | [ |- (?a /\ ?c) -> ~(?a -> ?b)]
+                    => apply (and_not_impl_func $a $b $c)
+                  | [ |- ~(forall x, @?p x) -> (exists x, @?q x)]
+                    => apply (not_all_ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                  | [ |- (exists x, @?q x) -> ~(forall x, @?p x)]
+                    => apply (ex_not_all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                  | [ |- ~(exists x, @?p x) -> (forall x, @?q x)]
+                    => apply (not_ex_all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                  | [ |- (forall x, @?q x) -> ~(exists x, @?p x)]
+                    => apply (all_not_ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                  | [ |- (~~?a) -> ?b]
+                    => apply (not_neg_pos_func $a $b)
+                  | [ |- ?b -> (~~?a)]
+                    => apply (pos_not_neg_func $a $b)
+                  end ] ) ]
       in
       match Control.case attempt with
       | Val _ => ()
@@ -208,4 +253,71 @@ Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
 Ltac2 solve_by_manipulating_negation () :=
   match! goal with
   | [ h : _ |- _ ] => solve_by_manipulating_negation_in h
+  end.
+
+
+
+(*For debugging: do a single step *)
+Local Ltac2 manipulate_negation_in (h_id : ident) :=
+  let h := Control.hyp h_id in
+  (* Check whether h is a proposition. *)
+  let type_h := Aux.get_value_of_hyp h in
+  let sort_h := Aux.get_value_of_hyp type_h in
+  match Aux.check_constr_equal sort_h constr:(Prop) with
+  | false => Control.zero (NegationError
+                         "Can only manipulate negation in propositions.")
+  | true => 
+      let attempt () :=
+        revert $h_id; 
+        print (of_constr (Control.goal ()));
+        first [ (* finish proof *)
+                exact id
+              | lazy_match! goal with
+                (* without negation *)
+                | [ |- (?a \/ ?b) -> (?c \/ ?d)]
+                  => apply (or_func $a $b $c $d)
+                | [ |- (?a /\ ?b) -> (?c /\ ?d)]
+                  => apply (and_func $a $b $c $d)
+                | [ |- (?a -> ?b) -> (?c -> ?d)]
+                  => apply (impl_func $a $b $c $d)
+                | [ |- (forall x, @?p x) -> (forall x, @?q x)] (* matching on a forall statement !!! *)
+                  => apply (all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                | [ |- (exists x, @?p x) -> (exists x, @?q x)]
+                  => apply (ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                (* with negation *)
+                | [ |- ~(?a \/ ?b) -> (?c /\ ?d)]
+                  => apply (not_or_and_func $a $b $c $d)
+                | [ |- (?c /\ ?d) -> ~(?a \/ ?b)]
+                  => apply (and_not_or_func $a $b $c $d)
+                | [ |- ~(?a /\ ?b) -> (?c \/ ?d)]
+                  => apply (not_and_or_func $a $b $c $d)
+                | [ |- (?c \/ ?d) -> ~(?a /\ ?b)]
+                  => apply (or_not_and_func $a $b $c $d)
+                | [ |- ~(?a /\ ?b) -> (?a -> ?c)]
+                  => apply (not_and_impl_func $a $b $c)
+                | [ |- (?a -> ?c) -> ~(?a /\ ?b)]
+                  => apply (impl_not_and_func $a $b $c)
+                | [ |- ~(?a -> ?b) -> (?a /\ ?c)]
+                  => apply (not_impl_and_func $a $b $c)
+                | [ |- (?a /\ ?c) -> ~(?a -> ?b)]
+                  => apply (and_not_impl_func $a $b $c)
+                | [ |- ~(forall x, @?p x) -> (exists x, @?q x)]
+                  => apply (not_all_ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                | [ |- (exists x, @?q x) -> ~(forall x, @?p x)]
+                  => apply (ex_not_all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                | [ |- ~(exists x, @?p x) -> (forall x, @?q x)]
+                  => apply (not_ex_all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                | [ |- (forall x, @?q x) -> ~(exists x, @?p x)]
+                  => apply (all_not_ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
+                | [ |- (~~?a) -> ?b]
+                  => apply (not_neg_pos_func $a $b)
+                | [ |- ?b -> (~~?a)]
+                  => apply (pos_not_neg_func $a $b)
+                end
+              ]
+      in
+      match Control.case attempt with
+      | Val _ => ()
+      | Err exn => Control.zero (exn)
+      end
   end.

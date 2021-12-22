@@ -82,55 +82,69 @@ Qed.
 Goal (~P /\ ~Q) -> ~(P \/ Q).
 Proof.
   intro H.
+Abort. (*
   solve_by_manipulating_negation_in @H.
-Qed.
+Qed.*)
 
-(* Test 3: ~(P /\ Q) implies (~P \/ ~Q). *)
+(* Test 5: ~(P /\ Q) implies (~P \/ ~Q). *)
 Goal ~(P /\ Q) -> (~P \/ ~Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 4: (~P \/ ~Q) implies ~(P /\ Q). *)
+(* Test 6: (~P \/ ~Q) implies ~(P /\ Q). *)
 Goal (~P \/ ~Q) -> ~(P /\ Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
 
-(* Test 5: ~(P -> Q) implies (P /\ ~Q). *)
+(* Test 7: ~(P /\ Q) implies (P -> ~Q). *)
+Goal ~(P /\ Q) -> (P -> ~Q).
+Proof.
+  intro H.
+  solve_by_manipulating_negation_in @H.
+Qed.
+(* Test 8: (P -> ~Q) implies ~(P /\ Q). *)
+Goal (P -> ~Q) -> ~(P /\ Q).
+Proof.
+  intro H.
+  solve_by_manipulating_negation_in @H.
+Qed.
+
+(* Test 9: ~(P -> Q) implies (P /\ ~Q). *)
 Goal ~(P -> Q) -> (P /\ ~Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 6: (P /\ ~Q) implies ~(P -> Q). *)
+(* Test 10: (P /\ ~Q) implies ~(P -> Q). *)
 Goal (P /\ ~Q) -> ~(P -> Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
 
-(* Test 5: ~(forall x, S x) implies (exists x, ~S x). *)
+(* Test 11: ~(forall x, S x) implies (exists x, ~S x). *)
 Goal ~(forall x, S x) -> (exists x, ~S x).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 6: (exists x, ~S x) implies ~(forall x, S x). *)
+(* Test 12: (exists x, ~S x) implies ~(forall x, S x). *)
 Goal (exists x, ~S x) -> ~(forall x, S x).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
 
-(* Test 6: ~(exists x, S x) implies (forall x, ~S x). *)
+(* Test 13: ~(exists x, S x) implies (forall x, ~S x). *)
 Goal ~(exists x, S x) -> (forall x, ~S x).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 7: (forall x, ~S x) implies ~(exists x, S x). *)
+(* Test 14: (forall x, ~S x) implies ~(exists x, S x). *)
 Goal (forall x, ~S x) -> ~(exists x, S x).
 Proof.
   intro H.
@@ -139,31 +153,31 @@ Qed.
 
 
 (** Propositions with negations in subexpressions of logical operators. *)
-(* Test 8: or *)
+(* Test 15: or *)
 Goal (~~P \/ ~~Q) -> (P \/ Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 9: and *)
+(* Test 16: and *)
 Goal (~~P /\ ~~Q) -> (P /\ Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 10: implies *)
+(* Test 17: implies *)
 Goal (~~P -> ~~Q) -> (P -> Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 11: for all *)
+(* Test 18: for all *)
 Goal (forall x, ~~S x) -> (forall x, S x).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
-(* Test 12: exists *)
+(* Test 19: exists *)
 Goal (exists x, ~~S x) -> (exists x, S x).
 Proof.
   intro H.
@@ -172,17 +186,27 @@ Qed.
 
 
 (** Some mixed stuff. *)
-(* Test 13 *)
+(* Test 20 *)
 Goal (P \/ ~~Q) -> (~~P \/ Q).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
 
+(** Difficult case from theory. *)
+Open Scope R_scope.
+Variable A : R -> Prop.
+(* Test 21 *)
+Goal (~ (exists x : R, A x /\ L < x)) -> (forall x : R, A x ->  ~(L < x)).
+Proof.
+  intro H.
+  solve_by_manipulating_negation ().
+Qed.
 
 
 (** Test tactic that tries every hypothesis *)
-Open Scope R_scope.
+
+(* Test 22 *)
 Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
           0 < Rdist x a < delta -> Rdist (f x) L < eps)
       ->
@@ -193,6 +217,7 @@ Proof.
   solve_by_manipulating_negation ().
 Qed.
 
+(* Test 23 *)
 Goal (0 = 0) -> (2 = 2) -> ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
           0 < Rdist x a < delta -> Rdist (f x) L < eps)
       ->
