@@ -97,8 +97,8 @@ Proof.
       We claim that H1 : (INR 1 > INR 0).
       Expand the definition of INR.
       That is, write the goal as ( 1 > 0 ).
-      This follows immediately.
-      Rewrite using (0 = INR(0)) in r.
+      We conclude that (1 > 0).
+      It holds that r2 : (x <= INR 0).
       It follows that (INR 1 > x).
     - Case (0 < x).
       By archimed it holds that H2 : (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
@@ -111,9 +111,11 @@ Proof.
       Choose n := k.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that H8 : (INR k = IZR (Z.of_nat k)).
-      Rewrite using (INR k = IZR (Z.of_nat n)).
-      Rewrite using (Z.of_nat n = up x).
-      This follows by assumption.
+      (* TODO: better solution *)
+      We claim that H9 : (IZR (up x) = IZR (Z.of_nat k)).
+      { rewrite up_x_is_k. reflexivity. }
+      We need to show that (x < k).
+      We conclude that (& x &< up x &= Z.of_nat k &= k).
 Qed.
 
 
@@ -126,24 +128,17 @@ Lemma conv_evt_eq_seq :
 Proof.
     Take a, b : (ℕ → ℝ) and l : ℝ.
     Assume a_b_similar : (evt_eq_sequences a b) and a_to_l : (a ⟶ l).
-    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜(b n) - l ｜ <ε).
-    Expand the definition of converges_to.
-    That is, write the goal as (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
-      for all n : ℕ, (n ≥ N)%nat ⇨ ｜ b n - l ｜ < ε ).
+    We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
+      for all n : ℕ, (n ≥ N)%nat ⇨ |b n - l| < ε ).
     Take ε : ℝ; such that ε_gt_0 : (ε > 0).
-    Choose n1 such that a_close_to_l according to (a_to_l ε ε_gt_0).
-    Choose k such that an_is_bn_for_n_ge_k according to a_b_similar.
-    Choose M := (Nat.max n1 k).
-    It holds that M_ge_n1 : (M ≥ n1)%nat.
+    It holds that a_to_l_some_N1 : 
+      (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε).
+    Choose N1 such that prop_N1 according to a_to_l_some_N1.
+    Choose K such that an_is_bn_for_n_ge_k according to a_b_similar.
+    Choose M := (Nat.max N1 K).
     Take n : ℕ; such that n_ge_M : (n ≥ M)%nat.
-    We claim that n_ge_n1 : (n ≥ n1)%nat.
-    This follows immediately.
-    It holds that an_eq_bn : (a n = b n).
-    We claim that an_close_to_l : (|(a n) - l | < ε).
-    Apply (a_close_to_l n).
-    This follows immediately.
-    Rewrite using (b n = a n).
-    Apply an_close_to_l.
+    It holds that b_n_eq_a_n : (b n = a n).
+    We conclude that (& |b n - l| &= |a n - l| &< ε).
 Qed.
 
 
@@ -157,15 +152,10 @@ Lemma eq_seq_conv_to_same_lim :
 Proof.
     Take a, b : (ℕ → ℝ) and l : R.
     Assume seq_eq : (for all n : ℕ, a n = b n).
-    Apply conv_evt_eq_seq.
-    (** By our lemma, it suffices to prove that (evt_eq_sequences a b) *)
-    We need to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
-    Expand the definition of evt_eq_sequences.
-    That is, write the goal as (there exists k : ℕ, 
-      for all n : ℕ, (n ≥ k)%nat ⇨ a n = b n ).
+    By conv_evt_eq_seq it suffices to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
     Choose k := O.
     Take n : ℕ; such that n_gt_k : (n ≥ k)%nat.
-    This follows immediately.
+    We conclude that (a n = b n).
 Qed.
 
 
@@ -181,17 +171,12 @@ Lemma lim_const_seq :
 Proof.
     Take c : ℝ.
     Define s := (constant_sequence c).
-    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜(s n) - c｜ < ε).
-    Expand the definition of converges_to.
-    That is, write the goal as (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
-      for all n : ℕ, (n ≥ N)%nat ⇨ ｜ s n - c ｜ < ε).
+    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |(s n) - c| < ε).
     Take ε : ℝ; such that ε_gt_0 : (ε > 0).
     Choose Nn := O.
     Take n : ℕ; such that n_ge_Nn : (n ≥ Nn)%nat.
     It holds that H : (s n = c).
-    Rewrite using (s n = c).
-    By R_dist_eq it holds that H2 : (｜c - c｜ = 0).
-    We conclude that (｜c - c｜ < ε).
+    We conclude that (& |s n - c| &= | c - c | &= |0| &= 0 &< ε).
 Qed.
 
 (** #### **Another simple limit**
@@ -221,27 +206,13 @@ Proof.
     Assume n_ge_N : (n ≥ n1)%nat.
     Expand the definition of R_dist.
     That is, write the goal as ( | 1 / (n + 1) - 0 | < ε ).
-    Apply Rabs_def1.
-    Rewrite using (1 / (INR n + 1) - 0 = 1 / (INR n + 1)).
-    We need to show that (1 / (INR n+1) < ε ).
-    It holds that Rininv_eps : (/ / ε = ε). 
-    Rewrite using (ε = / / ε).
-    We need to show that (1 / (INR n+1) < / / ε ).
-    Rewrite using (1/(INR n+1) = /(INR n+1)).
-    We need to show that (/ (INR n+1) < / / ε ).
-    Apply (Rinv_lt_contravar : for all r1 r2 : R, 0 < r1 * r2 -> r1 < r2 -> / r2 < / r1).
-    We need to show that (0 < / ε * (INR n + 1)).
-    This follows immediately.
-    It holds that H2 : (/ ε < INR n1).
-    By le_INR it holds that H3 : (INR n1 ≤ INR n ).
-    It holds that H4 : (INR n < INR n + 1).
-    We need to show that (/ ε < INR n + 1 ).
-    This follows immediately.
-    Rewrite using (1/(INR n + 1) - 0 = / (INR n + 1)).
-    It holds that H6 : (INR n >= 0).
-    It holds that H7 : (INR n + 1 > 0).
-    It holds that H8 : (0 < /(INR n + 1)).
-    This concludes the proof.
+    By Rabs_def1 it suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
+    We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
+    - It holds that n_plus_1_gt_0 : (0 < n + 1). (* n + 1 > 0 is difficult?*)
+      We conclude that (& -ε &< 0 &< / (n + 1) &= 1 / (n + 1) - 0).
+    - We claim that H0 : (/ ε < n + 1). 
+      { We conclude that (& / ε &< n1 &<= n &<= n + 1). }
+      We conclude that (& 1 / (n + 1) - 0 &= / (n + 1) &< / / ε &= ε).
 Qed.
 
 
@@ -250,12 +221,15 @@ Lemma min_1_over_n_plus_1_to_0 :
 Proof.
     By lim_d_0 it holds that H1 : (Un_cv d 0).
     By (CV_opp) it holds that H2 : (Un_cv (opp_seq d) (-0)).
-    Rewrite using (-0 = 0) in H2.
     Expand the definition of opp_seq in H2.
-    That is, write H2 as ( Un_cv (n) ↦ (- d n) 0 ).
+    That is, write H2 as ( Un_cv (n) ↦ (- d n) (-0) ).
     Expand the definition of d in H2.
-    That is, write H2 as ( Un_cv (n) ↦ (- (1 / (n + 1))) 0 ).
-    This follows by assumption.
+    That is, write H2 as ( Un_cv (n) ↦ (- (1 / (n + 1))) (-0) ).
+    It holds that n0_eq_0 : (0 = -0).
+    (* TODO: make transport automatic *)
+    By (eq_ind_r (fun x => Un_cv (n) ↦ (- (1 / (n + 1))) x) H2) 
+      it suffices to show that (Un_cv (n) ↦ (- (1 / (n + 1))) (-0)).
+    We conclude that (Un_cv (n) ↦ (- (1 / (n + 1))) (-0)).
 Qed.
 
 
@@ -269,40 +243,35 @@ Proof.
     Take a, b, c : (ℕ ⇨ ℝ) and l : ℝ.
     Assume b_squeezed : (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and a_cv_to_l : (a ⟶ l).
     Assume c_cv_to_l : (c ⟶ l).
-    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ ｜b n - l｜ < ε).
-    Expand the definition of converges_to.
-    That is, write the goal as (for all ε : ℝ, ε > 0 
-      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
-      ⇨ ｜ b n - l ｜ < ε ).
+    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |b n - l| < ε).
     Take ε : ℝ; such that ε_gt_0 : (ε > 0). 
     Choose Na such that a_close_to_l according to (a_cv_to_l ε ε_gt_0).
     Choose Nc such that c_close_to_l according to (c_cv_to_l ε ε_gt_0).
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that n_ge_N : (n ≥ Nn)%nat.
-    It holds that n_ge_Na : (n ≥ Na)%nat.
-    It holds that d_an_l_lt_ε : (R_dist (a n) l < ε).
-    Expand the definition of R_dist in d_an_l_lt_ε.
-    That is, write d_an_l_lt_ε as ( | a n - l | < ε ).
-    Rewrite using (Rabs( a n - l  ) = Rabs( l - a n)) in d_an_l_lt_ε.
-    By Rabs_def2 it holds that H2 : (l - a n < ε ∧- ε < l - a n).
-    It holds that H3 : (- ε < l - a n).
-    It holds that n_ge_Nc : (n ≥ Nc)%nat.
-    It holds that d_cn_l_lt_ε : (R_dist (c n) l < ε).
-    Expand the definition of R_dist in d_cn_l_lt_ε.
-    That is, write d_cn_l_lt_ε as ( | c n - l | < ε ).
-    By Rabs_def2 it holds that H4 : (c n - l < ε ∧ - ε < c n - l).
-    It holds that H5 : (c n - l < ε).
+    We claim that nε_lt_an_l : (-ε < a n - l).
+    { It holds that n_ge_Na : (n ≥ Na)%nat.
+      It holds that d_an_l_lt_ε : (R_dist (a n) l < ε).
+      Expand the definition of R_dist in d_an_l_lt_ε.
+      That is, write d_an_l_lt_ε as ( | a n - l | < ε ).
+      By Rabs_def2 it holds that an_l_lt_ε_and_nε_lt_an_l: (a n - l < ε /\ -ε < a n - l).
+      We conclude that (-ε < a n - l).
+    }
+    We claim that cn_l_lt_ε : (c n - l < ε).
+    { It holds that n_ge_Nc : (n ≥ Nc)%nat.
+      It holds that d_cn_l_lt_ε : (R_dist (c n) l < ε).
+      Expand the definition of R_dist in d_cn_l_lt_ε.
+      That is, write d_cn_l_lt_ε as ( | c n - l | < ε ).
+      By Rabs_def2 it holds that cn_l_lt_ε_and_nε_lt_cn_l: (c n - l < ε /\ -ε < c n - l).
+      We conclude that (c n - l < ε).
+    }
     Expand the definition of R_dist.
     That is, write the goal as ( | b n - l | < ε ).
-    Apply Rabs_def1. 
-    By b_squeezed it holds that H6 : (a n ≤ b n ∧ b n ≤ c n).
-    By b_squeezed it holds that H7 : (a n ≤ b n). 
-    We need to show that ( b n - l < ε).
-    This follows immediately.
+    By Rabs_def1 it suffices to show that (-ε < b n - l < ε).
     It holds that H6 : (a n ≤ b n ∧ b n ≤ c n).
-    By b_squeezed it holds that H8 : (b n ≤ c n).
-    We need to show that (- ε < b n - l).
-    This follows immediately.
+    We show both (- ε < b n - l) and ( b n - l < ε).
+    - We conclude that (& - ε &< a n - l &<= b n - l).
+    - We conclude that (& b n - l &<= c n - l &< ε).
 Qed.
 
 
@@ -322,15 +291,12 @@ Proof.
     It follows that (L ≤ M).
     Case (M < L).
     Define ε := (L-M).
+    It holds that ε_ge_0 : (ε > 0). 
     Expand the definition of Un_cv in a_cv_to_L.
     That is, write a_cv_to_L as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - L ｜ < eps).
-    We claim that H2 : (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
-    Apply a_cv_to_L. 
-    It holds that H3 : (L - M > 0). 
-    It follows that (ε > 0).
-
+    It holds that H2 :  (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
     Choose Nn such that a_close_to_L according to H2.
     It holds that H4 : (R_dist (a Nn) L < ε).
     Expand the definition of R_dist in H4.
@@ -338,7 +304,7 @@ Proof.
     By Rabs_def2 it holds that H5 : (a Nn - L < ε ∧ (- ε < a Nn - L)).
     It holds that H6 : (- ε < a Nn - L).
     It holds that H7 : (a Nn ≤ M).
-    Rewrite using (ε = L - M) in H6.
+    It holds that H8 : (- (L - M) < a Nn - L).
     It follows that (L ≤ M).
 Qed.
 
@@ -356,20 +322,14 @@ Proof.
     Assume a_cv_to_L : (Un_cv a L).
     Expand the definition of opp_seq in b.
     That is, write b as ( ℕ ⇨ ℝ ). (*TODO *)
-    We claim that H : (Un_cv b (-L)).
-    Apply CV_opp.
-    This follows by assumption.
+    By CV_opp it holds that H : (Un_cv b (-L)).
     We claim that H1 : (-L ≤ -M).
-    Apply (upp_bd_seq_is_upp_bd_lim b).
-    We need to show that (for all n : ℕ, b n ≤ - M).
-    Take n : ℕ. 
-    Rewrite using (b = opp_seq a).
-    Expand the definition of opp_seq.
-    That is, write the goal as (-(a n) ≤ -M).
-    This follows immediately.
-    We need to show that (Un_cv b (-L)).
-    This follows immediately.
-    It follows that (L ≥ M).
+    { By upp_bd_seq_is_upp_bd_lim it suffices to show that
+       (for all n : ℕ, b n ≤ - M).
+      Take n : ℕ.
+      We conclude that (& b n &= - a n &<= -M).
+    }
+    We conclude that (L >= M).
 Qed.
 
 
@@ -385,12 +345,11 @@ Proof.
     Take l : ℝ.
     Assume a_cv_to_m : (Un_cv a m) and b_cv_to_l : (Un_cv b l).
     Assume a_b_ordered : (∀ n : ℕ, a n ≤ b n).
-    By Rle_or_lt it holds that H1 : (m ≤ l ∨ l < m).
-    Because H1 either m_le_l or l_lt_m.
-    Case (m ≤ l).
-    Apply m_le_l.
-    Case (l < m).
+    We argue by contradiction.
+    Assume not_m_le_l : (~ m <= l).
+    It holds that l_lt_m : (l < m).
     Define ε := ((m - l)/2).
+    It holds that ε_gt_0 : (ε > 0).
     Expand the definition of Un_cv in b_cv_to_l.
     That is, write b_cv_to_l as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
@@ -399,33 +358,26 @@ Proof.
     That is, write a_cv_to_m as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - m ｜ < eps ).
-    It holds that H2 : (m-l > 0).
-    It holds that H3 : ((m-l)/2 > 0).
-    It holds that H4 : (ε > 0).
     It holds that H5 : (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
     It holds that H6 : (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
     Choose N1 such that H7 according to H5.
     Choose N2 such that H8 according to H6.
     Define N3 := (Nat.max N1 N2).
-    It holds that H9 : (Nat.max N1 N2 ≥ N1)%nat.
-    It holds that H10 : (Nat.max N1 N2 ≥ N2)%nat.
-    It holds that H11 : (N3 ≥ N1)%nat.
-    It holds that H12 : (N3 ≥ N2)%nat.
-    It holds that H13 : (R_dist (b N3) l < ε).
-    It holds that H14 : (R_dist (a N3) m < ε).
-    Expand the definition of R_dist in H13.
-    That is, write H13 as ( | b N3 - l | < ε ).
-    Expand the definition of R_dist in H14.
-    That is, write H14 as ( | a N3 - m | < ε ).
-    By Rabs_def2 it holds that H15 : (a N3 - m < ε ∧ - ε < a N3 - m).
-    By Rabs_def2 it holds that H16 : (b N3 - l < ε ∧ - ε < b N3 - l).
-    It holds that H17 : (a N3 - m < ε).
-    It holds that H18 : (- ε < b N3 - l).
-    Rewrite using (ε = (m - l)/2) in H17.
-    Rewrite using (ε = (m - l)/2) in H18.
-    It holds that H19 : (a N3 ≤ b N3).
-    It holds that H20 : (ε = (m - l)/2).
-    It follows that (m ≤ l).
+    We claim that b_N3_lt_a_N3 : (b N3 < a N3).
+    { It holds that H13 : (R_dist (b N3) l < ε).
+      It holds that H14 : (R_dist (a N3) m < ε).
+      Expand the definition of R_dist in H13.
+      That is, write H13 as ( | b N3 - l | < ε ).
+      Expand the definition of R_dist in H14.
+      That is, write H14 as ( | a N3 - m | < ε ).
+      By Rabs_def2 it holds that H15 : (a N3 - m < ε ∧ - ε < a N3 - m).
+      By Rabs_def2 it holds that H16 : (b N3 - l < ε ∧ - ε < b N3 - l).
+      We conclude that (& b N3 &< l + ε &= l + (m - l)/2 
+                            &= m - (m - l)/2 &= m - ε &< a N3).
+    }
+    It holds that a_N3_le_b_N3 : (a N3 <= b N3).
+    It holds that not_a_N3_le_b_N3 : (~ a N3 <= b N3).
+    Contradiction.
 Qed.
 
 Definition is_bounded (a : ℕ → ℝ) := 
@@ -457,19 +409,16 @@ We show both directions.
   We show both statements.
   + We need to show that (M ≥ 0).
     It holds that H1 : (0 ≤ |q|).
-    Rewrite inequality M "=" (M1 + |q|) "≥" 0.
+    It suffices to show that (0 <= M).
+    We conclude that (& 0 &<= (M1 + |q|) &= M).
 
   + We need to show that (
       for all n : ℕ,
         | a n | ≤ M ).
     Take n : ℕ.
-    Write goal using (|a n| = |a n - q + q|) as (| a n - q + q | ≤ M).
-
-By Rabs_triang it holds that triangle : (|a n - q + q| ≤ |a n - q| + |q|).
-Rewrite inequality
-  (|a n - q + q|) "≤" (|a n - q| + |q|)
-                  "≤" (M1 + |q|)
-                  "=" M.
+    By Rabs_triang it holds that triangle : (|a n - q + q| ≤ |a n - q| + |q|).
+    We conclude that (& |a n| &= |a n - q + q| 
+                              &<= (|a n - q| + |q|) &<= (M1 + |q|) &= M).
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
@@ -491,5 +440,5 @@ M ≥ 0 ∧ (for all n : ℕ,
 for all n : ℕ,
 | a n - q | ≤ M ).
   Take n : ℕ.
-  Rewrite inequality (|a n - q|) "=" (|a n|) "≤" (M).
+  We conclude that (& |a n - q| &= |a n| &<= M).
 Qed.

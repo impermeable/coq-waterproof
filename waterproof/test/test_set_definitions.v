@@ -43,7 +43,7 @@ Require Import Waterproof.load_database.Subsets.
 Require Import Waterproof.AllTactics.
 Goal forall b : B, B b.
   intro b.
-  This concludes the proof.
+  We conclude that (B b).
 Qed.
 
 (* Test 3: check the use of a tactic to show the existence of a specific term of a subset. *)
@@ -91,7 +91,7 @@ Abort.
            the characteristic function of that subset hold for that term.  *)
 Goal forall c : C, C c.
   intro c.
-  This concludes the proof.
+  We conclude that (C c).
 Qed.
 
 (* Test 3: check the use of a tactic to show the existence of a specific term of a subset. *)

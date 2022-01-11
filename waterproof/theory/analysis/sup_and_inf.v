@@ -140,11 +140,13 @@ Proof.
     That is, write the goal as (for all x : ℝ, A x ⇨ x ≤ - m).
     Take a : ℝ.
     Assume a_in_A : (a ∈ A).
-    Write m_low_bd as (∀ a : ℝ, (-a) ∈ A ⇒ m ≤ a).
+    It holds that m_low_bd_2 : (for all x : R, (-x) ∈ A -> m <= x).
     We claim that minmin_a_in_A : (--a ∈ A).
-    Write goal using (--a = a) as (a ∈ A).
-    Apply a_in_A.
-    By m_low_bd it holds that m_le_min_a : (m ≤ -a).
+    { It holds that nna_eq_a  :(--a = a).
+      (* TODO: We conclude that (--a ∈ A). should work *)
+      exact (eq_ind_r (fun x => x ∈ A) a_in_A nna_eq_a).
+    }
+    It holds that m_le_min_a : (m ≤ -a).
     It follows that (a ≤ -m).
 Qed.
 
@@ -161,9 +163,11 @@ Proof.
     Take a : ℝ.
     Assume a_in_A : (a ∈ A).
     We claim that minmin_a_in_A : (--a ∈ A).
-    Write goal using (--a = a) as (a ∈ A).
-    Apply a_in_A.
-    By M_upp_bd it holds that min_a_le_M : (-a ≤ M).
+    { It holds that nna_eq_a  :(--a = a).
+      (* TODO: We conclude that (--a ∈ A). should work *)
+      exact (eq_ind_r (fun x => x ∈ A) a_in_A nna_eq_a).
+    }
+    It holds that min_a_le_M : (-a ≤ M).
     It follows that (-M ≤ a).
 Qed.
 
@@ -175,10 +179,9 @@ Proof.
     Take A : (ℝ → Prop).
     Assume A_bdd_below : (is_bdd_below A).
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
-    Write A_bdd_below as (∃ m : ℝ, is_lower_bound A m).
-    Choose m such that m_low_bd according to A_bdd_below.
-    Expand the definition of bound.
-    That is, write the goal as (there exists m0 : ℝ , is_upper_bound (set_opp A) m0).
+    Expand the definition of is_bdd_below in A_bdd_below.
+    That is, write A_bdd_below as (∃ m : ℝ, is_lower_bound A m).
+    Choose m such that m_is_lower_bd_A according to A_bdd_below.
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) M).
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) M).
@@ -213,7 +216,7 @@ Proof.
       destruct M_is_sup as [previously_proven H1].
       By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
       By H1 it holds that H3 : (M ≤ -l).
-      This concludes the proof.
+      We conclude that (l <= -M).
 Qed.
 
 Lemma exists_inf :
@@ -227,26 +230,26 @@ Proof.
     Expand the definition of set_opp in B.
     That is, write B as (ℝ ⇨ Prop).
     We claim that H : (for all s : ℝ, (A s) -> (B (-s))).
-    Take s : ℝ.
-    Assume A_s_true : (A s).
-    Rewrite using (B (-s) = A (--s)).
-    Rewrite using (--s = s).
-    Apply A_s_true.
-    We claim that B_bdd_above : (is_bdd_above B).
-    {
-        Apply bdd_below_to_bdd_above_set_opp.
-        This follows immediately.
+    { Take s : ℝ.
+      Assume A_s_true : (A s).
+      (* TODO: make nicer *)
+      We need to show that (A (--s)).
+      It holds that H2 : (A (--s) = A s).
+      Fail We conclude that (A (--s)).
+      rewrite H2.
+      We conclude that (A s).
     }
+    By bdd_below_to_bdd_above_set_opp it holds that B_bdd_above : (is_bdd_above B).
     We claim that ex_y_in_B : (∃ y : ℝ, y ∈ B).
-    Choose x such that x_in_A according to ex_x.
-    Choose y := (-x).
-    We need to show that ((-(-x)) ∈ A).
-    Apply (H x).
-    This follows immediately.
+    { Choose x such that x_in_A according to ex_x.
+      Choose y := (-x).
+      We need to show that (B (-x)).
+      By H we conclude that (B (-x)).
+    }
     By completeness it holds that exists_sup : ({L | is_sup B L}).
     Choose L such that L_is_sup according to exists_sup.
     By sup_set_opp_is_inf_set it holds that minL_is_inf_A : (is_inf A (-L)).
-    This concludes the proof.
+    We conclude that ({m : ℝ | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
 Qed.
 
 
@@ -261,8 +264,8 @@ Lemma sup_is_upp_bd :
 Proof.
     Take A : (ℝ → Prop) and M : ℝ. 
     Assume M_is_sup_A : (is_sup A M).
-    Write M_is_sup_A as (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b) ).
-    Because M_is_sup_A both part1 and part2.
+    It holds that M_is_sup_A_2 : (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b)).
+    Because M_is_sup_A_2 both part1 and part2.
     It follows that (is_upper_bound A M). 
 Qed.
 
@@ -277,7 +280,7 @@ Proof.
     Assume A_is_sup_M : (is_sup A M) and L_is_upp_bd_A : (is_upper_bound A l).
     Because A_is_sup_M both M_is_upp_bd and any_upp_bd_le_M.
     (** We need to show that $M \leq L$.*)
-    This concludes the proof. 
+    We conclude that (M <= l).
 Qed.
 
 
@@ -292,7 +295,7 @@ Proof.
     Take A : (ℝ → Prop) and m : R.
     Assume m_is_inf_A : (is_inf A m).
     Because m_is_inf_A both m_is_low_bd and any_low_bd_ge_m.
-    Apply m_is_low_bd.
+    We conclude that (is_lower_bound A m).
     (** to show that $m$ is a lower bound of $A$*)
 Qed.
 
@@ -348,8 +351,8 @@ Proof.
     Assume ε_gt_0 : (ε > 0).
     It holds that H1 : (M - ε < M). 
     apply exists_almost_maximizer with (L := M- ε) (M := M).
-    This follows by assumption.
-    This concludes the proof.
+    - We conclude that (is_sup A M).
+    - We conclude that (M - ε < M).
 Qed.
 
 
@@ -375,10 +378,12 @@ Proof.
     We claim that a_is_not_M : (¬(a = M)).
     Assume a_eq_M : (a = M).
     We claim that M_in_A : (A M).
-    Rewrite using (M = a).
-    This follows by assumption.
+    { (* TODO: improve*)
+      rewrite <- a_eq_M.
+      We conclude that (A a).
+    }
     Contradiction.
-    This concludes the proof.
+    We conclude that (a < M).
     }
     Contradiction.
 Qed.
@@ -405,9 +410,8 @@ Proof.
     That is, write y_in_range as (there exists i : ℕ , y = a i).
     Choose i such that ai_is_y according to y_in_range.
     Choose k := i.
-    We need to show that (a i > l - ε).
-    Rewrite using (y = a i) in y_gt_l_min_ε.
-    Apply y_gt_l_min_ε.
+    We need to show that (l - ε < a i).
+    We conclude that (& l - ε &< y &= a i).
 Qed.
 
 
@@ -418,14 +422,10 @@ Proof.
     Take a : (ℕ → ℝ). 
     Assume pr : (has_ub a). 
     Take m : ℕ.
-    Apply seq_ex_almost_maximizer_ε.
+    By seq_ex_almost_maximizer_ε it suffices to show that (1 / (m + 1) > 0).
     (** We need to show that $1/(m+1) > 0$.*)
-     Rewrite using (1 / (INR m + 1) = / (INR m + 1)).
-    It holds that m_plus_1_pos : (m >= 0)%R.
-    It holds that m_plus_1_gt_0 : (0 < m + 1)%R. SearchPattern (0 < / _) .
-    (** We need to show that $(m+1) > 0$. *)
-    By Rinv_0_lt_compat it holds that H : (0 < / (m+1)).
-    We conclude that (/ (m+1) > 0). 
+    It holds that m_plus_1_gt_0 : (0 < m + 1)%R.
+    We conclude that (1 / (m+1) > 0).
 Qed.
 
 

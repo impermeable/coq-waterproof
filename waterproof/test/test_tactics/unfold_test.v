@@ -103,11 +103,10 @@ Abort.
 
 (** * Test 6
     Unfold functions IN A HYPOTHESIS to show that its definition
-    proves the goal, using the write_as notation.
+    proves the goal.
 *)
-Load write_as.
 Lemma test_unfold_6: forall (x a:nat), some_function (other_function x) = a -> False.
     intros x a h.
     Expand the definition of some_function, other_function in h.
-    Write h as ( 2 * (2 * x) = a ).
+    That is, write h as ( 2 * (2 * x) = a ).
 Abort.

@@ -21,7 +21,9 @@ Definition dist_positive :
 
 Definition dist_non_degenerate :
   ∀ x y : X, (dist X x y = 0) ⇒ (x = y). 
-  Take x, y : X. Apply (dist_refl X). Defined.
+  Take x, y : X.
+  By (proj1 (dist_refl X x y)) we conclude that (dist X x y = 0 ⇨ x = y).
+Defined.
 
 Definition dist_symmetric :
   ∀ x y : X, dist X x y = dist X y x
@@ -29,12 +31,13 @@ Definition dist_symmetric :
 
 Definition dist_triangle_inequality :
   ∀ x y z : X, dist X x z ≤ dist X x y + dist X y z.
-  Take x, y, z : X. Apply (dist_tri X).
+  Take x, y, z : X. 
+  By (dist_tri X) we conclude that (dist X x z ≤ dist X x y + dist X y z).
 Qed.
 
 Definition dist_reflexive : ∀ x : X, dist X x x = 0.
-  Take x : X. Apply (dist_refl X). We need to show that (x = x).
-  We conclude that (x = x).
+  Take x : X.
+  By (proj2 (dist_refl X x x)) we conclude that (dist X x x = 0).
 Defined.
 
 End Definitions.
@@ -51,8 +54,7 @@ Take x, y : ℝ.
 Assume d'_0 : (d_discrete_R x y = 0).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
-  Apply Req_true.
-  Apply e.
+  By Req_true we conclude that (Reqb x y = true).
 
 + Case (x ≠ y).
   Expand the definition of d_discrete_R in d'_0.
@@ -75,8 +77,7 @@ Either (x = y) or (x ≠ y).
   It holds that H1 : (0 ≠ 1).
   Contradiction.
 + Case (x ≠ y).
-  Apply Req_false.
-  Apply n.
+  By Req_false we conclude that (Reqb x y = false).
 Qed.
 
 Global Hint Resolve d'_eq_0 : reals.
