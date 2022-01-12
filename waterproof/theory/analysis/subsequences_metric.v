@@ -123,17 +123,17 @@ Proof.
     Check family.
     Locate family.
     Check ℕ.
-    Assume incr_loc : (∀ k : ℕ, ((g k) ≤ (g (k + 1)))%nat).
+    Assume (∀ k : ℕ, (g k) ≤ (g (k + 1)))%nat.
     Take k : ℕ.
     We use induction on l.
     - We first show the base case, namely ((k ≤ 0)%nat ⇨ (g k ≤ g 0)%nat).
-      Assume k_le_0 : ((k ≤ 0)%nat).
+      Assume (k ≤ 0)%nat.
       It holds that k_eq_0 : (k = 0)%nat.
       It suffices to show that (g k = g 0)%nat.
       We conclude that (g k = g 0)%nat.
     - We now show the induction step.
-      Assume IH : ((k ≤ l)%nat ⇨ (g k ≤ g l)%nat).
-      Assume k_le_Sl : ((k ≤ l + 1)%nat).
+      Assume ((k ≤ l) ⇨ (g k ≤ g l))%nat (IH).
+      Assume (k ≤ l + 1)%nat.
       destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
       + (** We first consider the case that $k < l + 1$.*)
         It holds that k_le_l: (k ≤ l)%nat.
@@ -153,9 +153,8 @@ Lemma index_sequence_property2 (n : ℕ → ℕ) :
             (k1 ≥ k2)%nat ⇒ 
                 (n k1 ≥ n k2)%nat.
 Proof.
-    Assume H : (is_index_sequence n).
-    Take k1, k2 : ℕ.
-    Assume k1_ge_k2 : (k1 ≥ k2)%nat.
+    Assume (is_index_sequence n).
+    Take k1, k2 : ℕ; such that (k1 ≥ k2)%nat.
     We need to show that (n k1 ≥ n k2)%nat.
     By incr_loc_to_glob it suffices to show that (is_increasing n).
     Expand the definition of is_increasing.
@@ -182,15 +181,16 @@ Global Hint Resolve double_is_even : subsequences.
 Lemma subsequence_of_convergent_sequence : ∀ a : (ℕ → X), ∀ p : X, a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
 Proof.
 Take a : (ℕ → X). Take p : X.
-Assume a_converges_to_p : (a ⟶ p).
+Assume (a ⟶ p).
 Take n : (ℕ → ℕ).
-Assume n_is_index_sequence : (is_index_sequence n).
+Assume (is_index_sequence n).
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (a (n k)) p < ε).
 
-Take ε : ℝ. Assume ε_pos : (ε > 0).
-Choose K such that k_le_K_a_k_to_p according to (a_converges_to_p ε ε_pos).
+Take ε : ℝ; such that (ε > 0).
+It holds that i : (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (a k) p < ε).
+Choose K such that k_le_K_a_k_to_p according to (i).
 Choose N3 := K.
-Take k : ℕ. Assume k_ge_N : (k ≥ N3)%nat.
+Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that H : (n k ≥ n K)%nat.
 By index_sequence_property it holds that H2 : (n K ≥ K)%nat.
 assert (H3 : (n k ≥ K)%nat) by auto with zarith.
@@ -203,9 +203,9 @@ Lemma equivalent_subsequence_convergence :
       y ⟶ p.
 Proof.
 Take x, y : (ℕ → X).
-Assume y_subsequence_of_x : (is_subsequence y x).
+Assume (is_subsequence y x).
 Take p : X.
-Assume x_converges_to_p : (x ⟶ p).
+Assume (x ⟶ p).
 
 We need to show that (y ⟶ p).
 It holds that y_sub_x : (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
@@ -214,10 +214,11 @@ Because m_is_index_and_y_eq_x_m both m_is_index and y_eq_x_m.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
 
-Take ε : ℝ. Assume ε_pos : (ε > 0).
-Choose K such that k_le_K_x_k_to_p according to (x_converges_to_p ε ε_pos).
+Take ε : ℝ; such that (ε > 0).
+It holds that i : (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε).
+Choose K such that k_le_K_x_k_to_p according to (i).
 Choose N3 := K.
-Take k : ℕ. Assume k_ge_N : (k ≥ N3)%nat.
+Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that H : (m k ≥ m K)%nat.
 By index_sequence_property it holds that H2 : (m K ≥ K)%nat.
 It holds that H3 : (m k ≥ K)%nat.

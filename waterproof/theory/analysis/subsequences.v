@@ -47,12 +47,12 @@ Lemma existence_next_el_to_fun :
 Proof.
     Take a : (ℕ → ℝ). 
     Take P : (ℕ → ℝ → Prop).
-    Assume ex_next : (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
+    Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     We claim that H1 : (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))).
     {
         Take m : ℕ.
         apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).
-        apply ex_next.
+        We conclude that (for all x : ℕ, there exists y : ℕ, (x ≤ y)%nat ∧ P m (a y)).
     }
     apply choice with (R := fun (m : ℕ) (h : ℕ → ℕ) ↦ ( ∀ N : ℕ, (N ≤ h N)%nat ∧ P m (a (h N)) ) ).
     apply H1.
@@ -79,11 +79,11 @@ Lemma created_seq_is_index_seq :
       is_index_seq (create_seq g).
 Proof.
     Take g : (ℕ → ℕ → ℕ).
-    Assume g_large : (∀ (m N : ℕ), (g m N ≥ N)%nat ).
+    Assume (∀ (m N : ℕ), (g m N ≥ N)%nat) (i).
     Expand the definition of is_index_seq.
     That is, write the goal as (for all k : ℕ, (create_seq g k < create_seq g (S k))%nat).
     Take k : ℕ.
-    By g_large it holds that H1 : (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
+    By i it holds that H1 : (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
     We conclude that (& create_seq g k &< g (S k) (S (create_seq g k)) &= create_seq g (S k))%nat.
 Qed.
 
@@ -98,12 +98,12 @@ Proof.
     Take a : (ℕ → ℝ).
     Take g : (ℕ → ℕ → ℕ).
     Take P : (ℕ → ℝ → Prop).
-    Assume relation_satisfied : (∀ m N : ℕ, P m (a (g m N))).
+    Assume (∀ m N : ℕ, P m (a (g m N))) (i).
     induction k. (*TODO: if we use 'We use induction on k.'-tacftic, then we cannot directly match on k + 1 *)
     - We need to show that (P 0%nat (a (g 0%nat 0%nat))).
-      By relation_satisfied we conclude that (P 0%nat (a (g 0%nat 0%nat))).
+      By (i) we conclude that (P 0%nat (a (g 0%nat 0%nat))).
     - We need to show that (P (S k) (a (g (S k) (S (create_seq g k))))).
-      By relation_satisfied we conclude that (P (S k) (a (g (S k) (S (create_seq g k))))).
+      By (i) we conclude that (P (S k) (a (g (S k) (S (create_seq g k))))).
 Qed.
 
 
@@ -115,7 +115,7 @@ Lemma exists_good_subseq :
 Proof.
     Take a : (ℕ → ℝ).
     Take P : (ℕ → ℝ → Prop).
-    Assume large_good_el_exist : (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
+    Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     By existence_next_el_to_fun it holds that  
     H1 : (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))).
     Choose g such that g_choice_fun according to H1.
@@ -151,17 +151,17 @@ Proof.
     Expand the definition of is_increasing.
     That is, write the goal as ((for all k : ℕ, (g k ≤ g (S k))%nat) 
       ⇨ for all k l : ℕ, (k ≤ l)%nat ⇨ (g k ≤ g l)%nat).
-    Assume incr_loc : (∀ k : ℕ, (g k ≤ g (S k))%nat).
+    Assume (∀ k : ℕ, (g k ≤ g (S k))%nat).
     Take k : ℕ. 
     induction l as [|l IH_l].
 
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
-    Assume k_le_0 : (k ≤ 0)%nat.
+    Assume (k ≤ 0)%nat.
     It holds that k_eq_0 : (k = 0)%nat.
     We conclude that (& g k &= g 0 &<= g 0)%nat.
 
     (** Next, we need to show that if $k \leq S (l)$ then $f(k) \leq f(S (l))$.*)
-    Assume Sk_le_Sl : (k ≤ S l)%nat.
+    Assume (k ≤ S l)%nat.
     destruct (lt_eq_lt_dec k (S l)) as [temp | k_gt_Sl].
     destruct temp as [k_lt_Sl | k_eq_Sl].
     (** We first consider the case that $k < S(l)$.*)
@@ -180,13 +180,12 @@ Qed.
 Lemma index_seq_strictly_incr :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ (is_increasing (fun (k : ℕ) ↦ (n k - k)%nat)).
 Proof.
-    Take n : (ℕ → ℕ). 
-    Assume n_is_index_seq : (is_index_seq n).
+    Take n : (ℕ → ℕ); such that (is_index_seq n) (i).
     Expand the definition of is_increasing.
     That is, write the goal as (for all k : ℕ, (n k - k ≤ n (S k) - S k)%nat).
     Take k : ℕ.
-    Expand the definition of is_index_seq in n_is_index_seq.
-    That is, write n_is_index_seq as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
+    Expand the definition of is_index_seq in i.
+    That is, write i as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
     It holds that H1 : (n k < n (S k))%nat.
     We conclude that (n k - k ≤ n (S k) - S k)%nat.
 Qed.
@@ -196,12 +195,11 @@ Qed.
 Lemma index_seq_grows_0 :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ ∀ k : ℕ, (n k ≥ k)%nat.
 Proof.
-    Take n : (ℕ → ℕ). 
-    Assume n_is_index_seq : (is_index_seq n).
+    Take n : (ℕ → ℕ); such that (is_index_seq n) (i).
     induction k as [|k IH].
     - We conclude that (n 0 >= 0)%nat.
-    - Expand the definition of is_index_seq in n_is_index_seq.
-      That is, write n_is_index_seq as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
+    - Expand the definition of is_index_seq in i.
+      That is, write i as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
       It holds that H1 : (n k < n (S k))%nat.
       We conclude that (n (S k) ≥ S k)%nat.
 Qed.
@@ -210,14 +208,11 @@ Qed.
 Lemma index_seq_grows :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ (∀ k l : ℕ, (k ≤ l)%nat ⇒ (n k - k ≤ n l - l)%nat).
 Proof.
-    Take n : (ℕ → ℕ). 
-    Assume n_is_index_seq : (is_index_seq n).
+    Take n : (ℕ → ℕ); such that (is_index_seq n).
     Define g := (fun (k : ℕ) ↦ (n k - k)%nat).
     By index_seq_strictly_incr it holds that incr_g : (is_increasing g).
     By incr_loc_to_glob it holds that H2 : (∀ k l : ℕ, (k ≤ l)%nat ⇒ (g k ≤ g l)%nat).
-    Take k : ℕ. 
-    Take l : ℕ. 
-    Assume k_le_l : (k ≤ l)%nat.
+    Take k : ℕ and l : ℕ; such that(k ≤ l)%nat.
     We need to show that (g k <= g l)%nat.
     We conclude that (g k <= g l)%nat.
 Qed.
@@ -311,9 +306,7 @@ Lemma elements_le_seq_of_max :
     (k ≤ n)%nat ⇒ (g k ≤ seq_of_max g n)%nat.
 Proof.
     Take g : (ℕ → ℕ).
-    Take n : ℕ.
-    Take k : ℕ.
-    Assume k_le_n : (k ≤ n)%nat. 
+    Take n : ℕ and k : ℕ; such that (k ≤ n)%nat.
     By elements_le_seq_of_max_pre it holds that H1 : (g k ≤ seq_of_max g k)%nat.
     We claim that H2 : (seq_of_max g k ≤ seq_of_max g n)%nat.
     { By incr_loc_to_glob it suffices to show that (is_increasing (seq_of_max g)).
@@ -337,7 +330,7 @@ Lemma built_seq_is_index_seq :
       is_index_seq (build_seq g).
 Proof.
     Take g : (ℕ → ℕ).
-    Assume for_all_k_g_k_ge_k : (for all k : ℕ, (g k ≥ k)%nat).
+    Assume that (for all k : ℕ, (g k ≥ k)%nat).
     Expand the definition of is_index_seq.
     That is, write the goal as (for all k : ℕ, (build_seq g k < build_seq g (S k))%nat).
     Take k : ℕ.

@@ -51,15 +51,15 @@ Lemma d'_eq_0 : forall x y : ℝ,
   d_discrete_R x y = 0 -> (Reqb x y) = true.
 Proof.
 Take x, y : ℝ. 
-Assume d'_0 : (d_discrete_R x y = 0).
+Assume (d_discrete_R x y = 0) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   By Req_true we conclude that (Reqb x y = true).
 
 + Case (x ≠ y).
-  Expand the definition of d_discrete_R in d'_0.
-  That is, write d'_0 as ( (if Reqb x y then 0 else 1) = 0).
-  rewrite (Req_false x y n) in d'_0.
+  Expand the definition of d_discrete_R in i.
+  That is, write i as ( (if Reqb x y then 0 else 1) = 0).
+  rewrite (Req_false x y n) in i.
   It holds that H1 : (1 ≠ 0).
   Contradiction.
 Qed.
@@ -67,13 +67,13 @@ Qed.
 Lemma d'_eq_1 : forall x y : ℝ, d_discrete_R x y = 1 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ. 
-Assume d'_1 : (d_discrete_R x y = 1).
-Expand the definition of d_discrete_R in d'_1.
-That is, write d'_1 as ( (if Reqb x y then 0 else 1) = 1
+Assume (d_discrete_R x y = 1) (i).
+Expand the definition of d_discrete_R in i.
+That is, write i as ( (if Reqb x y then 0 else 1) = 1
 ).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
-  rewrite (Req_true x y e) in d'_1.
+  rewrite (Req_true x y e) in i.
   It holds that H1 : (0 ≠ 1).
   Contradiction.
 + Case (x ≠ y).

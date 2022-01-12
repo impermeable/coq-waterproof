@@ -55,12 +55,12 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
                          where [t] is the expression from the first pair in [x].
         - [AssumeError], if [x] contains more than one element.
 *)
-Local Ltac2 assume_negation (x : (ident * constr) list) :=
+Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
     match x with 
     | [] => () (* Done. *)
     | head::tail => 
             match head with
-            | (v, t) => (* Check whether the right negated expression is assumed. *)
+            | (t, n) => (* Check whether the right negated expression is assumed. *)
                     lazy_match! goal with
                     | [ |- not ?u ] => 
                             match Aux.check_constr_equal u t with
@@ -68,7 +68,12 @@ Local Ltac2 assume_negation (x : (ident * constr) list) :=
                             | true  => (* Check whether this was the only assumption made.*)
                                    match tail with
                                    | h::t => Control.zero (AssumeError (of_string "Nothing left to assume after the negated expression."))
-                                   | [] => (* Assume negation *) Std.intros false [Std.IntroNaming (Std.IntroIdentifier v)]
+                                   | [] => (* Assume negation *)
+                                          (* Check whether a name has been given *)
+                                          match n with
+                                          | None   => let h := Fresh.in_goal @__wp__h in intro $h
+                                          | Some n => intro $n
+                                          end
                                    end
                             end
                     | [ |- _ ] => Control.zero (Aux.CannotHappenError "Cannot happen.")
@@ -92,21 +97,26 @@ Local Ltac2 assume_negation (x : (ident * constr) list) :=
         - [AssumeError], if the current goal does not require the assumption of any more hypotheses
                        in general or one of type [t], where [t] is the type from the first pair in [x].
 *)
-Local Ltac2 rec process_ident_type_pairs (x : (ident * constr) list) :=
+Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
     match x with
     | head::tail =>
             match head with
-            | (v, t) => lazy_match! goal with
-                    (* Check whether next assumption is that of a negated expression. *)
+            | (t, n) => lazy_match! goal with
+                    (* Check whether next assumption (i.e. [t]) is that of a negated expression. *)
                     | [ |- not _ ]   => assume_negation x (* If so, switch to different subroutine. *)
                     | [ |- ?u -> _ ] => 
                             (* Check whether the domain is a proposition. *)
                             let sort_u := Aux.get_value_of_hyp u in
                             match Aux.check_constr_equal sort_u constr:(Prop) with
-                            | true => 
+                            | true =>
                                 (* Check whether we need variabled of type t. *)
                                 match Aux.check_constr_equal u t with
-                                | true  => Std.intros false [Std.IntroNaming (Std.IntroIdentifier v)]
+                                | true =>
+                                    (* Check whether a name has been given *)
+                                    match n with
+                                    | None   => let h := Fresh.in_goal @__wp__h in intro $h
+                                    | Some n => intro $n
+                                    end
                                 | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
                                 end
                             | false => Control.zero (AssumeError (of_string "‘Assume’ cannot be used to construct a map (→). Use ‘Take’ instead."))
@@ -126,7 +136,7 @@ Local Ltac2 rec process_ident_type_pairs (x : (ident * constr) list) :=
     Checks whether the 'Assume' tactic can be applied to the current goal, 
     attempts to introduce a list of hypotheses.
 *)
-Local Ltac2 assume (x : (ident * constr) list) := 
+Local Ltac2 assume (x : (constr * (ident option)) list) := 
   lazy_match! goal with
     | [ |- not _ ]  => assume_negation x
     | [ |- _ -> _ ] => process_ident_type_pairs x
@@ -136,14 +146,14 @@ Local Ltac2 assume (x : (ident * constr) list) :=
 (** * Assume
     Version with type checking.
 *)
-Ltac2 Notation "Assume" that(opt("that")) x(list1(seq(ident, ":", constr), "and")) := 
+Ltac2 Notation "Assume" that(opt("that")) x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := 
     panic_if_goal_wrapped ();
     assume x.
 
 (** * such that
     Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x(list1(seq(ident, ":", constr), "and")) := 
+Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := 
     panic_if_goal_wrapped ();
     assume x.
 

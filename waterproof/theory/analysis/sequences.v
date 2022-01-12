@@ -127,16 +127,16 @@ Lemma conv_evt_eq_seq :
   ∀ (a b : ℕ → ℝ) (l : ℝ), (evt_eq_sequences a b) ⇒ (a ⟶ l) ⇒ (b ⟶ l).
 Proof.
     Take a, b : (ℕ → ℝ) and l : ℝ.
-    Assume a_b_similar : (evt_eq_sequences a b) and a_to_l : (a ⟶ l).
+    Assume (evt_eq_sequences a b) (i) and (a ⟶ l).
     We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
       for all n : ℕ, (n ≥ N)%nat ⇨ |b n - l| < ε ).
-    Take ε : ℝ; such that ε_gt_0 : (ε > 0).
+    Take ε : ℝ; such that (ε > 0).
     It holds that a_to_l_some_N1 : 
       (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε).
     Choose N1 such that prop_N1 according to a_to_l_some_N1.
-    Choose K such that an_is_bn_for_n_ge_k according to a_b_similar.
+    Choose K such that an_is_bn_for_n_ge_k according to i.
     Choose M := (Nat.max N1 K).
-    Take n : ℕ; such that n_ge_M : (n ≥ M)%nat.
+    Take n : ℕ; such that (n ≥ M)%nat.
     It holds that b_n_eq_a_n : (b n = a n).
     We conclude that (& |b n - l| &= |a n - l| &< ε).
 Qed.
@@ -151,10 +151,10 @@ Lemma eq_seq_conv_to_same_lim :
     (∀ n : ℕ, a n = b n) ⇒ a ⟶ l ⇒ b ⟶ l.
 Proof.
     Take a, b : (ℕ → ℝ) and l : R.
-    Assume seq_eq : (for all n : ℕ, a n = b n).
+    Assume (for all n : ℕ, a n = b n).
     By conv_evt_eq_seq it suffices to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
     Choose k := O.
-    Take n : ℕ; such that n_gt_k : (n ≥ k)%nat.
+    Take n : ℕ; such that (n ≥ k)%nat.
     We conclude that (a n = b n).
 Qed.
 
@@ -172,9 +172,9 @@ Proof.
     Take c : ℝ.
     Define s := (constant_sequence c).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |(s n) - c| < ε).
-    Take ε : ℝ; such that ε_gt_0 : (ε > 0).
+    Take ε : ℝ; such that (ε > 0).
     Choose Nn := O.
-    Take n : ℕ; such that n_ge_Nn : (n ≥ Nn)%nat.
+    Take n : ℕ; such that (n ≥ Nn)%nat.
     It holds that H : (s n = c).
     We conclude that (& |s n - c| &= | c - c | &= |0| &= 0 &< ε).
 Qed.
@@ -198,12 +198,10 @@ Proof.
     That is, write the goal as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
-    Take ε : ℝ.
-    Assume ε_gt_0 : (ε > 0).
+    Take ε : ℝ; such that (ε > 0).
     Choose n1 such that H_large according to (archimed_mod (/ε)).
     Choose N := n1.
-    Take n : ℕ. 
-    Assume n_ge_N : (n ≥ n1)%nat.
+    Take n : ℕ; such that (n ≥ n1)%nat.
     Expand the definition of R_dist.
     That is, write the goal as ( | 1 / (n + 1) - 0 | < ε ).
     By Rabs_def1 it suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
@@ -241,14 +239,16 @@ Theorem squeeze_theorem :
       a ⟶ l ⇒ c ⟶ l ⇒ b ⟶ l.
 Proof.
     Take a, b, c : (ℕ ⇨ ℝ) and l : ℝ.
-    Assume b_squeezed : (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and a_cv_to_l : (a ⟶ l).
-    Assume c_cv_to_l : (c ⟶ l).
+    Assume (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and (a ⟶ l).
+    Assume (c ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |b n - l| < ε).
-    Take ε : ℝ; such that ε_gt_0 : (ε > 0). 
-    Choose Na such that a_close_to_l according to (a_cv_to_l ε ε_gt_0).
-    Choose Nc such that c_close_to_l according to (c_cv_to_l ε ε_gt_0).
+    Take ε : ℝ; such that (ε > 0).
+    It holds that i : (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε).
+    It holds that ii : (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε).
+    Choose Na such that a_close_to_l according to i.
+    Choose Nc such that c_close_to_l according to ii.
     Choose Nn := (Nat.max Na Nc).
-    Take n : ℕ; such that n_ge_N : (n ≥ Nn)%nat.
+    Take n : ℕ; such that (n ≥ Nn)%nat.
     We claim that nε_lt_an_l : (-ε < a n - l).
     { It holds that n_ge_Na : (n ≥ Na)%nat.
       It holds that d_an_l_lt_ε : (R_dist (a n) l < ε).
@@ -283,8 +283,8 @@ Proof.
     Take a : (ℕ → ℝ).
     Take L : ℝ.
     Take M : ℝ.
-    Assume a_bdd_by_M : (∀ n : ℕ, (a n) ≤ M).
-    Assume a_cv_to_L : (Un_cv a L).
+    Assume (∀ n : ℕ, (a n) ≤ M).
+    Assume (Un_cv a L) (i).
     By Rle_or_lt it holds that H : (L ≤ M ∨ M < L).
     Because H either L_le_M or M_lt_L.
     Case (L ≤ M).
@@ -292,8 +292,8 @@ Proof.
     Case (M < L).
     Define ε := (L-M).
     It holds that ε_ge_0 : (ε > 0). 
-    Expand the definition of Un_cv in a_cv_to_L.
-    That is, write a_cv_to_L as (for all eps : ℝ, eps > 0 
+    Expand the definition of Un_cv in i.
+    That is, write i as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - L ｜ < eps).
     It holds that H2 :  (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
@@ -317,9 +317,9 @@ Proof.
     Take a : (ℕ → ℝ).
     Take L : ℝ.
     Take M : ℝ.
-    Assume a_bdd_by_M : (∀ n : ℕ, a n ≥ M).
+    Assume that (∀ n : ℕ, a n ≥ M).
     Define b := (opp_seq a).
-    Assume a_cv_to_L : (Un_cv a L).
+    Assume that (Un_cv a L).
     Expand the definition of opp_seq in b.
     That is, write b as ( ℕ ⇨ ℝ ). (*TODO *)
     By CV_opp it holds that H : (Un_cv b (-L)).
@@ -343,19 +343,19 @@ Proof.
     Take b : (ℕ → ℝ).
     Take m : ℝ.
     Take l : ℝ.
-    Assume a_cv_to_m : (Un_cv a m) and b_cv_to_l : (Un_cv b l).
-    Assume a_b_ordered : (∀ n : ℕ, a n ≤ b n).
+    Assume (Un_cv a m) (i) and (Un_cv b l) (ii).
+    Assume (∀ n : ℕ, a n ≤ b n).
     We argue by contradiction.
-    Assume not_m_le_l : (~ m <= l).
+    Assume (~ m <= l).
     It holds that l_lt_m : (l < m).
     Define ε := ((m - l)/2).
     It holds that ε_gt_0 : (ε > 0).
-    Expand the definition of Un_cv in b_cv_to_l.
-    That is, write b_cv_to_l as (for all eps : ℝ, eps > 0 
+    Expand the definition of Un_cv in ii.
+    That is, write ii as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
       ⇨ ｜ b n - l ｜ < eps).
-    Expand the definition of Un_cv in a_cv_to_m.
-    That is, write a_cv_to_m as (for all eps : ℝ, eps > 0 
+    Expand the definition of Un_cv in i.
+    That is, write i as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - m ｜ < eps ).
     It holds that H5 : (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
@@ -397,8 +397,8 @@ Proof.
 Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
-  Assume a_is_bounded : (is_bounded a).
-  Choose q such that q_bounds_a according to a_is_bounded.
+  Assume (is_bounded a) (i).
+  Choose q such that q_bounds_a according to i.
   Choose M1 such that M_bounds_a according to q_bounds_a.
   destruct M_bounds_a.
   We need to show that (
@@ -422,7 +422,7 @@ We show both directions.
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
-  Assume a_n_bounded : (there exists M : ℝ, M ≥ 0 ∧ ∀ n : ℕ, |a n| ≤ M).
+  Assume (there exists M : ℝ, M ≥ 0 ∧ ∀ n : ℕ, |a n| ≤ M) (i).
   (* Expand the definition of is_bounded. *)
   We need to show that (
 there exists q M : ℝ ,
@@ -430,7 +430,7 @@ M ≥ 0 ∧ (for all n : ℕ,
 | a n - q | ≤ M)
 ).
   Choose q := 0.
-  Choose M1 such that H according to a_n_bounded.
+  Choose M1 such that H according to i.
   destruct H.
   Choose M := M1. 
   We show both statements.

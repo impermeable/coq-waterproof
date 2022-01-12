@@ -25,20 +25,20 @@ Lemma seq_bdd_seq_acc_pts_bdd :
   ∀ a : ℕ → ℝ, has_ub a ⇒ bound (is_seq_acc_pt a).
 Proof.
     Take a : (ℕ → ℝ).
-    Assume a_upp_bdd : (has_ub a).
+    Assume that (has_ub a) (i).
     Expand the definition of bound.
     That is, write the goal as 
       (there exists m : ℝ, is_upper_bound (is_seq_acc_pt a) m).
     Expand the definition of is_upper_bound.
     That is, write the goal as (there exists m : ℝ,
       for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ m).
-    Choose M such that a_bdd_by_M according to a_upp_bdd.
+    Choose M such that a_bdd_by_M according to (i).
     Choose m := M.
     Take x : ℝ.
-    Assume x_is_acc_pt : (is_seq_acc_pt a x).
+    Assume that (is_seq_acc_pt a x) (ii).
     Expand the definition of is_seq_acc_pt.
     That is, write the goal as (x ≤ m).
-    Choose n such that n_good_ind_seq according to x_is_acc_pt.
+    Choose n such that n_good_ind_seq according to (ii).
     Because n_good_ind_seq both n_ind_seq and subseq_conv_to_x.
     We need to show that (x ≤ M).
     By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
@@ -46,12 +46,12 @@ Proof.
     That is, write a_bdd_by_M as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
     Expand the definition of EUn in a_bdd_by_M.
     That is, write a_bdd_by_M as (for all x0 : ℝ, 
-      (there exists i : ℕ, x0 = a i) ⇨ x0 ≤ M).
-    We claim that H : (for all i : ℕ, (a i) ≤ M).
-    { Take i : ℕ.
-      It suffices to show that (there exists i0 : nat, a i = a i0).
-      Choose i0 := i.
-      We conclude that (a i = a i0).
+      (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
+    We claim that H : (for all k : ℕ, (a k) ≤ M).
+    { Take k : ℕ.
+      It suffices to show that (there exists k0 : nat, a k = a k0).
+      Choose k0 := k.
+      We conclude that (a k = a k0).
     }
     Take n0 : ℕ.
     By H it holds that H2 : (a(n n0) ≤ M).

@@ -44,8 +44,8 @@ Lemma sigma_split_v2 :
     (k < l)%nat ⇒ (l ≤ N)%nat 
       ⇒ sigma a k N = sigma a k (l - 1)%nat + sigma a l N.
 Proof.
-    Take a : (ℕ → ℝ) and k, l, Nn : ℕ.
-    Assume k_lt_N : (k < l)%nat and l_le_N : (l ≤ Nn)%nat.
+    Take a : (ℕ → ℝ) and k, l, Nn : ℕ; such that
+      (k < l)%nat and (l ≤ Nn)%nat.
     It holds that H1 : (l = S (l - 1)%nat).
     (* TODO: It suffices to show that (sigma a k Nn = sigma a k (l - 1) + sigma a (S (l - 1)) Nn).*)
     rewrite H1 at 2.
@@ -62,8 +62,7 @@ Lemma partial_sums_pos_incr :
   ∀ (a : ℕ → ℝ), (∀ n : ℕ, a n ≥ 0)⇒
     Un_growing (partial_sums a).
 Proof.
-    Take a : (ℕ → ℝ).
-    Assume terms_pos : (∀ n : ℕ, a n ≥ 0).
+    Take a : (ℕ → ℝ); such that (∀ n : ℕ, a n ≥ 0).
     Expand the definition of Un_growing.
     That is, write the goal as (for all n : ℕ,  partial_sums a n ≤ partial_sums a (S n)).
     We need to show that (for all n : ℕ, partial_sums a n ≤ partial_sums a (S n)).
@@ -92,11 +91,11 @@ Theorem mouse_tail :
       (Un_cv (fun Nn ↦ sigma a k Nn) ((sigma a k (l-1)) + L))).
 Proof.
     Take a : (ℕ → ℝ) and k, l : ℕ and L : ℝ.
-    Assume k_lt_l : (k < l)%nat.
+    Assume that (k < l)%nat.
     We show both directions.
     - We need to show that (Un_cv (Nn) ↦ (sigma a l Nn) L
         ⇨ Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
-      Assume sigma_l_cv : (Un_cv (Nn) ↦ (sigma a l Nn) L).
+      Assume (Un_cv (Nn) ↦ (sigma a l Nn) L).
       (* TODO: fix
          By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
       We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
@@ -107,8 +106,7 @@ Proof.
       We claim that H3 : (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (Nn ↦ (sigma a k Nn))).
       { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k (l - 1)%nat + sigma a l n = sigma a k n).
         Choose M := l%nat.
-        Take n : ℕ.
-        Assume n_ge_l : (n ≥ M)%nat.
+        Take n : ℕ; such that (n ≥ M)%nat.
         By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
         We conclude that (k < l <= n)%nat.
       }
@@ -119,7 +117,7 @@ Proof.
         We need to show that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
         We conclude that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
     - We need to show that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L) ⇨ Un_cv (Nn) ↦ (sigma a l Nn) L).
-      Assume sigma_k_cv : (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
+      Assume that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
       We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
       { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
@@ -128,8 +126,7 @@ Proof.
       We claim that H3 : (evt_eq_sequences (Nn ↦ (sigma a k Nn - sigma a k (l-1))) (Nn ↦ (sigma a l Nn))).
       { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n - sigma a k (l-1) = sigma a l n).
         Choose M := l%nat.
-        Take n : ℕ.
-        Assume n_ge_l : (n ≥ M)%nat.
+        Take n : ℕ; such that (n ≥ M)%nat.
         It suffices to show that (sigma a k n = sigma a k (l - 1) + sigma a l n).
         By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
         We conclude that (k < l <= n)%nat.
