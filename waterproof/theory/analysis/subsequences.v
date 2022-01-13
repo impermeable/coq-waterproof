@@ -83,7 +83,7 @@ Proof.
     Expand the definition of is_index_seq.
     That is, write the goal as (for all k : ℕ, (create_seq g k < create_seq g (S k))%nat).
     Take k : ℕ.
-    By i it holds that H1 : (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
+    By (i) it holds that (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
     We conclude that (& create_seq g k &< g (S k) (S (create_seq g k)) &= create_seq g (S k))%nat.
 Qed.
 
@@ -116,8 +116,8 @@ Proof.
     Take a : (ℕ → ℝ).
     Take P : (ℕ → ℝ → Prop).
     Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
-    By existence_next_el_to_fun it holds that  
-    i : (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))).
+    By existence_next_el_to_fun it holds that
+      (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) (i).
     Choose g such that g_choice_fun according to (i).
     Choose n := (create_seq g).
     We show both statements.
@@ -126,7 +126,7 @@ Proof.
       By created_seq_is_index_seq it suffices to show that 
         (for all m N : ℕ, (g m N ≥ N)%nat).
       Take m, M : nat.
-      By g_choice_fun it holds that H3 : ((M ≤ g m M)%nat ∧ P m (a (g m M))).
+      By g_choice_fun it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))).
       We conclude that (M <= g m M)%nat.
     - We need to show that (for all k : ℕ, P k (a (n k))).
       We need to show that (for all k : ℕ, P k (a ((create_seq g) k))).
@@ -134,8 +134,8 @@ Proof.
       apply subseq_sat_rel.
       Take m : ℕ.
       Take M : ℕ.
-      By g_choice_fun it holds that H3 : ((M ≤ g m M)%nat ∧ P m (a (g m M))).
-      Because H3 both g_large and g_sat.
+      By g_choice_fun it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (ii).
+      Because ii both g_large and g_sat.
       We conclude that (P m (a (g m M))).
 Qed.
 
@@ -157,7 +157,7 @@ Proof.
 
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
     Assume (k ≤ 0)%nat.
-    It holds that k_eq_0 : (k = 0)%nat.
+    It holds that (k = 0)%nat.
     We conclude that (& g k &= g 0 &<= g 0)%nat.
 
     (** Next, we need to show that if $k \leq S (l)$ then $f(k) \leq f(S (l))$.*)
@@ -165,14 +165,14 @@ Proof.
     destruct (lt_eq_lt_dec k (S l)) as [temp | k_gt_Sl].
     destruct temp as [k_lt_Sl | k_eq_Sl].
     (** We first consider the case that $k < S(l)$.*)
-    It holds that k_le_l : (k ≤ l)%nat.
-    By IH_l it holds that gk_le_gl : (g k ≤ g l)%nat.
-    It holds that gl_le_g_Sl : (g l ≤ g (S l))%nat.
+    It holds that (k ≤ l)%nat.
+    By IH_l it holds that (g k ≤ g l)%nat.
+    It holds that (g l ≤ g (S l))%nat.
     We conclude that (g k <= g (S l))%nat.
     (** We now consider the case $k = S(l)$. We need to show that $f(k) \leq f(S(l))$. *)
     We conclude that (& g k &= g (S l) &<= g (S l))%nat.
     (** Finally we consider the case $k > S(l)$. However, this case is in contradiction with $k \leq S(l)$. *)
-    It holds that not_Sl_lt_k : (¬(S l < k)%nat).
+    It holds that (¬(S l < k)%nat).
     Contradiction.
 Qed.
 
@@ -186,7 +186,7 @@ Proof.
     Take k : ℕ.
     Expand the definition of is_index_seq in i.
     That is, write i as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
-    It holds that H1 : (n k < n (S k))%nat.
+    It holds that (n k < n (S k))%nat.
     We conclude that (n k - k ≤ n (S k) - S k)%nat.
 Qed.
 
@@ -200,7 +200,7 @@ Proof.
     - We conclude that (n 0 >= 0)%nat.
     - Expand the definition of is_index_seq in i.
       That is, write i as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
-      It holds that H1 : (n k < n (S k))%nat.
+      It holds that (n k < n (S k))%nat.
       We conclude that (n (S k) ≥ S k)%nat.
 Qed.
 
@@ -210,8 +210,8 @@ Lemma index_seq_grows :
 Proof.
     Take n : (ℕ → ℕ); such that (is_index_seq n).
     Define g := (fun (k : ℕ) ↦ (n k - k)%nat).
-    By index_seq_strictly_incr it holds that incr_g : (is_increasing g).
-    By incr_loc_to_glob it holds that H2 : (∀ k l : ℕ, (k ≤ l)%nat ⇒ (g k ≤ g l)%nat).
+    By index_seq_strictly_incr it holds that (is_increasing g).
+    By incr_loc_to_glob it holds that (∀ k l : ℕ, (k ≤ l)%nat ⇒ (g k ≤ g l)%nat).
     Take k : ℕ and l : ℕ; such that(k ≤ l)%nat.
     We need to show that (g k <= g l)%nat.
     We conclude that (g k <= g l)%nat.
@@ -307,7 +307,7 @@ Lemma elements_le_seq_of_max :
 Proof.
     Take g : (ℕ → ℕ).
     Take n : ℕ and k : ℕ; such that (k ≤ n)%nat.
-    By elements_le_seq_of_max_pre it holds that H1 : (g k ≤ seq_of_max g k)%nat.
+    By elements_le_seq_of_max_pre it holds that (g k ≤ seq_of_max g k)%nat.
     We claim that H2 : (seq_of_max g k ≤ seq_of_max g n)%nat.
     { By incr_loc_to_glob it suffices to show that (is_increasing (seq_of_max g)).
       By seq_of_max_is_increasing we conclude that (is_increasing (seq_of_max g)).
@@ -335,10 +335,10 @@ Proof.
     That is, write the goal as (for all k : ℕ, (build_seq g k < build_seq g (S k))%nat).
     Take k : ℕ.
     We need to show that (build_seq g k < g (S (seq_of_max g (build_seq g k))))%nat.
-    It holds that H1 : (g( S(seq_of_max g (build_seq g k)))≥ S(seq_of_max g (build_seq g k)))%nat.
-    It holds that H2 : (g( S(seq_of_max g (build_seq g k)))> seq_of_max g (build_seq g k))%nat.
-    By elements_le_seq_of_max_pre it holds that H3 : (seq_of_max g (build_seq g k) ≥ g(build_seq g k))%nat.
-    It holds that H4 : (g(build_seq g k) ≥ build_seq g k)%nat.
+    It holds that (g( S(seq_of_max g (build_seq g k)))≥ S(seq_of_max g (build_seq g k)))%nat.
+    It holds that (g( S(seq_of_max g (build_seq g k)))> seq_of_max g (build_seq g k))%nat.
+    By elements_le_seq_of_max_pre it holds that (seq_of_max g (build_seq g k) ≥ g(build_seq g k))%nat.
+    It holds that (g(build_seq g k) ≥ build_seq g k)%nat.
     We conclude that (& build_seq g k &<= g(build_seq g k)
                                       &<= seq_of_max g (build_seq g k)
                                       &<  g( S(seq_of_max g (build_seq g k))))%nat.

@@ -128,7 +128,7 @@ Proof.
     We use induction on l.
     - We first show the base case, namely ((k ≤ 0)%nat ⇨ (g k ≤ g 0)%nat).
       Assume (k ≤ 0)%nat.
-      It holds that k_eq_0 : (k = 0)%nat.
+      It holds that (k = 0)%nat.
       It suffices to show that (g k = g 0)%nat.
       We conclude that (g k = g 0)%nat.
     - We now show the induction step.
@@ -136,13 +136,13 @@ Proof.
       Assume (k ≤ l + 1)%nat.
       destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
       + (** We first consider the case that $k < l + 1$.*)
-        It holds that k_le_l: (k ≤ l)%nat.
+        It holds that (k ≤ l)%nat.
         We conclude that (& g k &<= g l &<= g (l + 1))%nat.
       + (** We now consider the case $k = S(l)$. We need to show that $f(k) \leq f(S(l))$. *)
         It suffices to show that (g k = g (l + 1))%nat.
         We conclude that (g k = g (l + 1))%nat.
       + (** Finally we consider the case $k > S(l)$. However, this case is in contradiction with $k \leq S(l)$. *)
-        It holds that not_Sl_lt_k: (¬(l + 1 < k)%nat). 
+        It holds that (¬(l + 1 < k)%nat). 
         Contradiction.
 Qed.
 
@@ -169,10 +169,10 @@ Global Hint Resolve index_sequence_property2 : subsequences.
 Lemma double_is_even : forall n : nat, Nat.even (2 * n) = true.
 Proof.
   Take n : nat.
-  It holds that H1 : (Nat.even (2 * n) = Nat.even (0 + 2 * n)).
+  It holds that (Nat.even (2 * n) = Nat.even (0 + 2 * n)).
   It suffices to show that (Nat.even (0 + 2*n) = true).
-  By Nat.even_add_mul_2 it holds that H2 : (Nat.even (0 + 2*n) = Nat.even 0).
-  It holds that H3 : (Nat.even 0 = true).
+  By Nat.even_add_mul_2 it holds that (Nat.even (0 + 2*n) = Nat.even 0).
+  It holds that (Nat.even 0 = true).
   We conclude that (Nat.even (0 + 2 * n) = true).
 Qed.
 
@@ -187,12 +187,12 @@ Assume (is_index_sequence n).
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (a (n k)) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that i : (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (a k) p < ε).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (a k) p < ε) (i).
 Choose K such that k_le_K_a_k_to_p according to (i).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
-By index_sequence_property2 it holds that H : (n k ≥ n K)%nat.
-By index_sequence_property it holds that H2 : (n K ≥ K)%nat.
+By index_sequence_property2 it holds that (n k ≥ n K)%nat.
+By index_sequence_property it holds that (n K ≥ K)%nat.
 assert (H3 : (n k ≥ K)%nat) by auto with zarith.
 We conclude that (dist (a (n k)) p < ε).
 Qed.
@@ -208,23 +208,23 @@ Take p : X.
 Assume (x ⟶ p).
 
 We need to show that (y ⟶ p).
-It holds that i : (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
+It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
 Choose m such that m_is_index_and_y_eq_x_m according to (i).
 Because m_is_index_and_y_eq_x_m both m_is_index and y_eq_x_m.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that i : (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε).
-Choose K such that k_le_K_x_k_to_p according to (i).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε) (ii).
+Choose K such that k_le_K_x_k_to_p according to (ii).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
-By index_sequence_property2 it holds that H : (m k ≥ m K)%nat.
-By index_sequence_property it holds that H2 : (m K ≥ K)%nat.
-It holds that H3 : (m k ≥ K)%nat.
-It holds that H4 : (dist (x (m k)) p < ε).
-It holds that y_k_eq_x_m_k : (y k = x (m k)).
+By index_sequence_property2 it holds that (m k ≥ m K)%nat.
+By index_sequence_property it holds that (m K ≥ K)%nat.
+It holds that (m k ≥ K)%nat.
+It holds that (dist (x (m k)) p < ε).
+It holds that (y k = x (m k)) (iii).
 (* It holds that H5 : (dist (y k) p = dist (x (m k)) p). Why does this not work? *)
-rewrite y_k_eq_x_m_k.
+rewrite (iii).
 We conclude that ( dist (x (m k)) p < ε).
 Qed.

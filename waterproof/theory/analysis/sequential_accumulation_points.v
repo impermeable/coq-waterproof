@@ -54,6 +54,6 @@ Proof.
       We conclude that (a k = a k0).
     }
     Take n0 : ℕ.
-    By H it holds that H2 : (a(n n0) ≤ M).
+    By H it holds that (a(n n0) ≤ M).
     It follows that (a(n n0) ≤ M).
 Qed.

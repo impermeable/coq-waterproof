@@ -60,7 +60,7 @@ Either (x = y) or (x ≠ y).
   Expand the definition of d_discrete_R in i.
   That is, write i as ( (if Reqb x y then 0 else 1) = 0).
   rewrite (Req_false x y n) in i.
-  It holds that H1 : (1 ≠ 0).
+  It holds that (1 ≠ 0).
   Contradiction.
 Qed.
 
@@ -74,7 +74,7 @@ That is, write i as ( (if Reqb x y then 0 else 1) = 1
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   rewrite (Req_true x y e) in i.
-  It holds that H1 : (0 ≠ 1).
+  It holds that (0 ≠ 1).
   Contradiction.
 + Case (x ≠ y).
   By Req_false we conclude that (Reqb x y = false).

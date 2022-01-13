@@ -64,8 +64,7 @@ Testcases for [By ... it holds that ... : ...]:" )).
 *)
 Lemma test_by_it_holds_1: 0 = 0.
 Proof.
-    By zero_lt_one it holds that this_lemma:(0 < 1).
-    assert_hyp_has_type @this_lemma constr:(0 < 1).
+    By zero_lt_one it holds that (0 < 1).
 Abort.
 
 (** * Test 2
@@ -77,10 +76,10 @@ Abort.
 Lemma test_by_it_holds_2: True.
 Proof.
     (* This is just to test if the extra lemma is really needed: *)
-    let failure () := It holds that ten_is_zero:(10 = 0) in
+    let failure () := It holds that (10 = 0) in
     assert_raises_error failure.
     
-    By zero_is_ten it holds that ten_is_zero:(10 = 0).
+    By zero_is_ten it holds that (10 = 0).
 Abort.
 
 (** * Test 3
@@ -90,7 +89,7 @@ Abort.
 Lemma test_by_it_holds_3: 0 = 0.
 Proof.
     let result () := 
-        By zero_lt_one it holds that this_lemma:(1 > 2)
+        By zero_lt_one it holds that (1 > 2)
     in
     assert_raises_error result.
 Abort.
@@ -108,8 +107,8 @@ Testcases for [It holds that ... : ...]:" )).
 *)
 Lemma test_it_holds_1: 0 = 0.
 Proof.
-    It holds that this_lemma:(True).
-    assert_hyp_has_type @this_lemma constr:(True).
+    It holds that (True) (i).
+    assert_hyp_has_type @i constr:(True).
 Abort.
 
 
@@ -120,7 +119,7 @@ Abort.
 Lemma test_it_holds_2: 0 = 0.
 Proof.
     let result () := 
-        It holds that this_lemma:(1 > 2)
+        It holds that (1 > 2)
     in
     assert_raises_error result.
 Abort.
@@ -140,8 +139,8 @@ Ltac2 Eval global_database_selection.
 Lemma it_holds_example: forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.
     intros x h.
-    It holds that x_is_two: (x = 2).
-    rewrite x_is_two. (* Change the goal to "even 2"*)
+    It holds that (x = 2) (i).
+    rewrite (i). (* Change the goal to "even 2"*)
     apply evenS. (* Change the goal to "even 0"*)
     apply even0.
 Qed.
@@ -151,6 +150,6 @@ Qed.
 Goal forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.
     intros x h.
-    Fail It holds that h: (x = 2).
-    It holds that x_eq_two : (x = 2).
+    Fail It holds that (x = 2) (h).
+    It holds that (x = 2) (i).
 Abort.

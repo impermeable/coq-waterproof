@@ -49,8 +49,8 @@ Lemma lim_const_min_1_over_n_plus_1 :
   ∀ x : ℝ, Un_cv (fun (n : ℕ) ↦ x - 1 / (INR n + 1)) x.
 Proof.
 Take x : ℝ.
-    It holds that H1 : (x = x - 0).
-    rewrite H1 at 1.
+    It holds that (x = x - 0) (i).
+    rewrite (i) at 1.
     apply CV_minus with
       (An := fun (n : ℕ) ↦ x)
       (Bn := fun (n : ℕ) ↦ 1 / (INR n + 1))
@@ -70,7 +70,8 @@ Proof.
     Assume that (has_ub a) (i).
     Assume that (has_lb (sequence_ub a (i))) (ii).
     Take m, Nn : ℕ.
-    By exists_almost_lim_sup_aux it holds that iii : (∃ k : ℕ, (k ≥ Nn)%nat ∧ a k > sequence_ub a (i) Nn - 1 / (INR(m) + 1)).
+    By exists_almost_lim_sup_aux it holds that 
+      (∃ k : ℕ, (k ≥ Nn)%nat ∧ a k > sequence_ub a (i) Nn - 1 / (INR(m) + 1)) (iii).
     Choose n such that n_good according to (iii).
     Choose k := n.
     We show both statements.
@@ -85,11 +86,11 @@ Proof.
         Define iv := (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)).
         Choose l such that l_is_lim according to (iv).
         We need to show that (l ≤ sequence_ub a (i) Nn).
-        By Wn_decreasing it holds that H3 : (Un_decreasing (sequence_ub a (i))).
+        By Wn_decreasing it holds that (Un_decreasing (sequence_ub a (i))).
         By decreasing_ineq we conclude that (l <= sequence_ub a (i) Nn).
       }
       Because n_good both part1 and part2.
-      It holds that H3 : (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n).
+      It holds that (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n).
       We need to show that (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
       We conclude that (& proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) &< a n &= a k).
 Qed.
@@ -131,7 +132,7 @@ Proof.
     Because M_is_sup both M_is_upp_bd and any_upp_bd_ge_M.
     Expand the definition of is_upper_bound in M_is_upp_bd.
     That is, write M_is_upp_bd as (for all x : ℝ, EUn (k) ↦ (a (Nn + k)%nat) x ⇨ x ≤ M).
-    It holds that H1 : (Nn + (n-Nn) = n)%nat.
+    It holds that (Nn + (n-Nn) = n)%nat.
     It suffices to show that (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
     Expand the definition of EUn.
     That is, write the goal as (there exists i : ℕ, a n = a (Nn + i)%nat).
@@ -157,8 +158,9 @@ Proof.
      ∀ k : ℕ, 
       a (m k) > L - 1 / (INR(k) + 1)).
     {
-      By exists_subseq_to_limsup_bdd it holds that iv : (there exists n : ℕ ⇨ ℕ, is_index_seq n 
-          ∧ (for all k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1))).
+      By exists_subseq_to_limsup_bdd it holds that 
+        (there exists n : ℕ ⇨ ℕ, is_index_seq n 
+          ∧ (for all k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1))) (iv).
       Choose m_seq such that m_seq_props according to (iv).
       Because m_seq_props both m_seq_ind_seq and m_seq_prop_for_k.
       Choose m := m_seq.
@@ -185,10 +187,10 @@ Proof.
         Take k : ℕ.
         We show both statements.
         * We need to show that (L - 1 / (k + 1) ≤ a (n k)).
-          By amk_large it holds that amk_large_spec : (a (m k) > L - 1 / (k+1)).
+          By amk_large it holds that (a (m k) > L - 1 / (k+1)).
           We conclude that (L - 1 / (k + 1) ≤ a (n k)).
         * We need to show that (a (n k) ≤ sequence_ub a (i) k).
-          By index_seq_grows_0 it holds that H1 : (m k ≥ k)%nat.
+          By index_seq_grows_0 it holds that (m k ≥ k)%nat.
           By sequence_ub_bds we conclude that (a (n k) ≤ sequence_ub a (i) k).
       + (*TODO: fix not being able to use notation convergence with ''By ... we conclude that ...*)
         We need to show that (Un_cv (k ↦ (L - 1 / (k + 1))) L).
@@ -206,9 +208,9 @@ Proof.
     Assume that (has_ub a) (i).
     Assume that (has_lb a) (ii).
     Define iii := (maj_min a (i) (ii)).
-    By Bolzano_Weierstrass_gen it holds that iv : 
+    By Bolzano_Weierstrass_gen it holds that
       (∃ (n : ℕ → ℕ), is_index_seq n
-        ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))).
+        ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))) (iv).
     Choose n0 such that n_good_subseq according to (iv).
     Choose n := n0.
     Choose l := (proj1_sig (lim_sup_bdd a (i) (iii))).
@@ -232,20 +234,20 @@ Proof.
     Define L := (sequence_ub a (i) m).
     We argue by contradiction.
     Assume that (~ x <= L).
-    It holds that L_lt_x : (L < x).
+    It holds that (L < x).
     Define ε := (x - L).
-    It holds that ε_gt_0 : (ε > 0).
-    It holds that iii : (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε).
+    It holds that (ε > 0).
+    It holds that (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε) (iii).
     Choose K such that ank_close_to_x according to (iii).
     Define Nn := (Nat.max K m).
-    It holds that H6 : (R_dist (a (n Nn)) x < ε).
-    By Rabs_def2 it holds that H8 : (a (n Nn) - x < ε ∧ - ε < a (n Nn) - x).
-    Because H8 both H9 and H10.
-    It holds that H11 : (x - a (n Nn) < x - L).
-    It holds that H12 : (a (n Nn) > L).
-    By index_seq_grows_0 it holds that H14 : (n Nn ≥ Nn)%nat.
-    By sequence_ub_bds it holds that H15 : (a (n Nn) ≤ L).
-    It holds that H16 : (~ a (n Nn) > L).
+    It holds that (R_dist (a (n Nn)) x < ε).
+    By Rabs_def2 it holds that (a (n Nn) - x < ε ∧ - ε < a (n Nn) - x) (iv).
+    Because iv both H9 and H10.
+    It holds that (x - a (n Nn) < x - L).
+    It holds that (a (n Nn) > L).
+    By index_seq_grows_0 it holds that (n Nn ≥ Nn)%nat.
+    By sequence_ub_bds it holds that (a (n Nn) ≤ L).
+    It holds that (~ a (n Nn) > L).
     Contradiction.
 Qed.
 
@@ -268,13 +270,13 @@ Proof.
       That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (lim_sup_bdd a (i) (ii))).
       Take x : ℝ.
       Assume (is_seq_acc_pt a x).
-      By acc_pt_bds_seq_ub it holds that H0 : (∀ m : ℕ, x ≤ sequence_ub a (i) m).
+      By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
       Choose L such that sequence_ub_cv_to_L according to (iii).
       (* TODO: fix *)
       simpl.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))
-          it holds that H1 : (L ≥ x).
+          it holds that (L ≥ x).
       We conclude that (x ≤ L).
     - We need to show that (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b 
         ⇨ proj1_sig (lim_sup_bdd a (i) (ii)) ≤ b).
@@ -301,22 +303,22 @@ Proof.
     Take a : (ℕ → ℝ).
     Take L : ℝ.
     Define P := (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
-    By classic it holds that P_or_not_P : (P \/ ~P).
-    Because P_or_not_P either p or not_p.
+    By classic it holds that (P \/ ~P) (i).
+    Because i either p or not_p.
     - Case P.
       It suffices to show that (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
       We conclude that (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
     - Case (~P).
       It suffices to show that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
-      It holds that not_p_1 : (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
-      It holds that not_p_alt : (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)).
+      It holds that (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
+      It holds that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)).
       Take m : nat.
-      It holds that i : (∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)).
+      It holds that (∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)) (i).
       Choose n such that H2 according to (i).
       Choose n0 := n.
       Because H2 both n_ge_m and not_an_lt_L.
       We show both (n0 >= m)%nat and (a n0 >= L).
       + We conclude that (n0 >= m)%nat.
-      + It holds that an_ge_L : (a n >= L).
+      + It holds that (a n >= L).
         We conclude that (a n0 >= L).
 Qed.

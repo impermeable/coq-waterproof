@@ -107,7 +107,7 @@ Proof.
     We need to show that (∀ a : ℝ, (-a ∈ A) ⇒ -M ≤ a).
     Take a : ℝ. 
     Assume (-a ∈ A).
-    By i it holds that H1 : (-a ≤ M).
+    By (i) it holds that (-a ≤ M).
     It follows that (-M ≤ a).
 Qed.
 
@@ -124,7 +124,7 @@ Proof.
     We need to show that (∀ a : ℝ, (-a ∈ A) ⇒ a ≤ -m).
     Take a : ℝ. 
     Assume (-a ∈ A).
-    By i it holds that H1 : (m ≤ -a).
+    By (i) it holds that (m ≤ -a).
     It follows that (a ≤ -m).
 Qed.
 
@@ -140,13 +140,13 @@ Proof.
     That is, write the goal as (for all x : ℝ, A x ⇨ x ≤ - m).
     Take a : ℝ.
     Assume (a ∈ A) (i).
-    It holds that m_low_bd_2 : (for all x : R, (-x) ∈ A -> m <= x).
+    It holds that (for all x : R, (-x) ∈ A -> m <= x).
     We claim that minmin_a_in_A : (--a ∈ A).
-    { It holds that nna_eq_a  :(--a = a).
+    { It holds that (--a = a) (ii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r (fun x => x ∈ A) (i) nna_eq_a).
+      exact (eq_ind_r (fun x => x ∈ A) (i) (ii)).
     }
-    It holds that m_le_min_a : (m ≤ -a).
+    It holds that (m ≤ -a).
     It follows that (a ≤ -m).
 Qed.
 
@@ -163,11 +163,11 @@ Proof.
     Take a : ℝ.
     Assume (a ∈ A) (i).
     We claim that minmin_a_in_A : (--a ∈ A).
-    { It holds that nna_eq_a  :(--a = a).
+    { It holds that (--a = a) (ii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r (fun x => x ∈ A) (i) nna_eq_a).
+      exact (eq_ind_r (fun x => x ∈ A) (i) (ii)).
     }
-    It holds that min_a_le_M : (-a ≤ M).
+    It holds that (-a ≤ M).
     It follows that (-M ≤ a).
 Qed.
 
@@ -214,8 +214,8 @@ Proof.
       That is, write i as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
       Because i both previously_proven and H1.
-      By low_bd_set_to_upp_bd_set_opp it holds that H2 : (is_upper_bound (set_opp A) (-l)).
-      By H1 it holds that H3 : (M ≤ -l).
+      By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
+      By H1 it holds that (M ≤ -l).
       We conclude that (l <= -M).
 Qed.
 
@@ -234,21 +234,21 @@ Proof.
       Assume (A s).
       (* TODO: make nicer *)
       We need to show that (A (--s)).
-      It holds that H2 : (A (--s) = A s).
+      It holds that (A (--s) = A s) (ii).
       Fail We conclude that (A (--s)).
-      rewrite H2.
+      rewrite ii.
       We conclude that (A s).
     }
-    By bdd_below_to_bdd_above_set_opp it holds that B_bdd_above : (is_bdd_above B).
+    By bdd_below_to_bdd_above_set_opp it holds that (is_bdd_above B).
     We claim that ex_y_in_B : (∃ y : ℝ, y ∈ B).
     { Choose x such that x_in_A according to (i).
       Choose y := (-x).
       We need to show that (B (-x)).
       By H we conclude that (B (-x)).
     }
-    By completeness it holds that exists_sup : ({L | is_sup B L}).
-    Choose L such that L_is_sup according to (exists_sup).
-    By sup_set_opp_is_inf_set it holds that minL_is_inf_A : (is_inf A (-L)).
+    By completeness it holds that ({L | is_sup B L}) (ii).
+    Choose L such that L_is_sup according to (ii).
+    By sup_set_opp_is_inf_set it holds that (is_inf A (-L)).
     We conclude that ({m : ℝ | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
 Qed.
 
@@ -264,9 +264,9 @@ Lemma sup_is_upp_bd :
 Proof.
     Take A : (ℝ → Prop) and M : ℝ. 
     Assume (is_sup A M).
-    It holds that M_is_sup_A_2 : (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b)).
-    Because M_is_sup_A_2 both part1 and part2.
-    It follows that (is_upper_bound A M). 
+    It holds that (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b)) (i).
+    Because i both part1 and part2.
+    It follows that (is_upper_bound A M).
 Qed.
 
 
@@ -325,16 +325,16 @@ Proof.
     Assume (L < M).
     We argue by contradiction.
     Assume (¬ (there exists a : ℝ, A a ∧ L < a)).
-    It holds that H0 : (∀ x : ℝ, A x ⇒ ¬(L < x)).
-    We claim that H3 : (is_upper_bound A L).
+    It holds that (∀ x : ℝ, A x ⇒ ¬(L < x)).
+    We claim that H0 : (is_upper_bound A L).
     { We need to show that (∀ x : ℝ, A x ⇒ (x <= L)).
       Take x : R.
       Assume (A x).
-      It holds that not_L_lt_x : (~ L < x).
+      It holds that (~ L < x).
       We conclude that (x ≤ L).
     }
-    By any_upp_bd_ge_sup it holds that H4 : (M ≤ L).
-    It holds that H5 : (¬(M ≤ L)).
+    By any_upp_bd_ge_sup it holds that (M ≤ L).
+    It holds that (¬(M ≤ L)).
     Contradiction.
 Qed.
 
@@ -348,7 +348,7 @@ Proof.
     Take A : (ℝ -> Prop) and M : ℝ.
     Assume (is_sup A M).
     Take ε : ℝ; such that (ε > 0).
-    It holds that H1 : (M - ε < M). 
+    It holds that (M - ε < M).
     apply exists_almost_maximizer with (L := M- ε) (M := M).
     - We conclude that (is_sup A M).
     - We conclude that (M - ε < M).
@@ -364,16 +364,16 @@ Proof.
     Assume (is_sup A M).
     We argue by contradiction.
     Assume ( ¬ (A M ∨ (for all a : ℝ, A a ⇨ a < M))).
-    It holds that H1 : ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M) ).
-    Because H1 both H2 and H3.
+    It holds that ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M)) (i).
+    Because i both H2 and H3.
     (** We only show the proposition on the *)
     (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
     We claim that H4 : (∀ a : ℝ, A a ⇒ a < M).
     {
     Take a : ℝ.
     Assume (A a).
-    By sup_is_upp_bd it holds that M_upp_bd : (is_upper_bound A M).
-    It holds that a_le_M : (a ≤ M).
+    By sup_is_upp_bd it holds that (is_upper_bound A M).
+    It holds that (a ≤ M).
     We claim that a_is_not_M : (¬(a = M)).
     Assume (a = M) (eq_1).
     We claim that M_in_A : (A M).
@@ -401,7 +401,7 @@ Proof.
     Define ii := (ub_to_lub a (i)).
     Choose l such that l_is_sup according to (ii).
     Take ε : ℝ; such that (ε > 0).
-    By exists_almost_maximizer_ε it holds that iii : (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
+    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iii).
     Choose y such that H2 according to (iii).
     Because H2 both iv and y_gt_l_min_ε.
     Expand the definition of EUn in iv.
@@ -422,7 +422,7 @@ Proof.
     Take m : ℕ.
     By seq_ex_almost_maximizer_ε it suffices to show that (1 / (m + 1) > 0).
     (** We need to show that $1/(m+1) > 0$.*)
-    It holds that m_plus_1_gt_0 : (0 < m + 1)%R.
+    It holds that (0 < m + 1)%R.
     We conclude that (1 / (m+1) > 0).
 Qed.
 
@@ -435,7 +435,7 @@ Proof.
     Assume (has_ub a) (i).
     Take m, Nn : ℕ.
     By seq_ex_almost_maximizer_m it holds that
-      ii : (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)).
+      (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)) (ii).
     Choose k such that k_good according to (ii).
     Choose l := (Nn+k)%nat.
     We show both statements.

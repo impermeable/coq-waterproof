@@ -55,5 +55,5 @@ Proof.
     intro n.
     We argue by contradiction.
     Assume (n ≠ n).
-    It holds that n_en_n : (n = n). ↯.
+    It holds that (n = n). ↯.
 Qed.
