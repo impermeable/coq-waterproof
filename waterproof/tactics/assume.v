@@ -5,7 +5,7 @@ Authors:
 Creation date: 20 May 2021
 
 [Assume] can be used to introduce the premise of an implication (⇒)
-as an hypothesis. 
+as an hypothesis.
 It expectes a type annotation for each hypothesis, and performs type-checking,
 
 --------------------------------------------------------------------------------
@@ -45,9 +45,9 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
     Attempts to assume a negated expression.
 
     Arguments:
-        - [x : (ident * constr) list)]: list of (identifier and expression).
+        - [x : (constr * (ident option)) list]: list of (expression optional name for expression)).
     Does:
-        - For the first pair of (identifier coupled with a expession) in [x], 
+        - For the first pair of (expession (and name)) in [x], 
             assume the expression.
 
     Raises Exceptions:
@@ -86,10 +86,10 @@ Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
     Attempts to recursively assume a list of hypotheses.
 
     Arguments:
-        - [x : (ident * constr) list)]: list of (hypothesis name and hypothesis).
+        - [x : (constr * (ident option)) list)]: list of (hypothesis and optional hypothesis name).
     Does:
-        - For the first pair of (hyp. name coupled with a hypothesis) in [x], 
-            assume the hypothesis.
+        - For the first pair of (hypothesis (and name)) in [x], 
+            assume the hypothesis (with specified name).
           If the assumed hypothesis did not come from a negated expression,
           proceeds to call itself with the remaining pairs in [x] as a new list [x'].
 

@@ -36,14 +36,14 @@ Require Import Waterproof.tactics.goal_wrappers.
 
 Local Ltac2 idtac () := ().
 
-(** * By ... it holds that ... : ...
+(** * assert_and_prove_sublemma
     Introduce a new sublemma and try to prove it immediately,
     optionally using a given lemma.
 
     Arguments:
-        - [id: ident], name for the new sublemma.
+        - [id: ident option], optional name for the new sublemma.
             If the proof succeeds, 
-            it will become a hypotheses bearing [id] as name.
+            it will become a hypothesis (bearing [id] as name).
         - [conclusion: constr], the actual content 
             of the new sublemma to prove.
         - [proving_lemma: constr], optional reference to a lemma 
@@ -72,16 +72,16 @@ Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr)
     | Err exn => Control.zero exn
     end.
 
-(** * By ... it holds that ... : ...
+(** * By ... it holds that ... (...)
     Introduce a new sublemma and try to prove it immediately
     using a given lemma.
 
     Arguments:
         - [lemma: constr], reference to a lemma 
             used to prove the new sublemma (via [waterprove)]).
-        - [id: ident], name for the new sublemma.
+        - [id: ident option], optional name for the new sublemma.
             If the proof succeeds, 
-            it will become a hypotheses bearing [id] as name.
+            it will become a hypothesis (bearing [id] as name).
         - [conclusion: constr], the actual content 
             of the new sublemma to prove.
 
@@ -96,15 +96,15 @@ Ltac2 Notation "By" lemma(constr)
     assert_and_prove_sublemma id conclusion (Some lemma).
     
     
-(** * It holds that ... : ...
+(** * It holds that ... (...)
     Introduce a new sublemma and try to prove it immediately.
-    Same as [By ... it holds that ... : ...],
+    Same as [By ... it holds that ... (...)],
     but without using a specified lemma.
 
     Arguments:
-        - [id: ident], name for the new sublemma.
+        - [id: ident option], optional name for the new sublemma.
             If the proof succeeds, 
-            it will become a hypotheses bearing [id] as name.
+            it will become a hypotheses (bearing [id] as name).
         - [conclusion: constr], the actual content 
             of the new sublemma to prove.
 
