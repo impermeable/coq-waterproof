@@ -106,8 +106,8 @@ Proof.
       It holds that H4 : (0 < IZR( up x )).
       By lt_0_IZR it holds that H5 : (0 < up x)%Z.
       It holds that H6 : (0 <= up x)%Z.
-      By IZN it holds that H7 : (∃ k : ℕ, up x = Z.of_nat k).
-      Choose k such that up_x_is_k according to H7.
+      By IZN it holds that i : (∃ k : ℕ, up x = Z.of_nat k).
+      Choose k such that up_x_is_k according to (i).
       Choose n := k.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that H8 : (INR k = IZR (Z.of_nat k)).
@@ -131,10 +131,10 @@ Proof.
     We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
       for all n : ℕ, (n ≥ N)%nat ⇨ |b n - l| < ε ).
     Take ε : ℝ; such that (ε > 0).
-    It holds that a_to_l_some_N1 : 
+    It holds that ii : 
       (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε).
-    Choose N1 such that prop_N1 according to a_to_l_some_N1.
-    Choose K such that an_is_bn_for_n_ge_k according to i.
+    Choose N1 such that prop_N1 according to (ii).
+    Choose K such that an_is_bn_for_n_ge_k according to (i).
     Choose M := (Nat.max N1 K).
     Take n : ℕ; such that (n ≥ M)%nat.
     It holds that b_n_eq_a_n : (b n = a n).
@@ -199,7 +199,8 @@ Proof.
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
     Take ε : ℝ; such that (ε > 0).
-    Choose n1 such that H_large according to (archimed_mod (/ε)).
+    By archimed_mod it holds that i : (there exists n : ℕ, n > / ε).
+    Choose n1 such that H_large according to (i).
     Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
     Expand the definition of R_dist.
@@ -245,8 +246,8 @@ Proof.
     Take ε : ℝ; such that (ε > 0).
     It holds that i : (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε).
     It holds that ii : (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε).
-    Choose Na such that a_close_to_l according to i.
-    Choose Nc such that c_close_to_l according to ii.
+    Choose Na such that a_close_to_l according to (i).
+    Choose Nc such that c_close_to_l according to (ii).
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that (n ≥ Nn)%nat.
     We claim that nε_lt_an_l : (-ε < a n - l).
@@ -296,8 +297,8 @@ Proof.
     That is, write i as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - L ｜ < eps).
-    It holds that H2 :  (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
-    Choose Nn such that a_close_to_L according to H2.
+    It holds that ii :  (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
+    Choose Nn such that a_close_to_L according to (ii).
     It holds that H4 : (R_dist (a Nn) L < ε).
     Expand the definition of R_dist in H4.
     That is, write H4 as ( | a Nn - L | < ε ).
@@ -358,10 +359,10 @@ Proof.
     That is, write i as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - m ｜ < eps ).
-    It holds that H5 : (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
-    It holds that H6 : (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
-    Choose N1 such that H7 according to H5.
-    Choose N2 such that H8 according to H6.
+    It holds that iii : (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
+    It holds that iv : (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
+    Choose N1 such that H7 according to (iii).
+    Choose N2 such that H8 according to (iv).
     Define N3 := (Nat.max N1 N2).
     We claim that b_N3_lt_a_N3 : (b N3 < a N3).
     { It holds that H13 : (R_dist (b N3) l < ε).
@@ -398,8 +399,8 @@ Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
   Assume (is_bounded a) (i).
-  Choose q such that q_bounds_a according to i.
-  Choose M1 such that M_bounds_a according to q_bounds_a.
+  Choose q such that ii according to (i).
+  Choose M1 such that M_bounds_a according to (ii).
   destruct M_bounds_a.
   We need to show that (
     there exists M : ℝ ,
@@ -430,7 +431,7 @@ M ≥ 0 ∧ (for all n : ℕ,
 | a n - q | ≤ M)
 ).
   Choose q := 0.
-  Choose M1 such that H according to i.
+  Choose M1 such that H according to (i).
   destruct H.
   Choose M := M1. 
   We show both statements.

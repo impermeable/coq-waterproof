@@ -208,8 +208,8 @@ Take p : X.
 Assume (x ⟶ p).
 
 We need to show that (y ⟶ p).
-It holds that y_sub_x : (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
-Choose m such that m_is_index_and_y_eq_x_m according to y_sub_x.
+It holds that i : (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
+Choose m such that m_is_index_and_y_eq_x_m according to (i).
 Because m_is_index_and_y_eq_x_m both m_is_index and y_eq_x_m.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).

@@ -47,6 +47,6 @@ Ltac2 choose_destruct_without_extra_hypothesis (s:ident) (u:ident) (v:constr) :=
 
 
 
-Ltac2 Notation "Choose" s(ident) "such" "that" u(ident) "according" "to" v(constr) :=
+Ltac2 Notation "Choose" s(ident) "such" "that" u(ident) "according" "to" "("v(constr)")" :=
     panic_if_goal_wrapped ();
     choose_destruct_without_extra_hypothesis s u v.

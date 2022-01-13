@@ -117,8 +117,8 @@ Proof.
     Take P : (ℕ → ℝ → Prop).
     Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     By existence_next_el_to_fun it holds that  
-    H1 : (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))).
-    Choose g such that g_choice_fun according to H1.
+    i : (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))).
+    Choose g such that g_choice_fun according to (i).
     Choose n := (create_seq g).
     We show both statements.
     - We need to show that (is_index_seq n).

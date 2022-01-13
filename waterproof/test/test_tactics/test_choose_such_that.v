@@ -50,7 +50,8 @@ Proof.
         reflexivity.
     }
     intro n.
-    Choose m such that exists_m_i_dunno according to (X n). 
+    pose (X n) as i.
+    Choose m such that sample_name according to (i).
 Abort.
 
 
@@ -67,5 +68,6 @@ Proof.
     intros.
     intro.
     intro.
-    Choose n1 such that a_close_to_l according to (H0 eps H1).
+    pose (H0 eps H1) as i.
+    Choose n1 such that a_close_to_l according to (i).
 Abort.
