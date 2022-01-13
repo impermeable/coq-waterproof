@@ -141,7 +141,7 @@ Proof.
     Take a : ℝ.
     Assume (a ∈ A) (i).
     It holds that (for all x : R, (-x) ∈ A -> m <= x).
-    We claim that minmin_a_in_A : (--a ∈ A).
+    We claim that (--a ∈ A).
     { It holds that (--a = a) (ii).
       (* TODO: We conclude that (--a ∈ A). should work *)
       exact (eq_ind_r (fun x => x ∈ A) (i) (ii)).
@@ -162,7 +162,7 @@ Proof.
     That is, write the goal as (for all a : ℝ, a ∈ A ⇨ - M ≤ a).
     Take a : ℝ.
     Assume (a ∈ A) (i).
-    We claim that minmin_a_in_A : (--a ∈ A).
+    We claim that (--a ∈ A).
     { It holds that (--a = a) (ii).
       (* TODO: We conclude that (--a ∈ A). should work *)
       exact (eq_ind_r (fun x => x ∈ A) (i) (ii)).
@@ -229,25 +229,25 @@ Proof.
     Define B := (set_opp A).
     Expand the definition of set_opp in B.
     That is, write B as (ℝ ⇨ Prop).
-    We claim that H : (for all s : ℝ, (A s) -> (B (-s))).
+    We claim that (for all s : ℝ, (A s) -> (B (-s))) (ii).
     { Take s : ℝ.
       Assume (A s).
       (* TODO: make nicer *)
       We need to show that (A (--s)).
-      It holds that (A (--s) = A s) (ii).
+      It holds that (A (--s) = A s) (iii).
       Fail We conclude that (A (--s)).
-      rewrite ii.
+      rewrite iii.
       We conclude that (A s).
     }
     By bdd_below_to_bdd_above_set_opp it holds that (is_bdd_above B).
-    We claim that ex_y_in_B : (∃ y : ℝ, y ∈ B).
+    We claim that (∃ y : ℝ, y ∈ B).
     { Choose x such that x_in_A according to (i).
       Choose y := (-x).
       We need to show that (B (-x)).
-      By H we conclude that (B (-x)).
+      By (ii) we conclude that (B (-x)).
     }
-    By completeness it holds that ({L | is_sup B L}) (ii).
-    Choose L such that L_is_sup according to (ii).
+    By completeness it holds that ({L | is_sup B L}) (iv).
+    Choose L such that L_is_sup according to (iv).
     By sup_set_opp_is_inf_set it holds that (is_inf A (-L)).
     We conclude that ({m : ℝ | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
 Qed.
@@ -326,7 +326,7 @@ Proof.
     We argue by contradiction.
     Assume (¬ (there exists a : ℝ, A a ∧ L < a)).
     It holds that (∀ x : ℝ, A x ⇒ ¬(L < x)).
-    We claim that H0 : (is_upper_bound A L).
+    We claim that (is_upper_bound A L).
     { We need to show that (∀ x : ℝ, A x ⇒ (x <= L)).
       Take x : R.
       Assume (A x).
@@ -368,21 +368,21 @@ Proof.
     Because i both H2 and H3.
     (** We only show the proposition on the *)
     (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
-    We claim that H4 : (∀ a : ℝ, A a ⇒ a < M).
-    {
-    Take a : ℝ.
-    Assume (A a).
-    By sup_is_upp_bd it holds that (is_upper_bound A M).
-    It holds that (a ≤ M).
-    We claim that a_is_not_M : (¬(a = M)).
-    Assume (a = M) (eq_1).
-    We claim that M_in_A : (A M).
-    { (* TODO: improve*)
-      rewrite <- eq_1.
-      We conclude that (A a).
-    }
-    Contradiction.
-    We conclude that (a < M).
+    We claim that (∀ a : ℝ, A a ⇒ a < M).
+    { Take a : ℝ.
+      Assume (A a).
+      By sup_is_upp_bd it holds that (is_upper_bound A M).
+      It holds that (a ≤ M).
+      We claim that (¬(a = M)).
+      { Assume (a = M) (eq_1).
+        We claim that (A M).
+        { (* TODO: improve*)
+          rewrite <- eq_1.
+          We conclude that (A a).
+        }
+        Contradiction.
+      }
+      We conclude that (a < M).
     }
     Contradiction.
 Qed.

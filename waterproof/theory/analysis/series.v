@@ -98,12 +98,12 @@ Proof.
       Assume (Un_cv (Nn) ↦ (sigma a l Nn) L).
       (* TODO: fix
          By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
-      We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
+      We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
       { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
       }
       By CV_plus it holds that (Un_cv (fun Nn ↦ sigma a k (l-1)%nat + sigma a l Nn) (sigma a k (l-1)%nat + L)).
-      We claim that H2 : (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (Nn ↦ (sigma a k Nn))).
+      We claim that (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (Nn ↦ (sigma a k Nn))).
       { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k (l - 1)%nat + sigma a l n = sigma a k n).
         Choose M := l%nat.
         Take n : ℕ; such that (n ≥ M)%nat.
@@ -118,12 +118,12 @@ Proof.
         We conclude that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
     - We need to show that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L) ⇨ Un_cv (Nn) ↦ (sigma a l Nn) L).
       Assume that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
-      We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
+      We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
       { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
       }
       By CV_minus it holds that (Un_cv (fun N ↦ sigma a k N - (sigma a k (l-1))) (sigma a k (l-1) + L - (sigma a k (l-1)))).
-      We claim that H3 : (evt_eq_sequences (Nn ↦ (sigma a k Nn - sigma a k (l-1))) (Nn ↦ (sigma a l Nn))).
+      We claim that (evt_eq_sequences (Nn ↦ (sigma a k Nn - sigma a k (l-1))) (Nn ↦ (sigma a l Nn))).
       { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n - sigma a k (l-1) = sigma a l n).
         Choose M := l%nat.
         Take n : ℕ; such that (n ≥ M)%nat.

@@ -78,7 +78,7 @@ Proof.
     - We need to show that (Nn ≤ k)%nat.
       We conclude that (Nn <= k)%nat.
     - We need to show that (a k > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
-      We claim that H2 : (proj1_sig (lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) Nn).
+      We claim that (proj1_sig (lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) Nn).
       { Expand the definition of lim_sup_bdd.
         That is, write the goal as 
           (proj1_sig (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)) 
@@ -153,10 +153,8 @@ Proof.
     Define L_with_proof := (lim_sup_bdd a (i) (ii)).
     Define L := (proj1_sig L_with_proof).
     Define sequence_ub_cv_to_L := (proj2_sig L_with_proof).
-    We claim that iii : (∃ m : ℕ → ℕ, is_index_seq m 
-                ∧ 
-     ∀ k : ℕ, 
-      a (m k) > L - 1 / (INR(k) + 1)).
+    We claim that (∃ m : ℕ → ℕ, is_index_seq m 
+      ∧ ∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)) (iii).
     {
       By exists_subseq_to_limsup_bdd it holds that 
         (there exists n : ℕ ⇨ ℕ, is_index_seq n 

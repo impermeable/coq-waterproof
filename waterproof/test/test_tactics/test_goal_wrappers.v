@@ -53,9 +53,9 @@ Load induction.
 Load claims.
 Goal forall n, n + 0 = n.
     We use induction on n.
-    - Fail We claim that m : nat.
+    - Fail We claim that nat.
       admit.
-    - Fail We claim that h : (n + 1 + 0 = n + 1).
+    - Fail We claim that (n + 1 + 0 = n + 1) (i).
 Abort.
 
 (** * Test 3

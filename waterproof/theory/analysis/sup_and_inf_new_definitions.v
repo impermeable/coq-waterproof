@@ -160,7 +160,7 @@ Proof.
     Take A : subset_R.
     Take a : A.
     Assume (is_bounded_above A) (i).
-    We claim that A_is_bdd : (bound A).
+    We claim that (bound A).
     { Expand the definition of bound.
       That is, write the goal as (there exists m : ℝ, Raxioms.is_upper_bound A m).
       Choose M such that A_bdd_by_M according to (i).
@@ -172,7 +172,7 @@ Proof.
       ltac1:(pose proof (A_bdd_by_M b)).
       We conclude that (x <= M).
     }
-    We claim that A_non_empty : (there exists x : ℝ, A x).
+    We claim that (there exists x : ℝ, A x).
     { Choose (a).
       We conclude that (A a).
     }
@@ -290,7 +290,7 @@ Proof.
     Take a : A.
     Expand the definition of is_lower_bound in i.
     That is, write i as (for all b : set_opp A, m ≤ b).
-    We claim that minmin_a_in_A : (A (--a)).
+    We claim that (A (--a)).
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
@@ -316,7 +316,7 @@ Proof.
     Expand the definition of is_lower_bound.
     That is, write the goal as (for all a : A, -M ≤ a).
     Take a : A.
-    We claim that minmin_a_in_A : (A (--a)).
+    We claim that (A (--a)).
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
@@ -359,7 +359,7 @@ Proof.
       (is_lower_bound A (- M) ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ -M)).
     We show both statements.
     - We need to show that (is_lower_bound A (- M)).
-      We claim that H0 : (is_upper_bound (set_opp A) M).
+      We claim that (is_upper_bound (set_opp A) M).
       Expand the definition of is_upper_bound.
       That is, write the goal as (for all a : set_opp A, a ≤ M).
       Take a : (set_opp A).
@@ -395,19 +395,20 @@ Proof.
     Take z : A.
     Assume (is_bounded_below A).
     Define B := (set_opp A).
-    We claim that B_bdd_above : (is_bounded_above B).
-    By bdd_below_to_bdd_above_set_opp it suffices to show that (is_bounded_below A).
-    We conclude that (is_bounded_below A). 
-    We claim that min_min_z_in_A : (A (--z)).
-    { It holds that (--z = z) (i).
-      It holds that (A z) (ii).
-      (* TODO: We conclude that (--z ∈ A). should work *)
-      exact (eq_ind_r (fun x => A x) (ii) (i)).
+    We claim that (is_bounded_above B) (i).
+    { By bdd_below_to_bdd_above_set_opp it suffices to show that (is_bounded_below A).
+      We conclude that (is_bounded_below A).
     }
-    It holds that ((set_opp A) (-z)) (iii).
-    Define c := (mk_elem_R _ (-z) (iii)).
-    Define i := (R_complete B c B_bdd_above).
-    Choose L such that L_is_sup_B according to (i).
+    We claim that (A (--z)).
+    { It holds that (--z = z) (ii).
+      It holds that (A z) (iii).
+      (* TODO: We conclude that (--z ∈ A). should work *)
+      exact (eq_ind_r (fun x => A x) (iii) (ii)).
+    }
+    It holds that ((set_opp A) (-z)) (iv).
+    Define c := (mk_elem_R _ (-z) (iv)).
+    By R_complete it holds that (there exists M : ℝ, is_sup B M) (v).
+    Choose L such that L_is_sup_B according to (v).
     Choose (- L).
     By sup_set_opp_is_inf_set we conclude that (is_inf A (-L)).
 Qed.
@@ -488,13 +489,13 @@ Proof.
     We argue by contradiction.
     Assume (¬ (there exists a : A, L < a)).
     It holds that (∀ x : A, ¬ (L < x)).
-    We claim that H1 : (∀ x : A, x ≤ L).
+    We claim that (∀ x : A, x ≤ L) (i).
     { Take x : A.
       It holds that (¬(L < x)).
       We need to show that (x ≤ L).
       We conclude that (x ≤ L).
     }
-    By H1 it holds that (is_upper_bound A L).
+    By (i) it holds that (is_upper_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_upp_bd_ge_sup it holds that (M <= L).
     It holds that (¬(M ≤ L)).
@@ -515,13 +516,13 @@ Proof.
     We argue by contradiction.
     Assume (¬ (there exists a : A, L > a)).
     It holds that (∀ x : A, ¬ (L > x)).
-    We claim that H1 : (∀ x : A, L ≤ x).
+    We claim that (∀ x : A, L ≤ x) (i).
     { Take x : A.
       It holds that (¬(L > x)).
       We need to show that (L ≤ x).
       We conclude that (L ≤ x).
     }
-    By H1 it holds that (is_lower_bound A L).
+    By (i) it holds that (is_lower_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_low_bd_le_inf it holds that (L <= m).
     It holds that (¬(L ≤ m)).
@@ -780,15 +781,15 @@ Proof.
     It holds that ((¬ (A M)) ∧ 
       ¬(∀ a : A, a < M)) (i).
     Because i both H2 and H3.
-    We claim that all_a_lt_M : (for all a : A, a < M).
+    We claim that (for all a : A, a < M).
     { 
       Take a : A.
       By sup_is_upp_bd it holds that (is_upper_bound A M).
       It holds that (a ≤ M).
-      We claim that M_not_a : (M ≠ a).
+      We claim that (M ≠ a).
       {
         Assume (M = a) (ii).
-        We claim that M_in_A : (A M).
+        We claim that (A M).
         { It holds that (A a) (iii).
           (* TODO: We conclude that (A M). should work *)
           exact (eq_ind_r (fun x => A x) (iii) (ii)).

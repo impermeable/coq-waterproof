@@ -47,13 +47,13 @@ Proof.
     Expand the definition of EUn in a_bdd_by_M.
     That is, write a_bdd_by_M as (for all x0 : ℝ, 
       (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
-    We claim that H : (for all k : ℕ, (a k) ≤ M).
+    We claim that (for all k : ℕ, (a k) ≤ M) (i).
     { Take k : ℕ.
       It suffices to show that (there exists k0 : nat, a k = a k0).
       Choose k0 := k.
       We conclude that (a k = a k0).
     }
     Take n0 : ℕ.
-    By H it holds that (a(n n0) ≤ M).
+    By (i) it holds that (a(n n0) ≤ M).
     It follows that (a(n n0) ≤ M).
 Qed.

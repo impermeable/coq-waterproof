@@ -94,10 +94,11 @@ Proof.
     Either (x <= 0) or (0 < x).
     - Case (x <= 0).
       Choose n := 1%nat.
-      We claim that H1 : (INR 1 > INR 0).
-      Expand the definition of INR.
-      That is, write the goal as ( 1 > 0 ).
-      We conclude that (1 > 0).
+      We claim that (INR 1 > INR 0).
+      { Expand the definition of INR.
+        That is, write the goal as ( 1 > 0 ).
+        We conclude that (1 > 0).
+      }
       It holds that (x <= INR 0).
       It follows that (INR 1 > x).
     - Case (0 < x).
@@ -112,7 +113,7 @@ Proof.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that (INR k = IZR (Z.of_nat k)).
       (* TODO: better solution *)
-      We claim that H9 : (IZR (up x) = IZR (Z.of_nat k)).
+      We claim that (IZR (up x) = IZR (Z.of_nat k)).
       { rewrite up_x_is_k. reflexivity. }
       We need to show that (x < k).
       We conclude that (& x &< up x &= Z.of_nat k &= k).
@@ -209,7 +210,7 @@ Proof.
     We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
     - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
       We conclude that (& -ε &< 0 &< / (n + 1) &= 1 / (n + 1) - 0).
-    - We claim that H0 : (/ ε < n + 1). 
+    - We claim that (/ ε < n + 1). 
       { We conclude that (& / ε &< n1 &<= n &<= n + 1). }
       We conclude that (& 1 / (n + 1) - 0 &= / (n + 1) &< / / ε &= ε).
 Qed.
@@ -250,7 +251,7 @@ Proof.
     Choose Nc such that c_close_to_l according to (ii).
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that (n ≥ Nn)%nat.
-    We claim that nε_lt_an_l : (-ε < a n - l).
+    We claim that (-ε < a n - l).
     { It holds that (n ≥ Na)%nat.
       It holds that (R_dist (a n) l < ε) (iii).
       Expand the definition of R_dist in iii.
@@ -258,7 +259,7 @@ Proof.
       By Rabs_def2 it holds that (a n - l < ε /\ -ε < a n - l).
       We conclude that (-ε < a n - l).
     }
-    We claim that cn_l_lt_ε : (c n - l < ε).
+    We claim that (c n - l < ε).
     { It holds that (n ≥ Nc)%nat.
       It holds that (R_dist (c n) l < ε) (iii).
       Expand the definition of R_dist in iii.
@@ -324,7 +325,7 @@ Proof.
     Expand the definition of opp_seq in b.
     That is, write b as ( ℕ ⇨ ℝ ). (*TODO *)
     By CV_opp it holds that (Un_cv b (-L)).
-    We claim that H1 : (-L ≤ -M).
+    We claim that (-L ≤ -M).
     { By upp_bd_seq_is_upp_bd_lim it suffices to show that
        (for all n : ℕ, b n ≤ - M).
       Take n : ℕ.
@@ -364,7 +365,7 @@ Proof.
     Choose N1 such that H7 according to (iii).
     Choose N2 such that H8 according to (iv).
     Define N3 := (Nat.max N1 N2).
-    We claim that b_N3_lt_a_N3 : (b N3 < a N3).
+    We claim that (b N3 < a N3).
     { It holds that (R_dist (b N3) l < ε)  (v).
       It holds that (R_dist (a N3) m < ε) (vi).
       Expand the definition of R_dist in v.

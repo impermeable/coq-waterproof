@@ -48,14 +48,14 @@ Proof.
     Take a : (ℕ → ℝ). 
     Take P : (ℕ → ℝ → Prop).
     Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
-    We claim that H1 : (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))).
+    We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))).
     {
         Take m : ℕ.
         apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).
         We conclude that (for all x : ℕ, there exists y : ℕ, (x ≤ y)%nat ∧ P m (a y)).
     }
     apply choice with (R := fun (m : ℕ) (h : ℕ → ℕ) ↦ ( ∀ N : ℕ, (N ≤ h N)%nat ∧ P m (a (h N)) ) ).
-    apply H1.
+    We conclude that (for all x : ℕ, there exists y : ℕ ⇨ ℕ , for all N : ℕ, (N ≤ y N)%nat ∧ P x (a (y N))).
 Qed.
 
 
@@ -308,7 +308,7 @@ Proof.
     Take g : (ℕ → ℕ).
     Take n : ℕ and k : ℕ; such that (k ≤ n)%nat.
     By elements_le_seq_of_max_pre it holds that (g k ≤ seq_of_max g k)%nat.
-    We claim that H2 : (seq_of_max g k ≤ seq_of_max g n)%nat.
+    We claim that (seq_of_max g k ≤ seq_of_max g n)%nat.
     { By incr_loc_to_glob it suffices to show that (is_increasing (seq_of_max g)).
       By seq_of_max_is_increasing we conclude that (is_increasing (seq_of_max g)).
     }

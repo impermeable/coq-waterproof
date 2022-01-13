@@ -29,12 +29,20 @@ From Ltac2 Require Import Ltac2.
 Load claims.
 
 
-(** Test 0: This should introduce a new subgoal, that n = n, under the name n_eq_n after
+(** Test 0: This should introduce a new subgoal, that n = n, unnamed after
             it is proven. *)
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
     intro n.
-    We claim that n_eq_n : (n = n).
-    reflexivity.
+    We claim that (n = n).
+    { reflexivity. }
 Abort.
 
+(** Test 1: This should introduce a new subgoal, that n = n, named i after
+            it is proven. *)
+Goal forall n : nat, exists m : nat, (n = m).
+Proof.
+    intro n.
+    We claim that (n = n) (i).
+    { reflexivity. }
+Abort.
