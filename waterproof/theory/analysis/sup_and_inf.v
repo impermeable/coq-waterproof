@@ -181,7 +181,7 @@ Proof.
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
     Expand the definition of is_bdd_below in (i).
     That is, write (i) as (∃ m : ℝ, is_lower_bound A m).
-    Choose m such that m_is_lower_bd_A according to (i).
+    Choose m such that (H1) according to (i).
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) M).
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) M).
@@ -203,7 +203,7 @@ Proof.
       Expand the definition of is_lub in (i).
       That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
-      Choose M_upp_bd such that H1 according to (i).
+      Choose M_upp_bd such that (H1) according to (i).
       By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
     - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
       Expand the definition of is_lower_bound.
@@ -240,13 +240,13 @@ Proof.
     }
     By bdd_below_to_bdd_above_set_opp it holds that (is_bdd_above B).
     We claim that (∃ y : ℝ, y ∈ B).
-    { Choose x such that x_in_A according to (i).
+    { Choose x such that (H1) according to (i).
       Choose y := (-x).
       We need to show that (B (-x)).
       By (ii) we conclude that (B (-x)).
     }
     By completeness it holds that ({L | is_sup B L}) (iv).
-    Choose L such that L_is_sup according to (iv).
+    Choose L such that (H1) according to (iv).
     By sup_set_opp_is_inf_set it holds that (is_inf A (-L)).
     We conclude that ({m : ℝ | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
 Qed.
@@ -400,15 +400,15 @@ Proof.
     Expand the definition of lub.
     That is, write the goal as (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
-    Define ii := (ub_to_lub a (i)).
-    Choose l such that l_is_sup according to (ii).
+    Define lub_a_prf := (ub_to_lub a (i)).
+    destruct (lub_a_prf) as [l H1].
     Take ε : ℝ; such that (ε > 0).
-    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iii).
-    Choose y such that ii according to (iii).
-    Because (ii) both (EUn a y) (iv) and (y > l - ε).
-    Expand the definition of EUn in (iv).
-    That is, write (iv) as (there exists n : ℕ , y = a n).
-    Choose n such that an_is_y according to (iv).
+    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
+    Choose y such that (v) according to (iv).
+    Because (v) both (EUn a y) (vi) and (y > l - ε).
+    Expand the definition of EUn in (vi).
+    That is, write (vi) as (there exists n : ℕ , y = a n).
+    Choose n such that (H2) according to (vi).
     Choose k := n.
     We need to show that (l - ε < a n).
     We conclude that (& l - ε &< y &= a n).
@@ -438,7 +438,7 @@ Proof.
     Take m, Nn : ℕ.
     By seq_ex_almost_maximizer_m it holds that
       (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)) (ii).
-    Choose k such that k_good according to (ii).
+    Choose k such that (H1) according to (ii).
     Choose l := (Nn+k)%nat.
     We show both statements.
     - We need to show that (l ≥ Nn)%nat.

@@ -37,13 +37,12 @@ Require Import Waterproof.theory.analysis.sup_and_inf.
 Require Import Waterproof.theory.analysis.sequential_accumulation_points.
 
 Global Hint Resolve Rabs_Rabsolu.
+
 (** ## lim sup*)
 Definition lim_sup_bdd (a : ℕ → ℝ) 
                        (pr1 : has_ub a) 
-                       (pr2 : has_lb (sequence_ub a pr1)) :=
-  decreasing_cv (sequence_ub a pr1)
-                (Wn_decreasing a pr1)
-                (pr2).
+                       (pr2 : has_lb (sequence_ub a pr1))
+:= decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) (pr2).
 
 Lemma lim_const_min_1_over_n_plus_1 :
   ∀ x : ℝ, Un_cv (fun (n : ℕ) ↦ x - 1 / (INR n + 1)) x.
@@ -72,7 +71,7 @@ Proof.
     Take m, Nn : ℕ.
     By exists_almost_lim_sup_aux it holds that 
       (∃ k : ℕ, (k ≥ Nn)%nat ∧ a k > sequence_ub a (i) Nn - 1 / (INR(m) + 1)) (iii).
-    Choose n such that iv according to (iii).
+    Choose n such that (iv) according to (iii).
     Choose k := n.
     We show both statements.
     - We need to show that (Nn ≤ k)%nat.
@@ -84,7 +83,7 @@ Proof.
           (proj1_sig (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)) 
             ≤ sequence_ub a (i) Nn).
         Define v := (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)).
-        Choose l such that l_is_lim according to (v).
+        destruct (v) as [l H1]. (* TODO: deal with sigma types *)
         We need to show that (l ≤ sequence_ub a (i) Nn).
         By Wn_decreasing it holds that (Un_decreasing (sequence_ub a (i))).
         By decreasing_ineq we conclude that (l <= sequence_ub a (i) Nn).
@@ -126,7 +125,7 @@ Proof.
     That is, write the goal as
       (a n ≤ (let (a0, _) := ub_to_lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat)).
-    Choose M such that iii according to (ii).
+    destruct (ii) as [M iii].
     Expand the definition of is_lub in (iii).
     That is, write (iii) as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
       ∧ (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b)).
@@ -161,7 +160,7 @@ Proof.
       By exists_subseq_to_limsup_bdd it holds that 
         (there exists n : ℕ ⇨ ℕ, is_index_seq n 
           ∧ (for all k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1))) (iv).
-      Choose m_seq such that v according to (iv).
+      Choose m_seq such that (v) according to (iv).
       Because (v) both (is_index_seq m_seq) and 
         (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1)).
       Choose m := m_seq.
@@ -171,7 +170,7 @@ Proof.
       - We need to show that (for all k : ℕ, a (m k) > L - 1 / (k + 1)).
         We conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
     }
-    Choose m such that iv according to (iii).
+    Choose m such that (iv) according to (iii).
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi).
     Choose n := m.
@@ -213,7 +212,7 @@ Proof.
     By Bolzano_Weierstrass_gen it holds that
       (∃ (n : ℕ → ℕ), is_index_seq n
         ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))) (iv).
-    Choose n0 such that n_good_subseq according to (iv).
+    Choose n0 such that (H1) according to (iv).
     Choose n := n0.
     Choose l := (proj1_sig (lim_sup_bdd a (i) (iii))).
     We conclude that (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))).
@@ -230,7 +229,7 @@ Proof.
     Expand the definition of is_seq_acc_pt in (ii).
     That is, write (ii) as (there exists n : ℕ ⇨ ℕ, is_index_seq n 
       ∧ Un_cv (k) ↦ (a (n k)) x).
-    Choose n such that iii according to (ii).
+    Choose n such that (iii) according to (ii).
     Because (iii) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x).
     Take m : ℕ.
     Define L := (sequence_ub a (i) m).
@@ -240,7 +239,7 @@ Proof.
     Define ε := (x - L).
     It holds that (ε > 0).
     It holds that (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε) (iv).
-    Choose K such that ank_close_to_x according to (iv).
+    Choose K such that (H1) according to (iv).
     Define Nn := (Nat.max K m).
     It holds that (R_dist (a (n Nn)) x < ε).
     By Rabs_def2 it holds that (a (n Nn) - x < ε ∧ - ε < a (n Nn) - x) (v).
@@ -274,7 +273,7 @@ Proof.
       Assume (is_seq_acc_pt a x).
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
-      Choose L such that sequence_ub_cv_to_L according to (iii).
+      destruct (iii) as [L sequence_ub_cv_to_L].
       (* TODO: fix *)
       simpl.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))
@@ -316,7 +315,7 @@ Proof.
       It holds that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)).
       Take m : nat.
       It holds that (∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)) (ii).
-      Choose n such that iii according to (ii).
+      Choose n such that (iii) according to (ii).
       Choose n0 := n.
       Because (iii) both (n ≥ m)%nat and (~(a n < L)).
       We show both (n0 >= m)%nat and (a n0 >= L).

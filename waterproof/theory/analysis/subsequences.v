@@ -118,7 +118,7 @@ Proof.
     Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     By existence_next_el_to_fun it holds that
       (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) (i).
-    Choose g such that g_choice_fun according to (i).
+    Choose g such that (ii) according to (i).
     Choose n := (create_seq g).
     We show both statements.
     - We need to show that (is_index_seq n).
@@ -126,7 +126,7 @@ Proof.
       By created_seq_is_index_seq it suffices to show that 
         (for all m N : ℕ, (g m N ≥ N)%nat).
       Take m, M : nat.
-      By g_choice_fun it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))).
+      By (ii) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))).
       We conclude that (M <= g m M)%nat.
     - We need to show that (for all k : ℕ, P k (a (n k))).
       We need to show that (for all k : ℕ, P k (a ((create_seq g) k))).
@@ -134,8 +134,8 @@ Proof.
       apply subseq_sat_rel.
       Take m : ℕ.
       Take M : ℕ.
-      By g_choice_fun it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (ii).
-      Because (ii) both (M ≤ g m M)%nat and (P m (a (g m M))).
+      By (ii) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (iii).
+      Because (iii) both (M ≤ g m M)%nat and (P m (a (g m M))).
       We conclude that (P m (a (g m M))).
 Qed.
 

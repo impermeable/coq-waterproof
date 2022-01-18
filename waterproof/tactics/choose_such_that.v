@@ -42,11 +42,50 @@ Require Import Waterproof.tactics.goal_wrappers.
     Does:
         - destructs the constr [v] under the names [s] and [u].
 *)
-Ltac2 choose_destruct_without_extra_hypothesis (s:ident) (u:ident) (v:constr) :=
-   destruct $v as [$s $u].
+
+Ltac2 choose_destruct_without_extra_hypothesis (s:ident) (u:ident) (v:ident)
+ := (* Copy hypothesis we will destruct. *)
+    let v_val := Control.hyp v in
+    let copy := Fresh.in_goal @copy in
+    pose $v_val as copy;
+    let copy_val := Control.hyp copy in
+    destruct $copy_val as [$s $u].
+(*
+    (* Create identifiers if not specified. *)
+    match u with
+    | None   => let h := Fresh.in_goal @__wp__h in
+                destruct $copy_val as [$s $h]
+    | Some u => destruct $copy_val as [$s $u]
+    end.
+*)
 
 
-
-Ltac2 Notation "Choose" s(ident) "such" "that" u(ident) "according" "to" "("v(constr)")" :=
-    panic_if_goal_wrapped ();
+Ltac2 Notation "Choose" s(ident) "such" "that" "("u(ident)")" "according" "to" "("v(ident)")"
+ := panic_if_goal_wrapped ();
     choose_destruct_without_extra_hypothesis s u v.
+
+(* Hard case from sup_and_inf.v
+
+(** ## Suprema and sequences*)
+Lemma seq_ex_almost_maximizer_ε :
+  ∀ (a : ℕ → ℝ) (pr : has_ub a) (ε : ℝ), 
+    ε > 0 ⇒ ∃ k : ℕ, a k > lub a pr - ε.
+Proof.
+    Take a : (ℕ → ℝ).
+    Assume (has_ub a) (i).
+    Expand the definition of lub.
+    That is, write the goal as (for all ε : ℝ,  ε > 0 
+      ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
+    Define ii := (ub_to_lub a (i)).
+    Choose l such that (H1) according to (ii).
+    Take ε : ℝ; such that (ε > 0).
+    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iii).
+    Choose y such that (iv) according to (iii).
+    Because (iv) both (EUn a y) (v) and (y > l - ε).
+    Expand the definition of EUn in (v).
+    That is, write (v) as (there exists n : ℕ , y = a n).
+    Choose n such that (H2) according to (v).
+    Choose k := n.
+    We need to show that (l - ε < a n).
+    We conclude that (& l - ε &< y &= a n).
+Qed.*)

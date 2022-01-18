@@ -108,13 +108,13 @@ Proof.
       By lt_0_IZR it holds that (0 < up x)%Z.
       It holds that (0 <= up x)%Z.
       By IZN it holds that (∃ k : ℕ, up x = Z.of_nat k) (i).
-      Choose k such that up_x_is_k according to (i).
+      Choose k such that (ii) according to (i).
       Choose n := k.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that (INR k = IZR (Z.of_nat k)).
       (* TODO: better solution *)
       We claim that (IZR (up x) = IZR (Z.of_nat k)).
-      { rewrite up_x_is_k. reflexivity. }
+      { rewrite (ii). reflexivity. }
       We need to show that (x < k).
       We conclude that (& x &< up x &= Z.of_nat k &= k).
 Qed.
@@ -134,8 +134,8 @@ Proof.
     Take ε : ℝ; such that (ε > 0).
     It holds that
       (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε) (ii).
-    Choose N1 such that prop_N1 according to (ii).
-    Choose K such that an_is_bn_for_n_ge_k according to (i).
+    Choose N1 such that (H1) according to (ii).
+    Choose K such that (H2) according to (i).
     Choose M := (Nat.max N1 K).
     Take n : ℕ; such that (n ≥ M)%nat.
     It holds that (b n = a n).
@@ -201,7 +201,7 @@ Proof.
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
     Take ε : ℝ; such that (ε > 0).
     By archimed_mod it holds that (there exists n : ℕ, n > / ε) (i).
-    Choose n1 such that H_large according to (i).
+    Choose n1 such that (H1) according to (i).
     Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
     Expand the definition of R_dist.
@@ -247,8 +247,8 @@ Proof.
     Take ε : ℝ; such that (ε > 0).
     It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε) (i).
     It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε) (ii).
-    Choose Na such that a_close_to_l according to (i).
-    Choose Nc such that c_close_to_l according to (ii).
+    Choose Na such that (H1) according to (i).
+    Choose Nc such that (H2) according to (ii).
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that (n ≥ Nn)%nat.
     We claim that (-ε < a n - l).
@@ -299,7 +299,7 @@ Proof.
         ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
         ⇨ ｜ a n - L ｜ < eps).
       It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε) (iii).
-      Choose Nn such that a_close_to_L according to (iii).
+      Choose Nn such that (H1) according to (iii).
       It holds that (R_dist (a Nn) L < ε) (iv).
       Expand the definition of R_dist in (iv).
       That is, write (iv) as ( | a Nn - L | < ε ).
@@ -362,8 +362,8 @@ Proof.
       ⇨ ｜ a n - m ｜ < eps ).
     It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε) (iii).
     It holds that (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε)  (iv).
-    Choose N1 such that H7 according to (iii).
-    Choose N2 such that H8 according to (iv).
+    Choose N1 such that (H1) according to (iii).
+    Choose N2 such that (H2) according to (iv).
     Define N3 := (Nat.max N1 N2).
     We claim that (b N3 < a N3).
     { It holds that (R_dist (b N3) l < ε)  (v).
@@ -400,9 +400,10 @@ Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
   Assume (is_bounded a) (i).
-  Choose q such that ii according to (i).
-  Choose M1 such that M_bounds_a according to (ii).
-  destruct M_bounds_a.
+  Choose q such that (ii) according to (i).
+  Choose M1 such that (iii) according to (ii).
+  Because (iii) both (M1 ≥ 0) and
+    (for all n : ℕ, | a n - q | ≤ M1).
   We need to show that (
     there exists M : ℝ ,
       M ≥ 0 ∧ (for all n : ℕ,
@@ -432,9 +433,10 @@ M ≥ 0 ∧ (for all n : ℕ,
 | a n - q | ≤ M)
 ).
   Choose q := 0.
-  Choose M1 such that H according to (i).
-  destruct H.
-  Choose M := M1. 
+  Choose M1 such that (ii) according to (i).
+  Because (ii) both (M1 ≥ 0) and
+    (for all n : ℕ, | a n | ≤ M1).
+  Choose M := M1.
   We show both statements.
   + We need to show that (M ≥ 0).
     It follows that (M ≥ 0).
