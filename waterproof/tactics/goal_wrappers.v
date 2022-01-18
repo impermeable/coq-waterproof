@@ -96,9 +96,9 @@ Module ExpandDef.
                := match x with wrap _ _ _ y => eq_refl end.
   End Hyp.
 End ExpandDef.
-Notation "'Add' '‘That' 'is,' 'write' 'the' 'goal' 'as' (  G ).’ 'to' 'proof' 'script.'" 
+Notation "'Add' '‘That' 'is,' 'write' 'the' 'goal' 'as' '('  G ').’' 'to' 'proof' 'script.'" 
          := (ExpandDef.Goal.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘That' 'is,' 'write' h 'as' (  H ).’ 'to' 'proof' 'script.'" 
+Notation "'Add' '‘That' 'is,' 'write' '(' h ')'  'as' '('  H ').’' 'to' 'proof' 'script.'" 
          := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing).
 
 Module StateGoal.

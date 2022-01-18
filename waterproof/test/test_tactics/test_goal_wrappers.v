@@ -74,8 +74,8 @@ Abort.
     Expand the definition in hypothesis wrapper.
 *)
 Goal forall n, (bar n = 0) -> (n = 0).
-    intros n h.
-    Expand the definition of bar in h.
-    Fail Expand the definition of foo in h.
+    intros n i.
+    Expand the definition of bar in (i).
+    Fail Expand the definition of foo in (i).
 Abort.
 

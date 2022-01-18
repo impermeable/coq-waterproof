@@ -34,31 +34,9 @@ From Ltac2 Require Import Option.
 Require Import Waterproof.test_auxiliary.
 Load unfold.
 
-Definition some_function (x: nat) := 2 * x.
-
-(** * Test 1
-    Unfold a function IN THE GOAL to show that its definition
-    proves the goal.
-*)
-Lemma test_unfold_1: forall (x:nat), some_function x = 2*x.
-    intros x.
-    Unfold some_function.
-    reflexivity.
-Qed.
-
-
-(** * Test 2
-    Unfold a function IN A HYPOTHESIS to show that its definition
-    proves the goal.
-*)
-Lemma test_unfold_2: forall (x a:nat), some_function x = a -> 2*x = a.
-    intros x a h.
-    Unfold some_function in h.
-    exact h.
-Qed.
-
-
+Definition some_function  (x: nat) := 2 * x.
 Definition other_function (x: nat) := 2 * x.
+
 (** * Test 3
     Unfold functions IN THE GOAL to show that its definition
     proves the goal.
@@ -92,13 +70,13 @@ Qed.
     proves the goal.
 *)
 Lemma test_unfold_5: forall (x a:nat), some_function (other_function x) = a -> False.
-    intros x a h.
-    Fail Expand the definition of some_function, other_function in g.
-    Expand the definition of some_function, other_function in h.
-    Fail That is, write g as (2*(2*x) = a).
-    Fail That is, write x as (2*(2*x) = a).
-    Fail That is, write h as (0 = 0).
-    That is, write h as (2*(2*x) = a).
+    intros x a i.
+    Fail Expand the definition of some_function, other_function in (ii).
+    Expand the definition of some_function, other_function in (i).
+    Fail That is, write (ii) as (2*(2*x) = a).
+    Fail That is, write (x) as (2*(2*x) = a).
+    Fail That is, write (i) as (0 = 0).
+    That is, write (i) as (2*(2*x) = a).
 Abort.
 
 (** * Test 6
@@ -106,7 +84,7 @@ Abort.
     proves the goal.
 *)
 Lemma test_unfold_6: forall (x a:nat), some_function (other_function x) = a -> False.
-    intros x a h.
-    Expand the definition of some_function, other_function in h.
-    That is, write h as ( 2 * (2 * x) = a ).
+    intros x a i.
+    Expand the definition of some_function, other_function in (i).
+    That is, write (i) as ( 2 * (2 * x) = a ).
 Abort.

@@ -179,8 +179,8 @@ Proof.
     Take A : (ℝ → Prop).
     Assume (is_bdd_below A) (i).
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
-    Expand the definition of is_bdd_below in i.
-    That is, write i as (∃ m : ℝ, is_lower_bound A m).
+    Expand the definition of is_bdd_below in (i).
+    That is, write (i) as (∃ m : ℝ, is_lower_bound A m).
     Choose m such that m_is_lower_bd_A according to (i).
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) M).
@@ -200,8 +200,8 @@ Proof.
       ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ - M)).
     We show both statements.
     - We need to show that ( is_lower_bound A (- M) ).
-      Expand the definition of is_lub in i.
-      That is, write i as (is_upper_bound (set_opp A) M 
+      Expand the definition of is_lub in (i).
+      That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
       Choose M_upp_bd such that H1 according to (i).
       By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
@@ -210,8 +210,8 @@ Proof.
       That is, write the goal as (for all l : ℝ, (for all a : ℝ, a ∈ A ⇨ l ≤ a) ⇨ l ≤ - M).
       Take l : ℝ.
       Assume (is_lower_bound A l).
-      Expand the definition of is_lub in i.
-      That is, write i as (is_upper_bound (set_opp A) M 
+      Expand the definition of is_lub in (i).
+      That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
       Because i both previously_proven and H1.
       By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
@@ -227,8 +227,6 @@ Proof.
     Assume (is_bdd_below A).
     Assume (∃ x : ℝ, x ∈ A) (i).
     Define B := (set_opp A).
-    Expand the definition of set_opp in B.
-    That is, write B as (ℝ ⇨ Prop).
     We claim that (for all s : ℝ, (A s) -> (B (-s))) (ii).
     { Take s : ℝ.
       Assume (A s).
@@ -404,8 +402,8 @@ Proof.
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iii).
     Choose y such that H2 according to (iii).
     Because H2 both iv and y_gt_l_min_ε.
-    Expand the definition of EUn in iv.
-    That is, write iv as (there exists i : ℕ , y = a i).
+    Expand the definition of EUn in (iv).
+    That is, write (iv) as (there exists n : ℕ , y = a n).
     Choose n such that an_is_y according to (iv).
     Choose k := n.
     We need to show that (l - ε < a n).

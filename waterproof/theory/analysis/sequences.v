@@ -221,10 +221,10 @@ Lemma min_1_over_n_plus_1_to_0 :
 Proof.
     By lim_d_0 it holds that (Un_cv d 0).
     By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
-    Expand the definition of opp_seq in i.
-    That is, write i as ( Un_cv (n) ↦ (- d n) (-0) ).
-    Expand the definition of d in i.
-    That is, write i as ( Un_cv (n) ↦ (- (1 / (n + 1))) (-0) ).
+    Expand the definition of opp_seq in (i).
+    That is, write (i) as ( Un_cv (n) ↦ (- d n) (-0) ).
+    Expand the definition of d in (i).
+    That is, write (i) as ( Un_cv (n) ↦ (- (1 / (n + 1))) (-0) ).
     It holds that (0 = -0).
     (* TODO: make transport automatic *)
     By (eq_ind_r (fun x => Un_cv (n) ↦ (- (1 / (n + 1))) x) (i)) 
@@ -254,16 +254,16 @@ Proof.
     We claim that (-ε < a n - l).
     { It holds that (n ≥ Na)%nat.
       It holds that (R_dist (a n) l < ε) (iii).
-      Expand the definition of R_dist in iii.
-      That is, write iii as ( | a n - l | < ε ).
+      Expand the definition of R_dist in (iii).
+      That is, write (iii) as ( | a n - l | < ε ).
       By Rabs_def2 it holds that (a n - l < ε /\ -ε < a n - l).
       We conclude that (-ε < a n - l).
     }
     We claim that (c n - l < ε).
     { It holds that (n ≥ Nc)%nat.
       It holds that (R_dist (c n) l < ε) (iii).
-      Expand the definition of R_dist in iii.
-      That is, write iii as ( | c n - l | < ε ).
+      Expand the definition of R_dist in (iii).
+      That is, write (iii) as ( | c n - l | < ε ).
       By Rabs_def2 it holds that (c n - l < ε /\ -ε < c n - l).
       We conclude that (c n - l < ε).
     }
@@ -294,15 +294,15 @@ Proof.
     Case (M < L).
     Define ε := (L-M).
     It holds that (ε > 0).
-    Expand the definition of Un_cv in i.
-    That is, write i as (for all eps : ℝ, eps > 0 
+    Expand the definition of Un_cv in (i).
+    That is, write (i) as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - L ｜ < eps).
     It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε) (iii).
     Choose Nn such that a_close_to_L according to (iii).
     It holds that (R_dist (a Nn) L < ε) (iv).
-    Expand the definition of R_dist in iv.
-    That is, write iv as ( | a Nn - L | < ε ).
+    Expand the definition of R_dist in (iv).
+    That is, write (iv) as ( | a Nn - L | < ε ).
     By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
     It holds that (- ε < a Nn - L).
     It holds that (a Nn ≤ M).
@@ -322,8 +322,8 @@ Proof.
     Assume that (∀ n : ℕ, a n ≥ M).
     Define b := (opp_seq a).
     Assume that (Un_cv a L).
-    Expand the definition of opp_seq in b.
-    That is, write b as ( ℕ ⇨ ℝ ). (*TODO *)
+    Expand the definition of opp_seq in (b).
+    That is, write (b) as ( ℕ ⇨ ℝ ). (*TODO *)
     By CV_opp it holds that (Un_cv b (-L)).
     We claim that (-L ≤ -M).
     { By upp_bd_seq_is_upp_bd_lim it suffices to show that
@@ -352,12 +352,12 @@ Proof.
     It holds that (l < m).
     Define ε := ((m - l)/2).
     It holds that (ε > 0).
-    Expand the definition of Un_cv in ii.
-    That is, write ii as (for all eps : ℝ, eps > 0 
+    Expand the definition of Un_cv in (ii).
+    That is, write (ii) as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
       ⇨ ｜ b n - l ｜ < eps).
-    Expand the definition of Un_cv in i.
-    That is, write i as (for all eps : ℝ, eps > 0 
+    Expand the definition of Un_cv in (i).
+    That is, write (i) as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - m ｜ < eps ).
     It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε) (iii).
@@ -368,10 +368,10 @@ Proof.
     We claim that (b N3 < a N3).
     { It holds that (R_dist (b N3) l < ε)  (v).
       It holds that (R_dist (a N3) m < ε) (vi).
-      Expand the definition of R_dist in v.
-      That is, write v as ( | b N3 - l | < ε ).
-      Expand the definition of R_dist in vi.
-      That is, write vi as ( | a N3 - m | < ε ).
+      Expand the definition of R_dist in (v).
+      That is, write (v) as ( | b N3 - l | < ε ).
+      Expand the definition of R_dist in (vi).
+      That is, write (vi) as ( | a N3 - m | < ε ).
       By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
       By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).
       We conclude that (& b N3 &< l + ε &= l + (m - l)/2 

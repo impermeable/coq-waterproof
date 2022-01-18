@@ -31,6 +31,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
 Require Export Waterproof.tactics.goal_wrappers.
 
+(* Deprecated rephrasing of 'unfold' tactic
 (** * Unfold
     Rewrite a function by its definition,
     in the goal or in a hypothesis.
@@ -55,7 +56,7 @@ Ltac2 Notation "Unfold" targets(list1(seq(reference, occurrences), ","))
                         in_clause(opt(clause)) :=
     panic_if_goal_wrapped ();
     Std.unfold targets (Notations.default_on_concl in_clause).
-
+*)
 
 
 (** * Tactics that wrap the goal such that the user needs to specify the effect of unfolding in the proof script. *)
@@ -87,7 +88,7 @@ Ltac2 ap_hyp_unwrap (h : constr) := apply (fun G => ExpandDef.Hyp.unwrap G _ $h)
         - Panics if the identifier [h] in the suffix [... in h] is not an hypothesis.
  
 *)
-Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", ident)))
+Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", "(", ident, ")")))
       := panic_if_goal_wrapped ();
          match cl with
          | None => Std.unfold targets (Notations.default_on_concl None);
@@ -142,11 +143,11 @@ Ltac2 hyp_as (h : ident) (t:constr)
      | true => 
        match Constr.equal g h_hyp with
        | true => apply (fun G => ExpandDef.Hyp.wrap G $s $g)
-       | false => raise_expanddef_error("Wrong identifier specified.")
+       | false => raise_expanddef_error("Wrong hypothesis specified.")
        end
      | false => raise_expanddef_error("Wrong rewriting specified.")
      end
    | [|- ExpandDef.Goal.Wrapper _] => raise_expanddef_error("Specify the effect of expanding definition in *goal*.")
    | [|- _] => raise_expanddef_error("No need to specify the effect of expanding definition.")
    end.
-Ltac2 Notation "That" "is," "write" h(ident) "as" t(constr) := hyp_as h t.
+Ltac2 Notation "That" "is," "write" "(" h(ident) ")" "as" t(constr) := hyp_as h t.

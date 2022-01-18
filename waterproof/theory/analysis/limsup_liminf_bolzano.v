@@ -125,13 +125,13 @@ Proof.
     That is, write the goal as
       (a n ≤ (let (a0, _) := ub_to_lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat)).
-    Choose M such that M_is_sup according to (ii).
-    Expand the definition of is_lub in M_is_sup.
-    That is, write M_is_sup as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
+    Choose M such that iii according to (ii).
+    Expand the definition of is_lub in (iii).
+    That is, write (iii) as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
       ∧ (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b)).
-    Because M_is_sup both M_is_upp_bd and any_upp_bd_ge_M.
-    Expand the definition of is_upper_bound in M_is_upp_bd.
-    That is, write M_is_upp_bd as (for all x : ℝ, EUn (k) ↦ (a (Nn + k)%nat) x ⇨ x ≤ M).
+    Because iii both iv and any_upp_bd_ge_M.
+    Expand the definition of is_upper_bound in (iv).
+    That is, write (iv) as (for all x : ℝ, EUn (k) ↦ (a (Nn + k)%nat) x ⇨ x ≤ M).
     It holds that (Nn + (n-Nn) = n)%nat.
     It suffices to show that (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
     Expand the definition of EUn.
@@ -223,8 +223,8 @@ Proof.
     Assume that (has_ub a) (i).
     Take x : ℝ.
     Assume that (is_seq_acc_pt a x) (ii).
-    Expand the definition of is_seq_acc_pt in ii.
-    That is, write ii as (there exists n : ℕ ⇨ ℕ, is_index_seq n 
+    Expand the definition of is_seq_acc_pt in (ii).
+    That is, write (ii) as (there exists n : ℕ ⇨ ℕ, is_index_seq n 
       ∧ Un_cv (k) ↦ (a (n k)) x).
     Choose n such that n_good_ind_seq according to (ii).
     Because n_good_ind_seq both n_ind_seq and ank_cv_to_x.
@@ -279,10 +279,10 @@ Proof.
     - We need to show that (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b 
         ⇨ proj1_sig (lim_sup_bdd a (i) (ii)) ≤ b).
       Take b : ℝ; such that (is_upper_bound (is_seq_acc_pt a) b) (iii).
-      Expand the definition of is_upper_bound in iii.
-      That is, write iii as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
-      Expand the definition of is_seq_acc_pt in iii.
-      That is, write iii as (for all x : ℝ, 
+      Expand the definition of is_upper_bound in (iii).
+      That is, write (iii) as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
+      Expand the definition of is_seq_acc_pt in (iii).
+      That is, write (iii) as (for all x : ℝ, 
         (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) ⇨ x ≤ b).
       It suffices to show that (there exists n : ℕ ⇨ ℕ, is_index_seq n
         ∧ Un_cv (k) ↦ (a (n k)) (proj1_sig (lim_sup_bdd a (i) (ii)))).

@@ -32,20 +32,20 @@ Proof.
     Expand the definition of is_upper_bound.
     That is, write the goal as (there exists m : ℝ,
       for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ m).
-    Choose M such that a_bdd_by_M according to (i).
+    Choose M such that ii according to (i).
     Choose m := M.
     Take x : ℝ.
-    Assume that (is_seq_acc_pt a x) (ii).
+    Assume that (is_seq_acc_pt a x) (iii).
     Expand the definition of is_seq_acc_pt.
     That is, write the goal as (x ≤ m).
-    Choose n such that n_good_ind_seq according to (ii).
+    Choose n such that n_good_ind_seq according to (iii).
     Because n_good_ind_seq both n_ind_seq and subseq_conv_to_x.
     We need to show that (x ≤ M).
     By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
-    Expand the definition of is_upper_bound in a_bdd_by_M.
-    That is, write a_bdd_by_M as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
-    Expand the definition of EUn in a_bdd_by_M.
-    That is, write a_bdd_by_M as (for all x0 : ℝ, 
+    Expand the definition of is_upper_bound in (ii).
+    That is, write (ii) as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
+    Expand the definition of EUn in (ii).
+    That is, write (ii) as (for all x0 : ℝ, 
       (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
     We claim that (for all k : ℕ, (a k) ≤ M) (i).
     { Take k : ℕ.

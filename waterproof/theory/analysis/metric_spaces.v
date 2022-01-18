@@ -57,8 +57,8 @@ Either (x = y) or (x ≠ y).
   By Req_true we conclude that (Reqb x y = true).
 
 + Case (x ≠ y).
-  Expand the definition of d_discrete_R in i.
-  That is, write i as ( (if Reqb x y then 0 else 1) = 0).
+  Expand the definition of d_discrete_R in (i).
+  That is, write (i) as ( (if Reqb x y then 0 else 1) = 0).
   rewrite (Req_false x y n) in i.
   It holds that (1 ≠ 0).
   Contradiction.
@@ -68,8 +68,8 @@ Lemma d'_eq_1 : forall x y : ℝ, d_discrete_R x y = 1 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ. 
 Assume (d_discrete_R x y = 1) (i).
-Expand the definition of d_discrete_R in i.
-That is, write i as ( (if Reqb x y then 0 else 1) = 1
+Expand the definition of d_discrete_R in (i).
+That is, write (i) as ( (if Reqb x y then 0 else 1) = 1
 ).
 Either (x = y) or (x ≠ y).
 + Case (x = y).

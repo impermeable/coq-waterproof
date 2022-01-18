@@ -184,8 +184,8 @@ Proof.
     Expand the definition of is_increasing.
     That is, write the goal as (for all k : ℕ, (n k - k ≤ n (S k) - S k)%nat).
     Take k : ℕ.
-    Expand the definition of is_index_seq in i.
-    That is, write i as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
+    Expand the definition of is_index_seq in (i).
+    That is, write (i) as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
     It holds that (n k < n (S k))%nat.
     We conclude that (n k - k ≤ n (S k) - S k)%nat.
 Qed.
@@ -198,8 +198,8 @@ Proof.
     Take n : (ℕ → ℕ); such that (is_index_seq n) (i).
     induction k as [|k IH].
     - We conclude that (n 0 >= 0)%nat.
-    - Expand the definition of is_index_seq in i.
-      That is, write i as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
+    - Expand the definition of is_index_seq in (i).
+      That is, write (i) as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
       It holds that (n k < n (S k))%nat.
       We conclude that (n (S k) ≥ S k)%nat.
 Qed.
