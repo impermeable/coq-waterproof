@@ -38,8 +38,8 @@ Proof.
     Assume that (is_seq_acc_pt a x) (iii).
     Expand the definition of is_seq_acc_pt.
     That is, write the goal as (x ≤ m).
-    Choose n such that n_good_ind_seq according to (iii).
-    Because n_good_ind_seq both n_ind_seq and subseq_conv_to_x.
+    Choose n such that iv according to (iii).
+    Because (iv) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x).
     We need to show that (x ≤ M).
     By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
     Expand the definition of is_upper_bound in (ii).

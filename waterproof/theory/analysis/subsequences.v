@@ -135,7 +135,7 @@ Proof.
       Take m : ℕ.
       Take M : ℕ.
       By g_choice_fun it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (ii).
-      Because ii both g_large and g_sat.
+      Because (ii) both (M ≤ g m M)%nat and (P m (a (g m M))).
       We conclude that (P m (a (g m M))).
 Qed.
 

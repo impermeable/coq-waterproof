@@ -30,38 +30,79 @@ Load because.
 (** Test 0: This should work *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
-    intro H.
-    Because H both n_eq_n and n_plus_1_eq_n_plus_1.
+    intro i.
+    Because (i) both (n = n) and (n + 1 = n + 1).
 Abort.
 
-
-(** Test 1: This should ~not~ work *)
+(** Test 1: This should work, test first prop labeled. *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
-    intro H.
-    Fail Because H both n_eq_n : nat and n_plus_1_eq_n_plus_1 : nat.
+    intro i.
+    Because (i) both (n = n) (ii) and (n + 1 = n + 1).
 Abort.
 
-(** Test 2: Tests the 'Because ... either ... or ...' tactic without specifying types of the 
+(** Test 2: This should work, test second prop labeled. *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) both (n = n) and (n + 1 = n + 1) (ii).
+Abort.
+
+(** Test 3: This should work, test both props labeled. *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) both (n = n) (ii) and (n + 1 = n + 1) (iii).
+Abort.
+
+
+(** Test 4: This should ~not~ work *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) both nat and nat.
+Abort.
+
+(** Test 5: Tests the 'Because ... either ... or ...' tactic without specifying labels of the 
               alternative hypotheses. *)
 Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
-    intro H.
-    Because H either n_eq_n or n_plus_1_eq_n_plus_1.
+    intro i.
+    Because (i) either (n = n) or (n + 1 = n + 1).
     - Case (n = n).
       admit.
     - Case (n+1 = n+1).
 Abort.
 
-(** Test 2: Tests the 'Because ... either ... or ...' tactic with types of the 
+(** Test 6: Tests the 'Because ... either ... or ...' tactic with labels for the 
               alternative hypotheses. *)
 Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
-    intro H.
-    Fail Because H either Hn : (n = 0) or HSn : (n+1 = n+1).
-    Fail Because H either Hn : (n = n) or HSn : (n+1 = 0).
-    Because H either Hn : (n = n) or HSn : (n+1 = n+1).
+    intro i.
+    Fail Because (i) either (n = 0) (ii) or (n+1 = n+1) (iii).
+    Fail Because (i) either (n = n) (ii) or (n+1 = 0) (iii).
+    Because (i) either (n = n) (ii) or (n+1 = n+1) (iii).
     - Case (n = n).
       admit.
     - Case (n+1 = n+1).
+Abort.
+
+(** Test 7 : Tests if the 'Because ... both ... and ...' tactic does not 
+             delete the origininal hypothesis *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) both (n = n) (i) and (n + 1 = n + 1).
+    Because (i) both (n = n) and (n + 1 = n + 1).
+    Check i.
+Abort.
+
+(** Test 8 : Tests if the 'Because ... either ... or ...' tactic does not 
+             delete the origininal hypothesis *)
+Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) either (n = n) (i) or (n + 1 = n + 1).
+    Because (i) either (n = n) or (n + 1 = n + 1).
+    Check i.
 Abort.

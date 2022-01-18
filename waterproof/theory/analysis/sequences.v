@@ -288,26 +288,26 @@ Proof.
     Assume (∀ n : ℕ, (a n) ≤ M).
     Assume (Un_cv a L) (i).
     By Rle_or_lt it holds that (L ≤ M ∨ M < L) (ii).
-    Because ii either L_le_M or M_lt_L.
-    Case (L ≤ M).
-    It follows that (L ≤ M).
-    Case (M < L).
-    Define ε := (L-M).
-    It holds that (ε > 0).
-    Expand the definition of Un_cv in (i).
-    That is, write (i) as (for all eps : ℝ, eps > 0 
-      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
-      ⇨ ｜ a n - L ｜ < eps).
-    It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε) (iii).
-    Choose Nn such that a_close_to_L according to (iii).
-    It holds that (R_dist (a Nn) L < ε) (iv).
-    Expand the definition of R_dist in (iv).
-    That is, write (iv) as ( | a Nn - L | < ε ).
-    By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
-    It holds that (- ε < a Nn - L).
-    It holds that (a Nn ≤ M).
-    It holds that (- (L - M) < a Nn - L).
-    It follows that (L ≤ M).
+    Because (ii) either (L ≤ M) or (M < L).
+    - Case (L ≤ M).
+      It follows that (L ≤ M).
+    - Case (M < L).
+      Define ε := (L-M).
+      It holds that (ε > 0).
+      Expand the definition of Un_cv in (i).
+      That is, write (i) as (for all eps : ℝ, eps > 0 
+        ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+        ⇨ ｜ a n - L ｜ < eps).
+      It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε) (iii).
+      Choose Nn such that a_close_to_L according to (iii).
+      It holds that (R_dist (a Nn) L < ε) (iv).
+      Expand the definition of R_dist in (iv).
+      That is, write (iv) as ( | a Nn - L | < ε ).
+      By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
+      It holds that (- ε < a Nn - L).
+      It holds that (a Nn ≤ M).
+      It holds that (- (L - M) < a Nn - L).
+      It follows that (L ≤ M).
 Qed.
 
 

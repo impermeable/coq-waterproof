@@ -209,22 +209,23 @@ Assume (x ⟶ p).
 
 We need to show that (y ⟶ p).
 It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
-Choose m such that m_is_index_and_y_eq_x_m according to (i).
-Because m_is_index_and_y_eq_x_m both m_is_index and y_eq_x_m.
+Choose m such that ii according to (i).
+Because (ii) both (is_index_sequence m) and 
+  (for all k : nat, y k = x (m k)).
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε) (ii).
-Choose K such that k_le_K_x_k_to_p according to (ii).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε) (iii).
+Choose K such that k_le_K_x_k_to_p according to (iii).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (m k ≥ m K)%nat.
 By index_sequence_property it holds that (m K ≥ K)%nat.
 It holds that (m k ≥ K)%nat.
 It holds that (dist (x (m k)) p < ε).
-It holds that (y k = x (m k)) (iii).
+It holds that (y k = x (m k)) (iv).
 (* It holds that H5 : (dist (y k) p = dist (x (m k)) p). Why does this not work? *)
-rewrite (iii).
+rewrite (iv).
 We conclude that ( dist (x (m k)) p < ε).
 Qed.

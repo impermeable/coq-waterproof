@@ -213,9 +213,10 @@ Proof.
       Expand the definition of is_lub in (i).
       That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
-      Because i both previously_proven and H1.
+      Because (i) both (is_upper_bound (set_opp A) M)
+        and (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b) (ii).
       By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
-      By H1 it holds that (M ≤ -l).
+      By (ii) it holds that (M ≤ -l).
       We conclude that (l <= -M).
 Qed.
 
@@ -262,8 +263,9 @@ Lemma sup_is_upp_bd :
 Proof.
     Take A : (ℝ → Prop) and M : ℝ. 
     Assume (is_sup A M).
-    It holds that (is_upper_bound A M ∧ (∀ b: ℝ, is_upper_bound A b ⇒ M ≤ b)) (i).
-    Because i both part1 and part2.
+    It holds that (is_upper_bound A M ∧ (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L)) (i).
+    Because (i) both (is_upper_bound A M) and
+      (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L).
     It follows that (is_upper_bound A M).
 Qed.
 
@@ -275,8 +277,10 @@ Lemma any_upp_bd_ge_sup :
       is_sup A M ⇒ (is_upper_bound A L ⇒ M ≤ L).
 Proof.
     Take A : (ℝ → Prop) and M, l : ℝ.
-    Assume (is_sup A M) (i) and (is_upper_bound A l).
-    Because i both M_is_upp_bd and any_upp_bd_le_M.
+    Assume (is_sup A M) and (is_upper_bound A l).
+    It holds that (is_upper_bound A M ∧ (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L)) (i).
+    Because (i) both (is_upper_bound A M) and
+      (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L).
     (** We need to show that $M \leq L$.*)
     We conclude that (M <= l).
 Qed.
@@ -291,10 +295,9 @@ Lemma inf_is_low_bd :
       is_inf A m ⇒ is_lower_bound A m.
 Proof.
     Take A : (ℝ → Prop) and m : R.
-    Assume (is_inf A m) (i).
-    Because i both m_is_low_bd and any_low_bd_ge_m.
+    Assume (is_inf A m).
+    It holds that (is_lower_bound A m ∧ (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m)) (i).
     We conclude that (is_lower_bound A m).
-    (** to show that $m$ is a lower bound of $A$*)
 Qed.
 
 
@@ -305,9 +308,10 @@ Lemma any_low_bd_ge_inf :
       is_inf A m ⇒ is_lower_bound A l ⇒ l ≤ m.
 Proof.
     Take A : (R → Prop) and m, l : R.
-    Assume (is_inf A m) (i) and (is_lower_bound A l).
-    Because i both m_low_bd and any_low_bd_le_m.
-    By any_low_bd_le_m we conclude that (l ≤ m).
+    Assume (is_inf A m) and (is_lower_bound A l).
+    It holds that (is_lower_bound A m ∧ (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m)) (i).
+    Because (i) both (is_lower_bound A m) and (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m) (ii).
+    By (ii) we conclude that (l ≤ m).
 Qed.
 
 (** ### $\varepsilon$-characterizations*)
@@ -363,7 +367,7 @@ Proof.
     We argue by contradiction.
     Assume ( ¬ (A M ∨ (for all a : ℝ, A a ⇨ a < M))).
     It holds that ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M)) (i).
-    Because i both H2 and H3.
+    Because (i) both (¬ (A M)) and  (¬(∀ a : ℝ, A a ⇒ a < M)).
     (** We only show the proposition on the *)
     (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
     We claim that (∀ a : ℝ, A a ⇒ a < M).
@@ -400,8 +404,8 @@ Proof.
     Choose l such that l_is_sup according to (ii).
     Take ε : ℝ; such that (ε > 0).
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iii).
-    Choose y such that H2 according to (iii).
-    Because H2 both iv and y_gt_l_min_ε.
+    Choose y such that ii according to (iii).
+    Because (ii) both (EUn a y) (iv) and (y > l - ε).
     Expand the definition of EUn in (iv).
     That is, write (iv) as (there exists n : ℕ , y = a n).
     Choose n such that an_is_y according to (iv).
