@@ -123,17 +123,17 @@ Proof.
     Check family.
     Locate family.
     Check ℕ.
-    Assume (∀ k : ℕ, (g k) ≤ (g (k + 1)))%nat.
+    Assume that (∀ k : ℕ, (g k) ≤ (g (k + 1)))%nat.
     Take k : ℕ.
     We use induction on l.
     - We first show the base case, namely ((k ≤ 0)%nat ⇨ (g k ≤ g 0)%nat).
-      Assume (k ≤ 0)%nat.
+      Assume that (k ≤ 0)%nat.
       It holds that (k = 0)%nat.
       It suffices to show that (g k = g 0)%nat.
       We conclude that (g k = g 0)%nat.
     - We now show the induction step.
-      Assume ((k ≤ l) ⇨ (g k ≤ g l))%nat (IH).
-      Assume (k ≤ l + 1)%nat.
+      Assume that ((k ≤ l) ⇨ (g k ≤ g l))%nat (IH).
+      Assume that (k ≤ l + 1)%nat.
       destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
       + (** We first consider the case that $k < l + 1$.*)
         It holds that (k ≤ l)%nat.
@@ -153,7 +153,7 @@ Lemma index_sequence_property2 (n : ℕ → ℕ) :
             (k1 ≥ k2)%nat ⇒ 
                 (n k1 ≥ n k2)%nat.
 Proof.
-    Assume (is_index_sequence n).
+    Assume that (is_index_sequence n).
     Take k1, k2 : ℕ; such that (k1 ≥ k2)%nat.
     We need to show that (n k1 ≥ n k2)%nat.
     By incr_loc_to_glob it suffices to show that (is_increasing n).
@@ -181,9 +181,9 @@ Global Hint Resolve double_is_even : subsequences.
 Lemma subsequence_of_convergent_sequence : ∀ a : (ℕ → X), ∀ p : X, a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
 Proof.
 Take a : (ℕ → X). Take p : X.
-Assume (a ⟶ p).
+Assume that (a ⟶ p).
 Take n : (ℕ → ℕ).
-Assume (is_index_sequence n).
+Assume that (is_index_sequence n).
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (a (n k)) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
@@ -204,9 +204,9 @@ Lemma equivalent_subsequence_convergence :
       y ⟶ p.
 Proof.
 Take x, y : (ℕ → X).
-Assume (is_subsequence y x).
+Assume that (is_subsequence y x).
 Take p : X.
-Assume (x ⟶ p).
+Assume that (x ⟶ p).
 
 We need to show that (y ⟶ p).
 It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).

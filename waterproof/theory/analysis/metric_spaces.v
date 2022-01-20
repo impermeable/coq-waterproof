@@ -51,7 +51,7 @@ Lemma d'_eq_0 : forall x y : ℝ,
   d_discrete_R x y = 0 -> (Reqb x y) = true.
 Proof.
 Take x, y : ℝ. 
-Assume (d_discrete_R x y = 0) (i).
+Assume that (d_discrete_R x y = 0) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   By Req_true we conclude that (Reqb x y = true).
@@ -67,7 +67,7 @@ Qed.
 Lemma d'_eq_1 : forall x y : ℝ, d_discrete_R x y = 1 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ. 
-Assume (d_discrete_R x y = 1) (i).
+Assume that (d_discrete_R x y = 1) (i).
 Expand the definition of d_discrete_R in (i).
 That is, write (i) as ( (if Reqb x y then 0 else 1) = 1
 ).

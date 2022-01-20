@@ -279,7 +279,7 @@ Proof.
       Expand the definition of is_upper_bound.
       That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (lim_sup_bdd a (i) (ii))).
       Take x : ℝ.
-      Assume (is_seq_acc_pt a x).
+      Assume that (is_seq_acc_pt a x).
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
       Choose L according to (iii), so for L  : R it holds that (Un_cv (sequence_ub a i) L).

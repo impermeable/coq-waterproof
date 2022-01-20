@@ -95,7 +95,7 @@ Proof.
     We show both directions.
     - We need to show that (Un_cv (Nn) ↦ (sigma a l Nn) L
         ⇨ Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
-      Assume (Un_cv (Nn) ↦ (sigma a l Nn) L).
+      Assume that (Un_cv (Nn) ↦ (sigma a l Nn) L).
       (* TODO: fix
          By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
       We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).

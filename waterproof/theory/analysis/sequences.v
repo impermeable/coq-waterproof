@@ -128,7 +128,7 @@ Lemma conv_evt_eq_seq :
   ∀ (a b : ℕ → ℝ) (l : ℝ), (evt_eq_sequences a b) ⇒ (a ⟶ l) ⇒ (b ⟶ l).
 Proof.
     Take a, b : (ℕ → ℝ) and l : ℝ.
-    Assume (evt_eq_sequences a b) (i) and (a ⟶ l).
+    Assume that (evt_eq_sequences a b) (i) and (a ⟶ l).
     We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
       for all n : ℕ, (n ≥ N)%nat ⇨ |b n - l| < ε ).
     Take ε : ℝ; such that (ε > 0).
@@ -154,7 +154,7 @@ Lemma eq_seq_conv_to_same_lim :
     (∀ n : ℕ, a n = b n) ⇒ a ⟶ l ⇒ b ⟶ l.
 Proof.
     Take a, b : (ℕ → ℝ) and l : R.
-    Assume (for all n : ℕ, a n = b n).
+    Assume that (for all n : ℕ, a n = b n).
     By conv_evt_eq_seq it suffices to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
     Choose k := O.
     Take n : ℕ; such that (n ≥ k)%nat.
@@ -243,8 +243,8 @@ Theorem squeeze_theorem :
       a ⟶ l ⇒ c ⟶ l ⇒ b ⟶ l.
 Proof.
     Take a, b, c : (ℕ ⇨ ℝ) and l : ℝ.
-    Assume (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and (a ⟶ l).
-    Assume (c ⟶ l).
+    Assume that (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and (a ⟶ l).
+    Assume that (c ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |b n - l| < ε).
     Take ε : ℝ; such that (ε > 0).
     It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε) (i).
@@ -289,8 +289,8 @@ Proof.
     Take a : (ℕ → ℝ).
     Take L : ℝ.
     Take M : ℝ.
-    Assume (∀ n : ℕ, (a n) ≤ M).
-    Assume (Un_cv a L) (i).
+    Assume that (∀ n : ℕ, (a n) ≤ M).
+    Assume that (Un_cv a L) (i).
     By Rle_or_lt it holds that (L ≤ M ∨ M < L) (ii).
     Because (ii) either (L ≤ M) or (M < L).
     - Case (L ≤ M).
@@ -350,10 +350,10 @@ Proof.
     Take b : (ℕ → ℝ).
     Take m : ℝ.
     Take l : ℝ.
-    Assume (Un_cv a m) (i) and (Un_cv b l) (ii).
-    Assume (∀ n : ℕ, a n ≤ b n).
+    Assume that (Un_cv a m) (i) and (Un_cv b l) (ii).
+    Assume that (∀ n : ℕ, a n ≤ b n).
     We argue by contradiction.
-    Assume (~ m <= l).
+    Assume that (~ m <= l).
     It holds that (l < m).
     Define ε := ((m - l)/2).
     It holds that (ε > 0).
@@ -406,7 +406,7 @@ Proof.
 Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
-  Assume (is_bounded a) (i).
+  Assume that (is_bounded a) (i).
   Choose q according to (i), so for q : R it holds that
     (there exists M : R, M ≥ 0 ∧ (for all n : ℕ, | a n - q | ≤ M)) (ii).
   Choose M1 according to (ii), so for M1 : R it holds that
@@ -434,7 +434,7 @@ We show both directions.
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
-  Assume (there exists M : ℝ, M ≥ 0 ∧ ∀ n : ℕ, |a n| ≤ M) (i).
+  Assume that (there exists M : ℝ, M ≥ 0 ∧ ∀ n : ℕ, |a n| ≤ M) (i).
   (* Expand the definition of is_bounded. *)
   We need to show that (
 there exists q M : ℝ ,

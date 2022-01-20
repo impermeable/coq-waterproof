@@ -39,7 +39,7 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) /\ (B /\ C) -> (A /\ C).
     intros A B C.
-    Assume ((A /\ B) /\ (B /\ C)) (i).
+    Assume that ((A /\ B) /\ (B /\ C)) (i).
     assert_hyp_has_type @i constr:((A /\ B) /\ (B /\ C)).
 Abort.
 
@@ -47,14 +47,14 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (B /\ C) -> (A /\ C).
     intros A B C.
-    Assume (A /\ B) and (B /\ C).
+    Assume that (A /\ B) and (B /\ C).
 Abort.
 
 (** * Test 4: two hypotheses, assume separately, but with a single tactic, second unnamed.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (B /\ C) -> (A /\ C).
     intros A B C.
-    Assume (A /\ B) (i) and (B /\ C).
+    Assume that (A /\ B) (i) and (B /\ C).
     assert_hyp_has_type @i constr:(A /\ B).
 Abort.
 
@@ -62,7 +62,7 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (B /\ C) -> (A /\ C).
     intros A B C.
-    Assume (A /\ B) and (B /\ C) (i).
+    Assume that (A /\ B) and (B /\ C) (i).
     assert_hyp_has_type @i constr:(B /\ C).
 Abort.
 
@@ -70,7 +70,7 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (B /\ C) -> (A /\ C).
     intros A B C.
-    Assume (A /\ B) (i) and (B /\ C) (ii).
+    Assume that (A /\ B) (i) and (B /\ C) (ii).
     assert_hyp_has_type @i  constr:(A /\ B).
     assert_hyp_has_type @ii constr:(B /\ C).
 Abort.
@@ -79,8 +79,8 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (B /\ C) -> (A /\ C).
     intros A B C.
-    Assume (A /\ B).
-    Assume (B /\ C) (i).
+    Assume that (A /\ B).
+    Assume that (B /\ C) (i).
     assert_hyp_has_type @i constr:(B /\ C).
 Abort.
 
@@ -88,43 +88,43 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (A /\ C).
     intros A B C.
-    Fail Assume (A /\ B) and (B /\ C).
+    Fail Assume that (A /\ B) and (B /\ C).
 Abort.
 
 (** * Test 9: assume wrong hypothesis.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (A /\ C).
     intros A B C.
-    Fail Assume (A /\ C).
+    Fail Assume that (A /\ C).
 Abort.
 
 (** * Test 10: assume when there is nothing to assume.)
 *)
 Goal exists n, n > 0.
-  Fail Assume (0 = 0) (i).
+  Fail Assume that (0 = 0) (i).
 Abort.
 
 (** * Test 11: assume a negated expression.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
-  Assume (not (not (not P))) (i).
-  Assume P.
+  Assume that (not (not (not P))) (i).
+  Assume that P.
 Abort.
 
 (** * Test 12: assume the wrong negated expression.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
-  Assume (not (not (not P))) (i).
-  Fail Assume (not P).
+  Assume that (not (not (not P))) (i).
+  Fail Assume that (not P).
 Abort.
 
 (** * Test 13: assume something after negated expression.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
-  Assume (not (not (not P))).
+  Assume that (not (not (not P))).
   Fail Assume that P and (0 = 0).
 Abort.
 
@@ -132,19 +132,19 @@ Abort.
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
-  Assume (not (not (not P))) and P.
+  Assume that (not (not (not P))) and P.
 Abort.
 
 (** * Test 15: should reject trying to construct a map.
 *)
 Goal nat -> nat.
-  Fail Assume nat (n).
+  Fail Assume that nat (n).
 Abort.
 
 (** * Test 16: should reject trying to construct a map.
 *)
 Goal (0 = 0) -> nat -> nat.
-  Fail Assume (0 = 0) and nat.
-  Assume (0 = 0).
-  Fail Assume nat.
+  Fail Assume that (0 = 0) and nat.
+  Assume that (0 = 0).
+  Fail Assume that nat.
 Abort.

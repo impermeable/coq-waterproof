@@ -47,7 +47,7 @@ Lemma existence_next_el_to_fun :
 Proof.
     Take a : (ℕ → ℝ). 
     Take P : (ℕ → ℝ → Prop).
-    Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
+    Assume that (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))).
     {
         Take m : ℕ.
@@ -79,7 +79,7 @@ Lemma created_seq_is_index_seq :
       is_index_seq (create_seq g).
 Proof.
     Take g : (ℕ → ℕ → ℕ).
-    Assume (∀ (m N : ℕ), (g m N ≥ N)%nat) (i).
+    Assume that (∀ (m N : ℕ), (g m N ≥ N)%nat) (i).
     Expand the definition of is_index_seq.
     That is, write the goal as (for all k : ℕ, (create_seq g k < create_seq g (S k))%nat).
     Take k : ℕ.
@@ -98,7 +98,7 @@ Proof.
     Take a : (ℕ → ℝ).
     Take g : (ℕ → ℕ → ℕ).
     Take P : (ℕ → ℝ → Prop).
-    Assume (∀ m N : ℕ, P m (a (g m N))) (i).
+    Assume that (∀ m N : ℕ, P m (a (g m N))) (i).
     induction k. (*TODO: if we use 'We use induction on k.'-tacftic, then we cannot directly match on k + 1 *)
     - We need to show that (P 0%nat (a (g 0%nat 0%nat))).
       By (i) we conclude that (P 0%nat (a (g 0%nat 0%nat))).
@@ -115,7 +115,7 @@ Lemma exists_good_subseq :
 Proof.
     Take a : (ℕ → ℝ).
     Take P : (ℕ → ℝ → Prop).
-    Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
+    Assume that (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     By existence_next_el_to_fun it holds that
       (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) (i).
     Choose g according to (i), so for g : ℕ → ℕ → ℕ it holds that
@@ -152,17 +152,17 @@ Proof.
     Expand the definition of is_increasing.
     That is, write the goal as ((for all k : ℕ, (g k ≤ g (S k))%nat) 
       ⇨ for all k l : ℕ, (k ≤ l)%nat ⇨ (g k ≤ g l)%nat).
-    Assume (∀ k : ℕ, (g k ≤ g (S k))%nat).
+    Assume that (∀ k : ℕ, (g k ≤ g (S k))%nat).
     Take k : ℕ. 
     induction l as [|l IH_l].
 
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
-    Assume (k ≤ 0)%nat.
+    Assume that (k ≤ 0)%nat.
     It holds that (k = 0)%nat.
     We conclude that (& g k &= g 0 &<= g 0)%nat.
 
     (** Next, we need to show that if $k \leq S (l)$ then $f(k) \leq f(S (l))$.*)
-    Assume (k ≤ S l)%nat.
+    Assume that (k ≤ S l)%nat.
     destruct (lt_eq_lt_dec k (S l)) as [temp | k_gt_Sl].
     destruct temp as [k_lt_Sl | k_eq_Sl].
     (** We first consider the case that $k < S(l)$.*)
