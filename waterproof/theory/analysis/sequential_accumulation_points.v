@@ -37,8 +37,9 @@ Proof.
     Choose m := M.
     Take x : ℝ.
     Assume that (is_seq_acc_pt a x) (iii).
-    Expand the definition of is_seq_acc_pt.
-    That is, write the goal as (x ≤ m).
+    Expand the definition of is_seq_acc_pt in (iii).
+    That is, write (iii) as (there exists n : ℕ ⇨ ℕ,
+      is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x).
     Choose n according to (iii), so for n : ℕ → ℕ it holds that
       (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iv).
     Because (iv) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
