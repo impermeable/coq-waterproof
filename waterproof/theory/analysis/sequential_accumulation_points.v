@@ -45,18 +45,18 @@ Proof.
     Because (iv) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
     We need to show that (x ≤ M).
     By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
-    Expand the definition of is_upper_bound in (ii).
-    That is, write (ii) as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
-    Expand the definition of EUn in (ii).
-    That is, write (ii) as (for all x0 : ℝ, 
-      (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
     We claim that (for all k : ℕ, (a k) ≤ M) (v).
-    { Take k : ℕ.
+    { Expand the definition of is_upper_bound in (ii).
+      That is, write (ii) as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
+      Expand the definition of EUn in (ii).
+      That is, write (ii) as (for all x0 : ℝ,
+        (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
+      Take k : ℕ.
       It suffices to show that (there exists k0 : nat, a k = a k0).
       Choose k0 := k.
       We conclude that (a k = a k0).
     }
     Take n0 : ℕ.
-    By (i) it holds that (a(n n0) ≤ M).
+    By (v) it holds that (a(n n0) ≤ M).
     It follows that (a(n n0) ≤ M).
 Qed.
