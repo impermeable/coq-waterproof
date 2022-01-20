@@ -38,28 +38,65 @@ Require Import Max.
 Require Import Waterproof.test_auxiliary.
 Load choose_such_that.
 
-
-(** Test 0: introducing a variable in an exists definition *)
-Goal forall n : nat, n = n.
+(** Test 0: with labeling *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
 Proof.
-    assert (forall n : nat, exists m : nat, forall t : nat, (n = m)) as X.
-    {
-        intro n.
-        pose (m := n); exists m.
-        intro t.
-        reflexivity.
-    }
-    intro n.
-    pose (X n) as i.
-    Choose m such that (ii) according to (i).
+  intro i.
+  Choose n according to (i), so for n : nat it holds that (n + 1 = n)%nat (ii).
+Abort.
+
+(** Test 1: without labeling *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Choose n according to (i), so for n : nat it holds that (n + 1 = n)%nat.
+Abort.
+
+(** Test 2: wrong type variable *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Fail Choose n3 according to (i), so for n3 : bool it holds that (n3 + 1 = n3)%nat.
+Abort.
+
+(** Test 3: wrong property *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Fail Choose n4 according to (i), so for n4 : nat it holds that (n4 + 1 = n4 + 1)%nat.
+Abort.
+
+(** Test 4: whether statement of existence hypothesis is replecated *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Choose n according to (i), so for n : nat it holds that (n + 1 = n)%nat.
+  Check (i).
+Abort.
+
+(** Test 5: tactic also works for destructing sig types *)
+Goal {n : nat | (n + 1 = n)%nat} -> False.
+Proof.
+  intro i.
+  Choose n according to (i), so for n : nat it holds that (n + 1 = n)%nat.
+Abort.
+
+(** Test 6: whether original hypothesis is destructed, so if the goal depends on the 
+      specific term of the sigma type, the goal changes as well.
+      As one would expect when using 'destruct .. as [.. ..]'. *)
+Goal forall p : {n : nat | (n + 1 = n)%nat}, (proj1_sig p = 0)%nat.
+Proof.
+  intro p.
+  Choose n according to (p), so for n : nat it holds that (n + 1 = n)%nat (ii).
+  simpl.
+  assert_goal_is constr:((n = 0)%nat).
 Abort.
 
 
-(** Test 1: more advanced use of the [Choose...such that...] in the context of limits of sequences *)
+
+
+(** Test 7: more advanced use of the [Choose...such that...] in the context of limits of sequences *)
 Local Open Scope R_scope.
-
-
-
 
 Definition evt_eq_sequences (a b : nat -> R) := (exists k : nat, forall n : nat, (n >= k)%nat -> a n = b n).
 
@@ -69,7 +106,8 @@ Proof.
     intro.
     intro.
     pose (H0 eps H1) as i.
-    Fail Choose n1 such that (i) according to (i).
-    Choose n1 such that (ii) according to (i).
-    Check i. (* To test whether the original proposition is not deleted. *)
+    Fail Choose N1 according to (i), so for N1 : nat it holds that
+           (forall n : nat, (n >= N1)%nat -> R_dist (a n) l < eps) (i).
+    Choose N1 according to (i), so for N1 : nat it holds that
+           (forall n : nat, (n >= N1)%nat -> R_dist (a n) l < eps).
 Abort.

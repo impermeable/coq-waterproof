@@ -108,7 +108,7 @@ Proof.
       By lt_0_IZR it holds that (0 < up x)%Z.
       It holds that (0 <= up x)%Z.
       By IZN it holds that (∃ k : ℕ, up x = Z.of_nat k) (i).
-      Choose k such that (ii) according to (i).
+      Choose k according to (i), so for k : nat it holds that (up x = Z.of_nat k) (ii).
       Choose n := k.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that (INR k = IZR (Z.of_nat k)).
@@ -134,8 +134,10 @@ Proof.
     Take ε : ℝ; such that (ε > 0).
     It holds that
       (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε) (ii).
-    Choose N1 such that (H1) according to (ii).
-    Choose K such that (H2) according to (i).
+    Choose N1 according to (ii), so for N1 : nat it holds that 
+      (for all n : ℕ, (n ≥ N1)%nat ⇨ |a n - l| < ε).
+    Choose K according to (i), so for K : nat it holds that 
+      (for all n : ℕ, (n ≥ K)%nat ⇨ a n = b n).
     Choose M := (Nat.max N1 K).
     Take n : ℕ; such that (n ≥ M)%nat.
     It holds that (b n = a n).
@@ -201,7 +203,7 @@ Proof.
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
     Take ε : ℝ; such that (ε > 0).
     By archimed_mod it holds that (there exists n : ℕ, n > / ε) (i).
-    Choose n1 such that (H1) according to (i).
+    Choose n1 according to (i), so for n : nat it holds that (n > /ε).
     Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
     Expand the definition of R_dist.
@@ -247,8 +249,10 @@ Proof.
     Take ε : ℝ; such that (ε > 0).
     It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε) (i).
     It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε) (ii).
-    Choose Na such that (H1) according to (i).
-    Choose Nc such that (H2) according to (ii).
+    Choose Na according to (i), so for Na : nat it holds that 
+      (∀ n : ℕ, (n ≥ Na)%nat ⇒ |a n - l| < ε).
+    Choose Nc according to (ii), so for Nc : nat it holds that 
+      (∀ n : ℕ, (n ≥ Nc)%nat ⇒ |c n - l| < ε).
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that (n ≥ Nn)%nat.
     We claim that (-ε < a n - l).
@@ -299,7 +303,8 @@ Proof.
         ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
         ⇨ ｜ a n - L ｜ < eps).
       It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε) (iii).
-      Choose Nn such that (H1) according to (iii).
+      Choose Nn according to (iii), so for Nn : nat it holds that
+        (∀n : ℕ, (n ≥ Nn)%nat ⇒ R_dist (a n) L < ε).
       It holds that (R_dist (a Nn) L < ε) (iv).
       Expand the definition of R_dist in (iv).
       That is, write (iv) as ( | a Nn - L | < ε ).
@@ -362,8 +367,10 @@ Proof.
       ⇨ ｜ a n - m ｜ < eps ).
     It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε) (iii).
     It holds that (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε)  (iv).
-    Choose N1 such that (H1) according to (iii).
-    Choose N2 such that (H2) according to (iv).
+    Choose N1 according to (iii), so for N1 : nat it holds that
+      (∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
+    Choose N2 according to (iv), so for N2 : nat it holds that
+      (∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
     Define N3 := (Nat.max N1 N2).
     We claim that (b N3 < a N3).
     { It holds that (R_dist (b N3) l < ε)  (v).
@@ -400,8 +407,10 @@ Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
   Assume (is_bounded a) (i).
-  Choose q such that (ii) according to (i).
-  Choose M1 such that (iii) according to (ii).
+  Choose q according to (i), so for q : R it holds that
+    (there exists M : R, M ≥ 0 ∧ (for all n : ℕ, | a n - q | ≤ M)) (ii).
+  Choose M1 according to (ii), so for M1 : R it holds that
+    (M1 ≥ 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (iii).
   Because (iii) both (M1 ≥ 0) and
     (for all n : ℕ, | a n - q | ≤ M1).
   We need to show that (
@@ -433,7 +442,8 @@ M ≥ 0 ∧ (for all n : ℕ,
 | a n - q | ≤ M)
 ).
   Choose q := 0.
-  Choose M1 such that (ii) according to (i).
+  Choose M1 according to (i), so for M1 : R it holds that
+    (M1 ≥ 0 ∧ (for all n : ℕ, | a n | ≤ M1)) (ii).
   Because (ii) both (M1 ≥ 0) and
     (for all n : ℕ, | a n | ≤ M1).
   Choose M := M1.

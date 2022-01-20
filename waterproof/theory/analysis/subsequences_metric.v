@@ -188,7 +188,8 @@ It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k
 
 Take ε : ℝ; such that (ε > 0).
 It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (a k) p < ε) (i).
-Choose K such that (H1) according to (i).
+Choose K according to (i), so for K : nat it holds that
+  (∀ k : ℕ, (k ≥ K)%nat → dist (a k) p < ε).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (n k ≥ n K)%nat.
@@ -209,7 +210,8 @@ Assume (x ⟶ p).
 
 We need to show that (y ⟶ p).
 It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
-Choose m such that (ii) according to (i).
+Choose m according to (i), so for m : nat -> nat it holds that 
+  (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (ii).
 Because (ii) both (is_index_sequence m) and 
   (for all k : nat, y k = x (m k)).
 
@@ -217,7 +219,8 @@ It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k
 
 Take ε : ℝ; such that (ε > 0).
 It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε) (iii).
-Choose K such that (H1) according to (iii).
+Choose K according to (iii), so for K : nat it holds that 
+  (∀ k : ℕ, (k ≥ K)%nat → dist (x k) p < ε).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (m k ≥ m K)%nat.

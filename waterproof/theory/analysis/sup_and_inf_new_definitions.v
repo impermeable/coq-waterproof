@@ -165,7 +165,9 @@ Proof.
     We claim that (bound A).
     { Expand the definition of bound.
       That is, write the goal as (there exists m : ℝ, Raxioms.is_upper_bound A m).
-      Choose M such that (H1) according to (i).
+      Expand the definition of is_bounded_above in (i).
+      That is, write (i) as (there exists M : R, is_upper_bound A M).
+      Choose M according to (i), so for M : R it holds that (is_upper_bound A M).
       Choose m := M.
       We need to show that (∀ a : ℝ, A a ⇒ a ≤ M).
       Take x : R.
@@ -179,7 +181,7 @@ Proof.
       We conclude that (A a).
     }
     By completeness it holds that (sig (is_lub A)) (ii).
-    Choose M such that (H1) according to (ii).
+    Choose M according to (ii), so for M : R it holds that (is_lub A M).
     By equivalence_sup_lub it holds that
       (is_lub A M ⇔ is_sup A M) (iii).
     Because (iii) both (is_lub A M -> is_sup A M) and
@@ -344,7 +346,7 @@ Proof.
     That is, write the goal as (there exists M : ℝ, is_upper_bound (set_opp A) M).
     Expand the definition of is_bounded_below in (i).
     That is, write (i) as (there exists m : ℝ, is_lower_bound A m).
-    Choose m such that (H1) according to (i).
+    Choose m according to (i), so for m : R it holds that (is_lower_bound A m).
     
     Choose M := (-m).
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) (-m)).
@@ -412,9 +414,9 @@ Proof.
     It holds that ((set_opp A) (-z)) (iv).
     Define c := (mk_elem_R _ (-z) (iv)).
     By R_complete it holds that (there exists M : ℝ, is_sup B M) (v).
-    Choose L such that (H1) according to (v).
-    Choose (- L).
-    By sup_set_opp_is_inf_set we conclude that (is_inf A (-L)).
+    Choose M according to (v), so for M : R it holds that (is_sup B M).
+    Choose m := (- M).
+    By sup_set_opp_is_inf_set we conclude that (is_inf A m).
 Qed.
 
 (** ### A supremum is an upper bound
@@ -554,7 +556,7 @@ We argue by contradiction.
 Assume (¬ M ≤ K).
 It holds that (M > K).
 By (i) it holds that (∃ a : A, K < a) (iii).
-Choose a such that (H1) according to (iii).
+Choose a according to (iii), so for a : A it holds that (K < a).
 By (ii) it holds that (a ≤ K).
 It holds that (K < K).
 It holds that (¬ (K < K)).
@@ -578,7 +580,7 @@ We argue by contradiction.
 Assume (¬ K ≤ m).
 It holds that (K > m).
 By (i) it holds that (∃ a : A, K > a) (iii).
-Choose a such that (H1) according to (iii).
+Choose a according to (iii), so for a : A it holds that (K > a).
 By ii it holds that (K ≤ a).
 It holds that (K > K).
 It holds that (¬ (K > K)).
@@ -599,7 +601,7 @@ It holds that (M - L > 0).
 Define ε1 := (M - L).
 It holds that (ε1 > 0).
 By (i) it holds that (there exists a : A , M - ε1 < a) (ii).
-Choose a0 such that (H1) according to (ii).
+Choose a0 according to (ii), so for a : A it holds that (M - ε1 < a).
 Choose a := a0.
 We conclude that (& L &= M - (M - L) &= M - ε1 &< a0 &= a).
 Qed.
@@ -618,7 +620,7 @@ It holds that (L - m > 0).
 Define ε1 := (L - m).
 It holds that (ε1 > 0).
 By (i) it holds that (there exists a : A , m + ε1 > a) (ii).
-Choose a0 such that (H1) according to (ii).
+Choose a0 according to (ii), so for a0 : A it holds that (m + ε1 > a0).
 Choose a := a0.
 We need to show that (a < L).
 We conclude that (& a &= a0 &< m + ε1 &= m + L - m &= L).

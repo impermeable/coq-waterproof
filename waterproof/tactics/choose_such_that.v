@@ -26,66 +26,83 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
+From Ltac2 Require Import Message.
+
+Ltac2 Type exn ::= [ ChooseSuchThatError(message) ].
+
+Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.goal_wrappers.
 
 
+Local Ltac2 mismatch_pred_existential_message (s : ident) (v : ident) :=
+  Message.concat (Message.concat
+    (Message.concat (of_string "Claimed property of ") (of_ident s))
+    (Message.concat (of_string " does not match ‘there exists’-statement (") (of_ident v))) (of_string ").").
 
-(** * choose_destrct_without_extra_hypothesis
-    Chooses a variable according to a particular definition, and label the remaining parts 
+
+(** * choose_such_that
+    Chooses a variable according to a particular hypothesis and labels the remaining parts 
     of the definition.
 
     Arguments:
-        - [s: ident], the variable to be chosen.
-        - [v: constr], the definition used.
-        - [u: ident], the remaining parts of the definition.
-
+        - [s: ident], the name of the variable to be chosen.
+        - [v: ident], the hypothesis used.
+        - [pred_u: constr], predicate that should hold for [s] 
+                            and [v]'s type should match (ex [pred_u]) or (sig [pred_u]).
+        - [u: ident option], optional name of property that [s] is to satisfy.
     Does:
-        - destructs the constr [v] under the names [s] and [u].
+        - Destructs the constr [v] under the names [s] (and [u]).
+        - Copies the hypothesis [v] to a new hypothesis also called [v],
+            hence the hypothesis is preserved despite its destruction.
+
+    Raises exceptions:
+        - [ChooseSuchThatError], if [v]'s type does not match (ex [pred_u]) or (sig [pred_u]).
 *)
 
-Ltac2 choose_destruct_without_extra_hypothesis (s:ident) (u:ident) (v:ident)
- := (* Copy hypothesis we will destruct. *)
-    let v_val := Control.hyp v in
-    let copy := Fresh.in_goal @copy in
-    pose $v_val as copy;
-    let copy_val := Control.hyp copy in
-    destruct $copy_val as [$s $u].
-(*
-    (* Create identifiers if not specified. *)
-    match u with
-    | None   => let h := Fresh.in_goal @__wp__h in
-                destruct $copy_val as [$s $h]
-    | Some u => destruct $copy_val as [$s $u]
+Ltac2 choose_such_that (s:ident) (v:ident) (pred_u:constr) (u:ident option)
+ := let v_val := Control.hyp v in
+    let copy_id := Fresh.in_goal @copy in
+    (* Create identifier if u is not specified. *)
+    let uu := match u with
+              | None   => Fresh.in_goal @__wp__h
+              | Some u => u
+              end
+    in
+    let attempt ()
+        := first [ (* Copy v, also count as check that v can be converted to (ex pred_u) *)
+                   assert (ex  $pred_u) as copy_id;
+                   Control.focus 1 1 (fun () => exact $v_val);
+                   (* Destruct v *)
+                   destruct $v_val as [$s $uu];
+                   (* Copy the copy, but with name v*)
+                   assert (ex  $pred_u) as $v;
+                   Control.focus 1 1 (fun () => exact &copy_id);
+                   (* Destroy copy *)
+                   clear copy_id
+                 | (* Copy v, also count as check that v can be converted to (sig pred_u) *)
+                   assert (sig $pred_u) as copy_id;
+                   Control.focus 1 1 (fun () => exact $v_val);
+                   (* Destruct v *)
+                   destruct $v_val as [$s $uu];
+                   (* Copy the copy, but with name v*)
+                   assert (sig $pred_u) as $v;
+                   Control.focus 1 1 (fun () => exact &copy_id);
+                   (* Destroy copy *)
+                   clear copy_id
+                 ]
+    in
+    match Control.case attempt with
+    | Val _   => ()
+    | Err exn => Control.zero (ChooseSuchThatError
+                 (mismatch_pred_existential_message s v))
     end.
-*)
 
 
-Ltac2 Notation "Choose" s(ident) "such" "that" "("u(ident)")" "according" "to" "("v(ident)")"
+(* Desired syntax:
+    Choose x according to (i), so for x : A it holds that (P x) (ii). *)
+
+Notation "'for' x : A 'it' 'holds' 'that' p" := (fun x : A => p) (at level 1, x name, only parsing).
+
+Ltac2 Notation "Choose" s(ident) "according" "to" "("v(ident)")" "," "so" pred_u(constr) u(opt(seq("(", ident, ")")))
  := panic_if_goal_wrapped ();
-    choose_destruct_without_extra_hypothesis s u v.
-
-(* Hard case from sup_and_inf.v
-
-(** ## Suprema and sequences*)
-Lemma seq_ex_almost_maximizer_ε :
-  ∀ (a : ℕ → ℝ) (pr : has_ub a) (ε : ℝ), 
-    ε > 0 ⇒ ∃ k : ℕ, a k > lub a pr - ε.
-Proof.
-    Take a : (ℕ → ℝ).
-    Assume (has_ub a) (i).
-    Expand the definition of lub.
-    That is, write the goal as (for all ε : ℝ,  ε > 0 
-      ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
-    Define ii := (ub_to_lub a (i)).
-    Choose l such that (H1) according to (ii).
-    Take ε : ℝ; such that (ε > 0).
-    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iii).
-    Choose y such that (iv) according to (iii).
-    Because (iv) both (EUn a y) (v) and (y > l - ε).
-    Expand the definition of EUn in (v).
-    That is, write (v) as (there exists n : ℕ , y = a n).
-    Choose n such that (H2) according to (v).
-    Choose k := n.
-    We need to show that (l - ε < a n).
-    We conclude that (& l - ε &< y &= a n).
-Qed.*)
+    choose_such_that s v pred_u u.

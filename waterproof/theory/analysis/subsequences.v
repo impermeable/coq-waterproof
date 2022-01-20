@@ -118,7 +118,8 @@ Proof.
     Assume (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
     By existence_next_el_to_fun it holds that
       (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) (i).
-    Choose g such that (ii) according to (i).
+    Choose g according to (i), so for g : ℕ → ℕ → ℕ it holds that
+      (∀ (m : ℕ) (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) (ii).
     Choose n := (create_seq g).
     We show both statements.
     - We need to show that (is_index_seq n).

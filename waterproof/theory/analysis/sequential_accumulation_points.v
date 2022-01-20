@@ -32,13 +32,15 @@ Proof.
     Expand the definition of is_upper_bound.
     That is, write the goal as (there exists m : ℝ,
       for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ m).
-    Choose M such that (ii) according to (i).
+    Choose M according to (i), so for M : R it holds that
+      (is_upper_bound (EUn a) M) (ii).
     Choose m := M.
     Take x : ℝ.
     Assume that (is_seq_acc_pt a x) (iii).
     Expand the definition of is_seq_acc_pt.
     That is, write the goal as (x ≤ m).
-    Choose n such that (iv) according to (iii).
+    Choose n according to (iii), so for n : ℕ → ℕ it holds that
+      (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iv).
     Because (iv) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x).
     We need to show that (x ≤ M).
     By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
