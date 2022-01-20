@@ -91,7 +91,7 @@ Proof.
         By decreasing_ineq we conclude that (l <= sequence_ub a (i) Nn).
       }
       Because (iv) both (n ≥ Nn)%nat and 
-        (a n > sequence_ub a i Nn - 1 / (m + 1)).
+        (a n > sequence_ub a i Nn - 1 / (m + 1)) hold.
       It holds that (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n).
       We need to show that (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
       We conclude that (& proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) &< a n &= a k).
@@ -133,7 +133,7 @@ Proof.
     That is, write (iii) as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
       ∧ (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b)).
     Because (iii) both (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M) (iv)
-      and (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b).
+      and (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b) hold.
     Expand the definition of is_upper_bound in (iv).
     That is, write (iv) as (for all x : ℝ, EUn (k) ↦ (a (Nn + k)%nat) x ⇨ x ≤ M).
     It holds that (Nn + (n-Nn) = n)%nat.
@@ -167,7 +167,7 @@ Proof.
        (is_index_seq m_seq ∧
         (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a i ii) - 1 / (k + 1))) (v).
       Because (v) both (is_index_seq m_seq) and 
-        (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1)).
+        (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) hold.
       Choose m := m_seq.
       We show both statements.
       - We need to show that (is_index_seq m).
@@ -178,7 +178,7 @@ Proof.
     Choose m according to (iii), so for m : ℕ ⇨ ℕ it holds that
       (is_index_seq m ∧ (for all k : ℕ, a (m k) > L - 1 / (k + 1))) (iv).
     Because (iv) both (is_index_seq m) (v) and
-      (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi).
+      (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
     Choose n := m.
     We need to show that (is_index_seq m ∧ Un_cv (k) ↦ (a (m k)) L).
     We show both statements.
@@ -238,7 +238,7 @@ Proof.
       ∧ Un_cv (k) ↦ (a (n k)) x).
     Choose n according to (ii), so for n : ℕ → ℕ it holds that 
       (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iii).
-    Because (iii) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x).
+    Because (iii) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
     Take m : ℕ.
     Define L := (sequence_ub a (i) m).
     We argue by contradiction.
@@ -252,7 +252,7 @@ Proof.
     Define Nn := (Nat.max K m).
     It holds that (R_dist (a (n Nn)) x < ε).
     By Rabs_def2 it holds that (a (n Nn) - x < ε ∧ - ε < a (n Nn) - x) (v).
-    Because (v) both (a (n Nn) - x < ε) and (- ε < a (n Nn) - x).
+    Because (v) both (a (n Nn) - x < ε) and (- ε < a (n Nn) - x) hold.
     It holds that (x - a (n Nn) < x - L).
     It holds that (a (n Nn) > L).
     By index_seq_grows_0 it holds that (n Nn ≥ Nn)%nat.
@@ -313,7 +313,7 @@ Proof.
     Take L : ℝ.
     Define P := (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
     By classic it holds that (P \/ ~P) (i).
-    Because (i) either P or (¬P).
+    Because (i) either P or (¬P) holds.
     - Case P.
       It suffices to show that (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
       We conclude that (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
@@ -326,7 +326,7 @@ Proof.
       Choose n according to (ii), so for n : nat it holds that
         ((n ≥ m)%nat ∧ ~(a n < L)) (iii).
       Choose n0 := n.
-      Because (iii) both (n ≥ m)%nat and (~(a n < L)).
+      Because (iii) both (n ≥ m)%nat and (~(a n < L)) hold.
       We show both (n0 >= m)%nat and (a n0 >= L).
       + We conclude that (n0 >= m)%nat.
       + It holds that (a n >= L).

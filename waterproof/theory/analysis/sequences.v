@@ -292,7 +292,7 @@ Proof.
     Assume that (∀ n : ℕ, (a n) ≤ M).
     Assume that (Un_cv a L) (i).
     By Rle_or_lt it holds that (L ≤ M ∨ M < L) (ii).
-    Because (ii) either (L ≤ M) or (M < L).
+    Because (ii) either (L ≤ M) or (M < L) holds.
     - Case (L ≤ M).
       It follows that (L ≤ M).
     - Case (M < L).
@@ -412,7 +412,7 @@ We show both directions.
   Choose M1 according to (ii), so for M1 : R it holds that
     (M1 ≥ 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (iii).
   Because (iii) both (M1 ≥ 0) and
-    (for all n : ℕ, | a n - q | ≤ M1).
+    (for all n : ℕ, | a n - q | ≤ M1) hold.
   We need to show that (
     there exists M : ℝ ,
       M ≥ 0 ∧ (for all n : ℕ,
@@ -445,7 +445,7 @@ M ≥ 0 ∧ (for all n : ℕ,
   Choose M1 according to (i), so for M1 : R it holds that
     (M1 ≥ 0 ∧ (for all n : ℕ, | a n | ≤ M1)) (ii).
   Because (ii) both (M1 ≥ 0) and
-    (for all n : ℕ, | a n | ≤ M1).
+    (for all n : ℕ, | a n | ≤ M1) hold.
   Choose M := M1.
   We show both statements.
   + We need to show that (M ≥ 0).

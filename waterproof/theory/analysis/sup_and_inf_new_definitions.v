@@ -101,7 +101,7 @@ Proof.
       That is, write (i) as ((for all x : ℝ, A x ⇨ x ≤ M)
         ∧ (for all b : ℝ, (for all x : ℝ, A x ⇨ x ≤ b) ⇨ M ≤ b)).
       Because (i) both (for all x : ℝ, A x ⇨ x ≤ M) (ii) and
-          (for all b : ℝ, (for all x : ℝ, A x ⇨ x ≤ b) ⇨ M ≤ b).
+          (for all b : ℝ, (for all x : ℝ, A x ⇨ x ≤ b) ⇨ M ≤ b) hold.
       Expand the definition of is_sup.
       That is, write the goal as 
         (is_upper_bound A M ∧ (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0)).
@@ -117,7 +117,7 @@ Proof.
         By equivalence_upper_bounds it holds that
           (is_upper_bound A M0 ⇔ Raxioms.is_upper_bound A M0) (iii).
         Because (iii) both (is_upper_bound A M0 -> Raxioms.is_upper_bound A M0)
-          and (Raxioms.is_upper_bound A M0 -> is_upper_bound A M0).
+          and (Raxioms.is_upper_bound A M0 -> is_upper_bound A M0) hold.
         It holds that (Raxioms.is_upper_bound A M0).
         We conclude that (M <= M0).
     - We need to show that (is_sup A M ⇨ is_lub A M).
@@ -129,7 +129,7 @@ Proof.
       That is, write (i) as (is_upper_bound A M 
         ∧ (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0)).
       Because (i) both (is_upper_bound A M) (ii) and
-        (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
+        (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
       We show both statements.
       + We need to show that (Raxioms.is_upper_bound A M).
         Expand the definition of Raxioms.is_upper_bound.
@@ -147,7 +147,7 @@ Proof.
         By equivalence_upper_bounds it holds that
           (is_upper_bound A b ⇔ Raxioms.is_upper_bound A b) (iv).
         Because (iv) both (is_upper_bound A b -> Raxioms.is_upper_bound A b)
-          and (Raxioms.is_upper_bound A b -> is_upper_bound A b).
+          and (Raxioms.is_upper_bound A b -> is_upper_bound A b) hold.
         We conclude that (is_upper_bound A b).
 Qed.
 
@@ -185,7 +185,7 @@ Proof.
     By equivalence_sup_lub it holds that
       (is_lub A M ⇔ is_sup A M) (iii).
     Because (iii) both (is_lub A M -> is_sup A M) and
-      (is_sup A M -> is_lub A M).
+      (is_sup A M -> is_lub A M) hold.
     Choose M0 := M.
     We need to show that (is_sup A M).
     We conclude that (is_sup A M).
@@ -363,7 +363,7 @@ Proof.
       That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
       Because (i) both (is_upper_bound (set_opp A) M) (ii) and
-        (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0).
+        (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
     Expand the definition of is_inf.
     That is, write the goal as
       (is_lower_bound A (- M) ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ -M)).
@@ -434,7 +434,7 @@ Proof.
     That is, write (i) as (is_upper_bound A M 
       ∧ (for all b : ℝ, is_upper_bound A b ⇨ M ≤ b)).
     Because (i) both (is_upper_bound A M) and
-      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
+      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
     It follows that (is_upper_bound A M).
 Qed.
 
@@ -450,7 +450,7 @@ Proof.
     Assume that (is_sup A M) (i).
     Assume that (is_upper_bound A L).
     Because (i) both (is_upper_bound A M) and
-      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
+      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
     (** We need to show that $M \leq L$.*)
     We conclude that (M ≤ L).
 Qed.
@@ -465,7 +465,7 @@ Proof.
     Take m : R.
     Assume that (is_inf A m) (i).
     Because (i) both (is_lower_bound A m) (ii) and
-      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m).
+      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
     By (ii) we conclude that (is_lower_bound A m).
 Qed.
 (** ## Any lower bound is less than or equal to the infimum*)
@@ -480,7 +480,7 @@ Proof.
     Assume that (is_inf A m) (i).
     Assume that (is_lower_bound A l).
     Because (i) both (is_lower_bound A m) and
-      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m).
+      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
     We conclude that (l ≤ m).
 Qed.
 
@@ -690,7 +690,7 @@ We show both directions.
      ∧ (for all M0 : ℝ,
       is_upper_bound A M0 ⇨ M ≤ M0) ).
     Because (i) both (is_upper_bound A M) and
-      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
+      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
     It follows that (is_upper_bound A M).
 
   + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : A, M - ε < a ).
@@ -708,7 +708,7 @@ We show both directions.
      ε > 0 ⇨ there exists a : A ,
                M - ε < a) ).
   Because (i) both (is_upper_bound A M) (ii) and
-    (for all ε : ℝ, ε > 0 ⇨ there exists a : A, M - ε < a).
+    (for all ε : ℝ, ε > 0 ⇨ there exists a : A, M - ε < a) hold.
 
   Expand the definition of is_sup.
   That is, write the goal as (
@@ -746,7 +746,7 @@ We show both directions.
                         is_lower_bound A l ⇨ l ≤ m) 
     ).
     Because (i) both (is_lower_bound A m) and
-      (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m).
+      (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
     It follows that (is_lower_bound A m).
 
   + We need to show that (for all ε : ℝ, ε > 0 
@@ -765,7 +765,7 @@ We show both directions.
      ε > 0 ⇨ there exists a : A ,
                m + ε > a) ).
   Because (i) both (is_lower_bound A m) (ii) and
-    (for all ε : ℝ, ε > 0 ⇨ there exists a : A, m + ε > a).
+    (for all ε : ℝ, ε > 0 ⇨ there exists a : A, m + ε > a) hold.
 
   Expand the definition of is_inf.
   That is, write the goal as (
@@ -794,7 +794,7 @@ Proof.
     Assume that (¬ (A M ∨ (for all a : A, a < M))).
     It holds that ((¬ (A M)) ∧ 
       ¬(∀ a : A, a < M)) (i).
-    Because (i) both(¬ (A M)) and (¬(∀ a : A, a < M)).
+    Because (i) both(¬ (A M)) and (¬(∀ a : A, a < M)) hold.
     We claim that (for all a : A, a < M).
     { 
       Take a : A.

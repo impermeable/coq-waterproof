@@ -204,7 +204,7 @@ Proof.
       That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
       Because (i) both (is_upper_bound (set_opp A) M) and
-        (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b).
+        (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b) hold.
       By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
     - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
       Expand the definition of is_lower_bound.
@@ -215,7 +215,7 @@ Proof.
       That is, write (i) as (is_upper_bound (set_opp A) M 
         ∧ (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b)).
       Because (i) both (is_upper_bound (set_opp A) M)
-        and (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b) (ii).
+        and (for all b : ℝ, is_upper_bound (set_opp A) b ⇨ M ≤ b) (ii) hold.
       By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
       By (ii) it holds that (M ≤ -l).
       We conclude that (l <= -M).
@@ -266,7 +266,7 @@ Proof.
     Assume that (is_sup A M).
     It holds that (is_upper_bound A M ∧ (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L)) (i).
     Because (i) both (is_upper_bound A M) and
-      (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L).
+      (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L) hold.
     It follows that (is_upper_bound A M).
 Qed.
 
@@ -281,7 +281,7 @@ Proof.
     Assume that (is_sup A M) and (is_upper_bound A l).
     It holds that (is_upper_bound A M ∧ (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L)) (i).
     Because (i) both (is_upper_bound A M) and
-      (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L).
+      (∀ L : ℝ, is_upper_bound A L ⇒ M ≤ L) hold.
     (** We need to show that $M \leq L$.*)
     We conclude that (M <= l).
 Qed.
@@ -311,7 +311,7 @@ Proof.
     Take A : (R → Prop) and m, l : R.
     Assume that (is_inf A m) and (is_lower_bound A l).
     It holds that (is_lower_bound A m ∧ (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m)) (i).
-    Because (i) both (is_lower_bound A m) and (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m) (ii).
+    Because (i) both (is_lower_bound A m) and (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m) (ii) hold.
     By (ii) we conclude that (l ≤ m).
 Qed.
 
@@ -368,7 +368,7 @@ Proof.
     We argue by contradiction.
     Assume that ( ¬ (A M ∨ (for all a : ℝ, A a ⇨ a < M))).
     It holds that ((¬ (A M)) ∧ ¬(∀ a : ℝ, A a ⇒ a < M)) (i).
-    Because (i) both (¬ (A M)) and  (¬(∀ a : ℝ, A a ⇒ a < M)).
+    Because (i) both (¬ (A M)) and  (¬(∀ a : ℝ, A a ⇒ a < M)) hold.
     (** We only show the proposition on the *)
     (** hand side of the or-sign, i.e. we will show that for all $a \in \mathbb{R}$, if $a \in A$ then $a < M$*)
     We claim that (∀ a : ℝ, A a ⇒ a < M).
@@ -407,7 +407,7 @@ Proof.
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
     Choose y according to (iv), so for y : R it holds that 
       ((EUn a) y ∧ y > l - ε) (v).
-    Because (v) both (EUn a y) (vi) and (y > l - ε).
+    Because (v) both (EUn a y) (vi) and (y > l - ε) hold.
     Expand the definition of EUn in (vi).
     That is, write (vi) as (there exists n : ℕ , y = a n).
     Choose n according to (vi), so for n : nat it holds that (y = a n).

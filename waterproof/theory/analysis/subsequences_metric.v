@@ -213,7 +213,7 @@ It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (
 Choose m according to (i), so for m : nat -> nat it holds that 
   (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (ii).
 Because (ii) both (is_index_sequence m) and 
-  (for all k : nat, y k = x (m k)).
+  (for all k : nat, y k = x (m k)) hold.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
 

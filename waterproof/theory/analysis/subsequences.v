@@ -136,7 +136,7 @@ Proof.
       Take m : ℕ.
       Take M : ℕ.
       By (ii) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (iii).
-      Because (iii) both (M ≤ g m M)%nat and (P m (a (g m M))).
+      Because (iii) both (M ≤ g m M)%nat and (P m (a (g m M))) hold.
       We conclude that (P m (a (g m M))).
 Qed.
 
