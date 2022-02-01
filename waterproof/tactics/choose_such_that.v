@@ -103,6 +103,6 @@ Ltac2 choose_such_that (s:ident) (v:ident) (pred_u:constr) (u:ident option)
 
 Notation "'for' x : A 'it' 'holds' 'that' p" := (fun x : A => p) (at level 1, x name, only parsing).
 
-Ltac2 Notation "Choose" s(ident) "according" "to" "("v(ident)")" "," "so" pred_u(constr) u(opt(seq("(", ident, ")")))
+Ltac2 Notation "Obtain" s(ident) "according" "to" "("v(ident)")" "," "so" pred_u(constr) u(opt(seq("(", ident, ")")))
  := panic_if_goal_wrapped ();
     choose_such_that s v pred_u u.

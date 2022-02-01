@@ -71,7 +71,7 @@ Proof.
     Take m, Nn : ℕ.
     By exists_almost_lim_sup_aux it holds that 
       (∃ k : ℕ, (k ≥ Nn)%nat ∧ a k > sequence_ub a (i) Nn - 1 / (INR(m) + 1)) (iii).
-    Choose n according to (iii), so for n : nat it holds that
+    Obtain n according to (iii), so for n : nat it holds that
       ((n ≥ Nn)%nat ∧ a n > sequence_ub a (i) Nn - 1 / (INR(m) + 1)) (iv).
     Choose k := n.
     We show both statements.
@@ -84,7 +84,7 @@ Proof.
           (proj1_sig (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)) 
             ≤ sequence_ub a (i) Nn).
         Define v := (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)).
-        Choose l according to (v), so for l : R it holds that 
+        Obtain l according to (v), so for l : R it holds that 
           (Un_cv (sequence_ub a (i)) l).
         We need to show that (l ≤ sequence_ub a (i) Nn).
         By Wn_decreasing it holds that (Un_decreasing (sequence_ub a (i))).
@@ -127,7 +127,7 @@ Proof.
     That is, write the goal as
       (a n ≤ (let (a0, _) := ub_to_lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat) (maj_ss a Nn (i))).
-    Choose M according to (ii), so for M : R it holds that 
+    Obtain M according to (ii), so for M : R it holds that 
       (is_sup (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M) (iii).
     Expand the definition of is_lub in (iii).
     That is, write (iii) as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
@@ -163,7 +163,7 @@ Proof.
       By exists_subseq_to_limsup_bdd it holds that 
         (there exists n : ℕ ⇨ ℕ, is_index_seq n 
           ∧ (for all k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1))) (iv).
-      Choose m_seq according to (iv), so for m_seq : ℕ ⇨ ℕ it holds that
+      Obtain m_seq according to (iv), so for m_seq : ℕ ⇨ ℕ it holds that
        (is_index_seq m_seq ∧
         (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a i ii) - 1 / (k + 1))) (v).
       Because (v) both (is_index_seq m_seq) and 
@@ -175,7 +175,7 @@ Proof.
       - We need to show that (for all k : ℕ, a (m k) > L - 1 / (k + 1)).
         We conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
     }
-    Choose m according to (iii), so for m : ℕ ⇨ ℕ it holds that
+    Obtain m according to (iii), so for m : ℕ ⇨ ℕ it holds that
       (is_index_seq m ∧ (for all k : ℕ, a (m k) > L - 1 / (k + 1))) (iv).
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
@@ -218,7 +218,7 @@ Proof.
     By Bolzano_Weierstrass_gen it holds that
       (∃ (n : ℕ → ℕ), is_index_seq n
         ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))) (iv).
-    Choose n0 according to (iv), so for n0 : ℕ → ℕ it holds that
+    Obtain n0 according to (iv), so for n0 : ℕ → ℕ it holds that
       (is_index_seq n0 ∧ Un_cv (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (lim_sup_bdd a (i) (iii)))).
     Choose n := n0.
     Choose l := (proj1_sig (lim_sup_bdd a (i) (iii))).
@@ -236,7 +236,7 @@ Proof.
     Expand the definition of is_seq_acc_pt in (ii).
     That is, write (ii) as (there exists n : ℕ → ℕ, is_index_seq n 
       ∧ Un_cv (k) ↦ (a (n k)) x).
-    Choose n according to (ii), so for n : ℕ → ℕ it holds that 
+    Obtain n according to (ii), so for n : ℕ → ℕ it holds that 
       (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iii).
     Because (iii) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
     Take m : ℕ.
@@ -247,7 +247,7 @@ Proof.
     Define ε := (x - L).
     It holds that (ε > 0).
     It holds that (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε) (iv).
-    Choose K according to (iv), so for K : nat it holds that
+    Obtain K according to (iv), so for K : nat it holds that
       (∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε).
     Define Nn := (Nat.max K m).
     It holds that (R_dist (a (n Nn)) x < ε).
@@ -282,7 +282,7 @@ Proof.
       Assume that (is_seq_acc_pt a x).
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
-      Choose L according to (iii), so for L  : R it holds that (Un_cv (sequence_ub a i) L).
+      Obtain L according to (iii), so for L  : R it holds that (Un_cv (sequence_ub a i) L).
       simpl.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))
           it holds that (L ≥ x).

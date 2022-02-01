@@ -181,7 +181,7 @@ Proof.
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
     Expand the definition of is_bdd_below in (i).
     That is, write (i) as (∃ m : ℝ, is_lower_bound A m).
-    Choose m according to (i), so for m : R it holds that (is_lower_bound A m).
+    Obtain m according to (i), so for m : R it holds that (is_lower_bound A m).
     Choose M := (-m).
     We need to show that (is_upper_bound (set_opp A) M).
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) M).
@@ -241,13 +241,13 @@ Proof.
     }
     By bdd_below_to_bdd_above_set_opp it holds that (is_bdd_above B).
     We claim that (∃ y : ℝ, y ∈ B).
-    { Choose x according to (i), so for x : R it holds that (A x).
+    { Obtain x according to (i), so for x : R it holds that (A x).
       Choose y := (-x).
       We need to show that (B (-x)).
       By (ii) we conclude that (B (-x)).
     }
     By completeness it holds that ({L | is_sup B L}) (iv).
-    Choose L according to (iv), so for L : R it holds that (is_sup B L).
+    Obtain L according to (iv), so for L : R it holds that (is_sup B L).
     By sup_set_opp_is_inf_set it holds that (is_inf A (-L)).
     We conclude that ({m : ℝ | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
 Qed.
@@ -396,15 +396,15 @@ Proof.
     That is, write the goal as (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
-    Choose l according to (lub_a_prf), so for l : R it holds that (is_sup (EUn a) l).
+    Obtain l according to (lub_a_prf), so for l : R it holds that (is_sup (EUn a) l).
     Take ε : ℝ; such that (ε > 0).
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
-    Choose y according to (iv), so for y : R it holds that 
+    Obtain y according to (iv), so for y : R it holds that 
       ((EUn a) y ∧ y > l - ε) (v).
     Because (v) both (EUn a y) (vi) and (y > l - ε) hold.
     Expand the definition of EUn in (vi).
     That is, write (vi) as (there exists n : ℕ , y = a n).
-    Choose n according to (vi), so for n : nat it holds that (y = a n).
+    Obtain n according to (vi), so for n : nat it holds that (y = a n).
     Choose k := n.
     We need to show that (l - ε < a n).
     We conclude that (& l - ε &< y &= a n).
@@ -434,7 +434,7 @@ Proof.
     Take m, Nn : ℕ.
     By seq_ex_almost_maximizer_m it holds that
       (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)) (ii).
-    Choose k according to (ii), so for k : nat it holds that
+    Obtain k according to (ii), so for k : nat it holds that
       (a (Nn + k)%nat > sequence_ub a i Nn - 1 / (m + 1)).
     Choose l := (Nn+k)%nat.
     We show both statements.
