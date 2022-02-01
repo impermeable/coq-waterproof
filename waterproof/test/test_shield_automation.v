@@ -49,7 +49,7 @@ Abort.
 
 
 (* Disable automation shielding. *)
-Ltac2 Set Waterproof.waterprove.waterprove.global_shield_automation := false.
+Ltac2 Set Waterproof.waterprove.automation_subroutine.global_shield_automation := false.
 
 (** * Test 5: show that we can now conclude the implication. 
 *)
@@ -92,7 +92,7 @@ Abort.
 
 
 (* Enable automation shielding. *)
-Ltac2 Set Waterproof.waterprove.waterprove.global_shield_automation := true.
+Ltac2 Set Waterproof.waterprove.automation_subroutine.global_shield_automation := true.
 
 (** * Test 13: show that we again cannot conclude the implication. 
 *)

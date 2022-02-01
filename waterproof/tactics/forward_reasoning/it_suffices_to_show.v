@@ -31,6 +31,8 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.tactics.goal_wrappers.
 
+Ltac2 Type exn ::= [ AutomationFailure(message) ].
+
 Local Ltac2 fail_suffice_to_show () :=
     Control.zero (AutomationFailure (of_string
 "Waterproof could not verify that this statement is enough to prove the goal.")).

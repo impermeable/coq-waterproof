@@ -45,7 +45,6 @@ Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
 Require Import Coq.micromega.Lia.
 Require Import Waterproof.tactics.simplify_chains.
-Require Import Waterproof.tactics.manipulate_negation.
 
 (** ** Additional database *)
 
@@ -77,7 +76,7 @@ Global Hint Resolve not_all_not_ex : classical_logic.
 Global Hint Resolve not_all_ex_not : classical_logic.
 (* not_ex_not_all cannot be used as a hint. *)
 (* Global Hint Resolve not_ex_not_all : classical_logic. *)
-Global Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : classical_logic.
+
 
 
 (** ** Subsets: lemmas for subsets of elements *)
@@ -524,4 +523,39 @@ Global Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
 Close Scope R_scope.
 
 
+(** ## Lemmas for dealing with negations in specific contexts, e.g. negated order relations
+*)
+(** * Naturals *)
+Global Hint Resolve le_not_lt : negation_nat.
+Global Hint Resolve lt_not_le : negation_nat.
+Global Hint Resolve not_lt : negation_nat.
+Global Hint Resolve not_le : negation_nat.
 
+(** * Integers *) (* TODO find minimal set of hints that can show all we want*)
+Global Hint Resolve  Zle_not_lt : negation_int.
+Global Hint Resolve  Zlt_not_le : negation_int.
+Global Hint Resolve  Zle_not_gt : negation_int.
+Global Hint Resolve  Zgt_not_le : negation_int.
+Global Hint Resolve  Znot_lt_ge : negation_int.
+Global Hint Resolve  Znot_lt_ge : negation_int.
+Global Hint Resolve  Znot_gt_le : negation_int.
+Global Hint Resolve  Znot_le_gt : negation_int.
+Global Hint Resolve  not_Zne    : negation_int.
+
+(** * Reals *) (* TODO find minimal set of hints that can show all we want*)
+Global Hint Resolve Rnot_le_lt : negation_reals.
+Global Hint Resolve Rnot_ge_gt : negation_reals.
+Global Hint Resolve Rnot_le_gt : negation_reals.
+Global Hint Resolve Rnot_ge_lt : negation_reals.
+Global Hint Resolve Rnot_lt_le : negation_reals.
+Global Hint Resolve Rnot_gt_le : negation_reals.
+Global Hint Resolve Rnot_gt_ge : negation_reals.
+Global Hint Resolve Rnot_lt_ge : negation_reals.
+
+Global Hint Resolve Rlt_not_le : negation_reals.
+Global Hint Resolve Rgt_not_le : negation_reals.
+Global Hint Resolve Rlt_not_ge : negation_reals.
+Global Hint Resolve Rle_not_lt : negation_reals.
+Global Hint Resolve Rge_not_lt : negation_reals.
+Global Hint Resolve Rle_not_gt : negation_reals.
+Global Hint Resolve Rge_not_gt : negation_reals.

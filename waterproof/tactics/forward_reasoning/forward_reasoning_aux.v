@@ -27,7 +27,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
-Require Export Waterproof.waterprove.waterprove.
+Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.tactics.goal_to_hint.
 Require Import Waterproof.auxiliary.
 
@@ -67,7 +67,7 @@ try making a smaller step.").
 
 (** * unwrap_optional_lemma
     Given an optional lemma, either returns the lemma itself,
-    or case the argument is [None], returns a dummy lemma.
+(*     or case the argument is [None], returns a dummy lemma (I : True). *)
 
     Arguments:
         - [lemma: constr option], one of the following:
@@ -80,6 +80,6 @@ try making a smaller step.").
 *)
 Ltac2 unwrap_optional_lemma (lemma: constr option) :=
     match lemma with
-    | None => constr:(dummy_lemma)
+    | None => constr:(I)
     | Some y => y
     end.

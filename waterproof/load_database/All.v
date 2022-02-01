@@ -40,6 +40,5 @@ Require Export Waterproof.load_database.SquareRoot.
 Require Export Waterproof.load_database.RealsAndIntegers.
 Require Export Waterproof.load_database.Sets.
 Require Export Waterproof.load_database.Additional.
-Require Export Waterproof.load_database.RealNumbers.
 Require Export Waterproof.load_database.Subsets.
 Require Export Waterproof.load_database.ClassicalLogic.

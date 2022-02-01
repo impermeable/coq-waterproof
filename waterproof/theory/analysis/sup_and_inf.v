@@ -328,14 +328,8 @@ Proof.
     Assume that (L < M).
     We argue by contradiction.
     Assume that (¬ (there exists a : ℝ, A a ∧ L < a)).
-    It holds that (∀ x : ℝ, A x ⇒ ¬(L < x)).
-    We claim that (is_upper_bound A L).
-    { We need to show that (∀ x : ℝ, A x ⇒ (x <= L)).
-      Take x : R.
-      Assume that (A x).
-      It holds that (~ L < x).
-      We conclude that (x ≤ L).
-    }
+    It holds that (∀ x : ℝ, A x ⇒ (x <= L)).
+    It holds that (is_upper_bound A L).
     By any_upp_bd_ge_sup it holds that (M ≤ L).
     It holds that (¬(M ≤ L)).
     Contradiction.

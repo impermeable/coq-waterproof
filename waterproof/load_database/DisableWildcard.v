@@ -27,7 +27,7 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.waterprove.waterprove.
+Require Import Waterproof.waterprove.automation_subroutine.
 
 Ltac2 Set global_use_all_databases := false.
 

@@ -498,13 +498,7 @@ Proof.
     Assume that (L < M).
     We argue by contradiction.
     Assume that (¬ (there exists a : A, L < a)).
-    It holds that (∀ x : A, ¬ (L < x)).
-    We claim that (∀ x : A, x ≤ L) (i).
-    { Take x : A.
-      It holds that (¬(L < x)).
-      We need to show that (x ≤ L).
-      We conclude that (x ≤ L).
-    }
+    It holds that (∀ x : A, x <= L) (i).
     By (i) it holds that (is_upper_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_upp_bd_ge_sup it holds that (M <= L).
@@ -525,13 +519,7 @@ Proof.
     Assume that (L > m).
     We argue by contradiction.
     Assume that (¬ (there exists a : A, L > a)).
-    It holds that (∀ x : A, ¬ (L > x)).
-    We claim that (∀ x : A, L ≤ x) (i).
-    { Take x : A.
-      It holds that (¬(L > x)).
-      We need to show that (L ≤ x).
-      We conclude that (L ≤ x).
-    }
+    It holds that (∀ x : A, L ≤ x) (i).
     By (i) it holds that (is_lower_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_low_bd_le_inf it holds that (L <= m).

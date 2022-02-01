@@ -1,9 +1,17 @@
-(** * [propagate_negation_backwards.v]
+(** * [manipulate_negation.v]
 Authors: 
     - Jelle Wemmenhove
 Creation date: 2 Nov 2021
 
-TODO: description
+Try to prove the current goal from a hypothesis by manipulating negations, 
+meaning that we interchange negations and logical operators. For example, this tactic 
+can show that (¬∀x∃y∀z,P(x,y,z) implies ∃x∀y∃z, ¬P(x,y,z)).
+
+Context specific manipulations can added by including them in the 
+[global_negation_database_selection].
+
+This tactic ([solve_by_manipulating_negation]) is added to the [classical_logic]
+hint database.
 
 --------------------------------------------------------------------------------
 
@@ -23,19 +31,14 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-
-
-
-
-
-
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
-
-
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.selected_databases.
+Require Import Waterproof.waterprove.automation_subroutine.
+
 Require Import Classical_Prop.
 Require Import Classical_Pred_Type.
 
@@ -241,7 +244,12 @@ Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
                     => apply (not_neg_pos_func $a $b)
                   | [ |- ?b -> (~~?a)]
                     => apply (pos_not_neg_func $a $b)
-                  end ] ) ]
+                  end
+                  | (* Try context specific manipulation, e.g. negating order relations *)
+                    let g := Control.goal () in
+                    let hint_databases := Some (load_databases global_negation_database_selection) in
+                    run_automation g [] 1 hint_databases false
+                  ] ) ]
       in
       match Control.case attempt with
       | Val _ => ()
@@ -255,6 +263,7 @@ Ltac2 solve_by_manipulating_negation () :=
   | [ h : _ |- _ ] => solve_by_manipulating_negation_in h
   end.
 
+Global Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : classical_logic.
 
 
 (*For debugging: do a single step *)
@@ -314,6 +323,10 @@ Local Ltac2 manipulate_negation_in (h_id : ident) :=
                 | [ |- ?b -> (~~?a)]
                   => apply (pos_not_neg_func $a $b)
                 end
+              | (* Try context specific manipulation, e.g. negating order relations *)
+                let g := Control.goal () in
+                let hint_databases := Some (load_databases global_negation_database_selection) in
+                run_automation g [] global_search_depth hint_databases false
               ]
       in
       match Control.case attempt with

@@ -31,9 +31,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
 From Ltac2 Require Import Message.
-Require Import Coq.Reals.Reals.
-Require Import ZArith.
-Require Import Classical.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.databases.
 
@@ -54,13 +51,17 @@ Ltac2 Type WaterproofDatabase := [
     | WaterproofDBIntegers
     | WaterproofDBIntuition
     | WaterproofDBFirstorder
+    (* Databases for manipulating negations. *)
+    | WaterproofNegationDBIntegers
+    | WaterproofNegationDBReals
+    | WaterproofNegationDBRealsAndIntegers
 ].
 
-(** * global_database_selection
+(** * global_database_selection, global_negation_database_selection
     Global variable that collects a list of database labels
     (of type [WaterproofDatabase]).
     The databases corresponding to these labels will be used
-    by the automation function [waterprove],
+    by the automation function [run_automation] in [waterprove.automation_subroutines],
     which is used in many different tactics.
 
     Implementation note:
@@ -70,10 +71,11 @@ Ltac2 Type WaterproofDatabase := [
     Hence the indirection via [WaterproofDatabase] labels.
 *)
 Ltac2 mutable global_database_selection := ([]:WaterproofDatabase list).
+Ltac2 mutable global_negation_database_selection := ([]:WaterproofDatabase list).
 
 (** * global_search_depth
     Global variable that specifies the maximum search depth
-    used by the automation tactics (via [waterprove]).
+    used by the automation tactics (via [run_automation] in [waterprove.automation_subroutines]).
 *)
 Ltac2 mutable global_search_depth := (2:int).
 
@@ -121,22 +123,26 @@ Ltac2 print_search_depth_set_to (new_depth: int) :=
 *)
 Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     match label with
-    | WaterproofDBMultiplication =>  (@eq_mult)::(@eq_opp)::[]
-    | WaterproofDBPlusMinus =>       (@eq_plus)::(@eq_minus)::[]
-    | WaterproofDBZeroOne =>         (@eq_zero)::(@eq_one)::(@eq_opp)::[]
-    | WaterproofDBSquareRoot =>      (@eq_sqr)::[]
-    | WaterproofDBExponential =>     (@eq_exp)::[]
-    | WaterproofDBAbsoluteValue =>   (@eq_abs)::[]
-    | WaterproofDBRealsAndIntegers =>(@zarith)::(@waterproof_integers)::(@arith)::(@real)::(@reals)::[]
-    | WaterproofDBSets =>            (@sets)::[]
-    | WaterproofDBSubsets =>         (@subsets)::[]
-    | WaterproofDBAdditional =>      (@additional)::[]
-    | WaterproofDBReals =>           (@real)::(@reals)::[]
-    | WaterproofDBClassicalLogic =>  (@classical_logic)::[]
-    | WaterproofDBConstructiveLogic => (@constructive_logic)::(@classical_logic)::[]
-    | WaterproofDBIntegers =>        (@zarith)::(@waterproof_integers)::(@arith)::[]
-    | WaterproofDBIntuition =>       (@intuition)::[]
-    | WaterproofDBFirstorder =>      (@firstorder)::[]
+    | WaterproofDBMultiplication =>     (@eq_mult)::(@eq_opp)::[]
+    | WaterproofDBPlusMinus =>          (@eq_plus)::(@eq_minus)::[]
+    | WaterproofDBZeroOne =>            (@eq_zero)::(@eq_one)::(@eq_opp)::[]
+    | WaterproofDBSquareRoot =>         (@eq_sqr)::[]
+    | WaterproofDBExponential =>        (@eq_exp)::[]
+    | WaterproofDBAbsoluteValue =>      (@eq_abs)::[]
+    | WaterproofDBRealsAndIntegers =>   (@zarith)::(@waterproof_integers)::(@arith)::(@real)::(@reals)::[]
+    | WaterproofDBSets =>               (@sets)::[]
+    | WaterproofDBSubsets =>            (@subsets)::[]
+    | WaterproofDBAdditional =>         (@additional)::[]
+    | WaterproofDBReals =>              (@real)::(@reals)::[]
+    | WaterproofDBClassicalLogic =>     (@classical_logic)::[]
+    | WaterproofDBConstructiveLogic =>  (@constructive_logic)::(@classical_logic)::[]
+    | WaterproofDBIntegers =>           (@zarith)::(@waterproof_integers)::(@arith)::[]
+    | WaterproofDBIntuition =>          (@intuition)::[]
+    | WaterproofDBFirstorder =>         (@firstorder)::[]
+    (* Databases for manipulating negations. *)
+    | WaterproofNegationDBIntegers =>   (@negation_int)::(@negation_nat)::[]
+    | WaterproofNegationDBReals =>      (@negation_reals)::[]
+    | WaterproofNegationDBRealsAndIntegers => (@negation_reals)::(@negation_int)::(@negation_nat)::[]
     | _ => Aux.cannot_happen ""
     end.
 
@@ -175,4 +181,4 @@ Local Ltac2 rec load_databases_rec
 *)
 Ltac2 load_databases (db_label_list: WaterproofDatabase list) := 
     load_databases_rec db_label_list [].
-    
+

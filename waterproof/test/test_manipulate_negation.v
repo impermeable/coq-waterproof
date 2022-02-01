@@ -229,3 +229,22 @@ Proof.
 Qed.
 Close Scope R_scope.
 
+
+(** Test theory specific negation manipulations. *)
+
+(* Test 24 *)
+Goal forall n m : nat, ~(n < m) -> (n >= m).
+Proof.
+  intros n m h.
+  Fail solve_by_manipulating_negation_in @h.
+Abort.
+
+Require Import Waterproof.load_database.Integers.
+(* Test 25 *)
+Goal forall n m : nat, ~(n < m) -> (n >= m).
+Proof.
+  intros n m h.
+  solve_by_manipulating_negation_in @h.
+Abort.
+
+

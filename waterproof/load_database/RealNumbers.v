@@ -31,3 +31,5 @@ Require Import Waterproof.selected_databases.
 
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBReals)::old_selection.
+Ltac2 Set global_negation_database_selection as old_selection :=
+    (WaterproofNegationDBReals)::old_selection.

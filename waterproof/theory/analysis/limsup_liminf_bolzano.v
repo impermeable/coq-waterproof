@@ -320,15 +320,5 @@ Proof.
     - Case (¬P).
       It suffices to show that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
       It holds that (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
-      It holds that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)).
-      Take m : nat.
-      It holds that (∃ n : ℕ, (n ≥ m)%nat ∧ ~(a n < L)) (ii).
-      Choose n according to (ii), so for n : nat it holds that
-        ((n ≥ m)%nat ∧ ~(a n < L)) (iii).
-      Choose n0 := n.
-      Because (iii) both (n ≥ m)%nat and (~(a n < L)) hold.
-      We show both (n0 >= m)%nat and (a n0 >= L).
-      + We conclude that (n0 >= m)%nat.
-      + It holds that (a n >= L).
-        We conclude that (a n0 >= L).
+      We conclude that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
 Qed.
