@@ -55,6 +55,8 @@ Ltac2 Type WaterproofDatabase := [
     | WaterproofNegationDBIntegers
     | WaterproofNegationDBReals
     | WaterproofNegationDBRealsAndIntegers
+    (* Databases for decidability. *)
+    | WaterproofDecidabilityDBReals
 ].
 
 (** * global_database_selection, global_negation_database_selection
@@ -72,6 +74,7 @@ Ltac2 Type WaterproofDatabase := [
 *)
 Ltac2 mutable global_database_selection := ([]:WaterproofDatabase list).
 Ltac2 mutable global_negation_database_selection := ([]:WaterproofDatabase list).
+Ltac2 mutable global_decidability_database_selection := ([]:WaterproofDatabase list).
 
 (** * global_search_depth
     Global variable that specifies the maximum search depth
@@ -140,9 +143,11 @@ Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     | WaterproofDBIntuition =>          (@intuition)::[]
     | WaterproofDBFirstorder =>         (@firstorder)::[]
     (* Databases for manipulating negations. *)
-    | WaterproofNegationDBIntegers =>   (@negation_int)::(@negation_nat)::[]
-    | WaterproofNegationDBReals =>      (@negation_reals)::[]
-    | WaterproofNegationDBRealsAndIntegers => (@negation_reals)::(@negation_int)::(@negation_nat)::[]
+    | WaterproofNegationDBIntegers =>   (@negation_int)::(@negation_nat)::(@nocore)::[]
+    | WaterproofNegationDBReals =>      (@negation_reals)::(@nocore)::[]
+    | WaterproofNegationDBRealsAndIntegers => (@negation_reals)::(@negation_int)::(@negation_nat)::(@nocore)::[]
+    (* Databases for decidablity. *)
+    | WaterproofDecidabilityDBReals =>  (@decidability_reals)::(@nocore)::[]
     | _ => Aux.cannot_happen ""
     end.
 
@@ -177,7 +182,7 @@ Local Ltac2 rec load_databases_rec
             for the meaning of the labels.
             These names have been added to the scope of Coq,
             and can hence directly be used with [auto].
-            Always contains the database [core].
+            Contains the database [core], unless the database [nocore] is specified.
 *)
 Ltac2 load_databases (db_label_list: WaterproofDatabase list) := 
     load_databases_rec db_label_list [].

@@ -559,3 +559,66 @@ Global Hint Resolve Rle_not_lt : negation_reals.
 Global Hint Resolve Rge_not_lt : negation_reals.
 Global Hint Resolve Rle_not_gt : negation_reals.
 Global Hint Resolve Rge_not_gt : negation_reals.
+
+
+(** ## Lemmas for decidability. *)
+(** * Reals *)
+Local Open Scope R_scope.
+
+(** Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
+    We cannot do the same for >= as it is not defined as <= .*)
+Global Hint Extern 1 => unfold Rgt : decidability_reals.
+
+Global Hint Resolve Req_EM_T : decidability_reals.
+
+(** Lemmas to write e.g. `{r1 ≤ r2} + {r2 < r1}`.*)
+Global Hint Resolve Rlt_le_dec : decidability_reals.
+Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2). 
+    destruct s.
+    exact (left r).
+    exact (right (Req_ge r1 r2 e)). 
+    exact (right (Rle_ge r2 r1 (Rlt_le r2 r1 r))).
+Qed.
+Global Hint Resolve Rlt_ge_dec : decidability_reals.
+
+(** Lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
+Global Hint Resolve Rlt_dec Rle_dec Rge_dec : decidability_reals.
+Lemma Rle_ge_dec : forall r1 r2, {r1 <= r2} + {~ r2 >= r1}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2).
+    destruct s.
+    ltac1:(apply (left (Rlt_le r1 r2 r))).
+    ltac1:(apply (left (Req_le r1 r2 e))).
+    ltac1:(apply (right (Rlt_not_ge r2 r1 r))).
+Qed.
+Lemma Rge_le_dec : forall r1 r2, {r1 >= r2} + {~ r2 <= r1}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2). 
+    destruct s.
+    ltac1:(apply (right (Rlt_not_le r2 r1 r))).
+    ltac1:(apply (left (Req_ge r1 r2 e))).
+    ltac1:(apply (left (Rgt_ge r1 r2 r))).
+Qed.
+Global Hint Resolve Rle_ge_dec Rge_le_dec : decidability_reals.
+
+(** Lemmas to split e.g. `{r1 <= r2} into {r1 < r2} + {r1 = r2}`.*)
+Lemma Rge_lt_or_eq_dec : forall r1 r2, (r1 >= r2) -> {r2 < r1} + {r1 = r2}.
+Proof.
+    intros.
+    destruct (total_order_T r2 r1).
+    - destruct s.
+      + left. exact r.
+      + right. symmetry. exact e.
+    - ltac1:(exfalso).
+      exact (Rlt_not_ge _ _ r H).
+Qed.
+Global Hint Resolve Rle_lt_or_eq_dec Rge_lt_or_eq_dec : decidability_reals.
+
+Global Hint Resolve total_order_T : decidability_reals. (* x < y, x = y or y < x*)
+
+Close Scope R_scope.

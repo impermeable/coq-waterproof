@@ -34,6 +34,7 @@ Load goal_wrappers.
     Case Wrapper
 *)
 Load either.
+Load RealNumbers.
 Load unfold.
 Require Import Reals.
 Local Open Scope R_scope.

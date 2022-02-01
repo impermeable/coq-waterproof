@@ -53,7 +53,6 @@ waterproof/load_database/EnableWildcard.v
 waterproof/tactics/goal_wrappers.v
 waterproof/tactics/take.v
 waterproof/tactics/assume.v
-waterproof/tactics/automation_databases/decidability_db.v
 waterproof/tactics/because.v
 waterproof/tactics/choose.v
 waterproof/tactics/choose_such_that.v
