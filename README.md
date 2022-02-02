@@ -127,7 +127,7 @@ Used by tactics:
 * `Write (ident) using (constr) as (constr).` (to rewrite a hypothesis and verify the result is expected)-->
 
 #### Chains of (in)equalities
-In written proofs, a chain of statements of the form $$s_1 < s_2 = s_3 <= ... < s_n$$ are often used, where each $s_i$ is a mathematical expression.
+In written proofs, a chain of statements of the form *s<sub>1</sub> < s<sub>2</sub> = s<sub>3</sub> ≤ ... < s<sub>n</sub>$$ are often used, where each *s<sub>i</sub>* is a mathematical expression.
 Waterproof allows a similar notation in Coq:
 ```coq
 Lemma example: forall a b c: R, (a < b ∧ b < c) -> (a < c).

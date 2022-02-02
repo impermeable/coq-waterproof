@@ -73,7 +73,7 @@ Proof.
     It suffices to show that
       (for all r : ℝ, r > 0 ⇒ (there exists x : ℝ, (open_ball 1 r x) ∧ (¬ [0,1)^c x))).
     Take r : R. Assume that (r > 0).
-    Choose x := ((Rmax (1/2) (1 - r/2))).
+    Choose x := (Rmax (1/2) (1 - r/2)).
     We show both (open_ball 1 r x) and (¬[0,1)^c x).
     + We need to show that (| x - 1 | < r).
       It suffices to show that (-r < x - 1 < r).
