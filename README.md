@@ -5,48 +5,66 @@ These tactics allow to write **pen-and-paper like sentences in valid Coq proofs*
 This makes proofscripts more similar to non-mechanized mathematical proofs. As a result, the proofscript becomes reasonably readable to mathematicians not familiar with the Coq syntax. 
 
 ## Example
-The following gives a flavour of the tactics.
+The following snippet of file `sample_proof.v` gives a flavour of the tactics.
 Note that also optional alternative notations for build-in terms 
 such as `R` (`ℝ`) and `forall` (`∀`) are provided:
 ```coq
-Lemma R_complete : ∀ (A : subsets_R) (x : A),
-    is_bounded_above A ⇒ mk_subset_R (fun M : ℝ => is_supp A M).
+Goal (¬ is_open [0,1)).
 Proof.
-    Take A : subsets_R.
-    Take a : (subsets_R_to_elements A).
-    Assume A_bdd_above : (is_bounded_above A).
-    We claim that H : (sig (is_lub (is_in A))).
-    Apply completeness.
-    Expand the definition of is_bounded_above in A_bdd_above.
-    Expand the definition of is_upper_bound in A_bdd_above.
-    Expand the definition of bound.
-    Choose M such that A_bdd_by_M according to A_bdd_above.
-    Choose m := M.
-    We need to show that (∀ a : ℝ, is_in A a ⇒ a ≤ M).
-    Expand the definition of Raxioms.is_upper_bound.
-    Take a : ℝ.
-    Assume w : (is_in A a).
-    Define b := (mk_element_R (is_in A) a w).
-    ltac1:(pose proof (A_bdd_by_M b)).
-    This follows by assumption.
-    Choose y := x.
-    induction y.
-    This follows by assumption.
-    Choose M such that M_upp_bd according to H.
+  Assume that (is_open [0,1)).
+  It holds that ([0,1) 0).
+  It holds that (is_interior_point 0 [0,1)) (i).
+  Obtain r according to (i), so for r : ℝ it holds that
+    (r > 0 ∧ (for all x : ℝ, (open_ball 0 r) x ⇒ [0,1) x)) (ii).
+  Because (ii) both (r > 0) and 
+    (for all x : ℝ, (open_ball 0 r) x ⇒ [0,1) x) (iii) hold.
+  It holds that ( | -r/2 - 0 | < r).
+  It holds that ((open_ball 0 r) (-r/2)).
+  By (iii) it holds that ([0,1) (-r/2)) (iv).
+  Because (iv) both (0 ≤ -r/2) and (-r/2 < 1) hold.
+  It holds that (¬ r > 0).
+  Contradiction.
+Qed.
 
-    destruct (equivalence_sup_lub A M) as [M_is_sup_A H2]. 
-    specialize (M_is_sup_A M_upp_bd).
-    exists M. 
-    exact M_is_sup_A.
+Goal (¬ is_closed [0,1)).
+Proof.
+  We need to show that 
+    (¬ (for all a : ℝ, ([0,1)^c a) ⇒ is_interior_point a [0,1)^c)).
+  It suffices to show that
+    (there exists a : ℝ, ([0,1)^c a) ∧ ¬(is_interior_point a [0,1)^c)).
+  Choose a := 1.
+  We show both statements.
+  - We need to show that ([0,1)^c 1).
+    We conclude that ([0,1)^c 1).
+  - We need to show that (¬(is_interior_point 1 [0,1)^c)).
+    We need to show that 
+      (¬ there exists r : ℝ, r > 0 ∧ (for all x : ℝ, open_ball 1 r x ⇒ [0,1)^c x)).
+    It suffices to show that
+      (for all r : ℝ, r > 0 ⇒ (there exists x : ℝ, (open_ball 1 r x) ∧ (¬ [0,1)^c x))).
+    Take r : R. Assume that (r > 0).
+    Choose x := ((Rmax (1/2) (1 - r/2))).
+    We show both (open_ball 1 r x) and (¬[0,1)^c x).
+    + We need to show that (| x - 1 | < r).
+      It suffices to show that (-r < x - 1 < r).
+      We show both (-r < x - 1) and (x - 1 < r).
+      * It holds that (1 - r/2 ≤ (Rmax (1/2) (1 - r/2))).
+        We conclude that (& -r &< -r/2 &= 1 - r/2 - 1 &≤ (Rmax (1/2) (1-r/2)) - 1 &= x - 1).
+      * We conclude that (& x - 1 &= Rmax (1/2) (1 - r/2) - 1 &< 0 &< r).
+    + We need to show that (¬ [0,1)^c x).
+      It suffices to show that ([0,1) x).
+      We need to show that (0 ≤ x ∧ x < 1).
+      We show both (0 ≤ x) and (x < 1).
+      * We conclude that (& 0 &≤ 1/2 &≤ Rmax (1/2) (1 - r/2) &= x).
+      * We conclude that (& x &= Rmax (1/2) (1 - r/2) &< 1).
 Qed.
 ```
 
 ## Features
 * Less cryptic, **sentence-like statements for build-in Coq tactics**.
 * Automation to **hide details not used in written proofs**.
-* **Enforce explicit steps**: for example, to a variable or a hypothesis one *must* supply the type along with the name (and this will be checked).
+* **Enforce explicit steps**: for example, after splitting the proof of a conjunstion, one has to write what is to be shown (and this will be checked).
 * **Help messages** and more **elaborate error messages**.
-* **Runtime-configurable presets of databases** used by the automation.
+* **Runtime-configurable presets of hint databases** used by the automation.
 * All tactics are implemented in Ltac2.
 * **Unit-tests for all tactics**. These are run at compile-time, to ensure a working version is compiled. Unit-tests raise an error if they fail. They are located in the directory `waterproof/test`.
 
@@ -90,7 +108,7 @@ The baviour of the automated tactics can be configured by imporing specific file
 ### Examples of automation features
 A few highlights of the automation features are shown below.
 
-#### Rewriting equalities
+<!--(deprecated)#### Rewriting equalities
 One can use literal equalities to rewrite goals and hypotheses. This alleviates the need to know the names of build-in Coq lemmas and theorems. The automation features will verify the literal, use it as a temporal lemma to rewrite the target, and remove it again from the proof state.
 Example:
 ```coq
@@ -106,23 +124,26 @@ Used by tactics:
 * `Rewrite using (constr) in (ident).` (to rewrite a hypothesis)
 * `Write goal using (constr) as (constr).` (to rewrite a the goal and verify the result is expected)
 * `Write goal using (constr) as (constr).` (to rewrite a the goal and verify the result is expected)
-* `Write (ident) using (constr) as (constr).` (to rewrite a hypothesis and verify the result is expected)
+* `Write (ident) using (constr) as (constr).` (to rewrite a hypothesis and verify the result is expected)-->
 
-#### Rewriting inequalities
-In written proofs, a chain of statements of the form $$s_1 < s_2 < s_3 < ... < s_n$$ are often used, where each $s_i$ is a mathematical expression.
+#### Chains of (in)equalities
+In written proofs, a chain of statements of the form $$s_1 < s_2 = s_3 <= ... < s_n$$ are often used, where each $s_i$ is a mathematical expression.
 Waterproof allows a similar notation in Coq:
 ```coq
-Lemma example: forall a b c: R, (a > b /\ b > c) -> (a > c).
-    intros a b c h.
-    destruct h as [h1 h2].
-    Rewrite inequality a ">" b ">" c.
+Lemma example: forall a b c: R, (a < b ∧ b < c) -> (a < c).
+    Take a, b, c, : R.
+    Assume that (a < b ∧ b < c) (i).
+    Because (i) both (a < b) and (b < c) hold.
+    We conclude that (& a &< b &< c).
 Qed.
 ```
-(Note that the quotes between connectives are necessary,
-since Ltac2 does not yet support customized syntactic classes)
+
+(Note that as of now only chains for `=`, `<` and `≤` are implemented.)
+<!--(Note that the quotes between connectives are necessary,
+since Ltac2 does not yet support customized syntactic classes)-->
 
 ## Background
 The Waterproof tactics-library is developed as part of the educational [Waterproof](https://github.com/impermeable/waterproof) GUI. 
 The tactics are designed to be used by mathematics students who are unfamiliar with Coq. This is also the reason the tactics require the user to be explicit: students are must learn to write readable proofs.
 
-The library was originally written by Jim Portegies in Ltac1. It was extended and ported to Ltac2 by Cosmin Manea, Lulof Pirée, Adrian Vrămuleţ and Tudor Voicu as part of the 'Waterfowl' bachelor Software Engineering Project at the [Eindhoven University of Technology](https://www.tue.nl/en/) (in May-June 2021).
+The library was originally written by Jim Portegies in Ltac1. It was extended and ported to Ltac2 by Cosmin Manea, Lulof Pirée, Adrian Vrămuleţ and Tudor Voicu as part of the 'Waterfowl' bachelor Software Engineering Project at the [Eindhoven University of Technology](https://www.tue.nl/en/) (in May-June 2021). Since then it has been under further development by Jelle Wemmenhove and Jim Portegies.
