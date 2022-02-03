@@ -25,7 +25,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Export Ltac2.
 Require Export Waterproof.tactics.assume.
-Require Export Waterproof.tactics.automation_databases.decidability_db.
 Require Export Waterproof.tactics.because.
 Require Export Waterproof.tactics.goal_to_hint.
 Require Export Waterproof.tactics.sets_tactics.sets_automation_tactics.
