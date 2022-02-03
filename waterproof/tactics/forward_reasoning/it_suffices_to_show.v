@@ -31,6 +31,8 @@ From Ltac2 Require Import Message.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.tactics.goal_wrappers.
 
+Ltac2 Type exn ::= [ AutomationFailure(message) ].
+
 Local Ltac2 fail_suffice_to_show () :=
     Control.zero (AutomationFailure (of_string
 "Waterproof could not verify that this statement is enough to prove the goal.")).
@@ -88,7 +90,7 @@ Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr opt
     let g := Control.goal () in
     let hyp_name := Fresh.in_goal @h in
     let f () := enough ($hyp_name : $statement) 
-                by (waterprove_with_hint g help_lemma true)
+                by (waterprove_without_hint g help_lemma true)
     in
     try_enough_expression f statement.
 

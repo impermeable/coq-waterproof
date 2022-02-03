@@ -49,7 +49,7 @@ Abort.
 
 
 (* Disable automation shielding. *)
-Ltac2 Set Waterproof.waterprove.waterprove.global_shield_automation := false.
+Ltac2 Set Waterproof.waterprove.automation_subroutine.global_shield_automation := false.
 
 (** * Test 5: show that we can now conclude the implication. 
 *)
@@ -92,7 +92,7 @@ Abort.
 
 
 (* Enable automation shielding. *)
-Ltac2 Set Waterproof.waterprove.waterprove.global_shield_automation := true.
+Ltac2 Set Waterproof.waterprove.automation_subroutine.global_shield_automation := true.
 
 (** * Test 13: show that we again cannot conclude the implication. 
 *)
@@ -110,43 +110,53 @@ Goal forall x : R, x + 3 = x + 3.
 Abort.
 
 
-(* Testing de Morgan laws. *)
 
-(* Level 1 *)
+(** Testing de Morgan laws. *)
+
+(** Level 1 *)
 Variable P1 : R -> Prop.
+(* Test 15 *)
 Goal ~ (forall x : R, P1 x) -> (exists x : R, ~ (P1 x)).
 Proof.
   intro H.
   We conclude that (there exists x : ℝ, ¬ P1 x).
 Qed.
 
-(* Level 2 *)
+(* Test 16: similar as test 15 but with 'It suffices to show that ...' *)
+Goal ~(for all x : R, P1 x).
+Proof.
+  It suffices to show that (there exists x : ℝ, ¬ P1 x).
+Abort.
+
+(** Level 2 *)
 Variable P2 : R -> R -> Prop.
+(* Test 17 *)
 Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
 Proof.
   intro H.
   We conclude that (there exists x : ℝ, ~ (exists y : R, P2 x y)).
 Qed.
 
+(* Test 17 *)
 Goal (exists x : R, ~ (exists y : R, P2 x y)) -> (exists x : R, forall y : R, ~ P2 x y).
 Proof.
   intro H.
-  Fail We conclude that (exists x : R, forall y : R, ~ P2 x y).
-Abort.
+  We conclude that (exists x : R, forall y : R, ~ P2 x y).
+Qed.
 
-
-
-(* Level 3 *)
+(** Level 3 *)
+(* Test 18 *)
 Variable P3 : R -> R -> R -> Prop.
-Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (forall y : R, P2 x y)).
+Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
 Proof.
   intro H.
-  Fail We conclude that (there exists x : ℝ, ~ (forall y : R, P2 x y)).
-Abort.
+  We conclude that (there exists x : ℝ, ~ (exists y : R, P2 x y)).
+Qed.
 
 (* Test with assumptions on variables, like forall \eps > 0. *)
 Definition Rdist (x y : R) := Rabs (x - y).
 Variable (f : R -> R) (a L : R).
+(* Test 19 *)
 Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
           0 < Rdist x a < delta -> Rdist (f x) L < eps)
       ->
@@ -154,8 +164,16 @@ Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)).
 Proof.
   intro H.
-  Fail
   We conclude that (there exists eps : ℝ , eps > 0
     ∧ ¬ (there exists delta : ℝ, delta > 0 ⇨ for all x : ℝ,
                        0 < Rdist x a < delta ⇨ Rdist (f x) L < eps)).
+Qed.
+
+(*Test 20: Similar as test 19, but with 'It suffices to show that ...'*)
+Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
+          0 < Rdist x a < delta -> Rdist (f x) L < eps).
+Proof.
+  It suffices to show that
+     (exists eps : R, eps > 0 /\ ~(exists delta : R, delta > 0 -> forall x : R, 
+          0 < Rdist x a < delta -> Rdist (f x) L < eps)).
 Abort.

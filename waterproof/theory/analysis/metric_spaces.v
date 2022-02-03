@@ -3,6 +3,7 @@ Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
 Require Import Waterproof.databases. (* Req_true is in here *)
+Require Import Waterproof.load_database.RealNumbers.
 Require Import micromega.Lra.
 
 Open Scope R_scope.
@@ -21,7 +22,9 @@ Definition dist_positive :
 
 Definition dist_non_degenerate :
   ∀ x y : X, (dist X x y = 0) ⇒ (x = y). 
-  Take x, y : X. Apply (dist_refl X). Defined.
+  Take x, y : X.
+  By (proj1 (dist_refl X x y)) we conclude that (dist X x y = 0 ⇨ x = y).
+Defined.
 
 Definition dist_symmetric :
   ∀ x y : X, dist X x y = dist X y x
@@ -29,12 +32,13 @@ Definition dist_symmetric :
 
 Definition dist_triangle_inequality :
   ∀ x y z : X, dist X x z ≤ dist X x y + dist X y z.
-  Take x, y, z : X. Apply (dist_tri X).
+  Take x, y, z : X. 
+  By (dist_tri X) we conclude that (dist X x z ≤ dist X x y + dist X y z).
 Qed.
 
 Definition dist_reflexive : ∀ x : X, dist X x x = 0.
-  Take x : X. Apply (dist_refl X). We need to show that (x = x).
-  We conclude that (x = x).
+  Take x : X.
+  By (proj2 (dist_refl X x x)) we conclude that (dist X x x = 0).
 Defined.
 
 End Definitions.
@@ -48,35 +52,33 @@ Lemma d'_eq_0 : forall x y : ℝ,
   d_discrete_R x y = 0 -> (Reqb x y) = true.
 Proof.
 Take x, y : ℝ. 
-Assume d'_0 : (d_discrete_R x y = 0).
+Assume that (d_discrete_R x y = 0) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
-  Apply Req_true.
-  Apply e.
+  By Req_true we conclude that (Reqb x y = true).
 
 + Case (x ≠ y).
-  Expand the definition of d_discrete_R in d'_0.
-  That is, write d'_0 as ( (if Reqb x y then 0 else 1) = 0).
-  rewrite (Req_false x y n) in d'_0.
-  It holds that H1 : (1 ≠ 0).
+  Expand the definition of d_discrete_R in (i).
+  That is, write (i) as ( (if Reqb x y then 0 else 1) = 0).
+  rewrite (Req_false x y n) in i.
+  It holds that (1 ≠ 0).
   Contradiction.
 Qed.
 
 Lemma d'_eq_1 : forall x y : ℝ, d_discrete_R x y = 1 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ. 
-Assume d'_1 : (d_discrete_R x y = 1).
-Expand the definition of d_discrete_R in d'_1.
-That is, write d'_1 as ( (if Reqb x y then 0 else 1) = 1
+Assume that (d_discrete_R x y = 1) (i).
+Expand the definition of d_discrete_R in (i).
+That is, write (i) as ( (if Reqb x y then 0 else 1) = 1
 ).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
-  rewrite (Req_true x y e) in d'_1.
-  It holds that H1 : (0 ≠ 1).
+  rewrite (Req_true x y e) in i.
+  It holds that (0 ≠ 1).
   Contradiction.
 + Case (x ≠ y).
-  Apply Req_false.
-  Apply n.
+  By Req_false we conclude that (Reqb x y = false).
 Qed.
 
 Global Hint Resolve d'_eq_0 : reals.

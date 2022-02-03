@@ -34,6 +34,7 @@ Load goal_wrappers.
     Case Wrapper
 *)
 Load either.
+Load RealNumbers.
 Load unfold.
 Require Import Reals.
 Local Open Scope R_scope.
@@ -53,9 +54,9 @@ Load induction.
 Load claims.
 Goal forall n, n + 0 = n.
     We use induction on n.
-    - Fail We claim that m : nat.
+    - Fail We claim that nat.
       admit.
-    - Fail We claim that h : (n + 1 + 0 = n + 1).
+    - Fail We claim that (n + 1 + 0 = n + 1) (i).
 Abort.
 
 (** * Test 3
@@ -74,8 +75,8 @@ Abort.
     Expand the definition in hypothesis wrapper.
 *)
 Goal forall n, (bar n = 0) -> (n = 0).
-    intros n h.
-    Expand the definition of bar in h.
-    Fail Expand the definition of foo in h.
+    intros n i.
+    Expand the definition of bar in (i).
+    Fail Expand the definition of foo in (i).
 Abort.
 

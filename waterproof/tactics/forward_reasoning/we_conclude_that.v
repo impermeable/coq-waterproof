@@ -32,6 +32,8 @@ Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.tactics.goal_wrappers.
 
+Ltac2 Type exn ::= [ AutomationFailure(message) ].
+
 Ltac2 warn_equivalent_goal_given () :=
     print (of_string "Warning: 
 The statement you provided does not exactly correspond to what you need to show. 
@@ -149,10 +151,10 @@ Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
     let finish_proof () := 
       lazy_match! target_goal with
       |  (inequality_chains_R.ineq_to_prop _ ) => 
-         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(dummy_lemma) false));
+         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false));
          waterprove_without_hint target_goal lemma true
       |  (inequality_chains_nat.ineq_to_prop _ ) => 
-         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(dummy_lemma) false));
+         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false));
          waterprove_without_hint target_goal lemma true
       |  _ => waterprove_without_hint target_goal lemma true
       end in

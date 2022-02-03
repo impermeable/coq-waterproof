@@ -29,6 +29,13 @@ Require Import Waterproof.tactics.goal_wrappers.
 
 Require Import Waterproof.auxiliary.
 
-Ltac2 Notation "We" "claim" "that" u(ident) ":" t(constr) :=
+Local Ltac2 my_assert (t:constr) (id:ident option) := 
+    match id with
+    | None    => let h := Fresh.in_goal @__wp__h in
+                 Aux.ltac2_assert h t
+    | Some id => Aux.ltac2_assert id t
+    end.
+
+Ltac2 Notation "We" "claim" "that" t(constr) id(opt(seq("(", ident, ")"))) :=
     panic_if_goal_wrapped ();
-    Aux.ltac2_assert u t.
+    my_assert t id.

@@ -78,6 +78,7 @@ Global Hint Resolve not_all_ex_not : classical_logic.
 (* Global Hint Resolve not_ex_not_all : classical_logic. *)
 
 
+
 (** ** Subsets: lemmas for subsets of elements *)
 (** ### Various lemmas *)
 Lemma base_same : forall C : Type,
@@ -522,4 +523,102 @@ Global Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
 Close Scope R_scope.
 
 
+(** ## Lemmas for dealing with negations in specific contexts, e.g. negated order relations
+*)
+(** * Naturals *)
+Global Hint Resolve le_not_lt : negation_nat.
+Global Hint Resolve lt_not_le : negation_nat.
+Global Hint Resolve not_lt : negation_nat.
+Global Hint Resolve not_le : negation_nat.
 
+(** * Integers *) (* TODO find minimal set of hints that can show all we want*)
+Global Hint Resolve  Zle_not_lt : negation_int.
+Global Hint Resolve  Zlt_not_le : negation_int.
+Global Hint Resolve  Zle_not_gt : negation_int.
+Global Hint Resolve  Zgt_not_le : negation_int.
+Global Hint Resolve  Znot_lt_ge : negation_int.
+Global Hint Resolve  Znot_lt_ge : negation_int.
+Global Hint Resolve  Znot_gt_le : negation_int.
+Global Hint Resolve  Znot_le_gt : negation_int.
+Global Hint Resolve  not_Zne    : negation_int.
+
+(** * Reals *) (* TODO find minimal set of hints that can show all we want*)
+Global Hint Resolve Rnot_le_lt : negation_reals.
+Global Hint Resolve Rnot_ge_gt : negation_reals.
+Global Hint Resolve Rnot_le_gt : negation_reals.
+Global Hint Resolve Rnot_ge_lt : negation_reals.
+Global Hint Resolve Rnot_lt_le : negation_reals.
+Global Hint Resolve Rnot_gt_le : negation_reals.
+Global Hint Resolve Rnot_gt_ge : negation_reals.
+Global Hint Resolve Rnot_lt_ge : negation_reals.
+
+Global Hint Resolve Rlt_not_le : negation_reals.
+Global Hint Resolve Rgt_not_le : negation_reals.
+Global Hint Resolve Rlt_not_ge : negation_reals.
+Global Hint Resolve Rle_not_lt : negation_reals.
+Global Hint Resolve Rge_not_lt : negation_reals.
+Global Hint Resolve Rle_not_gt : negation_reals.
+Global Hint Resolve Rge_not_gt : negation_reals.
+
+
+(** ## Lemmas for decidability. *)
+(** * Reals *)
+Local Open Scope R_scope.
+
+(** Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
+    We cannot do the same for >= as it is not defined as <= .*)
+Global Hint Extern 1 => unfold Rgt : decidability_reals.
+
+Global Hint Resolve Req_EM_T : decidability_reals.
+
+(** Lemmas to write e.g. `{r1 ≤ r2} + {r2 < r1}`.*)
+Global Hint Resolve Rlt_le_dec : decidability_reals.
+Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2). 
+    destruct s.
+    exact (left r).
+    exact (right (Req_ge r1 r2 e)). 
+    exact (right (Rle_ge r2 r1 (Rlt_le r2 r1 r))).
+Qed.
+Global Hint Resolve Rlt_ge_dec : decidability_reals.
+
+(** Lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
+Global Hint Resolve Rlt_dec Rle_dec Rge_dec : decidability_reals.
+Lemma Rle_ge_dec : forall r1 r2, {r1 <= r2} + {~ r2 >= r1}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2).
+    destruct s.
+    ltac1:(apply (left (Rlt_le r1 r2 r))).
+    ltac1:(apply (left (Req_le r1 r2 e))).
+    ltac1:(apply (right (Rlt_not_ge r2 r1 r))).
+Qed.
+Lemma Rge_le_dec : forall r1 r2, {r1 >= r2} + {~ r2 <= r1}.
+Proof.
+    intros.
+    destruct (total_order_T r1 r2). 
+    destruct s.
+    ltac1:(apply (right (Rlt_not_le r2 r1 r))).
+    ltac1:(apply (left (Req_ge r1 r2 e))).
+    ltac1:(apply (left (Rgt_ge r1 r2 r))).
+Qed.
+Global Hint Resolve Rle_ge_dec Rge_le_dec : decidability_reals.
+
+(** Lemmas to split e.g. `{r1 <= r2} into {r1 < r2} + {r1 = r2}`.*)
+Lemma Rge_lt_or_eq_dec : forall r1 r2, (r1 >= r2) -> {r2 < r1} + {r1 = r2}.
+Proof.
+    intros.
+    destruct (total_order_T r2 r1).
+    - destruct s.
+      + left. exact r.
+      + right. symmetry. exact e.
+    - ltac1:(exfalso).
+      exact (Rlt_not_ge _ _ r H).
+Qed.
+Global Hint Resolve Rle_lt_or_eq_dec Rge_lt_or_eq_dec : decidability_reals.
+
+Global Hint Resolve total_order_T : decidability_reals. (* x < y, x = y or y < x*)
+
+Close Scope R_scope.

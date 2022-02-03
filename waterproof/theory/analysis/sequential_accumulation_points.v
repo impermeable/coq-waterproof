@@ -25,35 +25,38 @@ Lemma seq_bdd_seq_acc_pts_bdd :
   ∀ a : ℕ → ℝ, has_ub a ⇒ bound (is_seq_acc_pt a).
 Proof.
     Take a : (ℕ → ℝ).
-    Assume a_upp_bdd : (has_ub a).
+    Assume that (has_ub a) (i).
     Expand the definition of bound.
     That is, write the goal as 
       (there exists m : ℝ, is_upper_bound (is_seq_acc_pt a) m).
     Expand the definition of is_upper_bound.
     That is, write the goal as (there exists m : ℝ,
       for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ m).
-    Choose M such that a_bdd_by_M according to a_upp_bdd.
+    Obtain M according to (i), so for M : R it holds that
+      (is_upper_bound (EUn a) M) (ii).
     Choose m := M.
     Take x : ℝ.
-    Assume x_is_acc_pt : (is_seq_acc_pt a x).
-    Expand the definition of is_seq_acc_pt.
-    That is, write the goal as (x ≤ m).
-    Choose n such that n_good_ind_seq according to x_is_acc_pt.
-    Because n_good_ind_seq both n_ind_seq and subseq_conv_to_x.
+    Assume that (is_seq_acc_pt a x) (iii).
+    Expand the definition of is_seq_acc_pt in (iii).
+    That is, write (iii) as (there exists n : ℕ ⇨ ℕ,
+      is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x).
+    Obtain n according to (iii), so for n : ℕ → ℕ it holds that
+      (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iv).
+    Because (iv) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
     We need to show that (x ≤ M).
-    Apply (upp_bd_seq_is_upp_bd_lim (fun (k : ℕ)↦ a(n k))).
-    Expand the definition of is_upper_bound in a_bdd_by_M.
-    That is, write a_bdd_by_M as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
-    Expand the definition of EUn in a_bdd_by_M.
-    That is, write a_bdd_by_M as (for all x0 : ℝ, 
-      (there exists i : ℕ, x0 = a i) ⇨ x0 ≤ M).
-    We claim that H : (for all i : ℕ, (a i) ≤ M).
-    Take i : ℕ.
-    Apply (a_bdd_by_M (a i)).
-    Choose i0 := i.
-    This follows by reflexivity.
+    By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
+    We claim that (for all k : ℕ, (a k) ≤ M) (v).
+    { Expand the definition of is_upper_bound in (ii).
+      That is, write (ii) as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
+      Expand the definition of EUn in (ii).
+      That is, write (ii) as (for all x0 : ℝ,
+        (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
+      Take k : ℕ.
+      It suffices to show that (there exists k0 : nat, a k = a k0).
+      Choose k0 := k.
+      We conclude that (a k = a k0).
+    }
     Take n0 : ℕ.
-    By H it holds that H2 : (a(n n0) ≤ M).
+    By (v) it holds that (a(n n0) ≤ M).
     It follows that (a(n n0) ≤ M).
-    Apply subseq_conv_to_x.
 Qed.

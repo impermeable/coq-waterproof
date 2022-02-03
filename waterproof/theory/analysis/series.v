@@ -44,13 +44,15 @@ Lemma sigma_split_v2 :
     (k < l)%nat ⇒ (l ≤ N)%nat 
       ⇒ sigma a k N = sigma a k (l - 1)%nat + sigma a l N.
 Proof.
-    Take a : (ℕ → ℝ) and k, l, Nn : ℕ.
-    Assume k_lt_N : (k < l)%nat and l_le_N : (l ≤ Nn)%nat.
-    It holds that H1 : (l = S (l - 1)%nat ).
-    rewrite H1 at 2.
-    apply sigma_split with (low := k) (k := (l-1)%nat) (high := Nn).
-    This follows immediately.
-    This concludes the proof.
+    Take a : (ℕ → ℝ) and k, l, Nn : ℕ; such that
+      (k < l)%nat and (l ≤ Nn)%nat.
+    It holds that (l = S (l - 1)%nat) (i).
+    (* TODO: It suffices to show that (sigma a k Nn = sigma a k (l - 1) + sigma a (S (l - 1)) Nn).*)
+    rewrite (i) at 2.
+    By sigma_split it suffices to show that (k <= l - 1 < Nn)%nat.
+    We show both (k <= l - 1)%nat and (l - 1 < Nn)%nat.
+    - We conclude that (k ≤ l - 1)%nat.
+    - We conclude that (l - 1 < Nn)%nat.
 Qed.
 
 
@@ -60,17 +62,16 @@ Lemma partial_sums_pos_incr :
   ∀ (a : ℕ → ℝ), (∀ n : ℕ, a n ≥ 0)⇒
     Un_growing (partial_sums a).
 Proof.
-    Take a : (ℕ → ℝ).
-    Assume terms_pos : (∀ n : ℕ, a n ≥ 0).
+    Take a : (ℕ → ℝ); such that (∀ n : ℕ, a n ≥ 0).
     Expand the definition of Un_growing.
     That is, write the goal as (for all n : ℕ,  partial_sums a n ≤ partial_sums a (S n)).
     We need to show that (for all n : ℕ, partial_sums a n ≤ partial_sums a (S n)).
     Take n : ℕ.
-    Rewrite using (partial_sums a (S n) = partial_sums a n + a (S n)).
-    It holds that H1 : (a (S n) ≥ 0).
-    It follows that (partial_sums a n ≤ partial_sums a n + a (S n)).
+    It holds that (a (S n) ≥ 0).
+    It holds that ((partial_sums a n) + a (S n) = partial_sums a (S n)).
+    We conclude that (& partial_sums a n &<= (partial_sums a n) + a (S n) 
+                                         &= partial_sums a (S n)).
 Qed.
-
 
 Definition series_cv_to (a : ℕ → ℝ) (l : ℝ) :=
   Un_cv (partial_sums a) l.
@@ -90,48 +91,51 @@ Theorem mouse_tail :
       (Un_cv (fun Nn ↦ sigma a k Nn) ((sigma a k (l-1)) + L))).
 Proof.
     Take a : (ℕ → ℝ) and k, l : ℕ and L : ℝ.
-    split.
-    Assume sigma_l_cv : (Un_cv (Nn) ↦ (sigma a l Nn) L).
-    We claim that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)).
-    Apply lim_const_seq.
-    By CV_plus it holds that H2 : (Un_cv (fun Nn ↦ sigma a k (l-1)%nat + sigma a l Nn) (sigma a k (l-1)%nat + L)).
-    We claim that H3 : (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n = sigma a k (l - 1)%nat + sigma a l n).
-    Choose M := l%nat.
-    Take n : ℕ. 
-    Assume n_ge_l : (n ≥ M)%nat.
-    Apply sigma_split_v2. 
-    This follows by assumption. 
-    This follows immediately.
-    apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn) (b := fun Nn ↦ sigma a k Nn).
-    Choose M such that H5 according to H3.
-    Expand the definition of evt_eq_sequences.
-    That is, write the goal as (there exists k0 : ℕ, for all n : ℕ, (n ≥ k0)%nat 
-      ⇨ sigma a k (l - 1) + sigma a l n = sigma a k n).
-    Choose k0 := M.
-    Take n : ℕ.
-    Assume n_ge_M : (n ≥ M)%nat.
-    It holds that H6 : (sigma a k n = sigma a k (l-1) + sigma a l n).
-    It holds that H7 : (sigma a k (l-1) + sigma a l n = sigma a k n).
-    Apply H7.
-    Apply H2.
-    Assume sigma_k_cv : (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
-    We claim that H7 : (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
-    Apply lim_const_seq.
-    By CV_minus it holds that H8 : (Un_cv (fun N ↦ sigma a k N - (sigma a k (l-1))) (sigma a k (l-1) + L - (sigma a k (l-1)))).
-    We claim that H9 : (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n - sigma a k (l - 1)%nat = sigma a l n ).
-    Choose M := l.
-    Take n : ℕ. 
-    Assume n_ge_l : (n ≥ l)%nat. 
-    By sigma_split_v2 it holds that H10 : (sigma a k n = sigma a k (l - 1)%nat + sigma a l n).
-    We need to show that (sigma a k n - sigma a k (l-1) = sigma a l n).
-    It follows that (sigma a k n - sigma a k (l - 1) = sigma a l n).
-    Rewrite using (L = sigma a k (l-1) + L - sigma a k (l-1)).
-    apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
-    Choose M such that H11 according to H9.
-    Expand the definition of evt_eq_sequences.
-    That is, write the goal as (there exists k0 : ℕ, for all n : ℕ, (n ≥ k0)%nat 
-      ⇨ sigma a k n - sigma a k (l - 1) = sigma a l n).
-    Choose k0 := M.
-    Apply H11.
-    Apply H8.
+    Assume that (k < l)%nat.
+    We show both directions.
+    - We need to show that (Un_cv (Nn) ↦ (sigma a l Nn) L
+        ⇨ Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
+      Assume that (Un_cv (Nn) ↦ (sigma a l Nn) L).
+      (* TODO: fix
+         By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
+      We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
+      { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
+        By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
+      }
+      By CV_plus it holds that (Un_cv (fun Nn ↦ sigma a k (l-1)%nat + sigma a l Nn) (sigma a k (l-1)%nat + L)).
+      We claim that (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (Nn ↦ (sigma a k Nn))).
+      { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k (l - 1)%nat + sigma a l n = sigma a k n).
+        Choose M := l%nat.
+        Take n : ℕ; such that (n ≥ M)%nat.
+        By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
+        We conclude that (k < l <= n)%nat.
+      }
+      (* TODO: find way of dealing with the case when coq cannot find parameters for apply ...*)
+      apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn).
+      + We conclude that (evt_eq_sequences (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (Nn) ↦ (sigma a k Nn)).
+      + (*TODO: fix  We conclude that ((Nn) ↦ (sigma a k (l - 1) + sigma a l Nn)). *)   
+        We need to show that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
+        We conclude that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
+    - We need to show that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L) ⇨ Un_cv (Nn) ↦ (sigma a l Nn) L).
+      Assume that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
+      We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
+      { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
+        By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
+      }
+      By CV_minus it holds that (Un_cv (fun N ↦ sigma a k N - (sigma a k (l-1))) (sigma a k (l-1) + L - (sigma a k (l-1)))).
+      We claim that (evt_eq_sequences (Nn ↦ (sigma a k Nn - sigma a k (l-1))) (Nn ↦ (sigma a l Nn))).
+      { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n - sigma a k (l-1) = sigma a l n).
+        Choose M := l%nat.
+        Take n : ℕ; such that (n ≥ M)%nat.
+        It suffices to show that (sigma a k n = sigma a k (l - 1) + sigma a l n).
+        By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
+        We conclude that (k < l <= n)%nat.
+      }
+      apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
+      + We conclude that (evt_eq_sequences (n) ↦ (sigma a k n - sigma a k (l - 1)) (n) ↦ (sigma a l n)).
+      + We need to show that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) L).
+        It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (i).
+        (* It suffices to show that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) (sigma a k (l - 1) + L - sigma a k (l - 1))).*)
+        rewrite <- (i). (* TODO come up with some notation for this (meaning transport)*)
+        We conclude that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) (sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.

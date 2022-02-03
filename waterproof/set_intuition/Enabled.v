@@ -27,6 +27,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Message.
-Require Import Waterproof.waterprove.waterprove.
+Require Import Waterproof.waterprove.automation_subroutine.
 
 Ltac2 Set global_enable_intuition := true.

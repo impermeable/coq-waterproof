@@ -28,6 +28,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 
 Load either.
+Load RealNumbers.
 Require Import Reals.
 Local Open Scope R_scope.
 

@@ -36,14 +36,14 @@ Require Import Waterproof.tactics.goal_wrappers.
 
 Local Ltac2 idtac () := ().
 
-(** * By ... it holds that ... : ...
+(** * assert_and_prove_sublemma
     Introduce a new sublemma and try to prove it immediately,
     optionally using a given lemma.
 
     Arguments:
-        - [id: ident], name for the new sublemma.
+        - [id: ident option], optional name for the new sublemma.
             If the proof succeeds, 
-            it will become a hypotheses bearing [id] as name.
+            it will become a hypothesis (bearing [id] as name).
         - [conclusion: constr], the actual content 
             of the new sublemma to prove.
         - [proving_lemma: constr], optional reference to a lemma 
@@ -54,29 +54,34 @@ Local Ltac2 idtac () := ().
             This happens if the sublemma does not hold,
             but can also happen if it is simply too difficult for [waterprove].
 *)
-Ltac2 assert_and_prove_sublemma (id: ident) (conclusion: constr) 
+Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) 
                                 (proving_lemma: constr option) :=
     let help_lemma := unwrap_optional_lemma proving_lemma
     in
     let by_arg () := waterprove_without_hint conclusion help_lemma true
     in
-    let proof_attempt () := Aux.ltac2_assert_with_by id conclusion by_arg
+    let proof_attempt () := (* Check whether identifier is given *)
+                            match id with
+                            | None    => let h := Fresh.in_goal @__wp__h in
+                                         Aux.ltac2_assert_with_by h conclusion by_arg
+                            | Some id => Aux.ltac2_assert_with_by id conclusion by_arg
+                            end
     in
     match Control.case proof_attempt with
     | Val _ => idtac () (*print (of_string ("New sublemma successfully added."))*)
     | Err exn => Control.zero exn
     end.
 
-(** * By ... it holds that ... : ...
+(** * By ... it holds that ... (...)
     Introduce a new sublemma and try to prove it immediately
     using a given lemma.
 
     Arguments:
         - [lemma: constr], reference to a lemma 
             used to prove the new sublemma (via [waterprove)]).
-        - [id: ident], name for the new sublemma.
+        - [id: ident option], optional name for the new sublemma.
             If the proof succeeds, 
-            it will become a hypotheses bearing [id] as name.
+            it will become a hypothesis (bearing [id] as name).
         - [conclusion: constr], the actual content 
             of the new sublemma to prove.
 
@@ -86,20 +91,20 @@ Ltac2 assert_and_prove_sublemma (id: ident) (conclusion: constr)
             but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 Notation "By" lemma(constr) 
-               "it" "holds" "that" id(ident) ":" conclusion(constr) := 
+               "it" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")")))  := 
     panic_if_goal_wrapped ();
     assert_and_prove_sublemma id conclusion (Some lemma).
     
     
-(** * It holds that ... : ...
+(** * It holds that ... (...)
     Introduce a new sublemma and try to prove it immediately.
-    Same as [By ... it holds that ... : ...],
+    Same as [By ... it holds that ... (...)],
     but without using a specified lemma.
 
     Arguments:
-        - [id: ident], name for the new sublemma.
+        - [id: ident option], optional name for the new sublemma.
             If the proof succeeds, 
-            it will become a hypotheses bearing [id] as name.
+            it will become a hypotheses (bearing [id] as name).
         - [conclusion: constr], the actual content 
             of the new sublemma to prove.
 
@@ -108,6 +113,6 @@ Ltac2 Notation "By" lemma(constr)
             This happens if the sublemma does not hold,
             but can also happen if it is simply too difficult for [waterprove].
 *)
-Ltac2 Notation "It" "holds" "that" id(ident) ":" conclusion(constr) :=
+Ltac2 Notation "It" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")")))  :=
     panic_if_goal_wrapped ();
     assert_and_prove_sublemma id conclusion None.

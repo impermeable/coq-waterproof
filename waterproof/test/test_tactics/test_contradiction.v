@@ -36,7 +36,7 @@ Require Import Waterproof.AllConstructiveTactics.
 Goal forall n : nat, n = n.
 Proof.
     We argue by contradiction.
-    Assume H : (¬ (for all n : ℕ, n = n)).
+    Assume that (¬ (for all n : ℕ, n = n)).
 Abort.
 
 
@@ -45,7 +45,7 @@ Goal forall n : nat, n = n.
 Proof.
     intro n.
     We argue by contradiction.
-    Assume H : (n ≠ n).
+    Assume that (n ≠ n).
     Contradiction.
 Qed.
 
@@ -54,6 +54,6 @@ Goal forall n : nat, n = n.
 Proof.
     intro n.
     We argue by contradiction.
-    Assume n_neq_n : (n ≠ n).
-    It holds that n_en_n : (n = n). ↯.
+    Assume that (n ≠ n).
+    It holds that (n = n). ↯.
 Qed.

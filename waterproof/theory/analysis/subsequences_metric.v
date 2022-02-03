@@ -96,19 +96,19 @@ Proof.
       unfold is_index_sequence. 
       Take k : ℕ. 
       unfold is_index_seq in H.
-      Apply H.
+      We conclude that ((n k < n (k + 1))%nat).
     - We need to show that (is_index_sequence n ⇨ is_index_seq n).
       intro.
       unfold is_index_seq. 
       Take k : ℕ. 
       unfold is_index_sequence in H.
-      Apply H.
+      We conclude that ((n k < n (k + 1))%nat).
 Qed.
 
 
 
 Definition is_increasing (g : ℕ → ℕ) :=
-  ∀ k : ℕ, (g k ≤ g (S k))%nat.
+  ∀ k : ℕ, (g k ≤ g (k + 1))%nat.
 
 Lemma incr_loc_to_glob :
   ∀ g : ℕ → ℕ,
@@ -119,36 +119,31 @@ Proof.
     Take g : (ℕ → ℕ).
     Expand the definition of is_increasing. (*TODO: the layout of is_increasing is confusing*)
     That is, write the goal as 
-      ((for all k : ℕ, (g k ≤ g (S k))%nat) ⇨ for all k l : ℕ, (k ≤ l ⇨ g k ≤ g l)%nat ).
+      ((for all k : ℕ, (g k ≤ g (k + 1))%nat) ⇨ for all k l : ℕ, (k ≤ l ⇨ g k ≤ g l)%nat ).
     Check family.
     Locate family.
     Check ℕ.
-    Assume incr_loc : (∀ k : ℕ, ((g k) ≤ (g (S k)))%nat).
+    Assume that (∀ k : ℕ, (g k) ≤ (g (k + 1)))%nat.
     Take k : ℕ.
-    induction l as [|l IH_l]. 
-    (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
-    Assume k_le_0 : ((k ≤ 0)%nat). 
-    Rewrite using (k = 0)%nat. 
-    We need to show that (g 0 ≤ g 0)%nat.
-    This follows immediately.
-    (** Next, we need to show that if $k \leq S (l)$ then $f(k) \leq f(S (l))$.*)
-    Assume Sk_le_Sl : ((k ≤ S l)%nat).
-    destruct (lt_eq_lt_dec k (S l)) as [temp | k_gt_Sl].
-    destruct temp as [k_lt_Sl | k_eq_Sl].
-    (** We first consider the case that $k < S(l)$.*)
-    It holds that k_le_l: (k ≤ l)%nat.
-    By IH_l it holds that gk_le_gl : (g k ≤ g l)%nat.
-    It holds that gl_le_g_Sl: (g l ≤ g (S l))%nat.
-
-    apply le_trans with (n := (g k)) (m := g l) (p := g (S l)).
-    exact gk_le_gl.
-    exact gl_le_g_Sl.
-    (** We now consider the case $k = S(l)$. We need to show that $f(k) \leq f(S(l))$. *)
-    Rewrite using (k = S l).
-    This follows by reflexivity.
-    (** Finally we consider the case $k > S(l)$. However, this case is in contradiction with $k \leq S(l)$. *)
-    It holds that not_Sl_lt_k: (¬(S l < k)%nat). 
-    Contradiction.
+    We use induction on l.
+    - We first show the base case, namely ((k ≤ 0)%nat ⇨ (g k ≤ g 0)%nat).
+      Assume that (k ≤ 0)%nat.
+      It holds that (k = 0)%nat.
+      It suffices to show that (g k = g 0)%nat.
+      We conclude that (g k = g 0)%nat.
+    - We now show the induction step.
+      Assume that ((k ≤ l) ⇨ (g k ≤ g l))%nat (IH).
+      Assume that (k ≤ l + 1)%nat.
+      destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
+      + (** We first consider the case that $k < l + 1$.*)
+        It holds that (k ≤ l)%nat.
+        We conclude that (& g k &<= g l &<= g (l + 1))%nat.
+      + (** We now consider the case $k = S(l)$. We need to show that $f(k) \leq f(S(l))$. *)
+        It suffices to show that (g k = g (l + 1))%nat.
+        We conclude that (g k = g (l + 1))%nat.
+      + (** Finally we consider the case $k > S(l)$. However, this case is in contradiction with $k \leq S(l)$. *)
+        It holds that (¬(l + 1 < k)%nat). 
+        Contradiction.
 Qed.
 
 
@@ -158,23 +153,14 @@ Lemma index_sequence_property2 (n : ℕ → ℕ) :
             (k1 ≥ k2)%nat ⇒ 
                 (n k1 ≥ n k2)%nat.
 Proof.
-    Assume H : (is_index_sequence n).
-    Take k1, k2 : ℕ.
-    Assume k1_ge_k2 : (k1 ≥ k2)%nat.
+    Assume that (is_index_sequence n).
+    Take k1, k2 : ℕ; such that (k1 ≥ k2)%nat.
     We need to show that (n k1 ≥ n k2)%nat.
-
-    ltac1:(pose proof (incr_loc_to_glob n)).
-    We claim that n_is_increasing : (is_increasing n).
+    By incr_loc_to_glob it suffices to show that (is_increasing n).
     Expand the definition of is_increasing.
-    That is, write the goal as (for all k : ℕ, (n k ≤ n (S k))%nat).
+    That is, write the goal as (for all k : ℕ, (n k ≤ n (k + 1))%nat).
     Take k : ℕ.
-    It holds that temp : (n k ≤ n (k+1))%nat.
-    It holds that temp2 : (k+1 = S k)%nat.
-    Write goal using (S k = (k + 1)%nat) as ((n k ≤ n (k + 1))%nat).
-    Apply temp.
-    Apply H0. 
-    Apply n_is_increasing. 
-    Apply k1_ge_k2.
+    We conclude that (n k ≤ n (k+1))%nat.
 Qed.
 
 Global Hint Resolve index_sequence_property2 : subsequences.
@@ -182,10 +168,12 @@ Global Hint Resolve index_sequence_property2 : subsequences.
 
 Lemma double_is_even : forall n : nat, Nat.even (2 * n) = true.
 Proof.
-    Take n : nat.
-    Rewrite equality (Nat.even (2*n)) "=" (Nat.even (0 + 2 * n)).
-    rewrite Nat.even_add_mul_2.
-    This concludes the proof.
+  Take n : nat.
+  It holds that (Nat.even (2 * n) = Nat.even (0 + 2 * n)).
+  It suffices to show that (Nat.even (0 + 2*n) = true).
+  By Nat.even_add_mul_2 it holds that (Nat.even (0 + 2*n) = Nat.even 0).
+  It holds that (Nat.even 0 = true).
+  We conclude that (Nat.even (0 + 2 * n) = true).
 Qed.
 
 Global Hint Resolve double_is_even : subsequences.
@@ -193,17 +181,19 @@ Global Hint Resolve double_is_even : subsequences.
 Lemma subsequence_of_convergent_sequence : ∀ a : (ℕ → X), ∀ p : X, a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
 Proof.
 Take a : (ℕ → X). Take p : X.
-Assume a_converges_to_p : (a ⟶ p).
+Assume that (a ⟶ p).
 Take n : (ℕ → ℕ).
-Assume n_is_index_sequence : (is_index_sequence n).
+Assume that (is_index_sequence n).
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (a (n k)) p < ε).
 
-Take ε : ℝ. Assume ε_pos : (ε > 0).
-Choose K such that k_le_K_a_k_to_p according to (a_converges_to_p ε ε_pos).
+Take ε : ℝ; such that (ε > 0).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (a k) p < ε) (i).
+Obtain K according to (i), so for K : nat it holds that
+  (∀ k : ℕ, (k ≥ K)%nat → dist (a k) p < ε).
 Choose N3 := K.
-Take k : ℕ. Assume k_ge_N : (k ≥ N3)%nat.
-By index_sequence_property2 it holds that H : (n k ≥ n K)%nat.
-By index_sequence_property it holds that H2 : (n K ≥ K)%nat.
+Take k : ℕ; such that (k ≥ N3)%nat.
+By index_sequence_property2 it holds that (n k ≥ n K)%nat.
+By index_sequence_property it holds that (n K ≥ K)%nat.
 assert (H3 : (n k ≥ K)%nat) by auto with zarith.
 We conclude that (dist (a (n k)) p < ε).
 Qed.
@@ -214,26 +204,31 @@ Lemma equivalent_subsequence_convergence :
       y ⟶ p.
 Proof.
 Take x, y : (ℕ → X).
-Assume y_subsequence_of_x : (is_subsequence y x).
+Assume that (is_subsequence y x).
 Take p : X.
-Assume x_converges_to_p : (x ⟶ p).
+Assume that (x ⟶ p).
 
 We need to show that (y ⟶ p).
-It holds that y_sub_x : (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
-Choose m such that m_is_index_and_y_eq_x_m according to y_sub_x.
-Because m_is_index_and_y_eq_x_m both m_is_index and y_eq_x_m.
+It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
+Obtain m according to (i), so for m : nat -> nat it holds that 
+  (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (ii).
+Because (ii) both (is_index_sequence m) and 
+  (for all k : nat, y k = x (m k)) hold.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
 
-Take ε : ℝ. Assume ε_pos : (ε > 0).
-Choose K such that k_le_K_x_k_to_p according to (x_converges_to_p ε ε_pos).
+Take ε : ℝ; such that (ε > 0).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε) (iii).
+Obtain K according to (iii), so for K : nat it holds that 
+  (∀ k : ℕ, (k ≥ K)%nat → dist (x k) p < ε).
 Choose N3 := K.
-Take k : ℕ. Assume k_ge_N : (k ≥ N3)%nat.
-It holds that y_k_eq_x_m_k : (y k = x (m k)).
-Write goal using (y k = x (m k)) as (dist (x (m k)) p < ε).
-
-By index_sequence_property2 it holds that H : (m k ≥ m K)%nat.
-By index_sequence_property it holds that H2 : (m K ≥ K)%nat.
-assert (H3 : (m k ≥ K)%nat ) by auto with zarith.
-We conclude that (dist (x (m k)) p < ε).
+Take k : ℕ; such that (k ≥ N3)%nat.
+By index_sequence_property2 it holds that (m k ≥ m K)%nat.
+By index_sequence_property it holds that (m K ≥ K)%nat.
+It holds that (m k ≥ K)%nat.
+It holds that (dist (x (m k)) p < ε).
+It holds that (y k = x (m k)) (iv).
+(* It holds that H5 : (dist (y k) p = dist (x (m k)) p). Why does this not work? *)
+rewrite (iv).
+We conclude that ( dist (x (m k)) p < ε).
 Qed.
