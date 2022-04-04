@@ -136,9 +136,9 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
 *)
 Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
     lazy_match! goal with
-    | [|- ExpandDef.Goal.Wrapper _] => goal_as t (*[goal_as] is from unfold.v*)
-    | [|- StateGoal.Wrapper _] => unwrap_state_goal t
-    | [|- _] => check_and_change_goal t
+    | [|- ExpandDef.Goal.Wrapper _] => goal_as t; change $t (*[goal_as] is from unfold.v*)
+    | [|- StateGoal.Wrapper _] => unwrap_state_goal t; change $t
+    | [|- _] => check_goal t; change $t
     end.
 
 (* Allow different syntax styles:

@@ -226,10 +226,7 @@ Definition set_opp (A : subset_R)  :=
 
 Definition original_elem {A : subset_R} : (set_opp A) -> A.
 Proof.
-    intro opp_a.
-    (** TODO: this does not work for some reason *)
-    (* It is not a forall goal. Also [intros] doesn't do anything here *)
-    (* Take opp_a : (set_opp A). *)
+    Take opp_a : (set_opp A).
     It holds that ((set_opp A) opp_a).
     It holds that (A (-opp_a)) (i).
     exact (mk_elem_R A (-opp_a) (i)).
