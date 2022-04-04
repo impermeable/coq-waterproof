@@ -40,95 +40,78 @@ Ltac2 Type exn ::= [ TakeError(message) ].
 Local Ltac2 too_many_of_type_message (t : constr) := 
   Message.concat (Message.concat (of_string "Tried to introduce too many variables of type ") (of_constr t)) (of_string ".").
 
-(** * introduce_idents
-    Attempts to recursively introduce variables of one type.
+Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
+  Message.concat (Message.concat 
+    (Message.concat (of_string "Expected variable of type ") (of_constr e))
+    (Message.concat (of_string " instead of ") (of_constr t))) (of_string ".").
+
+
+(** * intro_ident
+    Introduces a variable.
 
     Arguments:
-        - [x : ident list]: list of variables to introduce. 
-        - [t: constr]: type of the variables in [x].
-        - [ct : constr]: coercion of type [t].
+        - [id : ident ]: variable to introduce.
+        - [type: constr]: type of the variable [id].
     Does:
-        - If possible, introduces the first variable in [x]. 
-          Proceeds to call itself with the remaining variables in [x] as a new list [x'].
-
+        - Introduces the variable [id].
     Raises Exceptions:
-        - [TakeError], if the current goal does not require the introduction of any more variables 
-                       in general or of type [t].
+        - [TakeError], if the current goal does not require the introduction
+          of a variable of type [type], including coercions of [type].
 *)
-Local Ltac2 rec introduce_idents (x : ident list) (t : constr) (ct : constr) :=
-  match x with
-  | head::tail 
-    => (* Check whether we still need variables of coerced type [ct]. *)
-       lazy_match! goal with
-       | [ |- forall _ : ?u, _] 
-         => match Aux.check_constr_equal u ct with
-            | true  => (* Introduce head *)
-                       Std.intros false [Std.IntroNaming (Std.IntroIdentifier head)];
-                       (* Attempt to introduce remaining variables. *)
-                       introduce_idents tail t ct
-            | false => Control.zero (TakeError (too_many_of_type_message t))
-            end
-       | [ |- _] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
-       end
-  | [] => () (*done*)
+Local Ltac2 intro_ident (id : ident) (type : constr) :=
+  lazy_match! goal with
+  | [ |- forall _ : ?u, _] =>
+         let ct := Aux.get_coerced_type type in
+         (* Check whether we need a variable of type [type], including coercions of [type]. *)
+         match Aux.check_constr_equal u ct with
+         | true  => intro $id
+         | false => Control.zero (TakeError (too_many_of_type_message type))
+         end
+  | [ |- _] => Control.zero (TakeError (too_many_of_type_message type))
   end.
 
 
-Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
-  Message.concat (Message.concat 
-    (Message.concat (of_string "Expected variables of type ") (of_constr e))
-    (Message.concat (of_string " instead of ") (of_constr t))) (of_string ".").
-
-(** * process_identlist_type_pairs
-    Attempts to recursively introduce a list of (variables of a specific type).
+(** * intro_per_type
+    Introduces a list of variables of single type.
 
     Arguments:
-        - [x : (ident list * constr) list)]: list of (variables paired with a specific type).
+        - [pair : (ident list * constr)]: list of variables paired with their type.
     Does:
-        - For the first pair of (variables coupled with a type) in [x], 
-            calls [introduce_idents] to introduce these variables.
-          Proceeds to call itself with the remaining pairs in [x] as a new list [x'].
-
+        - Introduces the variables in [pair].
     Raises Exceptions:
-        - [TakeError], if the current goal does not require the introduction of any more variables 
-                       in general or of type [t], where [t] is the type from the first pair in [x].
+        - [TakeError], if the current goal does not require the introduction
+          of a variable of type [type], including coercions of [type].
 *)
-Local Ltac2 rec process_identlist_type_pairs (x : (ident list * constr) list) :=
-    match x with
-    | head::tail =>
-            match head with
-            | (v, t) => 
-                  lazy_match! goal with
-                  | [ |- forall _ : ?u, _] => 
-                        (* Check whether the type is not a proposition *)
-                        let sort_u := Aux.get_value_of_hyp u in
-                        match Aux.check_constr_equal sort_u constr:(Prop) with
-                        | false => 
-                             (* Check whether we need variables of type t. *)
-                             let ct := Aux.get_coerced_type t in
-                             match Aux.check_constr_equal u ct with
-                             | true  => introduce_idents v t ct
-                             | false => Control.zero (TakeError (expected_of_type_instead_of_message u t))
-                             end
-                        | true  => Control.zero (TakeError (of_string "‘Take’ cannot be used to prove an implication (⇨). Use ‘Assume’ instead."))
-                        end
-                  | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
-                  end
-            | _ => Control.zero (Aux.CannotHappenError "Cannot happen.")
-            end;
-            (* Attempt to introduce remaining variables of (different) types. *)
-            process_identlist_type_pairs tail
-    | [] => () (* Done. *)
-    end.
+Local Ltac2 intro_per_type (pair : ident list * constr) :=
+  match pair with
+  | (ids, type) => 
+      lazy_match! goal with
+      | [ |- forall _ : ?u, _] => 
+            (* Check whether [u] is not a proposition. *)
+            let sort_u := Aux.get_value_of_hyp u in
+            match Aux.check_constr_equal sort_u constr:(Prop) with
+            | false =>
+                 (* Check whether we need variables of type [type], including coercions of [type]. *)
+                 let ct := Aux.get_coerced_type type in
+                 match Aux.check_constr_equal u ct with
+                 | true  => List.iter (fun id => intro_ident id type) ids
+                 | false => Control.zero (TakeError (expected_of_type_instead_of_message u type))
+                 end
+            | true  => Control.zero (TakeError (of_string "‘Take ...’ cannot be used to prove an implication (⇨). Use ‘Assume that ...’ instead."))
+            end
+       | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+       end
+  end.
+
 
 (** * take
-    Checks whether the 'Take' tactic can be applied to the current goal, 
-    attempts to introduce a list of (variables of a specific type).
+    Checks whether variables need to be introduced,
+    attempts to introduce a list of variables of certain types.
 *)
 Local Ltac2 take (x : (ident list * constr) list) := 
   lazy_match! goal with
-    | [ |- forall _ , _ ] => process_identlist_type_pairs x
-    | [ |- _ ] => Control.zero (TakeError (of_string "‘Take’ can only be used to prove a ‘for all’-statement (∀) or to construct a map (→)."))
+    | [ |- forall _ , _ ] => List.iter intro_per_type x
+    | [ |- _ ] => Control.zero (TakeError (of_string "‘Take ...’ can only be used to prove a ‘for all’-statement (∀) or to construct a map (→)."))
   end.
 
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","), ":", constr), "and")) := 
