@@ -131,6 +131,17 @@ Goal not (0 = 1).
   Fail Take p : (0 = 1).
 Abort.
 
+Require Import Reals.
+(** Test 13: Introducing too many variables when 
+    the for all statement is followed by an implication.
+*)
+Goal forall (n : nat) (x y : R), (0 < x < y)%R -> (x^n < y^n)%R.
+Proof.
+  Fail Take n : nat and x, y, z : R.
+  Fail Take n : nat and x, y : R and f : (R -> R).
+  Take n : nat and x, y : R.
+Abort.
+
 Require Import Waterproof.definitions.set_definitions.
 
 (** Test 13: Introduciing set variables

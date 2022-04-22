@@ -87,20 +87,20 @@ Local Ltac2 intro_per_type (pair : ident list * constr) :=
   | (ids, type) => 
       lazy_match! goal with
       | [ |- forall _ : ?u, _] => 
-            (* Check whether [u] is not a proposition. *)
-            let sort_u := Aux.get_value_of_hyp u in
-            match Aux.check_constr_equal sort_u constr:(Prop) with
-            | false =>
-                 (* Check whether we need variables of type [type], including coercions of [type]. *)
-                 let ct := Aux.get_coerced_type type in
-                 match Aux.check_constr_equal u ct with
-                 | true  => List.iter (fun id => intro_ident id type) ids
-                 | false => Control.zero (TakeError (expected_of_type_instead_of_message u type))
-                 end
-            | true  => Control.zero (TakeError (of_string "‘Take ...’ cannot be used to prove an implication (⇨). Use ‘Assume that ...’ instead."))
-            end
-       | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
-       end
+          (* Check whether [u] is not a proposition. *)
+          let sort_u := Aux.get_value_of_hyp u in
+          match Aux.check_constr_equal sort_u constr:(Prop) with
+          | false =>
+              (* Check whether we need variables of type [type], including coercions of [type]. *)
+              let ct := Aux.get_coerced_type type in
+              match Aux.check_constr_equal u ct with
+              | true  => List.iter (fun id => intro_ident id type) ids
+              | false => Control.zero (TakeError (expected_of_type_instead_of_message u type))
+              end
+          | true  => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+          end
+      | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+      end
   end.
 
 
@@ -110,7 +110,13 @@ Local Ltac2 intro_per_type (pair : ident list * constr) :=
 *)
 Local Ltac2 take (x : (ident list * constr) list) := 
   lazy_match! goal with
-    | [ |- forall _ , _ ] => List.iter intro_per_type x
+    | [ |- forall _ : ?u, _] => 
+        (* Check whether [u] is not a proposition. *)
+        let sort_u := Aux.get_value_of_hyp u in
+        match Aux.check_constr_equal sort_u constr:(Prop) with
+        | false => List.iter intro_per_type x
+        | true  => Control.zero (TakeError (of_string "‘Take ...’ cannot be used to prove an implication (⇨). Use ‘Assume that ...’ instead."))
+        end
     | [ |- _ ] => Control.zero (TakeError (of_string "‘Take ...’ can only be used to prove a ‘for all’-statement (∀) or to construct a map (→)."))
   end.
 
