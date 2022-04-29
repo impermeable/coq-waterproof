@@ -38,6 +38,8 @@ Require Import Waterproof.theory.analysis.sequential_accumulation_points.
 
 Global Hint Resolve Rabs_Rabsolu.
 
+Open Scope R_scope.
+
 (** ## lim sup*)
 Definition lim_sup_bdd (a : ℕ → ℝ) 
                        (pr1 : has_ub a) 
@@ -322,3 +324,5 @@ Proof.
       It holds that (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
       We conclude that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
 Qed.
+
+Close Scope R_scope.

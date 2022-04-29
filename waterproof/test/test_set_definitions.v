@@ -24,78 +24,32 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-(* Tests for subsets of the reals. *)
-
-(* Test 0: check if we can talk about terms of a subset. *)
 Require Import Waterproof.definitions.set_definitions.
-Variable B : subset_R.
-Variable bb : B.
-
-(* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
+Require Import Waterproof.notations.notations.
 Require Import Reals.
+Require Import Lra.
 Open Scope R_scope.
-Goal forall b : B, b > 0.
-Abort.
+Open Scope subset_scope.
 
-(* Test 2: check if we can automatically deduce that for a term of a subset, 
-           the characteristic function of that subset hold for that term.  *)
-Require Import Waterproof.load_database.Subsets.
-Require Import Waterproof.AllTactics.
-Goal forall b : B, B b.
-  intro b.
-  We conclude that (B b).
-Qed.
+Variable P : R -> Prop.
+Definition A := as_subset R P.
 
-(* Test 3: check the use of a tactic to show the existence of a specific term of a subset. *)
-Variable QR : R -> Prop.
-Goal exists b0 : B, QR b0.
-  It suffices to show that (exists b0 : R, B b0 /\ QR b0).
-  Abort.
+Variable x : R.
+Check (x : A).
+Check (is_lub A).
+Check (x : [0,1]).
 
-
-
-(** * Preamble for subsets of a generic set X *)
-
-Context (X : Set).
-
-(** The following line automatically generates induction schemes for Records.*)
-(*Set Nonrecursive Elimination Schemes. *)
-Record     subset_X := mk_subset_X { pred_X :> X -> Prop }.
-Record     elements_X (A : subset_X) := mk_elem_X { elem_X :> X; witness_X : A elem_X }.
-Definition subset_to_elements_X := fun A : subset_X => elements_X A.
-Coercion   subset_to_elements_X : subset_X >-> Sortclass.
-
-Global Hint Resolve witness_X : subsets. (* for all (V : subset_X) (x : V), V x *)
-
-Lemma exists_and_implies_exists_subset_X (A : subset_X) (P : X -> Prop) : 
-  (exists a : X, (A a) /\ (P a)) -> (exists a : A, P a).
+Goal is_upper_bound [0,1] 1.
 Proof.
-  intro H. destruct H as [a [ainA Ha]]. exists (mk_elem_X A a ainA). exact Ha. 
-Defined.
-Hint Resolve exists_and_implies_exists_subset_X : subsets.
-
-
-(* Tests for subsets of the set X *)
-
-(* Test 0: check if we can talk about terms of a subset. *)
-Variable C : subset_X.
-Variable cc : C.
-
-(* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [X]). *)
-Variable f : X -> X -> Prop.
-Variable x0 : X.
-Goal forall c : C, f c x0.
-Abort.
-
-(* Test 2: check if we can automatically deduce that for a term of a subset, 
-           the characteristic function of that subset hold for that term.  *)
-Goal forall c : C, C c.
-  intro c.
-  We conclude that (C c).
+  unfold is_upper_bound.
+  intro a.
+  intro a_in_interval.
+  assert (0 <= a <= 1) by auto.
+  lra.
 Qed.
 
-(* Test 3: check the use of a tactic to show the existence of a specific term of a subset. *)
-Variable QX : X -> Prop.
-Goal exists c0 : C, QX c0.
-  It suffices to show that (exists c0 : X, C c0 /\ QX c0).
-  Abort.
+Goal 1/2 : [0,1].
+Proof.
+  enough (0 <= 1/2 <= 1) by auto.
+  lra.
+Qed.

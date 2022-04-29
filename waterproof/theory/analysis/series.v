@@ -39,6 +39,8 @@ Global Hint Resolve Rabs_minus_sym.
 Global Hint Resolve Rmult_lt_0_compat : real.
 Global Hint Resolve Rinv_lt_contravar : real.
 
+Open Scope R_scope.
+
 Lemma sigma_split_v2 :
   ∀ (a : ℕ → ℝ) (k l N : ℕ),
     (k < l)%nat ⇒ (l ≤ N)%nat 
@@ -139,3 +141,5 @@ Proof.
         rewrite <- (i). (* TODO come up with some notation for this (meaning transport)*)
         We conclude that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) (sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.
+
+Close Scope R_scope.

@@ -27,6 +27,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 Load databases.
 From Ltac2 Require Import Ltac2.
 Require Import simplify_chains.
+Open Scope nat_scope.
 (* Test 0: check if notations work. *)
 
 Goal  ∀ n : ℕ -> ℕ, (∀ k : ℕ, (n (k + 1) > n k)%nat) ⇒

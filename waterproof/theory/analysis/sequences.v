@@ -37,6 +37,7 @@ Global Hint Resolve Rabs_minus_sym : reals.
 Global Hint Resolve Rmult_lt_0_compat : reals.
 Global Hint Resolve Rinv_lt_contravar : reals.
 
+Open Scope R_scope.
 Open Scope extra.
 
 (** ** What is a sequence of real numbers?
@@ -456,3 +457,6 @@ for all n : ℕ,
   Take n : ℕ.
   We conclude that (& |a n - q| &= |a n| &<= M).
 Qed.
+
+Close Scope extra.
+Close Scope R_scope.

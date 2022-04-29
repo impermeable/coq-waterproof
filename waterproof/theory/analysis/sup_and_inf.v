@@ -39,6 +39,8 @@ Notation "x ∈ A" := (@is_in _ A x) (at level 50) : sup_and_inf_scope.
 (** ## Suprema and infima*)
 Notation is_sup := is_lub.
 Notation is_bdd_above := bound.
+
+Open Scope R_scope.
 Open Scope sup_and_inf_scope.
 
 (** ## Upper bounds
@@ -223,7 +225,7 @@ Qed.
 
 Lemma exists_inf :
   ∀ A : (ℝ →  Prop), is_bdd_below A ⇒
-    ((∃ x : ℝ, x ∈ A) ⇒ { m : ℝ | is_inf A m }).
+    ((∃ x : ℝ, x ∈ A) ⇒ { m | is_inf A m }).
 Proof.
     Take A : (ℝ → Prop).
     Assume that (is_bdd_below A).
@@ -249,7 +251,7 @@ Proof.
     By completeness it holds that ({L | is_sup B L}) (iv).
     Obtain L according to (iv), so for L : R it holds that (is_sup B L).
     By sup_set_opp_is_inf_set it holds that (is_inf A (-L)).
-    We conclude that ({m : ℝ | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
+    We conclude that ({m | is_inf A m}). (*TODO: make solvable with 'Choose ...'.*)
 Qed.
 
 
@@ -443,3 +445,6 @@ Proof.
     - We need to show that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
       We conclude that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
 Qed.
+
+Close Scope sup_and_inf_scope.
+Close Scope R_scope.

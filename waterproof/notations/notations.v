@@ -38,8 +38,6 @@ Require Import Max.
 
 Require Export Waterproof.definitions.set_definitions.
 
-Open Scope nat_scope.
-Open Scope R_scope.
 (** ## **Quantifiers**
 Allow unicode characters ∀ and ∃ for readability.*)
 Notation "'for' 'all' x .. y , P" := (forall x, .. (forall y, P) ..)
@@ -60,7 +58,7 @@ Notation "∃ x .. y , P " := (exists x, .. (exists y, P) ..)
 
 Notation "'fun' x .. y '↦' t" := (fun x => .. (fun y => t) ..)
   (at level 200, x binder, y binder, right associativity,
-  format "'[ ' '[ ' 'fun' x .. y ']' '↦' '/' t ']'").
+  format "'[ ' '[ ' 'fun' x .. y ']' '↦' '/' t ']'") : type_scope.
 (** ## **Set symbols, implications**
 The following notations deal with sets.*)
 Notation "x ∨ y" := (x \/ y) (at level 85, right associativity) : type_scope.
@@ -94,6 +92,9 @@ Notation "x ≥ y" := (ge x y) (at level 70, no associativity) : nat_scope.
 
 Notation "x ≤ y" := (x <= y)%R (at level 70, no associativity) : R_scope.
 Notation "x ≥ y" := (x >= y)%R (at level 70, no associativity) : R_scope.
+
+Open Scope nat_scope.
+Open Scope R_scope.
 (** ## **Scopes and coercions***)
 Notation "'ℕ'" := (nat).
 Notation "'ℤ'" := (Z).
@@ -122,11 +123,6 @@ When using this in rewrites, $<$, $>$, etc. should bind stronger.*)
 Notation "| x |" := (Rabs x) (at level 69, x at next level).
 Notation "｜ x - y ｜" := (R_dist x y) (at level 69, x at level 48, y at level 48) : extra.
 
-(** ## Subsets and intervals*)
-Notation "[ x , y ]" := (mk_subset_R (fun r : R => (x <= r <= y))).
-Notation "[ x , y )" := (mk_subset_R (fun r : R => (x <= r <  y))).
-Notation "( x , y ]" := (mk_subset_R (fun r : R => (x <  r <= y))).
-Notation "( x , y )" := (mk_subset_R (fun r : R => (x <  r <  y))).
 
 (** ## Sums and series*)
 Notation "'Σ' Cn 'equals' x" :=
@@ -142,14 +138,14 @@ Definition finite_triangle_inequalty :=
 (** For the composition of a sequence and a function (e.g. for the sequence of measures of a sequence of sets):*)
 (*Notation "μ ◦ C" :=
   (fun (n:ℕ) ↦ (μ (C n))) (at level 45).*)
-(** ## Sets*)
-Notation "b 'seen' 'as' 'element' 'of' A 'by' u" :=
-  (mk_elem_R A b u) (at level 50).
 
+(** ## Subsets and intervals*)
+Notation "[ a , b ]" := (as_subset R (fun x => (a <= x <= b))).
+Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))).
+Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))).
+Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))).
 
-(* We might want a notation like the following to clean
-   up the environment after using previous notation:
-Notation "'element' 'of' 'ℝ' 'that' 'is' 'in' A" :=
-  (elements_R_satisfying (is_in A)) (at level 50).
-  (*only to clean up environment*)
-*)
+Close Scope nat_scope.
+Close Scope R_scope.
+Declare Scope subset_scope.
+Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.

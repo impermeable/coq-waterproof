@@ -13,6 +13,8 @@ waterproof/definitions/inequality_chains.v
 waterproof/notations/notations.v
 waterproof/notations/set_notations.v
 waterproof/test_auxiliary.v
+waterproof/waterprove/simplify_subsets.v
+waterproof/tactics/simplify_chains.v
 
 # These depend multiple other file of the Waterproof-library.
 waterproof/databases.v
@@ -63,7 +65,7 @@ waterproof/tactics/we_need_to_show.v
 waterproof/tactics/we_show_both_directions.v
 waterproof/tactics/we_show_both_statements.v
 waterproof/tactics/goal_to_hint.v
-waterproof/tactics/simplify_chains.v
+
 
 # Automated tactics
 waterproof/tactics/forward_reasoning/forward_reasoning_aux.v

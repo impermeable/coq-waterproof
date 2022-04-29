@@ -17,6 +17,8 @@ Require Import Waterproof.theory.analysis.subsequences.
 
 Global Hint Resolve Rabs_Rabsolu.
 
+Open Scope R_scope.
+
 Definition is_seq_acc_pt (a : ℕ → ℝ) (x : ℝ) : Prop :=
   ∃ n : ℕ → ℕ, is_index_seq n ∧ Un_cv (fun (k : ℕ) ↦ a(n k)) x.
 
@@ -60,3 +62,5 @@ Proof.
     By (v) it holds that (a(n n0) ≤ M).
     It follows that (a(n n0) ≤ M).
 Qed.
+
+Close Scope R_scope.

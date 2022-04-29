@@ -22,14 +22,4 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-
-(** * Definitions for sets*)
-Require Import Reals.
-Open Scope R_scope.
-(** The following line automatically generates induction schemes for Records.*)
-(*Set Nonrecursive Elimination Schemes. *)
-Record     subset_R := mk_subset_R { pred_R :> R -> Prop }.
-Record     elements_R (A : subset_R) := mk_elem_R { elem_R :> R; witness_R : A elem_R }.
-Definition subset_to_elements_R := fun A : subset_R => elements_R A.
-Coercion   subset_to_elements_R : subset_R >-> Sortclass.
-
+Record subset (X : Type) := as_subset { pred :> X -> Prop }.

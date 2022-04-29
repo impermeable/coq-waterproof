@@ -45,6 +45,7 @@ Require Import Reals.ROrderedType.
 Require Import Coq.micromega.Lra.
 Require Import Coq.micromega.Lia.
 Require Import Waterproof.tactics.simplify_chains.
+Require Import Waterproof.waterprove.simplify_subsets.
 
 (** ** Additional database *)
 
@@ -77,8 +78,33 @@ Global Hint Resolve not_all_ex_not : classical_logic.
 (* not_ex_not_all cannot be used as a hint. *)
 (* Global Hint Resolve not_ex_not_all : classical_logic. *)
 
+Open Scope R_scope.
 
+(* subsets *)
+Global Hint Extern 3 => ltac2:(simpl_member_subset ()); lra : reals. (*TODO: do we need a hint database for (reals-and-subsets)?*)
+(* Global Hint Extern 3 => ltac2:(simpl_member_subset ()); lia : waterproof_integers. (* not yet needed? *) *)
+Global Hint Extern 3 (pred R _ _) => simpl; lra : reals.
 
+Open Scope subset_scope.
+Lemma left_in_closed_open {a b : R} : (a < b) -> (a : [a,b)).
+Proof.
+  intro a_lt_b.
+  split.
+  - apply Rle_refl.
+  - exact a_lt_b.
+Qed.
+Lemma right_in_open_closed {a b : R} : (a < b) -> (b : (a,b]).
+Proof.
+  intro a_lt_b.
+  split.
+  - exact a_lt_b.
+  - apply Rle_refl.
+Qed.
+Global Hint Resolve left_in_closed_open left_in_closed_open : subsets.
+Close Scope subset_scope.
+
+  
+(*
 (** ** Subsets: lemmas for subsets of elements *)
 (** ### Various lemmas *)
 Lemma base_same : forall C : Type,
@@ -185,7 +211,7 @@ Global Hint Resolve int_oc_prop1 : subsets.
 Global Hint Resolve int_oc_prop2 : subsets.
 Global Hint Resolve int_oo_prop1 : subsets.
 Global Hint Resolve int_oo_prop2 : subsets.
-
+*)
 
 (** *** The reals database *)
 Lemma Req_true : forall x y : R, x = y -> Reqb x y = true.
