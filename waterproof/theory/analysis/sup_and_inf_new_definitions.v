@@ -151,7 +151,7 @@ Proof.
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r (fun x => A x) (iii) (ii)).
+      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-a)).
     (** By m_low_bd it holds that (m ≤ -a) (m_le_min_a).*)
@@ -177,7 +177,7 @@ Proof.
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r (fun x => A x) (iii) (ii)).
+      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-a)).
     Define b := (-a).
@@ -259,7 +259,7 @@ Proof.
     { It holds that (--z = z) (ii).
       It holds that (A z) (iii).
       (* TODO: We conclude that (--z ∈ A). should work *)
-      exact (eq_ind_r (fun x => A x) (iii) (ii)).
+      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-z)) (iv).
     By R_complete it holds that (there exists M : ℝ, is_sup B M) (v).
@@ -650,7 +650,7 @@ Proof.
         We claim that (A M).
         { It holds that (A a) (iii).
           (* TODO: We conclude that (A M). should work *)
-          exact (eq_ind_r (fun x => A x) (iii) (ii)).
+      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
         }
         Contradiction.
       }

@@ -165,7 +165,7 @@ Qed.
 
 Global Hint Resolve index_sequence_property2 : subsequences.
 
-
+Open Scope nat_scope.
 Lemma double_is_even : forall n : nat, Nat.even (2 * n) = true.
 Proof.
   Take n : nat.
@@ -175,6 +175,7 @@ Proof.
   It holds that (Nat.even 0 = true).
   We conclude that (Nat.even (0 + 2 * n) = true).
 Qed.
+Close Scope nat_scope.
 
 Global Hint Resolve double_is_even : subsequences.
 

@@ -197,7 +197,7 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 Lemma lim_d_0 : Un_cv d 0.
 Proof.
     Expand the definition of d.
-    That is, write the goal as ( Un_cv (n) ↦ (1 / (n + 1)) 0 ).
+    That is, write the goal as (Un_cv(n ↦ (1 / (n + 1)), 0)).
     Expand the definition of Un_cv.
     That is, write the goal as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
@@ -225,14 +225,14 @@ Proof.
     By lim_d_0 it holds that (Un_cv d 0).
     By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
     Expand the definition of opp_seq in (i).
-    That is, write (i) as ( Un_cv (n) ↦ (- d n) (-0) ).
+    That is, write (i) as ( Un_cv (n ↦ -d(n), -0)).
     Expand the definition of d in (i).
-    That is, write (i) as ( Un_cv (n) ↦ (- (1 / (n + 1))) (-0) ).
+    That is, write (i) as ( Un_cv (n ↦ -(1 / (n + 1)), -0)).
     It holds that (0 = -0).
     (* TODO: make transport automatic *)
-    By (eq_ind_r (fun x => Un_cv (n) ↦ (- (1 / (n + 1))) x) (i)) 
-      it suffices to show that (Un_cv (n) ↦ (- (1 / (n + 1))) (-0)).
-    We conclude that (Un_cv (n) ↦ (- (1 / (n + 1))) (-0)).
+    By (eq_ind_r(_, _, fun x => Un_cv (n ↦ -(1 / (n + 1)), x), (i))) 
+      it suffices to show that (Un_cv (n ↦ -(1 / (n + 1)), -0)).
+    We conclude that (Un_cv (n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
 

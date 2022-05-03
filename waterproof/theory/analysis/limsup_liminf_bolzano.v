@@ -65,7 +65,7 @@ Qed.
 
 Lemma exists_almost_lim_sup : 
   ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))) (m : ℕ) (N : ℕ),
-    ∃ k : ℕ, (N ≤ k)%nat ∧ a k > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1).
+    ∃ k : ℕ, (N ≤ k)%nat ∧ a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1).
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
@@ -79,11 +79,11 @@ Proof.
     We show both statements.
     - We need to show that (Nn ≤ k)%nat.
       We conclude that (Nn <= k)%nat.
-    - We need to show that (a k > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
-      We claim that (proj1_sig (lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) Nn).
+    - We need to show that (a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
+      We claim that (proj1_sig(_,_,lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) Nn).
       { Expand the definition of lim_sup_bdd.
         That is, write the goal as 
-          (proj1_sig (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)) 
+          (proj1_sig(_, _, decreasing_cv (sequence_ub a (i), (Wn_decreasing a (i)), (ii))) 
             ≤ sequence_ub a (i) Nn).
         Define v := (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)).
         Obtain l according to (v), so for l : R it holds that 
@@ -94,24 +94,24 @@ Proof.
       }
       Because (iv) both (n ≥ Nn)%nat and 
         (a n > sequence_ub a i Nn - 1 / (m + 1)) hold.
-      It holds that (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n).
-      We need to show that (proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
-      We conclude that (& proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1) &< a n &= a k).
+      It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n).
+      We need to show that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
+      We conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) &< a n &= a k).
 Qed.
 
 
 Lemma exists_subseq_to_limsup_bdd :
    ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))),
-    ∃ n : ℕ → ℕ, is_index_seq n ∧ ∀ k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (INR(k) + 1).
+    ∃ n : ℕ → ℕ, is_index_seq n ∧ ∀ k : ℕ, a (n k) > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (INR(k) + 1).
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
     Assume that (has_lb (sequence_ub a (i))) (ii).
     (* TODO: notation for apply with parameters *)
-    apply exists_good_subseq with (P := fun (m : ℕ) (y :ℝ) ↦ y > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1) ).
+    apply exists_good_subseq with (P := fun (m : ℕ) (y :ℝ) ↦ y > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1) ).
     Take m, N1 : nat.
     By exists_almost_lim_sup we conclude that (there exists k : ℕ, (N1 ≤ k)%nat
-      ∧ a k > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
+      ∧ a k > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
 Qed.
 
 
@@ -124,20 +124,20 @@ Proof.
     Assume that (has_ub a) (i).
     Take Nn, n : ℕ; such that (n ≥ Nn)%nat.
     Expand the definition of sequence_ub.
-    That is, write the goal as (a n ≤ lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn (i))).
+    That is, write the goal as (a n ≤ lub (k ↦ (a (Nn + k)%nat), maj_ss a Nn (i))).
     Expand the definition of lub.
     That is, write the goal as
-      (a n ≤ (let (a0, _) := ub_to_lub (k) ↦ (a (Nn + k)%nat) (maj_ss a Nn (i)) in a0)).
+      (a n ≤ (let (a0, _) := ub_to_lub (k ↦ (a (Nn + k)%nat), maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat) (maj_ss a Nn (i))).
     Obtain M according to (ii), so for M : R it holds that 
       (is_sup (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M) (iii).
     Expand the definition of is_lub in (iii).
-    That is, write (iii) as (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M
-      ∧ (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b)).
-    Because (iii) both (is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) M) (iv)
-      and (for all b : ℝ, is_upper_bound (EUn (k) ↦ (a (Nn + k)%nat)) b ⇨ M ≤ b) hold.
+    That is, write (iii) as (is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), M)
+      ∧ (for all b : ℝ, is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b)).
+    Because (iii) both (is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), M)) (iv)
+      and (for all b : ℝ, is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b) hold.
     Expand the definition of is_upper_bound in (iv).
-    That is, write (iv) as (for all x : ℝ, EUn (k) ↦ (a (Nn + k)%nat) x ⇨ x ≤ M).
+    That is, write (iv) as (for all x : ℝ, EUn (k ↦ (a (Nn + k)%nat), x) ⇨ x ≤ M).
     It holds that (Nn + (n-Nn) = n)%nat.
     It suffices to show that (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
     Expand the definition of EUn.
@@ -151,7 +151,7 @@ Qed.
 (** ## A slightly upgraded version of the Bolzano-Weierstrass Theorem*)
 Theorem Bolzano_Weierstrass_gen :
   ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))),
-    ∃ (n : ℕ → ℕ), is_index_seq n ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a (i) (ii))).
+    ∃ (n : ℕ → ℕ), is_index_seq n ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig(_,_,lim_sup_bdd a (i) (ii))).
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
@@ -164,12 +164,12 @@ Proof.
     {
       By exists_subseq_to_limsup_bdd it holds that 
         (there exists n : ℕ ⇨ ℕ, is_index_seq n 
-          ∧ (for all k : ℕ, a (n k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1))) (iv).
+          ∧ (for all k : ℕ, a (n k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1))) (iv).
       Obtain m_seq according to (iv), so for m_seq : ℕ ⇨ ℕ it holds that
        (is_index_seq m_seq ∧
-        (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a i ii) - 1 / (k + 1))) (v).
+        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a i ii) - 1 / (k + 1))) (v).
       Because (v) both (is_index_seq m_seq) and 
-        (for all k : ℕ, a (m_seq k) > proj1_sig (lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) hold.
+        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) hold.
       Choose m := m_seq.
       We show both statements.
       - We need to show that (is_index_seq m).
@@ -182,11 +182,11 @@ Proof.
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
     Choose n := m.
-    We need to show that (is_index_seq m ∧ Un_cv (k) ↦ (a (m k)) L).
+    We need to show that (is_index_seq m ∧ Un_cv (fun k ↦ a(m(k)), L)).
     We show both statements.
     - We need to show that (is_index_seq m).
       By (v) we conclude that (is_index_seq n).
-    - We need to show that (Un_cv (k) ↦ (a (n k)) L).
+    - We need to show that (Un_cv (fun k ↦ a(n(k)), L)).
       (** TODO: an equivalent to "apply with" would be nice here *)
       apply (squeeze_theorem (fun (k : ℕ) ↦ L - 1 / (INR k + 1)) 
         (fun (k : ℕ) ↦ (a (n k)))
@@ -203,7 +203,7 @@ Proof.
           By sequence_ub_bds we conclude that (a (n k) ≤ sequence_ub a (i) k).
       + (*TODO: fix not being able to use notation convergence with ''By ... we conclude that ...*)
         We need to show that (Un_cv (k ↦ (L - 1 / (k + 1))) L).
-        By lim_const_min_1_over_n_plus_1 we conclude that (Un_cv (k) ↦ (L - 1 / (k + 1)) L).
+        By lim_const_min_1_over_n_plus_1 we conclude that (Un_cv (fun k ↦ L - 1 / (k + 1), L)).
       + By sequence_ub_cv_to_L we conclude that (sequence_ub a (i) ⟶ L).
 Qed.
 
@@ -219,12 +219,12 @@ Proof.
     Define iii := (maj_min a (i) (ii)).
     By Bolzano_Weierstrass_gen it holds that
       (∃ (n : ℕ → ℕ), is_index_seq n
-        ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))) (iv).
+        ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) (iv).
     Obtain n0 according to (iv), so for n0 : ℕ → ℕ it holds that
-      (is_index_seq n0 ∧ Un_cv (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (lim_sup_bdd a (i) (iii)))).
+      (is_index_seq n0 ∧ Un_cv (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
     Choose n := n0.
-    Choose l := (proj1_sig (lim_sup_bdd a (i) (iii))).
-    We conclude that (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) (proj1_sig (lim_sup_bdd a (i) (iii)))).
+    Choose l := (proj1_sig (_,_,lim_sup_bdd a (i) (iii))).
+    We conclude that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
 Qed.
 
 Lemma acc_pt_bds_seq_ub :
@@ -237,10 +237,10 @@ Proof.
     Assume that (is_seq_acc_pt a x) (ii).
     Expand the definition of is_seq_acc_pt in (ii).
     That is, write (ii) as (there exists n : ℕ → ℕ, is_index_seq n 
-      ∧ Un_cv (k) ↦ (a (n k)) x).
+      ∧ Un_cv (fun k ↦ a(n(k)), x)).
     Obtain n according to (ii), so for n : ℕ → ℕ it holds that 
-      (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iii).
-    Because (iii) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
+      (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) (iii).
+    Because (iii) both (is_index_seq n) and (Un_cv (fun k ↦ a(n(k)), x)) hold.
     Take m : ℕ.
     Define L := (sequence_ub a (i) m).
     We argue by contradiction.
@@ -266,7 +266,7 @@ Qed.
 (** ## Comparing definitions of lim sup*)
 Lemma lim_sup_bdd_is_sup_seq_acc_pts :
   ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))),
-    is_sup (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a (i) (ii))).
+    is_sup (is_seq_acc_pt a) (proj1_sig (_,_, lim_sup_bdd a (i) (ii))).
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
@@ -274,12 +274,12 @@ Proof.
     (* TODO: fix that we refer to is_lub here. Moreover, we show both statements should work immediately. *)
     Expand the definition of is_lub.
     That is, write the goal as 
-      (is_upper_bound (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a (i) (ii)))
-      ∧ (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b ⇨ proj1_sig (lim_sup_bdd a (i) (ii)) ≤ b)).
+      (is_upper_bound (is_seq_acc_pt a) (proj1_sig (_,_, lim_sup_bdd a (i) (ii)))
+      ∧ (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b ⇨ proj1_sig (_,_,lim_sup_bdd a (i) (ii)) ≤ b)).
     We show both statements.
-    - We need to show that (is_upper_bound (is_seq_acc_pt a) (proj1_sig (lim_sup_bdd a (i) (ii)))).
+    - We need to show that (is_upper_bound (is_seq_acc_pt a) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
       Expand the definition of is_upper_bound.
-      That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (lim_sup_bdd a (i) (ii))).
+      That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (_,_,lim_sup_bdd a (i) (ii))).
       Take x : ℝ.
       Assume that (is_seq_acc_pt a x).
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
@@ -290,17 +290,17 @@ Proof.
           it holds that (L ≥ x).
       We conclude that (x ≤ L).
     - We need to show that (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b 
-        ⇨ proj1_sig (lim_sup_bdd a (i) (ii)) ≤ b).
+        ⇨ proj1_sig (_,_,lim_sup_bdd a (i) (ii)) ≤ b).
       Take b : ℝ; such that (is_upper_bound (is_seq_acc_pt a) b) (iii).
       Expand the definition of is_upper_bound in (iii).
       That is, write (iii) as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
       Expand the definition of is_seq_acc_pt in (iii).
       That is, write (iii) as (for all x : ℝ, 
-        (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) ⇨ x ≤ b).
+        (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) ⇨ x ≤ b).
       It suffices to show that (there exists n : ℕ ⇨ ℕ, is_index_seq n
-        ∧ Un_cv (k) ↦ (a (n k)) (proj1_sig (lim_sup_bdd a (i) (ii)))).
+        ∧ Un_cv (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
       By Bolzano_Weierstrass_gen we conclude that (there exists n : ℕ ⇨ ℕ, is_index_seq n
-        ∧ Un_cv (k) ↦ (a (n k)) (proj1_sig (lim_sup_bdd a (i) (ii)))).
+        ∧ Un_cv (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
 Qed.
 
 (** ## Some attempts to get nicer subsequences*)

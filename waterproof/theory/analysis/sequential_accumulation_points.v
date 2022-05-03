@@ -41,10 +41,10 @@ Proof.
     Assume that (is_seq_acc_pt a x) (iii).
     Expand the definition of is_seq_acc_pt in (iii).
     That is, write (iii) as (there exists n : ℕ ⇨ ℕ,
-      is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x).
+      is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)).
     Obtain n according to (iii), so for n : ℕ → ℕ it holds that
-      (is_index_seq n ∧ Un_cv (k) ↦ (a (n k)) x) (iv).
-    Because (iv) both (is_index_seq n) and (Un_cv (k) ↦ (a (n k)) x) hold.
+      (is_index_seq n ∧ Un_cv (k ↦ (a(n(k))), x)) (iv).
+    Because (iv) both (is_index_seq n) and (Un_cv (k ↦ (a(n(k))), x)) hold.
     We need to show that (x ≤ M).
     By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
     We claim that (for all k : ℕ, (a k) ≤ M) (v).

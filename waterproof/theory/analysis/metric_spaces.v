@@ -23,7 +23,7 @@ Definition dist_positive :
 Definition dist_non_degenerate :
   ∀ x y : X, (dist X x y = 0) ⇒ (x = y). 
   Take x, y : X.
-  By (proj1 (dist_refl X x y)) we conclude that (dist X x y = 0 ⇨ x = y).
+  By (proj1(_,_,(dist_refl X x y))) we conclude that (dist X x y = 0 ⇨ x = y).
 Defined.
 
 Definition dist_symmetric :
@@ -38,7 +38,7 @@ Qed.
 
 Definition dist_reflexive : ∀ x : X, dist X x x = 0.
   Take x : X.
-  By (proj2 (dist_refl X x x)) we conclude that (dist X x x = 0).
+  By (proj2(_,_,(dist_refl X x x))) we conclude that (dist X x x = 0).
 Defined.
 
 End Definitions.

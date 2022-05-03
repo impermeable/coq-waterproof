@@ -38,6 +38,10 @@ Require Import Max.
 
 Require Export Waterproof.definitions.set_definitions.
 
+(** ## **Standard mathematical function notation.** *)
+Notation " f ( x , .. , y )" := (.. (f x) .. y) 
+(at level 10) : type_scope.
+
 (** ## **Quantifiers**
 Allow unicode characters ∀ and ∃ for readability.*)
 Notation "'for' 'all' x .. y , P" := (forall x, .. (forall y, P) ..)

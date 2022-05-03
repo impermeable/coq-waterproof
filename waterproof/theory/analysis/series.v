@@ -95,9 +95,9 @@ Proof.
     Take a : (ℕ → ℝ) and k, l : ℕ and L : ℝ.
     Assume that (k < l)%nat.
     We show both directions.
-    - We need to show that (Un_cv (Nn) ↦ (sigma a l Nn) L
-        ⇨ Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
-      Assume that (Un_cv (Nn) ↦ (sigma a l Nn) L).
+    - We need to show that (Un_cv(Nn ↦ (sigma a l Nn), L)
+        ⇨ Un_cv (Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
+      Assume that (Un_cv (Nn ↦ (sigma a l Nn), L)).
       (* TODO: fix
          By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
       We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
@@ -114,13 +114,13 @@ Proof.
       }
       (* TODO: find way of dealing with the case when coq cannot find parameters for apply ...*)
       apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn).
-      + We conclude that (evt_eq_sequences (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (Nn) ↦ (sigma a k Nn)).
+      + We conclude that (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn), Nn ↦ (sigma a k Nn))).
       + (*TODO: fix  We conclude that ((Nn) ↦ (sigma a k (l - 1) + sigma a l Nn)). *)   
-        We need to show that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
-        We conclude that (Un_cv (Nn) ↦ (sigma a k (l - 1) + sigma a l Nn) (sigma a k (l - 1) + L)).
-    - We need to show that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L) ⇨ Un_cv (Nn) ↦ (sigma a l Nn) L).
-      Assume that (Un_cv (Nn) ↦ (sigma a k Nn) (sigma a k (l - 1) + L)).
-      We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
+        We need to show that (Un_cv (Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
+        We conclude that (Un_cv (Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
+    - We need to show that (Un_cv (Nn ↦ (sigma a k Nn), (sigma a k (l - 1) + L)) ⇨ Un_cv (Nn ↦ (sigma a l Nn), L)).
+      Assume that (Un_cv (Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
+      We claim that (Un_cv (N ↦ (sigma a k (l-1)), (sigma a k (l-1)))).
       { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
       }
@@ -134,12 +134,12 @@ Proof.
         We conclude that (k < l <= n)%nat.
       }
       apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
-      + We conclude that (evt_eq_sequences (n) ↦ (sigma a k n - sigma a k (l - 1)) (n) ↦ (sigma a l n)).
-      + We need to show that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) L).
+      + We conclude that (evt_eq_sequences (n ↦ (sigma a k n - sigma a k (l - 1)), n ↦ (sigma a l n))).
+      + We need to show that (Un_cv (N ↦ (sigma a k N - sigma a k (l - 1)), L)).
         It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (i).
         (* It suffices to show that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) (sigma a k (l - 1) + L - sigma a k (l - 1))).*)
         rewrite <- (i). (* TODO come up with some notation for this (meaning transport)*)
-        We conclude that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) (sigma a k (l - 1) + L - sigma a k (l - 1))).
+        We conclude that (Un_cv (N ↦ (sigma a k N - sigma a k (l - 1)), sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.
 
 Close Scope R_scope.

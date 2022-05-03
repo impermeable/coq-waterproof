@@ -146,7 +146,7 @@ Proof.
     We claim that (--a ∈ A).
     { It holds that (--a = a) (ii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r (fun x => x ∈ A) (i) (ii)).
+      exact (eq_ind_r(_,_,(fun x => x ∈ A),(i),_,(ii))).
     }
     It holds that (m ≤ -a).
     It follows that (a ≤ -m).
@@ -167,7 +167,7 @@ Proof.
     We claim that (--a ∈ A).
     { It holds that (--a = a) (ii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r (fun x => x ∈ A) (i) (ii)).
+      exact (eq_ind_r(_,_,(fun x => x ∈ A),(i),_,(ii))).
     }
     It holds that (-a ≤ M).
     It follows that (-M ≤ a).
