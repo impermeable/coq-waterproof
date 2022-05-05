@@ -33,6 +33,7 @@ Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.theory.analysis.metric_spaces.
 Require Import Waterproof.theory.analysis.sequences_metric.
 
+Open Scope R_scope.
 Open Scope metric_scope.
 Definition is_index_sequence    (n : ℕ → ℕ) := 
     ∀ k : ℕ,
@@ -233,3 +234,6 @@ It holds that (y k = x (m k)) (iv).
 rewrite (iv).
 We conclude that ( dist (x (m k)) p < ε).
 Qed.
+
+Close Scope metric_scope.
+Close Scope R_scope.
