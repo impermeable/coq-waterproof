@@ -42,24 +42,41 @@ Open Scope R_scope.
 Notation is_bounded_above := bound.
 Notation is_sup := is_lub.
 
+(* Implement notations for these concepts. *)
+Notation "M 'is' 'the' 'supremum' 'of' A" := (is_lub A M) (at level 69).
+Local Ltac2 unfold_is_lub    ()          := unfold is_lub.
+Local Ltac2 unfold_is_lub_in (h : ident) := unfold is_lub in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "supremum" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
 
+Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69).
+Local Ltac2 unfold_bound    ()          := unfold bound.
+Local Ltac2 unfold_bound_in (h : ident) := unfold bound in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_bound unfold_bound_in cl.
+
+Notation "M 'is' 'an' 'upper' 'bound' 'of' A" := (is_upper_bound A M) (at level 69).
+Local Ltac2 unfold_is_upper_bound    ()          := unfold is_upper_bound.
+Local Ltac2 unfold_is_upper_bound_in (h : ident) := unfold is_upper_bound in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
 
 
 (** ## The completeness axiom
 
 The completeness axiom of the real numbers says that when a subset $A$ of the real numbers is bounded from above, and when there exists an element in the set, then there exists an $L$ such that $L$ is the supremum of $A$.*)
 Lemma R_complete : ∀ (A : ℝ → Prop) (a : ℝ),
-  (A a) ⇒ is_bounded_above A ⇒ exists M : R, is_sup A M.
+  (A a) ⇒ (A is bounded from above) ⇒ exists M : R, M is the supremum of A.
 Proof.
     Take A : (ℝ → Prop) and a : ℝ.
     Assume that (A a).
-    Assume that (is_bounded_above A) (i).
+    Assume that (A is bounded from above) (i).
     We claim that (there exists x : ℝ, A x).
     { Choose (a). We conclude that (A a). }
-    By completeness it holds that ({M | is_sup A M}) (ii).
-    Obtain M according to (ii), so for M : R it holds that (is_sup A M).
+    By completeness it holds that ({M | M is the supremum of A}) (ii).
+    Obtain M according to (ii), so for M : ℝ it holds that (M is the supremum of A).
     Choose (M).
-    We conclude that (is_sup A M).
+    We conclude that (M is the supremum of A).
 Qed.
 
 
@@ -84,6 +101,25 @@ Definition is_inf :=
   fun (A : ℝ → Prop) m 
     => (is_lower_bound A m) ∧ (∀ l : R, is_lower_bound A l ⇒ l ≤ m).
 
+(* Implement notations for these concepts. *)
+Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69).
+Local Ltac2 unfold_is_inf    ()          := unfold is_inf.
+Local Ltac2 unfold_is_inf_in (h : ident) := unfold is_inf in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "infimum" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
+
+Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69).
+Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
+Local Ltac2 unfold_is_bounded_below_in (h : ident) := unfold is_bounded_below in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
+
+Notation "M 'is' 'a' 'lower' 'bound' 'of' A" := (is_lower_bound A M) (at level 69).
+Local Ltac2 unfold_is_lower_bound    ()          := unfold is_lower_bound.
+Local Ltac2 unfold_is_lower_bound_in (h : ident) := unfold is_lower_bound in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
+
 
 
 (** ## Reflection of a subset of ℝ in the origin
@@ -101,13 +137,13 @@ Definition set_opp (A : ℝ → Prop) := (x ↦ (A (-x))).
 (** Hint Resolve neg_opp_is_original_elem : additional.*)
 Lemma upp_bd_set_to_low_bd_set_opp :
   ∀ (A : ℝ → Prop) (M : ℝ),
-    is_upper_bound A M ⇒ 
+    M is an upper bound of A ⇒ 
       is_lower_bound (set_opp A) (-M).
 Proof.
     Take A : (ℝ → Prop) and M : ℝ.
-    Assume that (is_upper_bound A M) (i).
+    Assume that (M is an upper bound of A) (i).
     We need to show that (∀ a : ℝ, (set_opp A a) ⇒ -M ≤ a).
-    Expand the definition of is_lower_bound.
+    Expand the definition of lower bound.
     That is, write the goal as (for all a : ℝ, set_opp A a ⇨ -M ≤ a).
     Take b : ℝ. Assume that (set_opp A b).
     Define a := (-b).
@@ -120,12 +156,11 @@ Qed.
 Lemma low_bd_set_to_upp_bd_set_opp :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_lower_bound A m ⇒
-      is_upper_bound (set_opp A) (-m).
+      -m is an upper bound of (set_opp A).
 Proof.
     Take A : (ℝ → Prop) and m : ℝ.
     Assume that (is_lower_bound A m) (i).
-    We need to show that (∀ b : ℝ, (set_opp A b) ⇒ b ≤ -m).
-    Expand the definition of is_upper_bound.
+    Expand the definition of upper bound.
     That is, write the goal as (for all b : ℝ, (set_opp A b) ⇒ b ≤ -m).
     Take b : ℝ. Assume that (set_opp A b).
     Define a := (-b).
@@ -137,15 +172,15 @@ Qed.
 Lemma low_bd_set_opp_to_upp_bd_set :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_lower_bound (set_opp A) m ⇒ 
-      is_upper_bound A (-m).
+      -m is an upper bound of A.
 Proof.
     Take A : (ℝ → Prop) and m : ℝ.
     Assume that (is_lower_bound (set_opp A) m) (i).
     We need to show that (∀ a : ℝ, (A a) ⇒ a ≤ -m).
-    Expand the definition of is_upper_bound.
+    Expand the definition of upper bound.
     That is, write the goal as (for all a : ℝ, (A a) ⇒ a ≤ -m).
     Take a : ℝ. Assume that (A a).
-    Expand the definition of is_lower_bound in (i).
+    Expand the definition of lower bound in (i).
     That is, write (i) as (for all b : ℝ, (set_opp A b) ⇒ m ≤ b).
     We claim that (A (--a)).
     { It holds that (--a = a) (ii).
