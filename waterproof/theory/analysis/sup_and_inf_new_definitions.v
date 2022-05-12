@@ -48,6 +48,8 @@ Local Ltac2 unfold_is_lub    ()          := unfold is_lub.
 Local Ltac2 unfold_is_lub_in (h : ident) := unfold is_lub in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "supremum" cl(opt(seq("in", "(", ident, ")"))) := 
   Waterproof.tactics.unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "the" "supremum" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
 
 Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69).
 Local Ltac2 unfold_bound    ()          := unfold bound.
@@ -60,7 +62,8 @@ Local Ltac2 unfold_is_upper_bound    ()          := unfold is_upper_bound.
 Local Ltac2 unfold_is_upper_bound_in (h : ident) := unfold is_upper_bound in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
   Waterproof.tactics.unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
-
+Ltac2 Notation "Expand" "the" "definition" "of" "an" "upper" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
 
 (** ## The completeness axiom
 
@@ -107,6 +110,8 @@ Local Ltac2 unfold_is_inf    ()          := unfold is_inf.
 Local Ltac2 unfold_is_inf_in (h : ident) := unfold is_inf in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "infimum" cl(opt(seq("in", "(", ident, ")"))) := 
   Waterproof.tactics.unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "the" "infimum" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
 
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69).
 Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
@@ -118,6 +123,8 @@ Notation "M 'is' 'a' 'lower' 'bound' 'of' A" := (is_lower_bound A M) (at level 6
 Local Ltac2 unfold_is_lower_bound    ()          := unfold is_lower_bound.
 Local Ltac2 unfold_is_lower_bound_in (h : ident) := unfold is_lower_bound in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
+  Waterproof.tactics.unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "a" "lower" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
   Waterproof.tactics.unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
 
 
