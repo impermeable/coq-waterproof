@@ -28,9 +28,6 @@ Local Ltac2 unfold_convergence_in (h : ident) := unfold convergence in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "⟶" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_convergence unfold_convergence_in cl.
 
-(* For some reason coq does not like the symbol ⟶ in the Ltac2 notation.*)
-(* Using the above tactic reurns the following error:
-    Syntax error: [q_reference] expected after 'of' (in [ltac2_expr]). *)
 (* With -->, waterproof complains, giving the following error:
     Command not supported (No proof-editing in progress)*)
 
