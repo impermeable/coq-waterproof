@@ -56,7 +56,7 @@ Ltac2 destruct_sets () :=
     lazy_match! goal with
         | [h : In _ (Intersection _ _ _) _ |- _ ] => let h_val := Control.hyp h in destruct $h_val
         | [h : In _ (Union _ _ _) _ |- _ ] => let h_val := Control.hyp h in
-                                              destruct $h_val; try (solve_remainder_proof (Control.goal ()) None); 
+                                              destruct $h_val; try (check_and_solve (Control.goal ()) None); 
                                               try (ltac1:(solve [firstorder (auto with sets)]));
                                               try (ltac1:(solve [firstorder (eauto with sets)]))
     end.
@@ -74,7 +74,7 @@ Ltac2 destruct_sets () :=
           in this order, in order to automatically prove a set inclusion.
 *)
 Ltac2 trivial_set_inclusion () :=
-    try (intro x); try (intro h); try (destruct_sets ()); ltac1:(try contradiction); try (solve_remainder_proof (Control.goal ()) None);
+    try (intro x); try (intro h); try (destruct_sets ()); ltac1:(try contradiction); try (check_and_solve (Control.goal ()) None);
     try (ltac1:(solve [firstorder (auto with sets)])); try (ltac1:(solve [firstorder (eauto with sets)])).
 
 

@@ -35,7 +35,7 @@ Abort.
 Goal (3 < 5) /\ (5 = 2 + 3) <-> (& 3 &< 5 &= 2 + 3).
 split.
 - intro H.
-  unfold inequality_chains_R.ineq_to_prop.
+  unfold ineq_chain_R.ineq_to_prop.
   simpl.
   destruct H.
   repeat split.
@@ -43,10 +43,9 @@ split.
   + assumption.
 
 - intro H.
-  unfold inequality_chains_R.ineq_to_prop in H.
+  unfold ineq_chain_R.ineq_to_prop in H.
   simpl in H.
-  destruct H.
-  destruct H0.
+  destruct H as [[H0 H1] H2].
   split.
   + assumption.
   + assumption.

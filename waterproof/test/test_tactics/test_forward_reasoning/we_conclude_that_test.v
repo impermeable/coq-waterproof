@@ -229,3 +229,13 @@ Close Scope R_scope.
 Goal (3 < 5).
 We conclude that (& 3 &< 4 &< 5).
 Qed.
+
+(** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &<= 5) for (3<5).*)
+Goal (3 < 5).
+We conclude that (& 3 &< 4 &<= 5).
+Qed.
+
+(** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &< 5) for (3<=5).*)
+Goal (3 <= 5).
+We conclude that (& 3 &< 4 &< 5).
+Qed.
