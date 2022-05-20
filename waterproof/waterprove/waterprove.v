@@ -32,6 +32,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Message.
 
+Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.waterprove.manipulate_negation.
@@ -75,8 +76,7 @@ try making a smaller step."))
         - [AutomationFailure], if [prop] could not be proven. (TODO: Incorrect!! Attempts to prove current goal)
 *)
 
-
-Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
+Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
     let first_attempt () := run_automation prop lemmas 3 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
     in
     let second_attempt () := 
@@ -111,4 +111,16 @@ Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
         | Err exn => fail_automation (Some (Control.goal()))
         end
     end.
+
+
+Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
+  (* Splits chain of inequalities into its parts and calls the actual waterprove subroutine on those. *)
+  lazy_match! goal with
+  | [ |- total_statement _ ] => repeat split;
+                                Control.enter (fun () => 
+                                  cbn;
+                                  actual_waterprove prop lemmas shield
+                                )
+  | [ |- _] => actual_waterprove prop lemmas shield
+  end.
 

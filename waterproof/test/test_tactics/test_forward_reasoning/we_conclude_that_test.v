@@ -241,3 +241,24 @@ Qed.
 Goal (3 <= 5).
 We conclude that (& 3 &< 4 &< 5).
 Qed.
+
+
+(** Actually tests for [waterprove] automation suboutine, but this seemed like a 
+    convenient place to test. *)
+(** Tests whether the error points out which specific (in)equality in the chain does not hold. *)
+Variable A : Type.
+Variable x y z : A.
+
+Goal (& x &= y &= z).
+Proof.
+Fail We conclude that (& x &= y &= z). (* Expected: unable to find proof (x = y) *)
+Admitted.
+
+Goal (x = y) -> (& x &= y &= z).
+Proof.
+intro p.
+Fail We conclude that (& x &= y &= z). (* Expected: unable to find proof (y = z) *)
+Admitted.
+
+
+

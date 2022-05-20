@@ -248,10 +248,8 @@ Proof.
     apply n.
 Qed.
 
-(* TODO: should these be placed in a different database ? *)
-Global Hint Extern 0 (total_statement _) => repeat split; cbn : core. 
-(*Global Hint Extern 0 (global_statement _) => cbn : reals. *)
-Global Hint Transparent total_statement.
+(* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
+Global Hint Extern 0 (total_statement _) => repeat split; cbn : core.
 
 Global Hint Resolve eq_sym : reals.
 Global Hint Resolve false_Req : reals.
