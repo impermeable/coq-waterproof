@@ -24,30 +24,20 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
+Require Import Waterproof.auxiliary.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ GoalHintError(string) ].
 
 Local Ltac2 create_forall_message (v_type: constr) :=
-Message.concat 
-    (Message.concat
+  Message.concat
             (Message.concat
                 (Message.of_string "The goal is to show a ‘for all’-statement (∀).
 Introduce an arbitrary variable of type ")
                 (Message.of_constr v_type)
             )
             ( Message.of_string ".
-Use ‘Take ... : ...’.")
-    )
-    (Message.concat
-        (Message.concat 
-            (Message.of_string "
-Or make an assumption stating ")
-            (Message.of_constr v_type)
-        )
-        ( Message.of_string ".
-Use ‘Assume ... : ...’.")
-    ).
+Use ‘Take ... : ...’.").
 
 Local Ltac2 create_implication_message (premise: constr) :=
     Message.concat
@@ -57,7 +47,17 @@ Assume the premise ")
             (Message.of_constr premise)
         )
         ( Message.of_string ".
-Use ‘Assume ... : ...’.").
+Use ‘Assume that (...).’.").
+
+Local Ltac2 create_function_message (premise: constr) :=
+    Message.concat
+        (Message.concat
+            (Message.of_string "The goal is to construct a map (⇒).
+Introduce an arbitrary variable of type ")
+                (Message.of_constr premise)
+            )
+            ( Message.of_string ".
+Use ‘Take ... : ...’.").
 
 Local Ltac2 create_exists_message (premise: constr) :=
     Message.concat
@@ -80,12 +80,12 @@ Local Ltac2 create_not_message (negated_type : constr) :=
 Assume that the negated expression ") (Message.of_constr negated_type)) 
 (Message.of_string " holds, then show a contradiction."))
 (Message.of_string "
-Use ‘Assume ... : ...’ to do the first step.").
+Use ‘Assume that (...).’ to do the first step.").
 
 Local Ltac2 create_contradiction_message () :=
     Message.of_string "The goal is to show a contradiction. 
 Show two properties that contradict eachother, i.e. prove P and (¬ P) for some P.
-Initiate the proof of a new property by using ‘We claim that ...’.
+Initiate the proof of a new property by using ‘We claim that (...).’.
 Use ‘Contradiction.’ or ‘↯.’ after you have shown two contradictory properties.".
 
 (** * goal_to_hint
@@ -107,7 +107,12 @@ Ltac2 goal_to_hint (g:constr) :=
         If the ∀ case is above the ⇒,
         then implications will fire the ∀ case instead.*)
     lazy_match! g with
-    | context [?a -> ?b] => create_implication_message a
+    | context [?a -> ?b]  => 
+        let sort_a := Aux.get_value_of_hyp a in
+        match Aux.check_constr_equal sort_a constr:(Prop) with
+        | true  => create_implication_message a
+        | false => create_function_message a
+        end
     | context [forall v:?v_type, _]  => create_forall_message v_type
     | context [exists v:?v_type, _]  => create_exists_message v_type
     | context [Case.Wrapper _ _]                => create_goal_wrapped_message ()

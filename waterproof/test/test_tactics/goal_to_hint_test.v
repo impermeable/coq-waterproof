@@ -59,6 +59,20 @@ Goal 0=0 -> 0=0.
     ").
 Abort.
 
+(** * Test 2.5
+    Should print a hint for a ⇒-goal twice.
+*)
+Goal nat -> nat.
+    print (goal_to_hint (Control.goal ())).
+    (* Should print exactly the same:*)
+    Help.
+    
+    (* Print some whitelines*)
+    Ltac2 Eval print (of_string "
+
+    ").
+Abort.
+
 
 (** * Test 3
     Should print a hint for a ∃-goal twice.
