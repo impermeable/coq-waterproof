@@ -54,7 +54,7 @@ Notation "∀ x .. y , P" := (forall x, .. (forall y, P) ..)
 
 Notation "'there' 'exists' x .. y , P " := (exists x, .. (exists y, P) ..)
   (at level 200, x binder, y binder, right associativity,
-  format "'[ ' '[ ' there  exists  x .. y  ']' , '//'  P ']'") : type_scope.
+  format "'[ ' '[ ' there  exists  x .. y ']' , '//'  P ']'") : type_scope.
 
 Notation "∃ x .. y , P " := (exists x, .. (exists y, P) ..)
   (at level 200, x binder, y binder, right associativity,
