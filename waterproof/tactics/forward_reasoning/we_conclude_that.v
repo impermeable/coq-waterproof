@@ -95,48 +95,23 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
   | false => 
       (* Do somethign special for inequality chains *)
       lazy_match! target_goal with
-      | (ineq_chain_R.ineq_to_prop ?u) =>
+      | (total_statement ?u) =>
           (* Convert inequality chain to global statement. *)
-          let conv_target := constr:(ineq_chain_R.find_global_statement $u) in
-          (* If at first no match, try to use that a chain of globval type < can also show <= *)
-          match target_equals_goal_judgementally conv_target with
+          let new_target := constr:(global_statement $u) in
+          match target_equals_goal_judgementally new_target with
           | false =>
-              lazy_match! (Control.goal ()) with
-              | (Rle ?x ?y) => apply (Rlt_le $x $y)
-              | (_) => ()
+              (* If at first no match, try to use weak global statement *)
+              let new_new_target := constr:(weak_global_statement $u) in
+              match target_equals_goal_judgementally new_new_target with
+              | false =>
+              warn_wrong_goal_given (new_target); 
+              Control.zero (AutomationFailure (of_string
+                "Given goal not equivalent to actual goal."))
+              | true => ()
               end
           | true => ()
           end;
-          (* Second try *)
-          match target_equals_goal_judgementally conv_target with
-          | false =>
-              warn_wrong_goal_given (conv_target); 
-              Control.zero (AutomationFailure (of_string
-                "Given goal not equivalent to actual goal."))
-          | true => 
-              (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false))
-          end
-      | (ineq_chain_nat.ineq_to_prop ?u) =>
-          (* Convert inequality chain to global statement. *)
-          let conv_target := constr:(ineq_chain_nat.find_global_statement $u) in
-          (* If at first no match, try to use that a chain of globval type < can also show <= *)
-          match target_equals_goal_judgementally conv_target with
-          | false =>
-              lazy_match! (Control.goal ()) with
-              | (le ?x ?y) => apply (lt_le $x $y)
-              | (_) => ()
-              end
-          | true => ()
-          end;
-          (* Second try *)
-          match target_equals_goal_judgementally conv_target with
-          | false =>
-              warn_wrong_goal_given (conv_target); 
-              Control.zero (AutomationFailure (of_string
-                "Given goal not equivalent to actual goal."))
-          | true => 
-              enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false)
-          end
+          (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false))
       | _ => 
           match target_equals_goal_judgementally target_goal with
           | false => 

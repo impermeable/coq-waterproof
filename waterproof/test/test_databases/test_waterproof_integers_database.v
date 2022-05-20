@@ -42,6 +42,7 @@ induction k as [| k IHk].
   auto with waterproof_integers. 
 Qed.
 
+Require Import Lia.
 Goal (& 3 &< 4 &<= 5).
 solve [auto with waterproof_integers].
 Qed.

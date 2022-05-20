@@ -31,22 +31,26 @@ Load inequality_chains.
 Goal (& 3 &< 4 &<= 5 &≤ 7).
 Abort.
 
-(* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
+(* Test 1: sample proof *)
 Goal (3 < 5) /\ (5 = 2 + 3) <-> (& 3 &< 5 &= 2 + 3).
 split.
 - intro H.
-  unfold ineq_chain_R.ineq_to_prop.
-  simpl.
+  cbn.
   destruct H.
   repeat split.
   + assumption.
-  + assumption.
 
 - intro H.
-  unfold ineq_chain_R.ineq_to_prop in H.
-  simpl in H.
-  destruct H as [[H0 H1] H2].
+  cbn in H.
+  destruct H as [H1 H2].
   split.
   + assumption.
   + assumption.
 Qed.
+
+(* Test 2: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
+Goal forall x : R, (& x &< INR 0).
+Abort.
+(* Test 3 : different coercion, namely IZR *)
+Goal forall x : R, (& x &< up x).
+Abort.

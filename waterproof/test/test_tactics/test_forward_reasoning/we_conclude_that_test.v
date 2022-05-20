@@ -36,7 +36,7 @@ Require Import Waterproof.load_database.DisableWildcard.
 
 
 (* lra only works in the [R_scope] *)
-Local Open Scope R_scope.
+Open Scope R_scope.
 Lemma zero_lt_one: 0 < 1.
 Proof.
     ltac1:(lra).
@@ -203,6 +203,7 @@ Proof.
 Qed.
 
 Require Import Waterproof.definitions.inequality_chains.
+Open Scope R_scope.
 
 (** * Test 4
 We make an exception on the goal check when the argument is a chain of inequalities
@@ -214,6 +215,7 @@ Qed.
 Goal (3 = 3).
 We conclude that (& 3 &= 3).
 Qed.
+
 
 Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
 intro eps.

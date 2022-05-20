@@ -31,6 +31,7 @@ Require Import Waterproof.auxiliary.
 Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.tactics.goal_wrappers.
 
+
 (**  ** simpl_ineq_chains
 
 Writes out an inequality chain as a big conjunction.
@@ -40,12 +41,7 @@ Ltac2 simpl_ineq_chains () :=
     repeat (
         match! goal with
 (** TODO: do this in a more structured way *)
-        | [ h : ineq_chain_R.ineq_to_prop _ |- _ ] => 
-            unfold ineq_chain_R.ineq_to_prop in $h;
-            simpl in $h
-        | [ h : ineq_chain_nat.ineq_to_prop _ |- _ ] => 
-            unfold ineq_chain_nat.ineq_to_prop in $h;
-            simpl in $h
-        | [ |- _ ] => ()
+        | [ h : total_statement _ |- _ ] => 
+            cbn in $h
         end
     ).

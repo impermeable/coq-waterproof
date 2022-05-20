@@ -249,14 +249,9 @@ Proof.
 Qed.
 
 (* TODO: should these be placed in a different database ? *)
-Global Hint Extern 0 (ineq_chain_R.ineq_to_prop _) => repeat split; simpl : reals. 
-Global Hint Extern 0 (ineq_chain_R.find_global_statement _) => unfold ineq_chain_R.find_global_statement : reals.
-
-Global Hint Extern 0 (ineq_chain_nat.ineq_to_prop _) => repeat split; simpl : waterproof_integers. 
-Global Hint Extern 0 (ineq_chain_nat.find_global_statement _) => unfold ineq_chain_nat.find_global_statement : waterproof_integers.
-
-Global Hint Transparent ineq_chain_R.ineq_to_prop : reals.
-Global Hint Transparent ineq_chain_nat.ineq_to_prop : waterproof_integers.
+Global Hint Extern 0 (total_statement _) => repeat split; cbn : core. 
+(*Global Hint Extern 0 (global_statement _) => cbn : reals. *)
+Global Hint Transparent total_statement.
 
 Global Hint Resolve eq_sym : reals.
 Global Hint Resolve false_Req : reals.
