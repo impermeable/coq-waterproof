@@ -38,7 +38,7 @@ Abort.
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     intro i.
-    Because (i) both (n = n) (ii) and (n + 1 = n + 1) hold.
+    Because (i) both (n = n) (ii) and (n + 1 = n + 1).
 Abort.
 
 (** Test 2: This should work, test second prop labeled. *)
@@ -81,7 +81,7 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro i.
     Fail Because (i) either (n = 0) (ii) or (n+1 = n+1) (iii) holds.
     Fail Because (i) either (n = n) (ii) or (n+1 = 0) (iii) holds.
-    Because (i) either (n = n) (ii) or (n+1 = n+1) (iii) holds.
+    Because (i) either (n = n) (ii) or (n+1 = n+1) (iii).
     - Case (n = n).
       admit.
     - Case (n+1 = n+1).

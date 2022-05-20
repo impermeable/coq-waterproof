@@ -84,10 +84,9 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
     warn_wrong_prop_specified tv type_v.
 
 
-Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) "hold"
+Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("hold"))
 :=  panic_if_goal_wrapped ();
     and_hypothesis_destruct_with_types s u tu v tv.
-
 
 
 (** * or_hypothesis_destruct_with_types
@@ -135,6 +134,6 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
                                  apply (Case.unwrap $type_v)).
 
 
-Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) "holds"
+Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("holds"))
 :=  panic_if_goal_wrapped ();
     or_hypothesis_destruct_with_types s u tu v tv.

@@ -81,11 +81,10 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
         | [ |- _ ] => raise_choose_error("'Choose' can only be applied to 'exists' goals")
     end.
 
-
-Ltac2 Notation "Choose" t(constr) :=
+Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(constr) :=
     panic_if_goal_wrapped ();
-    choose_variable_in_exists_no_renaming t.
+    match s with 
+    | None => choose_variable_in_exists_no_renaming t
+    | Some s => choose_variable_in_exists_goal_with_renaming s t
+    end.
 
-Ltac2 Notation "Choose" s(ident) ":=" t(constr) :=
-    panic_if_goal_wrapped ();
-    choose_variable_in_exists_goal_with_renaming s t.
