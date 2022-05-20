@@ -1,4 +1,38 @@
+(** * [inequality_chains.v]
+Authors:
+  - Jim Portegies
+  - Jelle Wemmenhove
+Creation date: 17 June 2021
 
+A module to write and use chains of inequalities such as 
+  (& 3 &<= 4 &< 7 &= 3 + 4 &< 8)  or
+  (& 8 &> 3 + 4 &= 7 &> 4 &>= 3).
+The combination of <- and > symbols in the same chain is syntactically valid, 
+but the kernel does not know how their combination should be interpreted.
+When used in a proof, this results in an error that informs the user about the missing interpretation,
+the error can be hard to understand without knowle3dge of the underlying implementation.
+
+We use type classes to overload the chain link symbols like '&=' and '&<'.
+
+--------------------------------------------------------------------------------
+
+This file is part of Waterproof-lib.
+
+Waterproof-lib is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Waterproof-lib is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
+*)
+
+(* Abstract representations for <, ≤, > and ≥ symbols.*)
 Inductive LessRel :=
 | rel_lt
 | rel_le.
@@ -6,32 +40,34 @@ Inductive GreaterRel :=
 | rel_gt
 | rel_ge.
 
-(* Chain types *)
-Inductive EqualChain (T : Type) :=
-| ec_base : T -> T -> EqualChain T
-| ec_link : EqualChain T -> T -> EqualChain T.
-
+(* Types of chains. *)
+(* Only contains =-relations. *)
+Inductive EqualChain (T : Type) := 
+| ec_base : T -> T -> EqualChain T (* first link *)
+| ec_link : EqualChain T -> T -> EqualChain T. (* link another term to chain *)
+(* Contains at least one <- or ≤-symbol. *)
 Inductive LessChain (T : Type) :=
-| lc_base : T -> LessRel -> T -> LessChain T
-| lc_link1 : EqualChain T -> LessRel -> T -> LessChain T
-| lc_link2 : LessChain T -> T -> LessChain T
-| lc_link3 : LessChain T -> LessRel -> T -> LessChain T.
-
+| lc_base : T -> LessRel -> T -> LessChain T (* first link *)
+| lc_link1 : EqualChain T -> LessRel -> T -> LessChain T (* link < or ≤ and term to equality chain *)
+| lc_link2 : LessChain T -> T -> LessChain T (* link term to chain with =-relation*)
+| lc_link3 : LessChain T -> LessRel -> T -> LessChain T. (* link term to chain with <- or ≤-relation*)
+(* Contains at least one >- or ≥-symbol. *)
 Inductive GreaterChain (T : Type) :=
-| gc_base : T -> GreaterRel -> T -> GreaterChain T
-| gc_link1 : EqualChain T -> GreaterRel -> T -> GreaterChain T
-| gc_link2 : GreaterChain T -> T -> GreaterChain T
-| gc_link3 : GreaterChain T -> GreaterRel -> T -> GreaterChain T.
+| gc_base : T -> GreaterRel -> T -> GreaterChain T (* first link *)
+| gc_link1 : EqualChain T -> GreaterRel -> T -> GreaterChain T (* link > or ≥ and term to equality chain *)
+| gc_link2 : GreaterChain T -> T -> GreaterChain T (* link term to chain with =-relation*)
+| gc_link3 : GreaterChain T -> GreaterRel -> T -> GreaterChain T. (* link term to chain with >- or ≥-relation*)
 
 
-(* Link notations *)
-Class EqLink (A B C: Type) := eq_link : A -> B -> C.
+(* Type classes for linking new terms to chains.
+   Type classes are used for notation overloading of link symbols like '&=' *)
+Class EqLink (A B C: Type) := eq_link : A -> B -> C. (*notation: _ &= _ *)
 #[export] Instance eq_base (T : Type) : EqLink T T (EqualChain T) := ec_base T.
 #[export] Instance ec_eq_link (T : Type) : EqLink (EqualChain T) T (EqualChain T) := ec_link T.
 #[export] Instance lc_eq_link (T : Type) : EqLink (LessChain T) T (LessChain T) := lc_link2 T.
 #[export] Instance gc_eq_link (T : Type) : EqLink (GreaterChain T) T (GreaterChain T) := gc_link2 T.
 
-Class LtLink (A B C : Type) := lt_link : A -> B -> C.
+Class LtLink (A B C : Type) := lt_link : A -> B -> C. (*notation: _ &< _ *)
 #[export] Instance lt_base (T : Type) : LtLink  T T (LessChain T) := 
   fun x => lc_base T x rel_lt.
 #[export] Instance ec_lt_link (T : Type) : LtLink (EqualChain T) T (LessChain T) :=
@@ -39,7 +75,7 @@ Class LtLink (A B C : Type) := lt_link : A -> B -> C.
 #[export] Instance lc_lt_link (T : Type) : LtLink (LessChain T) T (LessChain T) := 
   fun c1 => lc_link3 T c1 rel_lt.
 
-Class LeLink (A B C : Type) := le_link : A -> B -> C.
+Class LeLink (A B C : Type) := le_link : A -> B -> C. (*notation: _ &≤ _ *)
 #[export] Instance le_base (T : Type) : LeLink T T (LessChain T) := 
   fun x => lc_base T x rel_le.
 #[export] Instance ec_le_link (T : Type) : LeLink (EqualChain T) T (LessChain T) := 
@@ -47,7 +83,7 @@ Class LeLink (A B C : Type) := le_link : A -> B -> C.
 #[export] Instance lc_le_link (T : Type) : LeLink (LessChain T) T (LessChain T) := 
   fun c1 => lc_link3 T c1 rel_le.
 
-Class GtLink (A B C : Type) := gt_link : A -> B -> C.
+Class GtLink (A B C : Type) := gt_link : A -> B -> C. (*notation: _ &> _ *)
 #[export] Instance gt_base (T : Type) : GtLink  T T (GreaterChain T) := 
   fun x => gc_base T x rel_gt.
 #[export] Instance ec_gt_link (T : Type) : GtLink (EqualChain T) T (GreaterChain T) :=
@@ -55,7 +91,7 @@ Class GtLink (A B C : Type) := gt_link : A -> B -> C.
 #[export] Instance gc_gt_link (T : Type) : GtLink (GreaterChain T) T (GreaterChain T) := 
   fun c1 => gc_link3 T c1 rel_gt.
 
-Class GeLink (A B C : Type) := ge_link : A -> B -> C.
+Class GeLink (A B C : Type) := ge_link : A -> B -> C. (*notation: _ &≥ _ *)
 #[export] Instance ge_base (T : Type) : GeLink T T (GreaterChain T) := 
   fun x => gc_base T x rel_ge.
 #[export] Instance ec_ge_link (T : Type) : GeLink (EqualChain T) T (GreaterChain T) := 
@@ -64,7 +100,13 @@ Class GeLink (A B C : Type) := ge_link : A -> B -> C.
   fun c1 => gc_link3 T c1 rel_ge.
 
 
-(* Chain class *)
+(* Chains contain multiple meanings:
+    the global statement of (0 < 1 <= 2) is (0 < 2),
+    the weak global statement            is (0 <= 2),
+    the total statement                  is (0 < 1 /\ 1 <= 2)
+
+   Again a type class is used such that we can use the same terms and notations
+    for all three types of chains. *)
 Class InterpretableChain (T : Type) (C : Type -> Type) := 
   { global_statement : C T -> Prop
   ; weak_global_statement : C T -> Prop
@@ -72,10 +114,9 @@ Class InterpretableChain (T : Type) (C : Type -> Type) :=
   }.
 
 
-
 (** Helper functions *)
 
-(* Head *)
+(* Head: first term in a chain *)
 Fixpoint ec_head {T : Type} (c : EqualChain T) : T :=
 match c with
 | ec_base _ x y => x
@@ -96,7 +137,7 @@ match c with
 | gc_link3 _ gc rel z => gc_head gc
 end.
 
-(* Tail *)
+(* Tail: last term in a chain *)
 Definition ec_tail {T : Type} (c : EqualChain T) : T :=
 match c with
 | ec_base _ x y => y
@@ -132,6 +173,7 @@ end.
   }.
 
 (** Helper functions specific to Less- and GreaterChain. *)
+(* The global relation resulting from a combination of relations [rel1] and [rel2]. *)
 Definition less_relation_flow (rel1 rel2 : LessRel) : LessRel :=
 match rel1 with
 | rel_lt => rel_lt
@@ -142,7 +184,7 @@ match rel1 with
 | rel_gt => rel_gt
 | rel_ge => rel2
 end.
-
+(* Returns the global relation of a LessChain. *)
 Fixpoint global_less_rel {T : Type} (c : LessChain T) : LessRel :=
 match c with
 | lc_base _ x rel y => rel
@@ -150,6 +192,7 @@ match c with
 | lc_link2 _ lc z => global_less_rel lc
 | lc_link3 _ lc rel z => less_relation_flow (global_less_rel lc) rel
 end.
+(* Returns the global relation of a GreaterChain. *)
 Fixpoint global_grtr_rel {T : Type} (c : GreaterChain T) : GreaterRel :=
 match c with
 | gc_base _ x rel y => rel
@@ -158,9 +201,13 @@ match c with
 | gc_link3 _ gc rel z => grtr_relation_flow (global_grtr_rel gc) rel
 end.
 
+(* Functions to turn the abstract [LessRel] and [GreaterRel] relations into their concrete interpretations.
+   We again use type classes to be able to use the same name for these fucntions across types that implement them.
+  *)
 Class LessRelInterpretation (T : Type) := less_rel_to_pred : LessRel -> T -> T -> Prop.
 Class GreaterRelInterpretation (T : Type) := grtr_rel_to_pred : GreaterRel -> T -> T -> Prop.
 
+(** Global & total statement - LessChain *)
 Definition lc_global_statement (T : Type) `{! LessRelInterpretation T} (c : LessChain T) : Prop :=
 less_rel_to_pred (global_less_rel c) (lc_head c) (lc_tail c).
 Definition lc_weak_global_statement (T : Type) `{! LessRelInterpretation T} (c : LessChain T) : Prop :=
@@ -178,6 +225,7 @@ end.
   ; total_statement := lc_total_statement T
   }.
 
+(** Global & total statement - GreaterChain *)
 Definition gc_global_statement (T : Type) `{! GreaterRelInterpretation T} (c : GreaterChain T) : Prop :=
 grtr_rel_to_pred (global_grtr_rel c) (gc_head c) (gc_tail c).
 Definition gc_weak_global_statement (T : Type) `{! GreaterRelInterpretation T} (c : GreaterChain T) : Prop :=
@@ -195,7 +243,7 @@ end.
   ; total_statement := gc_total_statement T
   }.
 
-
+(* Notations for link type classes *)
 Notation "c &= y" := (eq_link c y) (at level 71, left associativity).
 Notation "c &< y" := (lt_link c y) (at level 71, left associativity).
 Notation "c &<= y" := (le_link c y) (at level 71, left associativity).
@@ -205,12 +253,13 @@ Notation "c &>= y" := (ge_link c y) (at level 71, left associativity).
 Notation "c &≥ y" := (ge_link c y) (at level 71, left associativity).
 Notation "& c" := (total_statement c) (at level 98).
 
-
+(* Interpretations of [LessRel] and [GreaterRel] for the naturals. *)
 #[export] Instance nat_less_rel_pred : LessRelInterpretation nat := 
   { less_rel_to_pred rel x y := match rel with | rel_lt => (x < y) | rel_le => (x <= y) end }.
 #[export] Instance nat_grtr_rel_pred : GreaterRelInterpretation nat := 
   { grtr_rel_to_pred rel x y := match rel with | rel_gt => (x > y) | rel_ge => (x >= y) end }.
 
+(* Interpretations of [LessRel] and [GreaterRel] for the reals. *)
 Require Import Reals.
 Open Scope R_scope.
 #[export] Instance R_less_rel_pred : LessRelInterpretation R := 
@@ -220,8 +269,15 @@ Open Scope R_scope.
 Close Scope R_scope.
 
 
-(* Manually adding variants where for mismatching types,
-   would like coercions to take care of this, but alas this does not seem to work. *)
+(* Because the typeclasses used for the link-symbols '&=' are so general,
+   they are unable to automatically make use of coercions,
+   e.g. the chain (& INR 0 &= 1) is not accepted, Coq says it is unable to find
+   an interpretation for (EqLink R nat ?C).
+
+   We thus have to add all these cases manually.
+*)
+
+(* Helper functions: functorality of chain types. *)
 Fixpoint ec_map {A B : Type} (f : A -> B) (c : EqualChain A) : EqualChain B :=
 match c with 
 | ec_base _ x y => ec_base _ (f x) (f y)
@@ -242,7 +298,7 @@ match c with
 | gc_link3 _ gc rel z => gc_link3 _ (gc_map f gc) rel (f z)
 end.
 
-(* INR : nat -> R *)
+(* embedding INR : nat -> R *)
 (* _ &= _ *)
 #[export] Instance eq_base_nat_R : EqLink nat R (EqualChain R) := fun n x => ec_base R (INR n) x.
 #[export] Instance eq_base_R_nat : EqLink R nat (EqualChain R) := fun x n => ec_base R x (INR n).
@@ -304,7 +360,7 @@ end.
   fun gcx n => gc_link3 R gcx rel_ge (INR n).
 
 
-(* IZR : Z -> R *)
+(* embedding IZR : Z -> R *)
 (* _ &= _ *)
 #[export] Instance eq_base_Z_R : EqLink Z R (EqualChain R) := fun z x => ec_base R (IZR z) x.
 #[export] Instance eq_base_R_Z : EqLink R Z (EqualChain R) := fun x z => ec_base R x (IZR z).
@@ -364,63 +420,3 @@ end.
   fun gcz => gc_link3 R (gc_map IZR gcz) rel_ge.
 #[export] Instance gc_ge_link_R_Z : GeLink (GreaterChain R) Z (GreaterChain R) := 
   fun gcx z => gc_link3 R gcx rel_ge (IZR z).
-
-
-(*
-(* Testing *)
-
-(*Quote: In practice, one common reason for using cbn is when you are dealing with 
-         operational typeclasses — that is, typeclasses with only one method, used 
-         to overload operations; if you don’t know what they are, and the libraries 
-         you use don’t use them either, you can defer learning about this. I’m not 
-         aware of any operational typeclasses used in the Coq stdlib (but I might 
-         forget some), but such typeclasses are common in other libraries (e.g. 
-         math-classes and std++).*)
-
-Variable ec : EqualChain nat.
-Variable lc : LessChain nat.
-Variable gc : GreaterChain nat.
-Check (ec &= 2).
-Check (ec &= 2 &= 3 &= 4).
-Check (ec &= 2 &< 3 &= 4).
-Check (ec &= 2 &< 3 &≤ 4).
-Check (lc &= 2).
-Check (lc &= 2 &= 3 &= 4).
-Check (lc &= 2 &< 3 &= 4).
-Check (lc &= 2 &< 3 &≤ 4).
-Check (gc &= 2).
-Check (gc &= 2 &= 3 &= 4).
-Check (gc &= 2 &< 3 &= 4). (* Will this throw an error? *)
-Check (gc &= 2 &< 3 &≤ 4).
-Fail Goal (gc &= 2 &< 3 &= 4). (* Unreadable error. *)
-
-Check (& ec &= 2 &= 3 &= 4).
-Check (& lc &= 2 &= 3 &= 4).
-Check (& 1 &= 2 &= 3 &= 4).
-Eval cbn in (& 1 &= 2 &= 3 &= 4).
-Eval cbn in (global_statement (1 &= 2 &= 3 &= 4)).
-
-Eval cbn in (& 1 &< 2 &= 3 &< 4).
-Eval cbn in (global_statement (1 &< 2 &< 3 &= 4)).
-Eval cbn in (weak_global_statement (1 &< 2 &< 3 &= 4)).
-
-Eval cbn in (& 1 &< 2 &= 3 &> 4).
-Eval cbn in (& 1 &> 2 &> 3 &= 4).
-Eval cbn in (global_statement (1 &> 2 &> 3 &= 4)).
-Eval cbn in (weak_global_statement (1 &> 2 &> 3 &= 4)).
-
-Goal (& 1 &< 2 &< 3) -> (& 4 &= 100) -> (1 < 3).
-Proof.
-  intros H1 H2.
-  cbn in H1, H2.
-Admitted.
-
-Goal (& 1 &< 2 &<= 3 &< 4).
-Proof.
-  repeat split; cbn.
-Admitted.
-
-(* Coerion tests *)
-Check (INR 0 &= 1).
-Check (0 &= INR 1).
-*)

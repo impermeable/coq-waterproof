@@ -54,3 +54,38 @@ Abort.
 (* Test 3 : different coercion, namely IZR *)
 Goal forall x : R, (& x &< up x).
 Abort.
+
+(** More tests *)
+(* Valid (though incorrect) inputs *)
+Check (1 &= 2).
+Check (1 &= 2 &= 3 &= 4).
+Check (1 &= 2 &< 3 &= 4).
+Check (1 &= 2 &< 3 &≤ 4).
+Check (1 &= 2 &> 3 &= 4).
+Check (1 &≥ 2 &> 3 &= 4).
+(* Invalid input: combining < and > in one chain *)
+Check (1 &< 2 &= 3 &> 4). (* Does type check, but the kernel has not found correct instance for '&>' *)
+Fail Goal (1 &< 2 &= 3 &> 4). (* Esoteric error. *)
+Fail Goal (& 1 &< 2 &= 3 &> 4).
+(* Check for correctness global, weak global and total stamements. *)
+Eval cbn in (& 1 &= 2 &= 3 &= 4). (* Expected: (1 = 2 /\ 2 = 3) /\ 3 = 4 *)
+Eval cbn in (global_statement (1 &= 2 &= 3 &= 4)). (* Expected: 1 = 4 , :( *)
+Eval cbn in (& 1 &< 2 &= 3 &< 4). (* Expected: (1 < 2 /\ 2 = 3) /\ 3 < 4 *)
+Eval cbn in (global_statement (1 &< 2 &< 3 &= 4)). (* Expected: 1 < 4 *)
+Eval cbn in (weak_global_statement (1 &< 2 &< 3 &= 4)). (* Expected: 1 <= 4*)
+Eval cbn in (& 1 &> 2 &> 3 &= 4). (* Expected: (1 > 2 /\ 2 > 3) /\ 3 = 4 *)
+Eval cbn in (global_statement (1 &> 2 &> 3 &= 4)). (* Expected: 1 > 4 *)
+Eval cbn in (weak_global_statement (1 &> 2 &> 3 &= 4)). (* Expected: 1 >= 4 *)
+
+(* Usage in hypotheses *)
+Goal (& 1 &< 2 &< 3) -> (& 4 &= 100) -> (1 < 3).
+Proof.
+  intros H1 H2.
+  cbn in H1, H2.
+Admitted.
+(* Usage in goal *)
+Goal (& 1 &< 2 &<= 3 &< 4).
+Proof.
+  repeat split; cbn.
+Admitted.
+
