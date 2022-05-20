@@ -42,8 +42,9 @@ Module Case.
   Definition wrapunwrap {A G : Type} {x : Wrapper A G} : wrap A G (unwrap _ _ x) = x
              := match x with wrap _ _ y => eq_refl end.
 End Case.
-Notation "'Add' '‘Case' (  A ).’ 'to' 'proof' 'script.'" 
-         := (Case.Wrapper A _) (at level 99, only printing).
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Case' ( A )." 
+         := (Case.Wrapper A _) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Case  ( A ).").
 
 Module NaturalInduction.
   Module Base.
@@ -68,10 +69,12 @@ Module NaturalInduction.
                := match x with wrap _ y => eq_refl end.
   End Step.
 End NaturalInduction.
-Notation "'Add' '‘We' 'first' 'show' 'the' 'base' 'case,' 'namely' (  G ).’ 'to' 'proof' 'script.'" 
-         := (NaturalInduction.Base.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘We' 'now' 'show' 'the' 'induction' 'step.’' 'to' 'proof' 'script.'"
-         := (NaturalInduction.Step.Wrapper _) (at level 99, only printing).
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case,' 'namely' ( G )." 
+         := (NaturalInduction.Base.Wrapper G) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  first  show  the  base  case,  namely  ( G ).").
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' 'the' 'induction' 'step.'" 
+         := (NaturalInduction.Step.Wrapper _) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  now  show  the  induction  step.").
 
 Module ExpandDef.
   Module Goal.
@@ -96,10 +99,12 @@ Module ExpandDef.
                := match x with wrap _ _ _ y => eq_refl end.
   End Hyp.
 End ExpandDef.
-Notation "'Add' '‘That' 'is,' 'write' 'the' 'goal' 'as' '('  G ').’' 'to' 'proof' 'script.'" 
-         := (ExpandDef.Goal.Wrapper G) (at level 99, only printing).
-Notation "'Add' '‘That' 'is,' 'write' '(' h ')'  'as' '('  H ').’' 'to' 'proof' 'script.'" 
-         := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing).
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' 'the' 'goal' 'as' '('  G ').'"
+         := (ExpandDef.Goal.Wrapper G) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  the  goal  as  ( G ).").
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' '(' h ')'  'as' '('  H ').'"
+         := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  ( h )  as  ( H ).").
 
 Module StateGoal.
   Private Inductive Wrapper (G : Type) : Type :=
@@ -111,15 +116,14 @@ Module StateGoal.
   Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
              := match x with wrap _ y => eq_refl end.
 End StateGoal.
-Notation "'Add' '‘We' 'need' 'to' 'show' 'that' (  G ).’ 'to' 'proof' 'script.'" 
-         := (StateGoal.Wrapper G) (at level 99, only printing).
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '('  G ').'"
+         := (StateGoal.Wrapper G) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ).").
 
 
 Ltac2 Type exn ::= [ GoalWrappedError(string) ].
 Ltac2 raise_goal_wrapped_error () := Control.zero (GoalWrappedError(
   "You cannot do this right now, follow the advice in the goal window.")).
-
-Ltac2 idtac () := ().
 
 
 (** * panic_if_goal_wrapped
@@ -135,7 +139,7 @@ Ltac2 panic_if_goal_wrapped ()
      | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
      | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
      | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
-     | [|- _] => idtac ()
+     | [|- _] => ()
      end.
 
 
