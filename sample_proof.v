@@ -59,8 +59,7 @@ Proof.
     (there exists a : ℝ, a : [0,1)^c ∧ ¬(is_interior_point a [0,1)^c)).
   Choose a := 1.
   We show both statements.
-  - We need to show that (1 : [0,1)^c).
-    We conclude that (1 : [0,1)^c).
+  - We conclude that (1 : [0,1)^c).
   - We need to show that (¬(is_interior_point 1 [0,1)^c)).
     We need to show that 
       (¬ there exists r : ℝ, r > 0 ∧ (for all x : ℝ, x : open_ball(1,r) ⇒ x : [0,1)^c)).

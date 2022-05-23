@@ -18,7 +18,7 @@ Proof.
     (r > 0 ∧ (for all x : ℝ, x : open_ball(0,r) ⇒ x : [0,1))) (ii).
   Because (ii) both (r > 0) and 
     (for all x : ℝ, x : open_ball(0,r) ⇒ x : [0,1)) (iii) hold.
-  It holds that (| -r/2 - 0 | < r).
+  It holds that ( | -r/2 - 0 | < r).
   It holds that (-r/2 : open_ball(0,r)).
   By (iii) it holds that (-r/2 : [0,1)) (iv).
   Because (iv) both (0 ≤ -r/2) and (-r/2 < 1) hold.
@@ -34,8 +34,7 @@ Proof.
     (there exists a : ℝ, a : [0,1)^c ∧ ¬(is_interior_point a [0,1)^c)).
   Choose a := 1.
   We show both statements.
-  - We need to show that (1 : [0,1)^c).
-    We conclude that (1 : [0,1)^c).
+  - We conclude that (1 : [0,1)^c).
   - We need to show that (¬(is_interior_point 1 [0,1)^c)).
     We need to show that 
       (¬ there exists r : ℝ, r > 0 ∧ (for all x : ℝ, x : open_ball(1,r) ⇒ x : [0,1)^c)).
