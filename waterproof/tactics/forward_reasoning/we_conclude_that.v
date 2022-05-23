@@ -31,6 +31,8 @@ Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.tactics.goal_wrappers.
+Require Import Reals.
+
 
 Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
@@ -74,66 +76,11 @@ Ltac2 target_equals_goal_judgementally (target:constr) :=
     let real_goal := eval cbv in $real_goal in
     Constr.equal target real_goal.
 
-
-(** * check_goal_and_call
-    Check if the current goal is equivalent to [target_goal],
-    and call a function [callback] if they are.
-    Raise a warning if they are logically equivalent,
-    but one needs to be rewritten first.
-    Throw an error if the current goal is not logically
-    equivalent to [target_goal].
+(** * check_and_sovle
+    Check if target_goal is what needs to be proven judgementally
+    -- using global or weak global statement for inequality chains --
+    and attempts to solve with optional lemma. 
     
-    Arguments:
-        - [target_goal: constr], expression that 
-            should equal the goal under focus.
-        - [callback: unit -> unit], Ltac2 function
-            to call in case the goal is correct.
-
-    Raises exceptions:
-        - [AutomationFailure], if [target_goal] is not equivalent
-            to the actual goal under focus, even after rewriting.
-        - Any exception raised by [callback].
-*)
-Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
-    (* First check if the given target equals the goal directly,
-    without applying any rewrite. *)
-    let conv_goal := lazy_match! target_goal with
-    (** TODO this needs to be done in a more structured way *)
-    | (inequality_chains_R.ineq_to_prop ?u) => constr:(inequality_chains_R.find_global_statement $u)
-    | (inequality_chains_nat.ineq_to_prop ?u) => constr:(inequality_chains_nat.find_global_statement $u)
-    | (?v) => v
-    end
-    in
-    match Constr.equal conv_goal (Control.goal ()) with
-    | false => 
-        match target_equals_goal_judgementally conv_goal with
-        | false => 
-            warn_wrong_goal_given (conv_goal); 
-            Control.zero (AutomationFailure (of_string
-        "Given goal not equivalent to actual goal."))
-        | true => 
-            (* User provided an equivalent goal, 
-            but written differently. 
-            Try to rewrite the real goal to match user input.*)
-            
-            lazy_match! target_goal with
-            | (inequality_chains_R.ineq_to_prop _) => ()
-            | (inequality_chains_nat.ineq_to_prop _) => ()
-            | _ => warn_equivalent_goal_given ();
-                   change $target_goal
-            end;
-            callback ()
-        end
-    | true => callback ()
-    end.
-    
-(** * solve_remainder_proof
-    Check if the given [target_goal] equals the actual goal under focus.
-    If they are different, raise an error (except in the case of (in)equality chains).
-    If they are equivalent after rewriting, raise an error and continue.
-    If the [target_goal] is equivalent to the goal under focus,
-    finish the proof automatically with the given lemma.
-
     Arguments:
         - [target_goal: constr], expression that 
             should equal the goal under focus.
@@ -146,19 +93,47 @@ Ltac2 check_goal_and_call (target_goal:constr) (callback: unit -> unit) :=
         - [AutomationFailure], if [target_goal] is not equivalent
             to the actual goal under focus, even after rewriting.
 *)
-Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
-    let lemma := unwrap_optional_lemma lemma in
-    let finish_proof () := 
+Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
+  let lemma := unwrap_optional_lemma lemma in
+  (* First check if the given target equals the goal directly,
+  without applying any rewrite. *)
+  match Constr.equal target_goal (Control.goal ()) with
+  | false => 
+      (* Do somethign special for inequality chains *)
       lazy_match! target_goal with
-      |  (inequality_chains_R.ineq_to_prop _ ) => 
-         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false));
-         waterprove_without_hint target_goal lemma true
-      |  (inequality_chains_nat.ineq_to_prop _ ) => 
-         (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false));
-         waterprove_without_hint target_goal lemma true
-      |  _ => waterprove_without_hint target_goal lemma true
-      end in
-    check_goal_and_call target_goal finish_proof.
+      | (total_statement ?u) =>
+          (* Convert inequality chain to global statement. *)
+          let new_target := constr:(global_statement $u) in
+          match target_equals_goal_judgementally new_target with
+          | false =>
+              (* If at first no match, try to use weak global statement *)
+              let new_new_target := constr:(weak_global_statement $u) in
+              match target_equals_goal_judgementally new_new_target with
+              | false =>
+              warn_wrong_goal_given (new_target); 
+              Control.zero (AutomationFailure (of_string
+                "Given goal not equivalent to actual goal."))
+              | true => ()
+              end
+          | true => ()
+          end;
+          (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false))
+      | _ => 
+          match target_equals_goal_judgementally target_goal with
+          | false => 
+              warn_wrong_goal_given (target_goal); 
+              Control.zero (AutomationFailure (of_string
+                "Given goal not equivalent to actual goal."))
+          | true => 
+              (* User provided an equivalent goal, but written differently. 
+                 Try to rewrite the real goal to match user input.*)
+              warn_equivalent_goal_given ();
+              change $target_goal
+          end
+      end
+  | true  => ()
+  end;
+  waterprove_without_hint target_goal lemma true.
 
 
 (** * We conclude that ...
@@ -178,14 +153,14 @@ Ltac2 solve_remainder_proof (target_goal:constr) (lemma:constr option) :=
 *)
 Ltac2 Notation "We" "conclude" "that" target_goal(constr) := 
     panic_if_goal_wrapped ();
-    solve_remainder_proof target_goal None.
+    check_and_solve target_goal None.
 
 (** * It follows that ...
     Alternative notation for [We conclude that ...].
 *)
 Ltac2 Notation "It" "follows" "that" target_goal(constr) :=  
     panic_if_goal_wrapped ();
-    solve_remainder_proof target_goal None.
+    check_and_solve target_goal None.
 
 (** * We conclude that ...
     Finish proving a goal using automation.
@@ -202,4 +177,4 @@ Ltac2 Notation "It" "follows" "that" target_goal(constr) :=
 *)
 Ltac2 Notation "By" lemma(constr) "we" "conclude" "that" target_goal(constr) :=  
     panic_if_goal_wrapped ();
-    solve_remainder_proof target_goal (Some lemma).
+    check_and_solve target_goal (Some lemma).
