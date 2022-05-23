@@ -243,6 +243,27 @@ We conclude that (& 3 &< 4 &< 5).
 Qed.
 
 
+(** * Test 6
+  Test whether wrapped goals requiring users to write out what they need to show
+  can be solved immediately. It is irritating to have to write something like:
+    'We need to show that (a < b).'
+    'We conclude that (a < b).'
+*)
+
+Goal (StateGoal.Wrapper (0 = 0)).
+Proof.
+  We conclude that (0 = 0).
+Qed.
+
+(** * Test 7
+  Test whether the tactic throws an error for other wrappers.
+*)
+Goal (Case.Wrapper (0 = 1) (0 = 0)).
+Proof.
+  Fail We conclude that (0 = 0).
+Abort.
+
+(** * Test 8 *)
 (** Actually tests for [waterprove] automation suboutine, but this seemed like a 
     convenient place to test. *)
 (** Tests whether the error points out which specific (in)equality in the chain does not hold. *)
@@ -252,13 +273,15 @@ Variable x y z : A.
 Goal (& x &= y &= z).
 Proof.
 Fail We conclude that (& x &= y &= z). (* Expected: unable to find proof (x = y) *)
-Admitted.
+Abort.
 
 Goal (x = y) -> (& x &= y &= z).
 Proof.
 intro p.
 Fail We conclude that (& x &= y &= z). (* Expected: unable to find proof (y = z) *)
-Admitted.
+Abort.
+
+
 
 
 

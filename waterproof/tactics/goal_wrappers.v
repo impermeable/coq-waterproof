@@ -116,10 +116,9 @@ Module StateGoal.
   Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
              := match x with wrap _ y => eq_refl end.
 End StateGoal.
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '('  G ').'"
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '('  G ').' 'or' 'write:' 'We' 'conclude' 'that' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'"
          := (StateGoal.Wrapper G) (at level 99, only printing,
-             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ).").
-
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ). '//' or  write: '//'   We  conclude  that  ( G ). '//' if  no  intermediary  proof  steps  are  required.").
 
 Ltac2 Type exn ::= [ GoalWrappedError(string) ].
 Ltac2 raise_goal_wrapped_error () := Control.zero (GoalWrappedError(

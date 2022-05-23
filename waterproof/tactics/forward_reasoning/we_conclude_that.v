@@ -136,6 +136,21 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
   waterprove_without_hint target_goal lemma true.
 
 
+(** * unwrap_state_goal_no_check
+    Removes a [StateGoal.Wrapper] wrapper from the goal.
+    
+    Arguments: None
+    
+    Does: 
+        - Removes the wrapper [StateGoal.Wrapper G].
+*)
+Local Ltac2 unwrap_state_goal_no_check () :=
+  lazy_match! goal with
+  | [|- StateGoal.Wrapper _] => apply StateGoal.wrap
+  | [|- _] => ()
+  end.
+
+
 (** * We conclude that ...
     Finish proving a goal using automation.
 
@@ -152,13 +167,15 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
             to the actual goal under focus, even after rewriting.
 *)
 Ltac2 Notation "We" "conclude" "that" target_goal(constr) := 
+    unwrap_state_goal_no_check ();
     panic_if_goal_wrapped ();
     check_and_solve target_goal None.
 
 (** * It follows that ...
     Alternative notation for [We conclude that ...].
 *)
-Ltac2 Notation "It" "follows" "that" target_goal(constr) :=  
+Ltac2 Notation "It" "follows" "that" target_goal(constr) :=      
+    unwrap_state_goal_no_check ();
     panic_if_goal_wrapped ();
     check_and_solve target_goal None.
 
@@ -176,5 +193,6 @@ Ltac2 Notation "It" "follows" "that" target_goal(constr) :=
             to the actual goal under focus, even after rewriting.
 *)
 Ltac2 Notation "By" lemma(constr) "we" "conclude" "that" target_goal(constr) :=  
+    unwrap_state_goal_no_check ();
     panic_if_goal_wrapped ();
     check_and_solve target_goal (Some lemma).
