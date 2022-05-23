@@ -99,6 +99,17 @@ Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occ
          end.
 
 
+Ltac2 expand_def_framework (unfold_goal : unit -> unit) (unfold_hyp : ident -> unit) (cl : ident option):=
+  panic_if_goal_wrapped ();
+  match cl with
+  | None    => unfold_goal ();
+               ap_goal_unwrap ()
+  | Some cl => let h_constr := Control.hyp cl in (* throws error if ident not found in hypotheses *)
+               unfold_hyp cl;
+               ap_hyp_unwrap h_constr
+  end.
+
+
 (** * goal_as
     Removes the [ExpandDef.Goal.Wrapper] from the goal.
 
