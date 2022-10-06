@@ -114,7 +114,7 @@ Abort.
 (** Testing de Morgan laws. *)
 
 (** Level 1 *)
-Variable P1 : R -> Prop.
+Local Parameter P1 : R -> Prop.
 (* Test 15 *)
 Goal ~ (forall x : R, P1 x) -> (exists x : R, ~ (P1 x)).
 Proof.
@@ -129,7 +129,7 @@ Proof.
 Abort.
 
 (** Level 2 *)
-Variable P2 : R -> R -> Prop.
+Local Parameter P2 : R -> R -> Prop.
 (* Test 17 *)
 Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
 Proof.
@@ -146,7 +146,7 @@ Qed.
 
 (** Level 3 *)
 (* Test 18 *)
-Variable P3 : R -> R -> R -> Prop.
+Local Parameter P3 : R -> R -> R -> Prop.
 Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
 Proof.
   intro H.
@@ -155,7 +155,7 @@ Qed.
 
 (* Test with assumptions on variables, like forall \eps > 0. *)
 Definition Rdist (x y : R) := Rabs (x - y).
-Variable (f : R -> R) (a L : R).
+Local Parameter (f : R -> R) (a L : R).
 (* Test 19 *)
 Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
           0 < Rdist x a < delta -> Rdist (f x) L < eps)

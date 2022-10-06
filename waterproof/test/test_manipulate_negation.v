@@ -195,7 +195,7 @@ Qed.
 
 (** Difficult case from theory. *)
 Open Scope R_scope.
-Variable A : R -> Prop.
+Local Parameter A : R -> Prop.
 (* Test 21 *)
 Goal (~ (exists x : R, A x /\ L < x)) -> (forall x : R, A x ->  ~(L < x)).
 Proof.

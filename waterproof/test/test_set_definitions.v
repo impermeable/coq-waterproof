@@ -31,10 +31,10 @@ Require Import Lra.
 Open Scope R_scope.
 Open Scope subset_scope.
 
-Variable P : R -> Prop.
+Local Parameter P : R -> Prop.
 Definition A := as_subset R P.
 
-Variable x : R.
+Local Parameter x : R.
 Check (x : A).
 Check (is_lub A).
 Check (x : [0,1]).

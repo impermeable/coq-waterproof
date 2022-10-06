@@ -99,10 +99,10 @@ Module ExpandDef.
                := match x with wrap _ _ _ y => eq_refl end.
   End Hyp.
 End ExpandDef.
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' 'the' 'goal' 'as' '('  G ').'"
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' 'the' 'goal' 'as' '(' G ').'"
          := (ExpandDef.Goal.Wrapper G) (at level 99, only printing,
              format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  the  goal  as  ( G ).").
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' '(' h ')'  'as' '('  H ').'"
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' '(' h ')' 'as' '(' H ').'"
          := (ExpandDef.Hyp.Wrapper _ H h) (at level 99, only printing,
              format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  ( h )  as  ( H ).").
 
@@ -116,7 +116,7 @@ Module StateGoal.
   Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
              := match x with wrap _ y => eq_refl end.
 End StateGoal.
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '('  G ').' 'or' 'write:' 'We' 'conclude' 'that' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'"
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '(' G ').' 'or' 'write:' 'We' 'conclude' 'that' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'"
          := (StateGoal.Wrapper G) (at level 99, only printing,
              format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ). '//' or  write: '//'   We  conclude  that  ( G ). '//' if  no  intermediary  proof  steps  are  required.").
 
