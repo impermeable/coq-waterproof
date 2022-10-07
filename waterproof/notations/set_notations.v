@@ -25,6 +25,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 For Coq's Ensembles library*)
 Require Import Sets.Ensembles. 
 Require Import Waterproof.notations.notations.
+
+Declare Scope ensemble_scope.
+
 Notation "'subset' U" := 
   (Ensemble U) (at level 50). 
 

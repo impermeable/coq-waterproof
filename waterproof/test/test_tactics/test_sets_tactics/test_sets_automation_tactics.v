@@ -47,8 +47,8 @@ Require Import Waterproof.load_database.Sets.
 
 Load sets_automation_tactics.
 
-Variable U : Type.
-Variable A B : (Ensemble U).
+Local Parameter U : Type.
+Local Parameter A B : (Ensemble U).
 
 Open Scope nat.
 

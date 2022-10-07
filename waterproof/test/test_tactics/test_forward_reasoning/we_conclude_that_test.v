@@ -267,8 +267,8 @@ Abort.
 (** Actually tests for [waterprove] automation suboutine, but this seemed like a 
     convenient place to test. *)
 (** Tests whether the error points out which specific (in)equality in the chain does not hold. *)
-Variable A : Type.
-Variable x y z : A.
+Local Parameter A : Type.
+Local Parameter x y z : A.
 
 Goal (& x &= y &= z).
 Proof.

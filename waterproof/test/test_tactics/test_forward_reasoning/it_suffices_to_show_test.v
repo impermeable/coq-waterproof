@@ -62,8 +62,8 @@ Abort.
 
 Require Import Waterproof.load_database.Integers.
 
-Variable f : nat -> nat.
-Parameter f_increasing : forall m n : nat, m <= n -> f m <= f n.
+Local Parameter f : nat -> nat.
+Local Parameter f_increasing : forall m n : nat, m <= n -> f m <= f n.
 
 Lemma test_it_suffices_3: f 1 <= f 2.
     By f_increasing it suffices to show that (1 <= 2).
