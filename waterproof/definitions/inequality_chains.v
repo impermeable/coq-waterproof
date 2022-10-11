@@ -32,33 +32,46 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-(* Abstract representations for <, ≤, > and ≥ symbols.*)
-Inductive LessRel :=
-| rel_lt
-| rel_le.
-Inductive GreaterRel :=
-| rel_gt
-| rel_ge.
+(* Abstract representations for =, <, ≤, > and ≥ symbols.*)
+Inductive EqualRel := | chain_eq.
+Inductive LessRel := | chain_lt | chain_le.
+Inductive GreaterRel := | chain_gt | chain_ge.
 
 (* Types of chains. *)
 (* Only contains =-relations. *)
-Inductive EqualChain (T : Type) := 
-| ec_base : T -> T -> EqualChain T (* first link *)
-| ec_link : EqualChain T -> T -> EqualChain T. (* link another term to chain *)
-(* Contains at least one <- or ≤-symbol. *)
+Inductive EqualChain (T : Type) :=
+| base_ec : T -> EqualRel * T -> EqualChain T
+| link_ec_eq : EqualChain T -> EqualRel * T -> EqualChain T.
 Inductive LessChain (T : Type) :=
-| lc_base : T -> LessRel -> T -> LessChain T (* first link *)
-| lc_link1 : EqualChain T -> LessRel -> T -> LessChain T (* link < or ≤ and term to equality chain *)
-| lc_link2 : LessChain T -> T -> LessChain T (* link term to chain with =-relation*)
-| lc_link3 : LessChain T -> LessRel -> T -> LessChain T. (* link term to chain with <- or ≤-relation*)
-(* Contains at least one >- or ≥-symbol. *)
+| base_lc : T -> LessRel * T -> LessChain T
+| link_ec_less : EqualChain T -> LessRel  * T -> LessChain T  (* link < or ≤ and term to equality chain *)
+| link_lc_eq   : LessChain T  -> EqualRel * T -> LessChain T  (* link term to chain with =-relation*)
+| link_lc_less : LessChain T  -> LessRel  * T -> LessChain T. (* link term to chain with <- or ≤-relation*)
 Inductive GreaterChain (T : Type) :=
-| gc_base : T -> GreaterRel -> T -> GreaterChain T (* first link *)
-| gc_link1 : EqualChain T -> GreaterRel -> T -> GreaterChain T (* link > or ≥ and term to equality chain *)
-| gc_link2 : GreaterChain T -> T -> GreaterChain T (* link term to chain with =-relation*)
-| gc_link3 : GreaterChain T -> GreaterRel -> T -> GreaterChain T. (* link term to chain with >- or ≥-relation*)
+| base_gc : T -> GreaterRel * T -> GreaterChain T
+| link_ec_grtr : EqualChain T   -> GreaterRel * T -> GreaterChain T (* link > or ≥ and term to equality chain *)
+| link_gc_eq   : GreaterChain T -> EqualRel   * T -> GreaterChain T (* link term to chain with =-relation*)
+| link_gc_grtr : GreaterChain T -> GreaterRel * T -> GreaterChain T. (* link term to chain with >- or ≥-relation*)
+
+(* Type classes for linking new terms to chains.
+   Type classes are used for notation overloading of link function 'chain_link' *)
+Class ChainLink (A B C : Type) := chain_link : A -> B -> C.
+#[export] Instance link_ec_eq_inst   (T : Type) : ChainLink (EqualChain T) (EqualRel * T) (EqualChain T) := link_ec_eq T.
+#[export] Instance link_ec_less_inst (T : Type) : ChainLink (EqualChain T) (LessRel  * T) (LessChain T) := link_ec_less T.
+#[export] Instance link_lc_eq_inst   (T : Type) : ChainLink (LessChain  T) (EqualRel * T) (LessChain T) := link_lc_eq T.
+#[export] Instance link_lc_less_inst (T : Type) : ChainLink (LessChain  T) (LessRel  * T) (LessChain T) := link_lc_less T.
+#[export] Instance link_ec_grtr_inst (T : Type) : ChainLink (EqualChain   T) (GreaterRel * T) (GreaterChain T) := link_ec_grtr T.
+#[export] Instance link_gc_eq_inst   (T : Type) : ChainLink (GreaterChain T) (EqualRel   * T) (GreaterChain T) := link_gc_eq T.
+#[export] Instance link_gc_grtr_inst (T : Type) : ChainLink (GreaterChain T) (GreaterRel * T) (GreaterChain T) := link_gc_grtr T.
+Class ChainBase (A B C : Type) := chain_base : A -> B -> C.
+#[export] Instance base_ec_inst (T : Type) : ChainBase T (EqualRel   * T) (EqualChain   T) := base_ec T.
+#[export] Instance base_lc_inst (T : Type) : ChainBase T (LessRel    * T) (LessChain    T) := base_lc T.
+#[export] Instance base_gc_inst (T : Type) : ChainBase T (GreaterRel * T) (GreaterChain T) := base_gc T.
 
 
+
+
+(*
 (* Type classes for linking new terms to chains.
    Type classes are used for notation overloading of link symbols like '&=' *)
 Class EqLink (A B C: Type) := eq_link : A -> B -> C. (*notation: _ &= _ *)
@@ -98,6 +111,54 @@ Class GeLink (A B C : Type) := ge_link : A -> B -> C. (*notation: _ &≥ _ *)
   fun c1 => gc_link1 T c1 rel_ge.
 #[export] Instance gc_ge_link (T : Type) : GeLink (GreaterChain T) T (GreaterChain T) := 
   fun c1 => gc_link3 T c1 rel_ge.
+*)
+
+
+
+
+(** Helper functions *)
+
+(* Head: first term in a chain *)
+Fixpoint ec_head {T : Type} (c : EqualChain T) : T :=
+match c with
+| base_ec _ x y => x
+| link_ec_eq _ ec z => ec_head ec
+end.
+Fixpoint lc_head {T : Type} (c : LessChain T) : T :=
+match c with
+| base_lc _ x _       => x
+| link_ec_less _ ec _ => ec_head ec
+| link_lc_eq _ lc _   => lc_head lc
+| link_lc_less _ lc _ => lc_head lc
+end.
+Fixpoint gc_head {T : Type} (c : GreaterChain T) : T :=
+match c with
+| base_gc _ x _       => x
+| link_ec_grtr _ ec _ => ec_head ec
+| link_gc_eq _ gc _   => gc_head gc
+| link_gc_grtr _ gc _ => gc_head gc
+end.
+
+(* Tail: last term in a chain *)
+Definition ec_tail {T : Type} (c : EqualChain T) : T :=
+match c with
+| base_ec _ _ (_,y)    => y
+| link_ec_eq _ _ (_,z) => z
+end.
+Definition lc_tail {T : Type} (c : LessChain T) : T :=
+match c with
+| base_lc _ _ (_,y)      => y
+| link_ec_less _ _ (_,z) => z
+| link_lc_eq _ _ (_,z)   => z
+| link_lc_less _ _ (_,z) => z
+end.
+Definition gc_tail {T : Type} (c : GreaterChain T) : T :=
+match c with
+| base_gc _ x (_,y)      => y
+| link_ec_grtr _ _ (_,z) => z
+| link_gc_eq _ _ (_,z)   => z
+| link_gc_grtr _ _ (_,z) => z
+end.
 
 
 (* Chains contain multiple meanings:
@@ -113,58 +174,27 @@ Class InterpretableChain (T : Type) (C : Type -> Type) :=
   ; total_statement : C T -> Prop
   }.
 
-
-(** Helper functions *)
-
-(* Head: first term in a chain *)
-Fixpoint ec_head {T : Type} (c : EqualChain T) : T :=
-match c with
-| ec_base _ x y => x
-| ec_link _ ec z => ec_head ec
-end.
-Fixpoint lc_head {T : Type} (c : LessChain T) : T :=
-match c with
-| lc_base _ x rel y => x
-| lc_link1 _ ec rel z => ec_head ec
-| lc_link2 _ lc z => lc_head lc
-| lc_link3 _ lc rel z => lc_head lc
-end.
-Fixpoint gc_head {T : Type} (c : GreaterChain T) : T :=
-match c with
-| gc_base _ x rel y => x
-| gc_link1 _ ec rel z => ec_head ec
-| gc_link2 _ gc z => gc_head gc
-| gc_link3 _ gc rel z => gc_head gc
-end.
-
-(* Tail: last term in a chain *)
-Definition ec_tail {T : Type} (c : EqualChain T) : T :=
-match c with
-| ec_base _ x y => y
-| ec_link _ ec z => z
-end.
-Definition lc_tail {T : Type} (c : LessChain T) : T :=
-match c with
-| lc_base _ x rel y => y
-| lc_link1 _ ec rel z => z
-| lc_link2 _ lc z => z
-| lc_link3 _ lc rel z => z
-end.
-Definition gc_tail {T : Type} (c : GreaterChain T) : T :=
-match c with
-| gc_base  _ x rel y => y
-| gc_link1 _ ec rel z => z
-| gc_link2 _ lc z => z
-| gc_link3 _ lc rel z => z
-end.
+(* Notations for link type classes *)
+Declare Scope chain_scope.
+Delimit Scope chain_scope with chain.
+Notation "< y" :=  (chain_lt, y) (at level 69, y at next level) : chain_scope.
+Notation "<= y" := (chain_le, y) (at level 69, y at next level) : chain_scope.
+Notation "≤ y" :=  (chain_le, y) (at level 69, y at next level) : chain_scope.
+Notation "= y" :=  (chain_eq, y) (at level 69, y at next level) : chain_scope.
+Notation "> y" :=  (chain_gt, y) (at level 69, y at next level) : chain_scope.
+Notation ">= y" := (chain_ge, y) (at level 69, y at next level) : chain_scope.
+Notation "≥ y" :=  (chain_ge, y) (at level 69, y at next level) : chain_scope.
+(* Full chain *)
+Notation "& x ly lz .. lw" := (total_statement (chain_link .. (chain_link (chain_base x ly%chain) lz%chain) .. lw%chain))
+  (at level 70, x at next level, ly at next level, lw at next level).
 
 (** Global & total statement - EqualChain *)
 Definition ec_global_statement (T : Type) (c : EqualChain T) : Prop :=
   ec_head c = ec_tail c.
 Fixpoint ec_total_statement (T : Type) (c : EqualChain T) : Prop :=
 match c with
-| ec_base _ x y => (x = y)
-| ec_link _ c1 z => (ec_total_statement _ c1) /\ (ec_tail c1 = z)
+| base_ec _ x (_,y)     => (x = y)
+| link_ec_eq _ ec (_,z) => (ec_total_statement _ ec) /\ (ec_tail ec = z)
 end.
 #[export] Instance ec_interpretable (T : Type) : InterpretableChain T EqualChain :=
   { global_statement := ec_global_statement T
@@ -176,102 +206,105 @@ end.
 (* The global relation resulting from a combination of relations [rel1] and [rel2]. *)
 Definition less_relation_flow (rel1 rel2 : LessRel) : LessRel :=
 match rel1 with
-| rel_lt => rel_lt
-| rel_le => rel2
+| chain_lt => chain_lt
+| chain_le => rel2
 end.
 Definition grtr_relation_flow (rel1 rel2 : GreaterRel) : GreaterRel :=
 match rel1 with
-| rel_gt => rel_gt
-| rel_ge => rel2
+| chain_gt => chain_gt
+| chain_ge => rel2
 end.
 (* Returns the global relation of a LessChain. *)
 Fixpoint global_less_rel {T : Type} (c : LessChain T) : LessRel :=
 match c with
-| lc_base _ x rel y => rel
-| lc_link1 _ ec rel z => rel
-| lc_link2 _ lc z => global_less_rel lc
-| lc_link3 _ lc rel z => less_relation_flow (global_less_rel lc) rel
+| base_lc _ _ (rel,_)       => rel
+| link_ec_less _ _ (rel,_)  => rel
+| link_lc_eq _ lc _         => global_less_rel lc
+| link_lc_less _ lc (rel,_) => less_relation_flow (global_less_rel lc) rel
 end.
 (* Returns the global relation of a GreaterChain. *)
 Fixpoint global_grtr_rel {T : Type} (c : GreaterChain T) : GreaterRel :=
 match c with
-| gc_base _ x rel y => rel
-| gc_link1 _ ec rel z => rel
-| gc_link2 _ gc z => global_grtr_rel gc
-| gc_link3 _ gc rel z => grtr_relation_flow (global_grtr_rel gc) rel
+| base_gc _ _ (rel,_)       => rel
+| link_ec_grtr _ _ (rel,_)  => rel
+| link_gc_eq _ gc _         => global_grtr_rel gc
+| link_gc_grtr _ gc (rel,_) => grtr_relation_flow (global_grtr_rel gc) rel
 end.
 
 (* Functions to turn the abstract [LessRel] and [GreaterRel] relations into their concrete interpretations.
-   We again use type classes to be able to use the same name for these fucntions across types that implement them.
+   We again use type classes to be able to use the same name for these functions across types that implement them.
   *)
-Class LessRelInterpretation (T : Type) := less_rel_to_pred : LessRel -> T -> T -> Prop.
-Class GreaterRelInterpretation (T : Type) := grtr_rel_to_pred : GreaterRel -> T -> T -> Prop.
+Class OrderInterpretation (T : Type) := 
+  { less_rel_to_pred : LessRel -> T -> T -> Prop
+  ; grtr_rel_to_pred : GreaterRel -> T -> T -> Prop
+  }.
 
 (** Global & total statement - LessChain *)
-Definition lc_global_statement (T : Type) `{! LessRelInterpretation T} (c : LessChain T) : Prop :=
-less_rel_to_pred (global_less_rel c) (lc_head c) (lc_tail c).
-Definition lc_weak_global_statement (T : Type) `{! LessRelInterpretation T} (c : LessChain T) : Prop :=
-less_rel_to_pred rel_le (lc_head c) (lc_tail c).
-Fixpoint lc_total_statement (T : Type) `{! LessRelInterpretation T} (c : LessChain T) : Prop :=
+Definition lc_global_statement (T : Type) `{! OrderInterpretation T} (c : LessChain T) : Prop :=
+  less_rel_to_pred (global_less_rel c) (lc_head c) (lc_tail c).
+Definition lc_weak_global_statement (T : Type) `{! OrderInterpretation T} (c : LessChain T) : Prop :=
+  less_rel_to_pred chain_le (lc_head c) (lc_tail c).
+Fixpoint lc_total_statement (T : Type) `{! OrderInterpretation T} (c : LessChain T) : Prop :=
 match c with
-| lc_base _ x rel y => less_rel_to_pred rel x y
-| lc_link1 _ ec rel z => (ec_total_statement _ ec) /\ less_rel_to_pred rel (ec_tail ec) z
-| lc_link2 _ lc z => (lc_total_statement _ lc) /\ (lc_tail lc = z)
-| lc_link3 _ lc rel z => (lc_total_statement _ lc) /\ less_rel_to_pred rel (lc_tail lc) z
+| base_lc _ x (rel,y) => less_rel_to_pred rel x y
+| link_ec_less _ ec (rel,z) => (ec_total_statement _ ec) /\ less_rel_to_pred rel (ec_tail ec) z
+| link_lc_eq _ lc (_,z)     => (lc_total_statement _ lc) /\ (lc_tail lc = z)
+| link_lc_less _ lc (rel,z) => (lc_total_statement _ lc) /\ less_rel_to_pred rel (lc_tail lc) z
 end.
-#[export] Instance lc_interpretable (T : Type) `{! LessRelInterpretation T} : InterpretableChain T LessChain :=
+#[export] Instance lc_interpretable (T : Type) `{! OrderInterpretation T} : InterpretableChain T LessChain :=
   { global_statement := lc_global_statement T
   ; weak_global_statement := lc_weak_global_statement T
   ; total_statement := lc_total_statement T
   }.
 
 (** Global & total statement - GreaterChain *)
-Definition gc_global_statement (T : Type) `{! GreaterRelInterpretation T} (c : GreaterChain T) : Prop :=
-grtr_rel_to_pred (global_grtr_rel c) (gc_head c) (gc_tail c).
-Definition gc_weak_global_statement (T : Type) `{! GreaterRelInterpretation T} (c : GreaterChain T) : Prop :=
-grtr_rel_to_pred rel_ge (gc_head c) (gc_tail c).
-Fixpoint gc_total_statement (T : Type) `{! GreaterRelInterpretation T} (c : GreaterChain T) : Prop :=
+Definition gc_global_statement (T : Type) `{! OrderInterpretation T} (c : GreaterChain T) : Prop :=
+  grtr_rel_to_pred (global_grtr_rel c) (gc_head c) (gc_tail c).
+Definition gc_weak_global_statement (T : Type) `{! OrderInterpretation T} (c : GreaterChain T) : Prop :=
+  grtr_rel_to_pred chain_ge (gc_head c) (gc_tail c).
+Fixpoint gc_total_statement (T : Type) `{! OrderInterpretation T} (c : GreaterChain T) : Prop :=
 match c with
-| gc_base _ x rel y => grtr_rel_to_pred rel x y
-| gc_link1 _ ec rel z => (ec_total_statement _ ec) /\ grtr_rel_to_pred rel (ec_tail ec) z
-| gc_link2 _ gc z => (gc_total_statement _ gc) /\ (gc_tail gc = z)
-| gc_link3 _ gc rel z => (gc_total_statement _ gc) /\ grtr_rel_to_pred rel (gc_tail gc) z
+| base_gc _ x (rel,y) => grtr_rel_to_pred rel x y
+| link_ec_grtr _ ec (rel,z) => (ec_total_statement _ ec) /\ grtr_rel_to_pred rel (ec_tail ec) z
+| link_gc_eq _ gc (_,z) => (gc_total_statement _ gc) /\ (gc_tail gc = z)
+| link_gc_grtr _ gc (rel,z) => (gc_total_statement _ gc) /\ grtr_rel_to_pred rel (gc_tail gc) z
 end.
-#[export] Instance gc_interpretable (T : Type) `{! GreaterRelInterpretation T} : InterpretableChain T GreaterChain :=
+#[export] Instance gc_interpretable (T : Type) `{! OrderInterpretation T} : InterpretableChain T GreaterChain :=
   { global_statement := gc_global_statement T
   ; weak_global_statement := gc_weak_global_statement T
   ; total_statement := gc_total_statement T
   }.
 
-(* Notations for link type classes *)
-Notation "c &= y" := (eq_link c y) (at level 71, left associativity).
-Notation "c &< y" := (lt_link c y) (at level 71, left associativity).
-Notation "c &<= y" := (le_link c y) (at level 71, left associativity).
-Notation "c &≤ y" := (le_link c y) (at level 71, left associativity).
-Notation "c &> y" := (gt_link c y) (at level 71, left associativity).
-Notation "c &>= y" := (ge_link c y) (at level 71, left associativity).
-Notation "c &≥ y" := (ge_link c y) (at level 71, left associativity).
-Notation "& c" := (total_statement c) (at level 98).
 
 (* Interpretations of [LessRel] and [GreaterRel] for the naturals. *)
-#[export] Instance nat_less_rel_pred : LessRelInterpretation nat := 
-  { less_rel_to_pred rel x y := match rel with | rel_lt => (x < y) | rel_le => (x <= y) end }.
-#[export] Instance nat_grtr_rel_pred : GreaterRelInterpretation nat := 
-  { grtr_rel_to_pred rel x y := match rel with | rel_gt => (x > y) | rel_ge => (x >= y) end }.
+#[export] Instance order_interpretation_nat : OrderInterpretation nat := 
+  { less_rel_to_pred rel x y := match rel with | chain_lt => (x < y) | chain_le => (x <= y) end
+  ; grtr_rel_to_pred rel x y := match rel with | chain_gt => (x > y) | chain_ge => (x >= y) end
+  }.
 
 (* Interpretations of [LessRel] and [GreaterRel] for the reals. *)
 Require Import Reals.
 Open Scope R_scope.
-#[export] Instance R_less_rel_pred : LessRelInterpretation R := 
-  { less_rel_to_pred rel x y := match rel with | rel_lt => (x < y) | rel_le => (x <= y) end }.
-#[export] Instance R_grtr_rel_pred : GreaterRelInterpretation R := 
-  { grtr_rel_to_pred rel x y := match rel with | rel_gt => (x > y) | rel_ge => (x >= y) end }.
+#[export] Instance order_interpretation_R : OrderInterpretation R := 
+  { less_rel_to_pred rel x y := match rel with | chain_lt => (x < y) | chain_le => (x <= y) end
+  ; grtr_rel_to_pred rel x y := match rel with | chain_gt => (x > y) | chain_ge => (x >= y) end
+  }.
 Close Scope R_scope.
 
+(*
+(* tests *)
+Check (& 0 < 1 = 2 - 1 < 2).
+Goal (& 0 < 1 = 2 - 1 < 2).
+Proof. unfold total_statement; cbv.
+Abort.
+Check (& 0 < 1 = 2 - 1 > 1). (* No typeclass inference found. *)
+
+Check (& INR 0 < 1 = 1). (* No typeclass inference found. *)
+*)
 
 (* Because the typeclasses used for the link-symbols '&=' are so general,
    they are unable to automatically make use of coercions,
-   e.g. the chain (& INR 0 &= 1) is not accepted, Coq says it is unable to find
+   e.g. the chain (& INR 0 < 1 = 1) is not accepted, Coq says it is unable to find
    an interpretation for (EqLink R nat ?C).
 
    We thus have to add all these cases manually.
@@ -280,143 +313,105 @@ Close Scope R_scope.
 (* Helper functions: functorality of chain types. *)
 Fixpoint ec_map {A B : Type} (f : A -> B) (c : EqualChain A) : EqualChain B :=
 match c with 
-| ec_base _ x y => ec_base _ (f x) (f y)
-| ec_link _ ec z => ec_link _ (ec_map f ec) (f z)
+| base_ec _ x (rel,y)     => base_ec _ (f x) (rel,f y)
+| link_ec_eq _ ec (rel,z) => link_ec_eq _ (ec_map f ec) (rel, f z)
 end.
 Fixpoint lc_map {A B : Type} (f : A -> B) (c : LessChain A) : LessChain B :=
 match c with
-| lc_base _ x rel y => lc_base _ (f x) rel (f y)
-| lc_link1 _ ec rel z => lc_link1 _ (ec_map f ec) rel (f z)
-| lc_link2 _ lc z => lc_link2 _ (lc_map f lc) (f z)
-| lc_link3 _ lc rel z => lc_link3 _ (lc_map f lc) rel (f z)
+| base_lc _ x (rel,y) => base_lc _ (f x) (rel, f y)
+| link_ec_less _ ec (rel,z) => link_ec_less _ (ec_map f ec) (rel, f z)
+| link_lc_eq _ lc (rel,z)   => link_lc_eq _ (lc_map f lc) (rel, f z)
+| link_lc_less _ lc (rel,z) => link_lc_less _ (lc_map f lc) (rel, f z)
 end.
 Fixpoint gc_map {A B : Type} (f : A -> B) (c : GreaterChain A) : GreaterChain B :=
 match c with
-| gc_base _ x rel y => gc_base _ (f x) rel (f y)
-| gc_link1 _ ec rel z => gc_link1 _ (ec_map f ec) rel (f z)
-| gc_link2 _ gc z => gc_link2 _ (gc_map f gc) (f z)
-| gc_link3 _ gc rel z => gc_link3 _ (gc_map f gc) rel (f z)
+| base_gc _ x (rel,y) => base_gc _ (f x) (rel, f y)
+| link_ec_grtr _ ec (rel,z) => link_ec_grtr _ (ec_map f ec) (rel, f z)
+| link_gc_eq _ gc (rel,z)   => link_gc_eq _ (gc_map f gc) (rel, f z)
+| link_gc_grtr _ gc (rel,z) => link_gc_grtr _ (gc_map f gc) (rel, f z)
 end.
 
-(* embedding INR : nat -> R *)
-(* _ &= _ *)
-#[export] Instance eq_base_nat_R : EqLink nat R (EqualChain R) := fun n x => ec_base R (INR n) x.
-#[export] Instance eq_base_R_nat : EqLink R nat (EqualChain R) := fun x n => ec_base R x (INR n).
-#[export] Instance ec_eq_link_nat_R : EqLink (EqualChain nat) R (EqualChain R) := 
-  fun ecn x => ec_link R (ec_map INR ecn) x.
-#[export] Instance ec_eq_link_R_nat : EqLink (EqualChain R) nat (EqualChain R) := 
-  fun ecx n => ec_link R ecx (INR n).
-#[export] Instance lc_eq_link_nat_R : EqLink (LessChain nat) R (LessChain R) := 
-  fun lcn x => lc_link2 R (lc_map INR lcn) x.
-#[export] Instance lc_eq_link_R_nat : EqLink (LessChain R) nat (LessChain R) := 
-  fun lcx n => lc_link2 R lcx (INR n).
-#[export] Instance gc_eq_link_nat_R : EqLink (GreaterChain nat) R (GreaterChain R) := 
-  fun gcn x => gc_link2 R (gc_map INR gcn) x.
-#[export] Instance gc_eq_link_R_nat : EqLink (GreaterChain R) nat (GreaterChain R) := 
-  fun gcx n => gc_link2 R gcx (INR n).
-(* _ &< _ *)
-#[export] Instance lt_base_nat_R : LtLink nat R (LessChain R) := fun n x => lc_base R (INR n) rel_lt x.
-#[export] Instance lt_base_R_nat : LtLink R nat (LessChain R) := fun x n => lc_base R x rel_lt (INR n).
-#[export] Instance ec_lt_link_nat_R : LtLink (EqualChain nat) R (LessChain R) :=
-  fun ecn => lc_link1 R (ec_map INR ecn) rel_lt.
-#[export] Instance ec_lt_link_R_nat : LtLink (EqualChain R) nat (LessChain R) :=
-  fun ecx n => lc_link1 R ecx rel_lt (INR n).
-#[export] Instance lc_lt_link_nat_R : LtLink (LessChain nat) R (LessChain R) := 
-  fun lcn => lc_link3 R (lc_map INR lcn) rel_lt.
-#[export] Instance lc_lt_link_R_nat : LtLink (LessChain R) nat (LessChain R) := 
-  fun lcx n => lc_link3 R lcx rel_lt (INR n).
-(* _ ≤ _ *)
-#[export] Instance le_base_nat_R : LeLink nat R (LessChain R) := fun n => lc_base R (INR n) rel_le.
-#[export] Instance le_base_R_nat : LeLink R nat (LessChain R) := fun x n => lc_base R x rel_le (INR n).
-#[export] Instance ec_le_link_nat_R : LeLink (EqualChain nat) R (LessChain R) := 
-  fun ecn => lc_link1 R (ec_map INR ecn) rel_le.
-#[export] Instance ec_le_link_R_nat : LeLink (EqualChain R) nat (LessChain R) := 
-  fun ecx n => lc_link1 R ecx rel_le (INR n).
-#[export] Instance lc_le_link_nat_R : LeLink (LessChain nat) R (LessChain R) := 
-  fun lcn => lc_link3 R (lc_map INR lcn) rel_le.
-#[export] Instance lc_le_link_R_nat : LeLink (LessChain R) nat (LessChain R) := 
-  fun lcx n => lc_link3 R lcx rel_le (INR n).
-(* _ > _ *)
-#[export] Instance gt_base_nat_R : GtLink nat R (GreaterChain R) :=  fun n => gc_base R (INR n) rel_gt.
-#[export] Instance gt_base_R_nat : GtLink R nat (GreaterChain R) :=  fun x n => gc_base R x rel_gt (INR n).
-#[export] Instance ec_gt_link_nat_R : GtLink (EqualChain nat) R (GreaterChain R) :=
-  fun ecn => gc_link1 R (ec_map INR ecn) rel_gt.
-#[export] Instance ec_gt_link_R_nat : GtLink (EqualChain R) nat (GreaterChain R) :=
-  fun ecx n => gc_link1 R ecx rel_gt (INR n).
-#[export] Instance gc_gt_link_nat_R : GtLink (GreaterChain nat) R (GreaterChain R) := 
-  fun gcn => gc_link3 R (gc_map INR gcn) rel_gt.
-#[export] Instance gc_gt_link_R_nat : GtLink (GreaterChain R) nat (GreaterChain R) := 
-  fun gcx n => gc_link3 R gcx rel_gt (INR n).
-(* _ ≥ _ *)
-#[export] Instance ge_base_nat_R : GeLink nat R (GreaterChain R) := fun n => gc_base R (INR n) rel_ge.
-#[export] Instance ge_base_R_nat : GeLink R nat (GreaterChain R) := fun x n => gc_base R x rel_ge (INR n).
-#[export] Instance ec_ge_link_nat_R : GeLink (EqualChain nat) R (GreaterChain R) := 
-  fun ecn => gc_link1 R (ec_map INR ecn) rel_ge.
-#[export] Instance ec_ge_link_R_nat : GeLink (EqualChain R) nat (GreaterChain R) := 
-  fun ecx n => gc_link1 R ecx rel_ge (INR n).
-#[export] Instance gc_ge_link_nat_R : GeLink (GreaterChain nat) R (GreaterChain R) := 
-  fun gcn => gc_link3 R (gc_map INR gcn) rel_ge.
-#[export] Instance gc_ge_link_R_nat : GeLink (GreaterChain R) nat (GreaterChain R) := 
-  fun gcx n => gc_link3 R gcx rel_ge (INR n).
+Definition snd_map {A B C : Type} (f : B -> C) (z : A * B) : A * C := (fst z, f (snd z)). 
 
+(* embedding INR : nat -> R *)
+(* EqualChain *)
+#[export] Instance base_ec_nat_R : ChainBase nat (EqualRel * R) (EqualChain R) := fun n lx => base_ec R (INR n) lx.
+#[export] Instance base_ec_R_nat : ChainBase R (EqualRel * nat) (EqualChain R) := fun x ln => base_ec R x (snd_map INR ln).
+#[export] Instance link_ec_eq_nat_R : ChainLink (EqualChain nat) (EqualRel * R) (EqualChain R) := 
+  fun ecn lx => link_ec_eq R (ec_map INR ecn) lx.
+#[export] Instance link_ec_eq_R_nat : ChainLink (EqualChain R) (EqualRel * nat) (EqualChain R) := 
+  fun ecx ln => link_ec_eq R ecx (snd_map INR ln).
+(* LessChain *)
+#[export] Instance base_lc_nat_R : ChainBase nat (LessRel * R) (LessChain R) := fun n lx => base_lc R (INR n) lx.
+#[export] Instance base_lc_R_nat : ChainBase R (LessRel * nat) (LessChain R) := fun x ln => base_lc R x (snd_map INR ln).
+#[export] Instance link_ec_less_nat_R : ChainLink (EqualChain nat) (LessRel * R) (LessChain R) :=
+  fun ecn lx => link_ec_less R (ec_map INR ecn) lx.
+#[export] Instance link_ec_less_R_nat : ChainLink (EqualChain R) (LessRel * nat) (LessChain R) :=
+  fun ecx ln => link_ec_less R ecx (snd_map INR ln).
+#[export] Instance link_lc_eq_nat_R : ChainLink (LessChain nat) (EqualRel * R) (LessChain R) := 
+  fun lcn x => link_lc_eq R (lc_map INR lcn) x.
+#[export] Instance link_lc_eq_R_nat : ChainLink (LessChain R) (EqualRel * nat) (LessChain R) := 
+  fun lcx ln => link_lc_eq R lcx (snd_map INR ln).
+#[export] Instance link_lc_less_nat_R : ChainLink (LessChain nat) (LessRel * R) (LessChain R) := 
+  fun lcn lx => link_lc_less R (lc_map INR lcn) lx.
+#[export] Instance link_lc_less_R_nat : ChainLink (LessChain R) (LessRel * nat) (LessChain R) := 
+  fun lcx ln => link_lc_less R lcx (snd_map INR ln).
+(* GreaterChain *)
+#[export] Instance base_gc_nat_R : ChainBase nat (GreaterRel * R) (GreaterChain R) := fun n lx => base_gc R (INR n) lx.
+#[export] Instance base_gc_R_nat : ChainBase R (GreaterRel * nat) (GreaterChain R) := fun x ln => base_gc R x (snd_map INR ln).
+#[export] Instance link_ec_grtr_nat_R : ChainLink (EqualChain nat) (GreaterRel * R) (GreaterChain R) :=
+  fun ecn lx => link_ec_grtr R (ec_map INR ecn) lx.
+#[export] Instance link_ec_grtr_R_nat : ChainLink (EqualChain R) (GreaterRel * nat) (GreaterChain R) :=
+  fun ecx ln => link_ec_grtr R ecx (snd_map INR ln).
+#[export] Instance link_gc_eq_nat_R : ChainLink (GreaterChain nat) (EqualRel * R) (GreaterChain R) := 
+  fun gcn x => link_gc_eq R (gc_map INR gcn) x.
+#[export] Instance link_gc_eq_R_nat : ChainLink (GreaterChain R) (EqualRel * nat) (GreaterChain R) := 
+  fun gcx ln => link_gc_eq R gcx (snd_map INR ln).
+#[export] Instance link_gc_grtr_nat_R : ChainLink (GreaterChain nat) (GreaterRel * R) (GreaterChain R) := 
+  fun gcn lx => link_gc_grtr R (gc_map INR gcn) lx.
+#[export] Instance link_gc_grtr_R_nat : ChainLink (GreaterChain R) (GreaterRel * nat) (GreaterChain R) := 
+  fun gcx ln => link_gc_grtr R gcx (snd_map INR ln).
+
+(*
+(* test *)
+Check (& INR 0 < 1 = 1).
+*)
 
 (* embedding IZR : Z -> R *)
-(* _ &= _ *)
-#[export] Instance eq_base_Z_R : EqLink Z R (EqualChain R) := fun z x => ec_base R (IZR z) x.
-#[export] Instance eq_base_R_Z : EqLink R Z (EqualChain R) := fun x z => ec_base R x (IZR z).
-#[export] Instance ec_eq_link_Z_R : EqLink (EqualChain Z) R (EqualChain R) := 
-  fun ecz x => ec_link R (ec_map IZR ecz) x.
-#[export] Instance ec_eq_link_R_Z : EqLink (EqualChain R) Z (EqualChain R) := 
-  fun ecx z => ec_link R ecx (IZR z).
-#[export] Instance lc_eq_link_Z_R : EqLink (LessChain Z) R (LessChain R) := 
-  fun lcz x => lc_link2 R (lc_map IZR lcz) x.
-#[export] Instance lc_eq_link_R_Z : EqLink (LessChain R) Z (LessChain R) := 
-  fun lcx z => lc_link2 R lcx (IZR z).
-#[export] Instance gc_eq_link_Z_R : EqLink (GreaterChain Z) R (GreaterChain R) := 
-  fun gcz x => gc_link2 R (gc_map IZR gcz) x.
-#[export] Instance gc_eq_link_R_Z : EqLink (GreaterChain R) Z (GreaterChain R) := 
-  fun gcx z => gc_link2 R gcx (IZR z).
-(* _ &< _ *)
-#[export] Instance lt_base_Z_R : LtLink Z R (LessChain R) := fun z x => lc_base R (IZR z) rel_lt x.
-#[export] Instance lt_base_R_Z : LtLink R Z (LessChain R) := fun x z => lc_base R x rel_lt (IZR z).
-#[export] Instance ec_lt_link_Z_R : LtLink (EqualChain Z) R (LessChain R) :=
-  fun ecz => lc_link1 R (ec_map IZR ecz) rel_lt.
-#[export] Instance ec_lt_link_R_Z : LtLink (EqualChain R) Z (LessChain R) :=
-  fun ecx z => lc_link1 R ecx rel_lt (IZR z).
-#[export] Instance lc_lt_link_Z_R : LtLink (LessChain Z) R (LessChain R) := 
-  fun lcz => lc_link3 R (lc_map IZR lcz) rel_lt.
-#[export] Instance lc_lt_link_R_Z : LtLink (LessChain R) Z (LessChain R) := 
-  fun lcx z => lc_link3 R lcx rel_lt (IZR z).
-(* _ ≤ _ *)
-#[export] Instance le_base_Z_R : LeLink Z R (LessChain R) := fun z => lc_base R (IZR z) rel_le.
-#[export] Instance le_base_R_Z : LeLink R Z (LessChain R) := fun x z => lc_base R x rel_le (IZR z).
-#[export] Instance ec_le_link_Z_R : LeLink (EqualChain Z) R (LessChain R) := 
-  fun ecz => lc_link1 R (ec_map IZR ecz) rel_le.
-#[export] Instance ec_le_link_R_Z : LeLink (EqualChain R) Z (LessChain R) := 
-  fun ecx z => lc_link1 R ecx rel_le (IZR z).
-#[export] Instance lc_le_link_Z_R : LeLink (LessChain Z) R (LessChain R) := 
-  fun lcz => lc_link3 R (lc_map IZR lcz) rel_le.
-#[export] Instance lc_le_link_R_Z : LeLink (LessChain R) Z (LessChain R) := 
-  fun lcx z => lc_link3 R lcx rel_le (IZR z).
-(* _ > _ *)
-#[export] Instance gt_base_Z_R : GtLink Z R (GreaterChain R) :=  fun z => gc_base R (IZR z) rel_gt.
-#[export] Instance gt_base_R_Z : GtLink R Z (GreaterChain R) :=  fun x z => gc_base R x rel_gt (IZR z).
-#[export] Instance ec_gt_link_Z_R : GtLink (EqualChain Z) R (GreaterChain R) :=
-  fun ecz => gc_link1 R (ec_map IZR ecz) rel_gt.
-#[export] Instance ec_gt_link_R_Z : GtLink (EqualChain R) Z (GreaterChain R) :=
-  fun ecx z => gc_link1 R ecx rel_gt (IZR z).
-#[export] Instance gc_gt_link_Z_R : GtLink (GreaterChain Z) R (GreaterChain R) := 
-  fun gcz => gc_link3 R (gc_map IZR gcz) rel_gt.
-#[export] Instance gc_gt_link_R_Z : GtLink (GreaterChain R) Z (GreaterChain R) := 
-  fun gcx z => gc_link3 R gcx rel_gt (IZR z).
-(* _ ≥ _ *)
-#[export] Instance ge_base_Z_R : GeLink Z R (GreaterChain R) := fun z => gc_base R (IZR z) rel_ge.
-#[export] Instance ge_base_R_Z : GeLink R Z (GreaterChain R) := fun x z => gc_base R x rel_ge (IZR z).
-#[export] Instance ec_ge_link_Z_R : GeLink (EqualChain Z) R (GreaterChain R) := 
-  fun ecz => gc_link1 R (ec_map IZR ecz) rel_ge.
-#[export] Instance ec_ge_link_R_Z : GeLink (EqualChain R) Z (GreaterChain R) := 
-  fun ecx z => gc_link1 R ecx rel_ge (IZR z).
-#[export] Instance gc_ge_link_Z_R : GeLink (GreaterChain Z) R (GreaterChain R) := 
-  fun gcz => gc_link3 R (gc_map IZR gcz) rel_ge.
-#[export] Instance gc_ge_link_R_Z : GeLink (GreaterChain R) Z (GreaterChain R) := 
-  fun gcx z => gc_link3 R gcx rel_ge (IZR z).
+(* EqualChain *)
+#[export] Instance base_ec_Z_R : ChainBase Z (EqualRel * R) (EqualChain R) := fun n lx => base_ec R (IZR n) lx.
+#[export] Instance base_ec_R_Z : ChainBase R (EqualRel * Z) (EqualChain R) := fun x ln => base_ec R x (snd_map IZR ln).
+#[export] Instance link_ec_eq_Z_R : ChainLink (EqualChain Z) (EqualRel * R) (EqualChain R) := 
+  fun ecn lx => link_ec_eq R (ec_map IZR ecn) lx.
+#[export] Instance link_ec_eq_R_Z : ChainLink (EqualChain R) (EqualRel * Z) (EqualChain R) := 
+  fun ecx ln => link_ec_eq R ecx (snd_map IZR ln).
+(* LessChain *)
+#[export] Instance base_lc_Z_R : ChainBase Z (LessRel * R) (LessChain R) := fun n lx => base_lc R (IZR n) lx.
+#[export] Instance base_lc_R_Z : ChainBase R (LessRel * Z) (LessChain R) := fun x ln => base_lc R x (snd_map IZR ln).
+#[export] Instance link_ec_less_Z_R : ChainLink (EqualChain Z) (LessRel * R) (LessChain R) :=
+  fun ecn lx => link_ec_less R (ec_map IZR ecn) lx.
+#[export] Instance link_ec_less_R_Z : ChainLink (EqualChain R) (LessRel * Z) (LessChain R) :=
+  fun ecx ln => link_ec_less R ecx (snd_map IZR ln).
+#[export] Instance link_lc_eq_Z_R : ChainLink (LessChain Z) (EqualRel * R) (LessChain R) := 
+  fun lcn x => link_lc_eq R (lc_map IZR lcn) x.
+#[export] Instance link_lc_eq_R_Z : ChainLink (LessChain R) (EqualRel * Z) (LessChain R) := 
+  fun lcx ln => link_lc_eq R lcx (snd_map IZR ln).
+#[export] Instance link_lc_less_Z_R : ChainLink (LessChain Z) (LessRel * R) (LessChain R) := 
+  fun lcn lx => link_lc_less R (lc_map IZR lcn) lx.
+#[export] Instance link_lc_less_R_Z : ChainLink (LessChain R) (LessRel * Z) (LessChain R) := 
+  fun lcx ln => link_lc_less R lcx (snd_map IZR ln).
+(* GreaterChain *)
+#[export] Instance base_gc_Z_R : ChainBase Z (GreaterRel * R) (GreaterChain R) := fun n lx => base_gc R (IZR n) lx.
+#[export] Instance base_gc_R_Z : ChainBase R (GreaterRel * Z) (GreaterChain R) := fun x ln => base_gc R x (snd_map IZR ln).
+#[export] Instance link_ec_grtr_Z_R : ChainLink (EqualChain Z) (GreaterRel * R) (GreaterChain R) :=
+  fun ecn lx => link_ec_grtr R (ec_map IZR ecn) lx.
+#[export] Instance link_ec_grtr_R_Z : ChainLink (EqualChain R) (GreaterRel * Z) (GreaterChain R) :=
+  fun ecx ln => link_ec_grtr R ecx (snd_map IZR ln).
+#[export] Instance link_gc_eq_Z_R : ChainLink (GreaterChain Z) (EqualRel * R) (GreaterChain R) := 
+  fun gcn x => link_gc_eq R (gc_map IZR gcn) x.
+#[export] Instance link_gc_eq_R_Z : ChainLink (GreaterChain R) (EqualRel * Z) (GreaterChain R) := 
+  fun gcx ln => link_gc_eq R gcx (snd_map IZR ln).
+#[export] Instance link_gc_grtr_Z_R : ChainLink (GreaterChain Z) (GreaterRel * R) (GreaterChain R) := 
+  fun gcn lx => link_gc_grtr R (gc_map IZR gcn) lx.
+#[export] Instance link_gc_grtr_R_Z : ChainLink (GreaterChain R) (GreaterRel * Z) (GreaterChain R) := 
+  fun gcx ln => link_gc_grtr R gcx (snd_map IZR ln).

@@ -117,7 +117,7 @@ Proof.
       We claim that (IZR (up x) = IZR (Z.of_nat k)).
       { rewrite (ii). reflexivity. }
       We need to show that (x < k).
-      We conclude that (& x &< up x &= Z.of_nat k &= k).
+      We conclude that (& x < up x = Z.of_nat k = k).
 Qed.
 
 
@@ -142,7 +142,7 @@ Proof.
     Choose M := (Nat.max N1 K).
     Take n : ℕ; such that (n ≥ M)%nat.
     It holds that (b n = a n).
-    We conclude that (& |b n - l| &= |a n - l| &< ε).
+    We conclude that (& |b n - l| = |a n - l| < ε).
 Qed.
 
 
@@ -180,7 +180,7 @@ Proof.
     Choose Nn := O.
     Take n : ℕ; such that (n ≥ Nn)%nat.
     It holds that (s n = c).
-    We conclude that (& |s n - c| &= | c - c | &= |0| &= 0 &< ε).
+    We conclude that (& |s n - c| = | c - c | = |0| = 0 < ε).
 Qed.
 
 (** #### **Another simple limit**
@@ -212,10 +212,10 @@ Proof.
     By Rabs_def1 it suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
     We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
     - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
-      We conclude that (& -ε &< 0 &< / (n + 1) &= 1 / (n + 1) - 0).
+      We conclude that (& -ε < 0 < / (n + 1) = 1 / (n + 1) - 0).
     - We claim that (/ ε < n + 1). 
-      { We conclude that (& / ε &< n1 &<= n &<= n + 1). }
-      We conclude that (& 1 / (n + 1) - 0 &= / (n + 1) &< / / ε &= ε).
+      { We conclude that (& / ε < n1 <= n <= n + 1). }
+      We conclude that (& 1 / (n + 1) - 0 = / (n + 1) < / / ε = ε).
 Qed.
 
 
@@ -277,8 +277,8 @@ Proof.
     By Rabs_def1 it suffices to show that (-ε < b n - l < ε).
     It holds that (a n ≤ b n ∧ b n ≤ c n).
     We show both (- ε < b n - l) and ( b n - l < ε).
-    - We conclude that (& - ε &< a n - l &<= b n - l).
-    - We conclude that (& b n - l &<= c n - l &< ε).
+    - We conclude that (& - ε < a n - l <= b n - l).
+    - We conclude that (& b n - l <= c n - l < ε).
 Qed.
 
 
@@ -335,7 +335,7 @@ Proof.
     { By upp_bd_seq_is_upp_bd_lim it suffices to show that
        (for all n : ℕ, b n ≤ - M).
       Take n : ℕ.
-      We conclude that (& b n &= - a n &<= -M).
+      We conclude that (& b n = - a n <= -M).
     }
     We conclude that (L >= M).
 Qed.
@@ -382,8 +382,8 @@ Proof.
       That is, write (vi) as ( | a N3 - m | < ε ).
       By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
       By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).
-      We conclude that (& b N3 &< l + ε &= l + (m - l)/2 
-                            &= m - (m - l)/2 &= m - ε &< a N3).
+      We conclude that (& b N3 < l + ε = l + (m - l)/2 
+                            = m - (m - l)/2 = m - ε < a N3).
     }
     It holds that (a N3 <= b N3).
     It holds that (~ a N3 <= b N3).
@@ -423,15 +423,15 @@ We show both directions.
   + We need to show that (M ≥ 0).
     It holds that (0 ≤ |q|).
     It suffices to show that (0 <= M).
-    We conclude that (& 0 &<= (M1 + |q|) &= M).
+    We conclude that (& 0 <= (M1 + |q|) = M).
 
   + We need to show that (
       for all n : ℕ,
         | a n | ≤ M ).
     Take n : ℕ.
     By Rabs_triang it holds that (|a n - q + q| ≤ |a n - q| + |q|).
-    We conclude that (& |a n| &= |a n - q + q| 
-                              &<= (|a n - q| + |q|) &<= (M1 + |q|) &= M).
+    We conclude that (& |a n| = |a n - q + q| 
+                              <= (|a n - q| + |q|) <= (M1 + |q|) = M).
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
@@ -455,7 +455,7 @@ M ≥ 0 ∧ (for all n : ℕ,
 for all n : ℕ,
 | a n - q | ≤ M ).
   Take n : ℕ.
-  We conclude that (& |a n - q| &= |a n| &<= M).
+  We conclude that (& |a n - q| = |a n| <= M).
 Qed.
 
 Close Scope extra.

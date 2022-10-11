@@ -172,7 +172,7 @@ Proof.
     Take b : ℝ. Assume that (set_opp A b).
     Define a := (-b).
     By (i) it holds that (m ≤ a).
-    We conclude that (& b &= -a &<= -m).
+    We conclude that (& b = -a <= -m).
 Qed.
 
 
@@ -487,7 +487,7 @@ Because (iii) both (A a) and (M - ε1 < a) hold.
 Choose (a).
 We show both (A a) and (L < a).
 - We conclude that (A a).
-- We conclude that (& L &= M - (M - L) &= M - ε1 &< a).
+- We conclude that (& L = M - (M - L) = M - ε1 < a).
 Qed.
 
 Lemma if_almost_minimizer_ε_then_every_low_bd_smaller :
@@ -509,7 +509,7 @@ Choose (a).
 Because (iii) both (A a) and (m + ε1 > a) hold.
 We show both (A a) and (L > a).
 - We conclude that (A a).
-- We conclude that (& a &< m + ε1 &= m + L - m &= L).
+- We conclude that (& a < m + ε1 = m + L - m = L).
 Qed.
 
 Lemma exists_almost_maximizer_ε :

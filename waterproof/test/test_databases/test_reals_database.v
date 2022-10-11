@@ -30,16 +30,16 @@ Load databases.
 Open Scope R_scope.
 (* Test 0: check if notations work. *)
 
-Goal (& 3 &< 4 &<= 5).
+Goal (& 3 < 4 <= 5).
 auto with reals.
 Qed.
 
-Goal (& 3 &= 3).
+Goal (& 3 = 3 = 3).
 auto with reals.
 Qed.
 Open Scope R_scope.
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
-Goal forall x : R, (& x &< 5 &= 2 + 3) -> (x < 5).
+Goal forall x : R, (& x < 5 = 2 + 3) -> (x < 5).
 intro x.
 intro H.
 auto with reals.

@@ -409,7 +409,7 @@ Proof.
     Obtain n according to (vi), so for n : nat it holds that (y = a n).
     Choose k := n.
     We need to show that (l - ε < a n).
-    We conclude that (& l - ε &< y &= a n).
+    We conclude that (& l - ε < y = a n).
 Qed.
 
 

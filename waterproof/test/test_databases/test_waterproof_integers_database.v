@@ -43,17 +43,18 @@ induction k as [| k IHk].
 Qed.
 
 Require Import Lia.
-Goal (& 3 &< 4 &<= 5).
+Goal (& 3 < 4 <= 5).
 solve [auto with waterproof_integers].
 Qed.
 
-Goal (& 3 &= 3).
+Goal (& 3 = 3 = 3).
 solve [auto with waterproof_integers].
 Qed.
 
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
-Goal forall x : nat, (& x &< 5 &= 2 + 3) -> (x < 5).
+Goal forall x : nat, (& x < 5 = 2 + 3) -> (x < 5).
 intro x.
 intro H.
+simpl_ineq_chains ().
 solve [auto with waterproof_integers].
 Qed.

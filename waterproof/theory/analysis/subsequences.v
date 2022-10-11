@@ -84,7 +84,7 @@ Proof.
     That is, write the goal as (for all k : ℕ, (create_seq g k < create_seq g (S k))%nat).
     Take k : ℕ.
     By (i) it holds that (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
-    We conclude that (& create_seq g k &< g (S k) (S (create_seq g k)) &= create_seq g (S k))%nat.
+    We conclude that (& create_seq g k < g (S k) (S (create_seq g k)) = create_seq g (S k))%nat.
 Qed.
 
 
@@ -159,7 +159,7 @@ Proof.
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
     Assume that (k ≤ 0)%nat.
     It holds that (k = 0)%nat.
-    We conclude that (& g k &= g 0 &<= g 0)%nat.
+    We conclude that (& g k = g 0 <= g 0)%nat.
 
     (** Next, we need to show that if $k \leq S (l)$ then $f(k) \leq f(S (l))$.*)
     Assume that (k ≤ S l)%nat.
@@ -171,7 +171,7 @@ Proof.
     It holds that (g l ≤ g (S l))%nat.
     We conclude that (g k <= g (S l))%nat.
     (** We now consider the case $k = S(l)$. We need to show that $f(k) \leq f(S(l))$. *)
-    We conclude that (& g k &= g (S l) &<= g (S l))%nat.
+    We conclude that (& g k = g (S l) <= g (S l))%nat.
     (** Finally we consider the case $k > S(l)$. However, this case is in contradiction with $k \leq S(l)$. *)
     It holds that (¬(S l < k)%nat).
     Contradiction.
@@ -313,7 +313,7 @@ Proof.
     { By incr_loc_to_glob it suffices to show that (is_increasing (seq_of_max g)).
       By seq_of_max_is_increasing we conclude that (is_increasing (seq_of_max g)).
     }
-    We conclude that (& g k &<= seq_of_max g k &<= seq_of_max g n)%nat.
+    We conclude that (& g k <= seq_of_max g k <= seq_of_max g n)%nat.
 Qed.
 
 
@@ -340,8 +340,8 @@ Proof.
     It holds that (g( S(seq_of_max g (build_seq g k)))> seq_of_max g (build_seq g k))%nat.
     By elements_le_seq_of_max_pre it holds that (seq_of_max g (build_seq g k) ≥ g(build_seq g k))%nat.
     It holds that (g(build_seq g k) ≥ build_seq g k)%nat.
-    We conclude that (& build_seq g k &<= g(build_seq g k)
-                                      &<= seq_of_max g (build_seq g k)
-                                      &<  g( S(seq_of_max g (build_seq g k))))%nat.
+    We conclude that (& build_seq g k <= g(build_seq g k)
+                                      <= seq_of_max g (build_seq g k)
+                                      <  g( S(seq_of_max g (build_seq g k))))%nat.
 Qed.
 (** ### Subsequence satisfies relation*)

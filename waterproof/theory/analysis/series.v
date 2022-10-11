@@ -71,8 +71,8 @@ Proof.
     Take n : ℕ.
     It holds that (a (S n) ≥ 0).
     It holds that ((partial_sums a n) + a (S n) = partial_sums a (S n)).
-    We conclude that (& partial_sums a n &<= (partial_sums a n) + a (S n) 
-                                         &= partial_sums a (S n)).
+    We conclude that (& partial_sums a n <= (partial_sums a n) + a (S n) 
+                                         = partial_sums a (S n)).
 Qed.
 
 Definition series_cv_to (a : ℕ → ℝ) (l : ℝ) :=

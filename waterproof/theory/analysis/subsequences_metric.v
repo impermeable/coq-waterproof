@@ -138,7 +138,7 @@ Proof.
       destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
       + (** We first consider the case that $k < l + 1$.*)
         It holds that (k ≤ l)%nat.
-        We conclude that (& g k &<= g l &<= g (l + 1))%nat.
+        We conclude that (& g k <= g l <= g (l + 1))%nat.
       + (** We now consider the case $k = S(l)$. We need to show that $f(k) \leq f(S(l))$. *)
         It suffices to show that (g k = g (l + 1))%nat.
         We conclude that (g k = g (l + 1))%nat.

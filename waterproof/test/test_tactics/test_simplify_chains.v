@@ -35,7 +35,7 @@ Require Import micromega.Lra.
 Open Scope R_scope.
 
 (** Test 0: Go from a chain of inequalities to the statement *)
-Goal forall x : R, (& x &< 4 &<= 5 &= 2 + 3 &< 10) -> (x < 10).
+Goal forall x : R, (& x < 4 <= 5 = 2 + 3 < 10) -> (x < 10).
 intro x.
 intro H.
 Fail ltac1:(lra). (* at this stage, lra does not work yet *)

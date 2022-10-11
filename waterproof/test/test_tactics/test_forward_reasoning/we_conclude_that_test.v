@@ -209,18 +209,18 @@ Open Scope R_scope.
 We make an exception on the goal check when the argument is a chain of inequalities
 *)
 Goal (3 < 5).
-We conclude that (& 3 &< 4 &< 5).
+We conclude that (& 3 < 4 < 5).
 Qed.
 
 Goal (3 = 3).
-We conclude that (& 3 &= 3).
+We conclude that (& 3 = 3 = 3).
 Qed.
 
 
 Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
 intro eps.
 intro eps_gt_0.
-assert (& Rmin (eps/2) 1 &<= eps/2 &<= eps).
+assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
 auto with reals.
 auto with reals.
 Qed.
@@ -229,17 +229,17 @@ Close Scope R_scope.
 
 (** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &< 5) for (3<5).*)
 Goal (3 < 5).
-We conclude that (& 3 &< 4 &< 5).
+We conclude that (& 3 < 4 < 5).
 Qed.
 
 (** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &<= 5) for (3<5).*)
 Goal (3 < 5).
-We conclude that (& 3 &< 4 &<= 5).
+We conclude that (& 3 < 4 <= 5).
 Qed.
 
 (** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &< 5) for (3<=5).*)
 Goal (3 <= 5).
-We conclude that (& 3 &< 4 &< 5).
+We conclude that (& 3 < 4 < 5).
 Qed.
 
 
@@ -270,15 +270,15 @@ Abort.
 Local Parameter A : Type.
 Local Parameter x y z : A.
 
-Goal (& x &= y &= z).
+Goal (& x = y = z).
 Proof.
-Fail We conclude that (& x &= y &= z). (* Expected: unable to find proof (x = y) *)
+Fail We conclude that (& x = y = z). (* Expected: unable to find proof (x = y) *)
 Abort.
 
-Goal (x = y) -> (& x &= y &= z).
+Goal (x = y) -> (& x = y = z).
 Proof.
 intro p.
-Fail We conclude that (& x &= y &= z). (* Expected: unable to find proof (y = z) *)
+Fail We conclude that (& x = y = z). (* Expected: unable to find proof (y = z) *)
 Abort.
 
 

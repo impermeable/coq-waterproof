@@ -126,8 +126,8 @@ We have to take care with the associative level.
 When using this in rewrites, $<$, $>$, etc. should bind stronger.*)
 Declare Scope extra.
 
-Notation "| x |" := (Rabs x) (at level 69, x at next level).
-Notation "｜ x - y ｜" := (R_dist x y) (at level 69, x at level 48, y at level 48) : extra.
+Notation "| x |" := (Rabs x) (at level 65, x at next level).
+Notation "｜ x - y ｜" := (R_dist x y) (at level 65, x at level 48, y at level 48) : extra.
 
 
 (** ## Sums and series*)
