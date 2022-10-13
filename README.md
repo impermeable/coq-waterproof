@@ -47,14 +47,14 @@ Proof.
       It suffices to show that (-r < x - 1 < r).
       We show both (-r < x - 1) and (x - 1 < r).
       * It holds that (1 - r/2 ≤ Rmax(1/2, 1 - r/2)).
-        We conclude that (& -r &< -r/2 &= 1 - r/2 - 1 &≤ Rmax(1/2, 1 - r/2) - 1 &= x - 1).
-      * We conclude that (& x - 1 &= Rmax(1/2, 1 - r/2) - 1 &< 0 &< r).
+        We conclude that (& -r < -r/2 = 1 - r/2 - 1 ≤ Rmax(1/2, 1 - r/2) - 1 = x - 1).
+      * We conclude that (& x - 1 = Rmax(1/2, 1 - r/2) - 1 < 0 < r).
     + We need to show that (¬ x : [0,1)^c).
       It suffices to show that (x : [0,1)).
       We need to show that (0 ≤ x ∧ x < 1).
       We show both (0 ≤ x) and (x < 1).
-      * We conclude that (& 0 &≤ 1/2 &≤ Rmax(1/2, 1 - r/2) &= x).
-      * We conclude that (& x &= Rmax(1/2, 1 - r/2) &< 1).
+      * We conclude that (& 0 ≤ 1/2 ≤ Rmax(1/2, 1 - r/2) = x).
+      * We conclude that (& x = Rmax(1/2, 1 - r/2) < 1).
 Qed.
 ```
 
@@ -133,13 +133,10 @@ Lemma example: forall a b c: R, (a < b ∧ b < c) -> (a < c).
     Take a, b, c, : R.
     Assume that (a < b ∧ b < c) (i).
     Because (i) both (a < b) and (b < c) hold.
-    We conclude that (& a &< b &< c).
+    We conclude that (& a < b < c).
 Qed.
 ```
 
-(Note that as of now only chains for `=`, `<` and `≤` are implemented.)
-<!--(Note that the quotes between connectives are necessary,
-since Ltac2 does not yet support customized syntactic classes)-->
 
 ## Background
 The Waterproof tactics-library is developed as part of the educational [Waterproof](https://github.com/impermeable/waterproof) GUI. 
