@@ -37,10 +37,6 @@ Module Case.
     | wrap : G -> Wrapper A G.
   Definition unwrap (A G : Type) : Wrapper A G -> G 
              := fun x => match x with wrap _ _ y => y end.
-  Definition unwrapwrap {A G : Type} {x : G} : unwrap _ _ (wrap A G x) = x
-             := eq_refl.
-  Definition wrapunwrap {A G : Type} {x : Wrapper A G} : wrap A G (unwrap _ _ x) = x
-             := match x with wrap _ _ y => eq_refl end.
 End Case.
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Case' ( A )." 
          := (Case.Wrapper A _) (at level 99, only printing,
@@ -52,10 +48,6 @@ Module NaturalInduction.
       | wrap : G -> Wrapper G.
     Definition unwrap (G : Type) : Wrapper G -> G 
                := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
   End Base.
 
   Module Step.
@@ -63,10 +55,6 @@ Module NaturalInduction.
       | wrap : G -> Wrapper G.
     Definition unwrap (G : Type) : Wrapper G -> G 
                := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
   End Step.
 End NaturalInduction.
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case,' 'namely' ( G )." 
@@ -82,10 +70,6 @@ Module ExpandDef.
       | wrap : G -> Wrapper G.
     Definition unwrap (G : Type) : Wrapper G -> G 
                := fun x => match x with wrap _ y => y end.
-    Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-               := eq_refl.
-    Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-               := match x with wrap _ y => eq_refl end.
   End Goal.
 
   Module Hyp.
@@ -93,10 +77,6 @@ Module ExpandDef.
       | wrap : G -> Wrapper G H h.
     Definition unwrap (G H : Type) (h : H) : Wrapper G H h -> G 
                := fun x => match x with wrap _ _ _ y => y end.
-    Definition unwrapwrap {G H : Type} {h : H} {x : G} : unwrap _ _ _ (wrap G H h x) = x
-               := eq_refl.
-    Definition wrapunwrap {G H : Type} {h : H} {x : Wrapper G H h} : wrap G H h (unwrap _ _ _ x) = x
-               := match x with wrap _ _ _ y => eq_refl end.
   End Hyp.
 End ExpandDef.
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' 'the' 'goal' 'as' '(' G ').'"
@@ -111,14 +91,20 @@ Module StateGoal.
     | wrap : G -> Wrapper G.
   Definition unwrap (G : Type) : Wrapper G -> G 
              := fun x => match x with wrap _ y => y end.
-  Definition unwrapwrap {G : Type} {x : G} : unwrap _ (wrap G x) = x
-             := eq_refl.
-  Definition wrapunwrap {G : Type} {x : Wrapper G} : wrap G (unwrap _ x) = x
-             := match x with wrap _ y => eq_refl end.
 End StateGoal.
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '(' G ').' 'or' 'write:' 'We' 'conclude' 'that' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'"
          := (StateGoal.Wrapper G) (at level 99, only printing,
              format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ). '//' or  write: '//'   We  conclude  that  ( G ). '//' if  no  intermediary  proof  steps  are  required.").
+
+Module ByContradiction.
+  Private Inductive Wrapper (A G : Type) : Type :=
+    | wrap : G -> Wrapper A G.
+  Definition unwrap (A G : Type) : Wrapper A G -> G 
+             := fun x => match x with wrap _ _ y => y end.
+End ByContradiction.
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' '(' A ').'"
+         := (ByContradiction.Wrapper A _) (at level 99, only printing,
+             format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Assume  that  ( A ).").
 
 Ltac2 Type exn ::= [ GoalWrappedError(string) ].
 Ltac2 raise_goal_wrapped_error () := Control.zero (GoalWrappedError(
@@ -138,6 +124,7 @@ Ltac2 panic_if_goal_wrapped ()
      | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
      | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
      | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
+     | [|- ByContradiction.Wrapper _]       => raise_goal_wrapped_error ()
      | [|- _] => ()
      end.
 

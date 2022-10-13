@@ -29,6 +29,8 @@ From Ltac2 Require Import Message.
 
 Require Import Classical.
 
+Require Import Waterproof.tactics.goal_wrappers.
+
 
 (** * contra
     Starts a proof by contradiction.
@@ -41,7 +43,8 @@ Require Import Classical.
 *)
 Ltac2 contra () :=
     lazy_match! goal with
-        | [ |- ?x] => apply (NNPP $x)
+        | [ |- ?x] => apply (NNPP $x);
+                      apply (ByContradiction.unwrap (not $x))
         | [ |- _] => print(of_string "Failed to start a proof by contradiction.")
     end.
 

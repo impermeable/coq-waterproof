@@ -57,3 +57,10 @@ Proof.
     Assume that (n ≠ n).
     It holds that (n = n). ↯.
 Qed.
+
+(** Test 3: wrong assumption specified for wrapper. *)
+Goal forall n : nat, n = n.
+Proof.
+    We argue by contradiction.
+    Fail Assume that (¬ (for all n : nat, n ≠ n)).
+Abort.
