@@ -82,12 +82,6 @@ Assume that the negated expression ") (Message.of_constr negated_type))
 (Message.of_string "
 Use ‘Assume that (...).’ to do the first step.").
 
-Local Ltac2 create_contradiction_message () :=
-    Message.of_string "The goal is to show a contradiction. 
-Show two properties that contradict eachother, i.e. prove P and (¬ P) for some P.
-Initiate the proof of a new property by using ‘We claim that (...).’.
-Use ‘Contradiction.’ or ‘↯.’ after you have shown two contradictory properties.".
-
 (** * goal_to_hint
     Give a hint indicating a potential step to proving 
     a given proposition [g].
@@ -121,8 +115,9 @@ Ltac2 goal_to_hint (g:constr) :=
     | context [ExpandDef.Goal.Wrapper _]        => create_goal_wrapped_message ()
     | context [ExpandDef.Hyp.Wrapper _ _ _]     => create_goal_wrapped_message ()
     | context [StateGoal.Wrapper _]             => create_goal_wrapped_message ()
+    | context [ByContradiction.Wrapper _ _]     => create_goal_wrapped_message ()
     | context [not ?g] => create_not_message g
-    | context [False]  => create_contradiction_message ()
+    | context [False]  => create_goal_wrapped_message ()
     | _ => Control.zero (GoalHintError "No hint available for this goal.")
     end.
 

@@ -124,7 +124,7 @@ Ltac2 panic_if_goal_wrapped ()
      | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
      | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
      | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
-     | [|- ByContradiction.Wrapper _]       => raise_goal_wrapped_error ()
+     | [|- ByContradiction.Wrapper _ _]     => raise_goal_wrapped_error ()
      | [|- _] => ()
      end.
 
