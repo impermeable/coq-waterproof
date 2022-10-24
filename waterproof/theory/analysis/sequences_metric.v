@@ -21,8 +21,6 @@ Definition bounded {X : Metric_Space} (a : ℕ → Base X) :=
 
 Declare Scope metric_scope.
 Notation "a ⟶ c" := (convergence a c) (at level 20) : metric_scope.
-
-
 Local Ltac2 unfold_convergence    ()          := unfold convergence.
 Local Ltac2 unfold_convergence_in (h : ident) := unfold convergence in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "⟶" cl(opt(seq("in", "(", ident, ")"))) := 
@@ -30,5 +28,23 @@ Ltac2 Notation "Expand" "the" "definition" "of" "⟶" cl(opt(seq("in", "(", iden
 
 (* With -->, waterproof complains, giving the following error:
     Command not supported (No proof-editing in progress)*)
+
+Notation "a '_converges' 'to_' p" := (convergence a p) (at level 68) : metric_scope.
+Notation "a 'converges' 'to' p" := (convergence a p) (at level 68, only parsing) : metric_scope.
+Ltac2 Notation "Expand" "the" "definition" "of" "converges" "to" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_convergence unfold_convergence_in cl.
+
+(* Index shift*)
+Require Import Waterproof.AllTactics.
+Require Import Waterproof.databases.
+Require Import Waterproof.load_database.RealsAndIntegers.
+Lemma relation_shift {X : Metric_Space} (a : nat -> Base X) (k : nat) (n : nat) (n_ge_k : (n ≥ k)%nat) : 
+  a ((n - k) + k)%nat = a n.
+Proof.
+We conclude that (a (n - k + k) = a n)%nat.
+Qed.
+
+#[export] Hint Resolve relation_shift : waterproof_integers.
+#[export] Hint Extern 1 (_ = _) => (rewrite relation_shift) : waterproof_integers.
 
 Close Scope R_scope.
