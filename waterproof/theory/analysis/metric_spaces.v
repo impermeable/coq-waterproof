@@ -43,15 +43,17 @@ Defined.
 
 End Definitions.
 
-(** ** Expample : the discrete metric on the real line *)
+
+
+(** ** Expample : a discrete metric on the real line *)
 
 Definition d_discrete_R : 
-  ℝ → ℝ → ℝ := fun (x y : ℝ) => if Reqb x y then 0 else 1.
+  ℝ → ℝ → ℝ := fun (x y : ℝ) => if Reqb x y then 0 else 3.
 
 Lemma d'_eq_0 : forall x y : ℝ,
   d_discrete_R x y = 0 -> (Reqb x y) = true.
 Proof.
-Take x, y : ℝ. 
+Take x, y : ℝ.
 Assume that (d_discrete_R x y = 0) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
@@ -59,29 +61,28 @@ Either (x = y) or (x ≠ y).
 
 + Case (x ≠ y).
   Expand the definition of d_discrete_R in (i).
-  That is, write (i) as ( (if Reqb x y then 0 else 1) = 0).
+  That is, write (i) as ( (if Reqb x y then 0 else 3) = 0).
   rewrite (Req_false x y n) in i.
-  It holds that (1 ≠ 0).
+  It holds that (3 ≠ 0).
   Contradiction.
 Qed.
 
-Lemma d'_eq_1 : forall x y : ℝ, d_discrete_R x y = 1 -> (Reqb x y) = false.
+Lemma d'_eq_3 : forall x y : ℝ, d_discrete_R x y = 3 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ. 
-Assume that (d_discrete_R x y = 1) (i).
+Assume that (d_discrete_R x y = 3) (i).
 Expand the definition of d_discrete_R in (i).
-That is, write (i) as ( (if Reqb x y then 0 else 1) = 1
-).
+That is, write (i) as ( (if Reqb x y then 0 else 3) = 3).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   rewrite (Req_true x y e) in i.
-  It holds that (0 ≠ 1).
+  It holds that (0 ≠ 3).
   Contradiction.
 + Case (x ≠ y).
   By Req_false we conclude that (Reqb x y = false).
 Qed.
 
 Global Hint Resolve d'_eq_0 : reals.
-Global Hint Resolve d'_eq_1 : reals.
+Global Hint Resolve d'_eq_3 : reals.
 Global Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : reals.
 Global Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : reals.

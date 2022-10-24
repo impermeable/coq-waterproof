@@ -101,23 +101,23 @@ Ltac2 goal_to_hint (g:constr) :=
         If the ∀ case is above the ⇒,
         then implications will fire the ∀ case instead.*)
     lazy_match! g with
-    | context [?a -> ?b]  => 
+    | ?a -> ?b  => 
         let sort_a := Aux.get_value_of_hyp a in
         match Aux.check_constr_equal sort_a constr:(Prop) with
         | true  => create_implication_message a
         | false => create_function_message a
         end
-    | context [forall v:?v_type, _]  => create_forall_message v_type
-    | context [exists v:?v_type, _]  => create_exists_message v_type
-    | context [Case.Wrapper _ _]                => create_goal_wrapped_message ()
-    | context [NaturalInduction.Base.Wrapper _] => create_goal_wrapped_message ()
-    | context [NaturalInduction.Step.Wrapper _] => create_goal_wrapped_message ()
-    | context [ExpandDef.Goal.Wrapper _]        => create_goal_wrapped_message ()
-    | context [ExpandDef.Hyp.Wrapper _ _ _]     => create_goal_wrapped_message ()
-    | context [StateGoal.Wrapper _]             => create_goal_wrapped_message ()
-    | context [ByContradiction.Wrapper _ _]     => create_goal_wrapped_message ()
-    | context [not ?g] => create_not_message g
-    | context [False]  => create_goal_wrapped_message ()
+    | forall v:?v_type, _ => create_forall_message v_type
+    | exists v:?v_type, _ => create_exists_message v_type
+    | Case.Wrapper _ _                => create_goal_wrapped_message ()
+    | NaturalInduction.Base.Wrapper _ => create_goal_wrapped_message ()
+    | NaturalInduction.Step.Wrapper _ => create_goal_wrapped_message ()
+    | ExpandDef.Goal.Wrapper _        => create_goal_wrapped_message ()
+    | ExpandDef.Hyp.Wrapper _ _ _     => create_goal_wrapped_message ()
+    | StateGoal.Wrapper _             => create_goal_wrapped_message ()
+    | ByContradiction.Wrapper _ _     => create_goal_wrapped_message ()
+    | not ?g => create_not_message g
+    | False  => create_goal_wrapped_message ()
     | _ => Control.zero (GoalHintError "No hint available for this goal.")
     end.
 
