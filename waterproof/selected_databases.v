@@ -57,6 +57,7 @@ Ltac2 Type WaterproofDatabase := [
     | WaterproofNegationDBRealsAndIntegers
     (* Databases for decidability. *)
     | WaterproofDecidabilityDBReals
+    | WaterproofDecidabilityDBNat
 ].
 
 (** * global_database_selection, global_negation_database_selection
@@ -148,6 +149,7 @@ Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     | WaterproofNegationDBRealsAndIntegers => (@negation_reals)::(@negation_int)::(@negation_nat)::(@nocore)::[]
     (* Databases for decidablity. *)
     | WaterproofDecidabilityDBReals =>  (@decidability_reals)::(@nocore)::[]
+    | WaterproofDecidabilityDBNat   =>  (@decidability_nat)::(@nocore)::[]
     | _ => Aux.cannot_happen ""
     end.
 

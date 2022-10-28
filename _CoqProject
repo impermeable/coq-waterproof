@@ -129,5 +129,8 @@ waterproof/theory/analysis/sequences.v
 waterproof/theory/analysis/subsequences_metric.v
 waterproof/theory/analysis/subsequences.v
 waterproof/theory/analysis/series.v
+waterproof/theory/analysis/open_and_closed.v
 waterproof/theory/analysis/sequential_accumulation_points.v
 waterproof/theory/analysis/limsup_liminf_bolzano.v
+waterproof/theory/analysis/continuity_domain_R.v
+waterproof/theory/analysis/continuity_domain_nat.v

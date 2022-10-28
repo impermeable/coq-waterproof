@@ -40,7 +40,9 @@ Require Export Waterproof.definitions.set_definitions.
 
 (** ## **Standard mathematical function notation.** *)
 Notation " f ( x , .. , y )" := (.. (f x) .. y) 
-(at level 10) : type_scope.
+  (at level 10,
+  format "f '(' x ,  .. ,  y ')'") : type_scope.
+
 
 (** ## **Quantifiers**
 Allow unicode characters ∀ and ∃ for readability.*)
@@ -128,8 +130,8 @@ We have to take care with the associative level.
 When using this in rewrites, $<$, $>$, etc. should bind stronger.*)
 Declare Scope extra.
 
-Notation "| x |" := (Rabs x) (at level 65, x at next level).
-Notation "｜ x - y ｜" := (R_dist x y) (at level 65, x at level 48, y at level 48) : extra.
+Notation "| x |" := (Rabs x) (at level 65, x at next level, format "| x |").
+Notation "｜ x - y ｜" := (R_dist x y) (at level 65, x at level 48, y at level 48, format "｜ x  -  y ｜") : extra.
 
 
 (** ## Sums and series*)
