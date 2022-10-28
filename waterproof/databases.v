@@ -435,7 +435,6 @@ Global Hint Resolve le_not_lt : negation_nat.
 Global Hint Resolve lt_not_le : negation_nat.
 Global Hint Resolve not_lt : negation_nat.
 Global Hint Resolve not_le : negation_nat.
-Global Hint Resolve lt_irrefl : negation_nat.
 
 (** * Integers *) (* TODO add more to make automation faster*)
 Global Hint Resolve  Zle_not_lt : negation_int.
@@ -446,7 +445,6 @@ Global Hint Resolve  Znot_lt_ge : negation_int.
 Global Hint Resolve  Znot_lt_ge : negation_int.
 Global Hint Resolve  Znot_gt_le : negation_int.
 Global Hint Resolve  Znot_le_gt : negation_int.
-Global Hint Resolve  Z.lt_irrefl : negation_int.
 
 (** * Reals *) (* TODO add more to make automation faster*)
 
@@ -467,8 +465,7 @@ Global Hint Resolve Rge_not_lt : negation_reals.
 Global Hint Resolve Rle_not_gt : negation_reals.
 Global Hint Resolve Rge_not_gt : negation_reals.
 
-Global Hint Resolve ROrder.lt_irrefl : negation_reals.
-Global Hint Resolve Rgt_irrefl : negation_reals.
+
 
 
 
