@@ -149,28 +149,28 @@ Global Hint Resolve true_Req : reals.
 (** TODO: find a different solution for the simplification of inequality chains? *)
 Global Hint Extern 3 ( @eq R _ _ ) => ltac2:(simpl_ineq_chains ()); field : reals.
 
-Global Hint Extern 3 ( Rle _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 ( Rge _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 ( Rlt _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 ( Rgt _ _ ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rle _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rlt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 ( Rgt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
 
-Global Hint Extern 3 (~ (Rle _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (Rge _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (Rlt _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (Rgt _ _) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (@eq R _ _ ) ) => ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rle _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rlt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
 
-Global Hint Extern 3 ( Rle _ _ ) => nra : reals.
-Global Hint Extern 3 ( Rge _ _ ) => nra : reals.
-Global Hint Extern 3 ( Rlt _ _ ) => nra : reals.
-Global Hint Extern 3 ( Rgt _ _ ) => nra : reals.
+Global Hint Extern 3 ( Rle _ _ ) => cbn; nra : reals.
+Global Hint Extern 3 ( Rge _ _ ) => cbn; nra : reals.
+Global Hint Extern 3 ( Rlt _ _ ) => cbn; nra : reals.
+Global Hint Extern 3 ( Rgt _ _ ) => cbn; nra : reals.
 
-Global Hint Extern 3 ( _ = _ ) => ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
-Global Hint Extern 3 ( @eq nat _  _) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( le _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( ge _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( lt _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( gt _ _ ) => ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
+Global Hint Extern 3 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( le _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+Global Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
 
 Global Hint Resolve Rmin_l : reals.
 Global Hint Resolve Rmin_r : reals.
@@ -435,7 +435,6 @@ Global Hint Resolve le_not_lt : negation_nat.
 Global Hint Resolve lt_not_le : negation_nat.
 Global Hint Resolve not_lt : negation_nat.
 Global Hint Resolve not_le : negation_nat.
-Global Hint Resolve lt_irrefl : negation_nat.
 
 (** * Integers *) (* TODO add more to make automation faster*)
 Global Hint Resolve  Zle_not_lt : negation_int.
@@ -446,7 +445,6 @@ Global Hint Resolve  Znot_lt_ge : negation_int.
 Global Hint Resolve  Znot_lt_ge : negation_int.
 Global Hint Resolve  Znot_gt_le : negation_int.
 Global Hint Resolve  Znot_le_gt : negation_int.
-Global Hint Resolve  Z.lt_irrefl : negation_int.
 
 (** * Reals *) (* TODO add more to make automation faster*)
 
@@ -467,8 +465,7 @@ Global Hint Resolve Rge_not_lt : negation_reals.
 Global Hint Resolve Rle_not_gt : negation_reals.
 Global Hint Resolve Rge_not_gt : negation_reals.
 
-Global Hint Resolve ROrder.lt_irrefl : negation_reals.
-Global Hint Resolve Rgt_irrefl : negation_reals.
+
 
 
 
@@ -531,5 +528,8 @@ Qed.
 Global Hint Resolve Rle_lt_or_eq_dec Rge_lt_or_eq_dec : decidability_reals.
 
 Global Hint Resolve total_order_T : decidability_reals. (* x < y, x = y or y < x*)
+
+(* Natural numbers *)
+Global Hint Resolve Nat.eq_dec : decidability_nat. (* TODO: add more! *)
 
 Close Scope R_scope.

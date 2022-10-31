@@ -85,7 +85,7 @@ Lemma convergence_equivalence : converges_to = Un_cv.
 Proof.
     trivial.
 Qed.
-
+Locate converges_to.
 
 (** ## Preparation for a simple limit*)
 Lemma archimed_mod :
@@ -392,11 +392,18 @@ Qed.
 
 Definition is_bounded (a : ℕ → ℝ) := 
   ∃ q : ℝ,
-    ∃ M : ℝ, M ≥ 0 ∧
+    ∃ M : ℝ, M > 0 ∧
       ∀ n : ℕ, 
         |a n - q| ≤ M.
+Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 20).
+Notation "a 'is' 'bounded'" := (is_bounded a) (at level 20, only parsing).
+Local Ltac2 unfold_is_bounded    ()          := unfold is_bounded.
+Local Ltac2 unfold_is_bounded_in (h : ident) := unfold is_bounded in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_is_bounded unfold_is_bounded_in cl.
+
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
-  ∃ M : ℝ, M ≥ 0 ∧ 
+  ∃ M : ℝ, M > 0 ∧ 
     ∀ n : ℕ, |a n| ≤ M.
     
 Lemma is_bounded_equivalence : 
@@ -409,18 +416,18 @@ We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
   Assume that (is_bounded a) (i).
   Obtain q according to (i), so for q : R it holds that
-    (there exists M : R, M ≥ 0 ∧ (for all n : ℕ, | a n - q | ≤ M)) (ii).
+    (there exists M : R, M > 0 ∧ (for all n : ℕ, | a n - q | ≤ M)) (ii).
   Obtain M1 according to (ii), so for M1 : R it holds that
-    (M1 ≥ 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (iii).
-  Because (iii) both (M1 ≥ 0) and
+    (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (iii).
+  Because (iii) both (M1 > 0) and
     (for all n : ℕ, | a n - q | ≤ M1) hold.
   We need to show that (
     there exists M : ℝ ,
-      M ≥ 0 ∧ (for all n : ℕ,
+      M > 0 ∧ (for all n : ℕ,
         | a n | ≤ M)).
   Choose M := (M1 + |q|).
   We show both statements.
-  + We need to show that (M ≥ 0).
+  + We need to show that (M > 0).
     It holds that (0 ≤ |q|).
     It suffices to show that (0 <= M).
     We conclude that (& 0 <= (M1 + |q|) = M).
@@ -435,28 +442,82 @@ We show both directions.
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
-  Assume that (there exists M : ℝ, M ≥ 0 ∧ ∀ n : ℕ, |a n| ≤ M) (i).
+  Assume that (there exists M : ℝ, M > 0 ∧ ∀ n : ℕ, |a n| ≤ M) (i).
   (* Expand the definition of is_bounded. *)
   We need to show that (
 there exists q M : ℝ ,
-M ≥ 0 ∧ (for all n : ℕ,
+M > 0 ∧ (for all n : ℕ,
 | a n - q | ≤ M)
 ).
   Choose q := 0.
   Obtain M1 according to (i), so for M1 : R it holds that
-    (M1 ≥ 0 ∧ (for all n : ℕ, | a n | ≤ M1)) (ii).
-  Because (ii) both (M1 ≥ 0) and
+    (M1 > 0 ∧ (for all n : ℕ, | a n | ≤ M1)) (ii).
+  Because (ii) both (M1 > 0) and
     (for all n : ℕ, | a n | ≤ M1) hold.
   Choose M := M1.
   We show both statements.
-  + We need to show that (M ≥ 0).
-    It follows that (M ≥ 0).
+  + We need to show that (M > 0).
+    It follows that (M > 0).
   + We need to show that (
 for all n : ℕ,
 | a n - q | ≤ M ).
   Take n : ℕ.
   We conclude that (& |a n - q| = |a n| <= M).
 Qed.
+
+(** Definitions sequence bounded from above and below *)
+Definition is_bounded_above (a : ℕ → ℝ) := 
+  ∃ M : ℝ, ∀ n : ℕ, a(n) ≤ M.
+Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 20).
+Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 20, only parsing).
+Local Ltac2 unfold_is_bounded_above    ()          := unfold is_bounded_above.
+Local Ltac2 unfold_is_bounded_above_in (h : ident) := unfold is_bounded_above in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_is_bounded_above unfold_is_bounded_above_in cl.
+
+Definition is_bounded_below (a : ℕ → ℝ) :=
+  ∃ m : ℝ, ∀ n : ℕ, m ≤ a(n).
+Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 20).
+Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 20, only parsing).
+Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
+Local Ltac2 unfold_is_bounded_below_in (h : ident) := unfold is_bounded_below in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
+
+
+(** Convergence to +∞ and -∞. *)
+Definition diverges_to_plus_infinity (a : ℕ → ℝ) := 
+  ∀ M : ℝ,
+    ∃ N : ℕ,
+      ∀ n : ℕ, (n ≥ N)%nat ⇒
+        a(n) ≥ M.
+
+Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
+Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
+Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
+Local Ltac2 unfold_diverge_plus_infty ()             := unfold diverges_to_plus_infinity.
+Local Ltac2 unfold_diverge_plus_infty_in (h : ident) := unfold diverges_to_plus_infinity in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_diverge_plus_infty unfold_diverge_plus_infty_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_diverge_plus_infty unfold_diverge_plus_infty_in cl.
+
+Definition diverges_to_minus_infinity (a : ℕ → ℝ) := 
+  ∀ M : ℝ,
+    ∃ N : ℕ,
+      ∀ n : ℕ, (n ≥ N)%nat ⇒
+        a(n) ≤ M.
+
+Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
+Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).
+Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
+Local Ltac2 unfold_diverge_minus_infty ()             := unfold diverges_to_minus_infinity.
+Local Ltac2 unfold_diverge_minus_infty_in (h : ident) := unfold diverges_to_minus_infinity in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_diverge_minus_infty unfold_diverge_minus_infty_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_diverge_minus_infty unfold_diverge_minus_infty_in cl.
+
 
 Close Scope extra.
 Close Scope R_scope.

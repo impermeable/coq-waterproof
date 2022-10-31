@@ -35,21 +35,28 @@ Require Import Waterproof.theory.analysis.sequences_metric.
 
 Open Scope R_scope.
 Open Scope metric_scope.
-Definition is_index_sequence    (n : ℕ → ℕ) := 
+Definition is_index_sequence (n : ℕ → ℕ) := 
     ∀ k : ℕ,
         (n k < n (k + 1))%nat.
+Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 68) : metric_scope.
+Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 68, only parsing) : metric_scope.
+Local Ltac2 unfold_is_index_sequence    ()          := unfold is_index_sequence.
+Local Ltac2 unfold_is_index_sequence_in (h : ident) := unfold is_index_sequence in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "index" "sequence" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_is_index_sequence unfold_is_index_sequence_in cl.
 
 
 (** The next definition captures what it means to be an index sequence.*)
 Definition is_index_seq (n : ℕ → ℕ) :=
     ∀ k : ℕ, (n k < n (k + 1))%nat.
-    
-Variable M : Metric_Space.
-Definition X := Base M.
-Definition dist := dist M.
+
 
 Notation "a ◦ n" := (fun (k : nat) => a (n k)) (right associativity, at level 11).
 Notation "a ◦ n ◦ m" := (fun (k : nat) => a (n (m k))) (right associativity, at level 12).
+
+Section my_section.
+Variable X : Metric_Space.
+
 
 Definition is_subsequence (b : ℕ → X) (a : ℕ → X) := 
     ∃ m : (ℕ → ℕ),
@@ -57,9 +64,8 @@ Definition is_subsequence (b : ℕ → X) (a : ℕ → X) :=
             b k = (a ◦ m) k.
 
 Definition is_accumulation_point (p : X) (a : ℕ → X) :=
-    ∃ l : (ℕ → ℕ),
-        is_index_sequence l ∧ (a ◦ l) ⟶ p.
-
+    ∃ m : (ℕ → ℕ),
+        is_index_sequence m ∧ (a ◦ m) ⟶ p.
 
 
 Lemma index_sequence_property (n : ℕ → ℕ) :
@@ -82,8 +88,6 @@ Proof.
     apply H.
 Qed.
 
-Global Hint Resolve index_sequence_property : subsequences.
-Global Hint Extern 1 => (unfold ge) : subsequences.
 
 
 
@@ -164,7 +168,6 @@ Proof.
     We conclude that (n k ≤ n (k+1))%nat.
 Qed.
 
-Global Hint Resolve index_sequence_property2 : subsequences.
 
 Open Scope nat_scope.
 Lemma double_is_even : forall n : nat, Nat.even (2 * n) = true.
@@ -178,7 +181,6 @@ Proof.
 Qed.
 Close Scope nat_scope.
 
-Global Hint Resolve double_is_even : subsequences.
 
 Lemma subsequence_of_convergent_sequence : ∀ a : (ℕ → X), ∀ p : X, a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
 Proof.
@@ -186,18 +188,18 @@ Take a : (ℕ → X). Take p : X.
 Assume that (a ⟶ p).
 Take n : (ℕ → ℕ).
 Assume that (is_index_sequence n).
-It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (a (n k)) p < ε).
+It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist _ (a (n k)) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (a k) p < ε) (i).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (a k) p < ε) (i).
 Obtain K according to (i), so for K : nat it holds that
-  (∀ k : ℕ, (k ≥ K)%nat → dist (a k) p < ε).
+  (∀ k : ℕ, (k ≥ K)%nat → dist _ (a k) p < ε).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (n k ≥ n K)%nat.
 By index_sequence_property it holds that (n K ≥ K)%nat.
 assert (H3 : (n k ≥ K)%nat) by auto with zarith.
-We conclude that (dist (a (n k)) p < ε).
+We conclude that (dist _ (a (n k)) p < ε).
 Qed.
 
 Lemma equivalent_subsequence_convergence : 
@@ -217,23 +219,47 @@ Obtain m according to (i), so for m : nat -> nat it holds that
 Because (ii) both (is_index_sequence m) and 
   (for all k : nat, y k = x (m k)) hold.
 
-It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist (y k) p < ε).
+It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist _ (y k) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist (x k) p < ε) (iii).
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (x k) p < ε) (iii).
 Obtain K according to (iii), so for K : nat it holds that 
-  (∀ k : ℕ, (k ≥ K)%nat → dist (x k) p < ε).
+  (∀ k : ℕ, (k ≥ K)%nat → dist _ (x k) p < ε).
 Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (m k ≥ m K)%nat.
 By index_sequence_property it holds that (m K ≥ K)%nat.
 It holds that (m k ≥ K)%nat.
-It holds that (dist (x (m k)) p < ε).
+It holds that (dist _ (x (m k)) p < ε).
 It holds that (y k = x (m k)) (iv).
 (* It holds that H5 : (dist (y k) p = dist (x (m k)) p). Why does this not work? *)
 rewrite (iv).
-We conclude that ( dist (x (m k)) p < ε).
+We conclude that ( dist _ (x (m k)) p < ε).
 Qed.
+
+End my_section.
+
+
+
+Notation "b 'is' 'a' '_subsequence_' 'of' a" := (is_subsequence _ b a) (at level 68) : metric_scope.
+Notation "b 'is' 'a' 'subsequence' 'of' a" := (is_subsequence _ b a) (at level 68, only parsing) : metric_scope.
+Local Ltac2 unfold_is_subsequence    ()          := unfold is_subsequence.
+Local Ltac2 unfold_is_subsequence_in (h : ident) := unfold is_subsequence in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "subsequence" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_is_subsequence unfold_is_subsequence_in cl.
+
+Notation "p 'is' 'an' '_accumulation' 'point_' 'of' a" := (is_accumulation_point _ p a) (at level 68) : metric_scope.
+Notation "p 'is' 'an' 'accumulation' 'point' 'of' a" := (is_accumulation_point _ p a) (at level 68, only parsing) : metric_scope.
+Local Ltac2 unfold_is_accumulation_point    ()          := unfold is_accumulation_point.
+Local Ltac2 unfold_is_accumulation_point_in (h : ident) := unfold is_accumulation_point in $h.
+Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" cl(opt(seq("in", "(", ident, ")"))) := 
+  expand_def_framework unfold_is_accumulation_point unfold_is_accumulation_point_in cl.
+
+
+Global Hint Resolve index_sequence_property : subsequences.
+Global Hint Extern 1 => (unfold ge) : subsequences.
+Global Hint Resolve double_is_even : subsequences.
+Global Hint Resolve index_sequence_property2 : subsequences.
 
 Close Scope metric_scope.
 Close Scope R_scope.
