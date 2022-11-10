@@ -34,6 +34,8 @@ Require Import Waterproof.load_database.Intuition.
 Require Import Waterproof.load_database.ClassicalLogic.
 Require Import Coq.Logic.Classical.
 
+Declare Scope sup_and_inf_scope.
+
 Definition is_in {D : Set} := fun (A : (D → Prop)) ↦ (fun (x : D) ↦ A x).
 Notation "x ∈ A" := (@is_in _ A x) (at level 50) : sup_and_inf_scope.
 (** ## Suprema and infima*)

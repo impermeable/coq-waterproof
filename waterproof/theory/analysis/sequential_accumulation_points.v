@@ -15,7 +15,7 @@ Require Import Waterproof.load_database.DisableWildcard.
 Require Import Waterproof.theory.analysis.sequences.
 Require Import Waterproof.theory.analysis.subsequences.
 
-Global Hint Resolve Rabs_Rabsolu.
+Global Hint Resolve Rabs_Rabsolu : reals.
 
 Open Scope R_scope.
 

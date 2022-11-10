@@ -1,7 +1,7 @@
 Require Import Reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load_database.RealNumbers.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.load_database.Intuition.
 
@@ -45,7 +45,7 @@ Global Hint Resolve Rabs_minus_sym : reals.
 Lemma useful_lemma : for all n m : ℕ, (n ≠ m) ⇒ (1 ≤ | m - n |).
 Proof.
   Take n, m : ℕ. Assume that (n ≠ m).
-  By nat_total_order it holds that (n > m ∨ n < m)%nat (i).
+  assert (n > m ∨ n < m)%nat as i by (apply Nat.lt_gt_cases; auto).
   Because (i) either (n > m)%nat or (n < m)%nat holds.
   + Case (n > m)%nat.
     It holds that (n ≥ S m)%nat.

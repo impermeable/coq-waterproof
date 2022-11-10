@@ -36,7 +36,7 @@ Require Import Waterproof.theory.analysis.subsequences.
 Require Import Waterproof.theory.analysis.sup_and_inf.
 Require Import Waterproof.theory.analysis.sequential_accumulation_points.
 
-Global Hint Resolve Rabs_Rabsolu.
+Global Hint Resolve Rabs_Rabsolu : reals.
 
 Open Scope R_scope.
 

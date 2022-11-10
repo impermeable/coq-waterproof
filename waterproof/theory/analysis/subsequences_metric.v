@@ -81,7 +81,7 @@ Proof.
     apply Nat.le_0_l.
     specialize (H k). 
     unfold ge. 
-    apply lt_le_S. 
+    apply Nat.le_succ_l. 
     rewrite Nat.add_1_r in H.
     apply (Nat.le_lt_trans k (n k)). 
     apply IHk. 
@@ -89,9 +89,6 @@ Proof.
 Qed.
 
 
-
-
-Require Import Arith.
 
 Lemma index_seq_equiv (n : ℕ → ℕ) : is_index_seq n ⇔ is_index_sequence n.
 Proof. 
