@@ -113,3 +113,28 @@ Goal False.
     Help.
 Abort.
 
+
+(** * Test 7, should print hint for conjunction. *)
+Goal (0 = 0) /\ (0 = 1).
+Proof.
+  Help.
+Abort.
+
+(** * Test 8, should print hint for disjunction. *)
+Goal (0 = 0) \/ (0 = 1).
+Proof.
+  Help.
+Abort.
+
+(** * Test 9, should print hint for trivial statement. *)
+Goal (0 = 0).
+Proof.
+  Help.
+Abort.
+
+(** * Test 10, should not print hint for non-trivial statement. *)
+Goal (0 = 1).
+Proof.
+  Help.
+Abort.
+

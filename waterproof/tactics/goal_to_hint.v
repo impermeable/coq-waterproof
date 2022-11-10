@@ -25,6 +25,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ GoalHintError(string) ].
@@ -37,7 +38,7 @@ Introduce an arbitrary variable of type ")
                 (Message.of_constr v_type)
             )
             ( Message.of_string ".
-Use ‘Take ... : ...’.").
+Use ‘Take ... : (...).’.").
 
 Local Ltac2 create_implication_message (premise: constr) :=
     Message.concat
@@ -57,7 +58,7 @@ Introduce an arbitrary variable of type ")
                 (Message.of_constr premise)
             )
             ( Message.of_string ".
-Use ‘Take ... : ...’.").
+Use ‘Take ... : (...).’.").
 
 Local Ltac2 create_exists_message (premise: constr) :=
     Message.concat
@@ -67,7 +68,7 @@ Choose a specific variable of type ")
                 (Message.of_constr premise)
         )
         ( Message.of_string ".
-Use ‘Choose ... ’.").
+Use ‘Choose ... := (...).’ or ‘Choose (...).’.").
 
 Local Ltac2 create_goal_wrapped_message () :=
     Message.of_string "Follow the advice in the goal window.".
@@ -81,6 +82,18 @@ Assume that the negated expression ") (Message.of_constr negated_type))
 (Message.of_string " holds, then show a contradiction."))
 (Message.of_string "
 Use ‘Assume that (...).’ to do the first step.").
+
+
+(** * Auxilliary tactic that checks if goal can be shown with minimal automation, i.e. only with core database. *)
+Local Ltac2 solvable_by_core_auto () :=
+  let assertion_id := Fresh.in_goal @assert_goal in
+  let goal := Control.goal () in
+  assert $goal as assertion_id;
+  Control.focus 1 1 (fun () => 
+    let g := Control.goal () in
+    let hint_databases := Some ((@core)::[]) in
+    run_automation g [] 1 hint_databases false);
+  clear assertion_id.
 
 (** * goal_to_hint
     Give a hint indicating a potential step to proving 
@@ -109,6 +122,12 @@ Ltac2 goal_to_hint (g:constr) :=
         end
     | forall v:?v_type, _ => create_forall_message v_type
     | exists v:?v_type, _ => create_exists_message v_type
+    | _ /\ _ => Message.of_string
+"The goal is to show a conjunction (∧).
+Show both statements, use ‘We show both statements.’"
+    | _ \/ _ => Message.of_string
+"The goal is to show a disjunction (∨).
+Show one of the statements, use ‘It suffices to show that (...).’ with the dots replaced with the statement you decide to show."
     | Case.Wrapper _ _                => create_goal_wrapped_message ()
     | NaturalInduction.Base.Wrapper _ => create_goal_wrapped_message ()
     | NaturalInduction.Step.Wrapper _ => create_goal_wrapped_message ()
@@ -118,7 +137,11 @@ Ltac2 goal_to_hint (g:constr) :=
     | ByContradiction.Wrapper _ _     => create_goal_wrapped_message ()
     | not ?g => create_not_message g
     | False  => create_goal_wrapped_message ()
-    | _ => Control.zero (GoalHintError "No hint available for this goal.")
+    | _ => 
+        match Control.case solvable_by_core_auto with
+        | Val _ => Message.of_string "The goal can be shown immediately, use ‘We conclude that (...).’."
+        | Err exn => Control.zero (GoalHintError "No hint available for this goal.")
+        end
     end.
 
 (** * print_goal_hint
@@ -144,12 +167,13 @@ Ltac2 print_goal_hint (g: constr option) :=
         | (mess, _) => Message.print mess
         | _ => ()
         end
-    | Err exn => Message.print (Message.of_string "No hint available.")
+    | Err exn => Message.print (Message.of_string "No hint available for this goal.")
     end.
 
 (** * Help tactic
     Tries to give a hint how to proceed proving the current goal.
 *)
 Ltac2 Notation "Help" := print_goal_hint None.
+
 
 
