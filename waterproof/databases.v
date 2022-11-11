@@ -193,13 +193,15 @@ Proof.
     intros.
     unfold Rdiv in *.
     rewrite Rmult_1_l in *.
-    rewrite <- (Rinv_inv r2).
+    rewrite <- (Rinv_involutive r2).
     apply (Rinv_lt_contravar (/ r2) r1).
     apply Rmult_lt_0_compat. 
     apply Rinv_0_lt_compat. 
     apply H0. 
     apply H.
     apply H1.
+    apply Rgt_not_eq.
+    apply H0.
 Qed.
 
 Lemma div_pos : forall r1 r2 : R, r1 > 0 ->1 / r1 > 0.
@@ -223,7 +225,7 @@ Proof.
     intros.
     unfold Rdiv in *. 
     rewrite Rmult_1_l in *.
-    rewrite <- (Rinv_inv r1), <- (Rinv_inv r2).
+    rewrite <- (Rinv_involutive r1), <- (Rinv_involutive r2).
     apply (Rinv_lt_contravar (/ r1) (/ r2)). 
     apply Rmult_lt_0_compat. 
     apply Rinv_0_lt_compat. 
@@ -265,7 +267,7 @@ Qed.
 Global Hint Resolve div_sign_flip : reals.
 Global Hint Resolve div_pos : reals.
 Global Hint Resolve inv_remove : reals.
-Global Hint Resolve Rinv_inv : reals.
+Global Hint Resolve Rinv_involutive : reals.
 Global Hint Resolve Rabs_left : reals.
 Global Hint Resolve Rabs_right : reals.
 Global Hint Resolve Rabs_left1 : reals.
@@ -360,7 +362,7 @@ Global Hint Extern 1 => (rewrite Rmult_1_l) :  eq_one. (* 1 * x = x *)
 Global Hint Extern 1 => (rewrite Rmult_1_r) :  eq_one. (* x * 1 = x *)
 Global Hint Extern 1 => (rewrite Rinv_1) :  eq_one. (* x / 1 = x *)
 Global Hint Extern 1 => (rewrite pow_1) :  eq_one. (* x ^ 1 = x *)
-Global Hint Extern 1 => (rewrite Rinv_inv) : eq_one. (* / / x = x *)
+Global Hint Extern 1 => (rewrite Rinv_involutive) : eq_one. (* / / x = x *)
 
 
 
