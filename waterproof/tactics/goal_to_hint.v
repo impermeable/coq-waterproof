@@ -88,12 +88,13 @@ Use ‘Assume that (...).’ to do the first step.").
 Local Ltac2 solvable_by_core_auto () :=
   let assertion_id := Fresh.in_goal @assert_goal in
   let goal := Control.goal () in
-  assert $goal as assertion_id;
+  assert $goal as $assertion_id;
   Control.focus 1 1 (fun () => 
     let g := Control.goal () in
     let hint_databases := Some ((@core)::[]) in
     run_automation g [] 1 hint_databases false);
-  clear assertion_id.
+  clear $assertion_id.
+
 
 (** * goal_to_hint
     Give a hint indicating a potential step to proving 

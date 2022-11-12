@@ -68,33 +68,41 @@ Ltac2 choose_such_that (s:ident) (v:ident) (pred_u:constr) (u:ident option)
               | Some u => u
               end
     in
-    let attempt ()
-        := first [ (* Copy v, also count as check that v can be converted to (ex pred_u) *)
-                   assert (ex  $pred_u) as copy_id;
-                   Control.focus 1 1 (fun () => exact $v_val);
-                   (* Destruct v *)
-                   destruct $v_val as [$s $uu];
-                   (* Copy the copy, but with name v*)
-                   assert (ex  $pred_u) as $v;
-                   Control.focus 1 1 (fun () => exact &copy_id);
-                   (* Destroy copy *)
-                   clear copy_id
-                 | (* Copy v, also count as check that v can be converted to (sig pred_u) *)
-                   assert (sig $pred_u) as copy_id;
-                   Control.focus 1 1 (fun () => exact $v_val);
-                   (* Destruct v *)
-                   destruct $v_val as [$s $uu];
-                   (* Copy the copy, but with name v*)
-                   assert (sig $pred_u) as $v;
-                   Control.focus 1 1 (fun () => exact &copy_id);
-                   (* Destroy copy *)
-                   clear copy_id
-                 ]
-    in
-    match Control.case attempt with
-    | Val _   => ()
-    | Err exn => Control.zero (ChooseSuchThatError
-                 (mismatch_pred_existential_message s v))
+    match Control.case 
+    (fun () =>
+      (* Copy v, also count as check that v can be converted to (ex pred_u) *)
+      assert (ex  $pred_u) as $copy_id;
+      Control.focus 1 1 (fun () => exact $v_val)
+    ) with
+    | Val _ =>
+      (* ~continue with (v = ex  pred_u) case~ *)
+      (* Destruct v *)
+      destruct $v_val as [$s $uu];
+      (* Copy the copy, but with name v*)
+      assert (ex  $pred_u) as $v;
+      Control.focus 1 1 (fun () => 
+      let copy_val := Control.hyp copy_id in exact $copy_val);
+      (* Destroy copy *)
+      clear $copy_id
+    | Err e =>
+      Control.plus
+      (fun () =>
+        (* Copy v, also count as check that v can be converted to (sig pred_u) *)
+        assert (sig $pred_u) as $copy_id;
+        Control.focus 1 1 (fun () => exact $v_val)
+      )
+      (fun e =>
+        Control.zero (ChooseSuchThatError (mismatch_pred_existential_message s v))
+      );
+      (* ~continue with (v = sig pred_u) case~ *)
+      (* Destruct v *)
+      destruct $v_val as [$s $uu];
+      (* Copy the copy, but with name v*)
+      assert (sig $pred_u) as $v;
+      Control.focus 1 1 (fun () => 
+        let copy_val := Control.hyp copy_id in exact $copy_val);
+      (* Destroy copy *)
+      clear $copy_id
     end.
 
 
