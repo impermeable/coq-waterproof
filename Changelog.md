@@ -1,3 +1,10 @@
+# Waterproof Change Log Tag 1.2.4
+
+- Added and updated theory files.
+- Improved notation for (in)equality chains, e.g. (& a < b <= c = d).
+- Bug fixes.
+
+
 # Waterproof Change Log Tag 1.1.0
 
 - Added and updated theory files.
