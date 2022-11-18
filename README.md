@@ -1,56 +1,40 @@
-# Waterproof Tactics Library
+# coq-waterproof
 
-The Waterproof tactics-library provides custom tactics to Coq.
-These tactics allow to write **pen-and-paper like sentences in valid Coq proofs**. 
-This makes proofscripts more similar to non-mechanized mathematical proofs. As a result, the proofscript becomes reasonably readable to mathematicians not familiar with the Coq syntax. 
+The coq-waterproof library allows you to write Coq proofs in **a style that resembles non-mechanized mathematical proofs**.
+Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts.
+
 
 ## Example
-The following snippet of file `sample_proof.v` gives a flavour of the tactics.
-Note that also optional alternative notations for build-in terms 
-such as `R` (`ℝ`) and `forall` (`∀`) are provided:
+The following snippet from the `sample_proof.v` file gives a taste of a proof written using coq-waterproof.
 ```coq
-Goal (¬ is_open [0,1)).
+Goal (¬ [0,1) is closed).
 Proof.
-  Assume that (is_open [0,1)).
-  It holds that (0 : [0,1)).
-  It holds that (is_interior_point 0 [0,1)) (i).
-  Obtain r according to (i), so for r : ℝ it holds that
-    (r > 0 ∧ (for all x : ℝ, x : open_ball(0,r) ⇒ x : [0,1))) (ii).
-  Because (ii) both (r > 0) and 
-    (for all x : ℝ, x : open_ball(0,r) ⇒ x : [0,1)) (iii) hold.
-  It holds that ( | -r/2 - 0 | < r).
-  It holds that (-r/2 : open_ball(0,r)).
-  By (iii) it holds that (-r/2 : [0,1)) (iv).
-  Because (iv) both (0 ≤ -r/2) and (-r/2 < 1) hold.
-  It holds that (¬ r > 0).
-  Contradiction.
-Qed.
-
-Goal (¬ is_closed [0,1)).
-Proof.
-  We need to show that 
-    (¬ (for all a : ℝ, a : [0,1)^c ⇒ is_interior_point a [0,1)^c)).
+  Expand the definition of closed.
+  That is, write the goal as (¬ ℝ\[0,1) is open).
+  Expand the definition of open.
+  That is, write the goal as 
+    (¬ ∀ a : ℝ, a : ℝ\[0,1) ⇒ a is an interior point of ℝ\[0,1)).
   It suffices to show that
-    (there exists a : ℝ, a : [0,1)^c ∧ ¬(is_interior_point a [0,1)^c)).
+    (∃ a : ℝ, a : ℝ\[0,1) ∧ ¬ a is an interior point of ℝ\[0,1)).
   Choose a := 1.
   We show both statements.
-  - We conclude that (1 : [0,1)^c).
-  - We need to show that (¬(is_interior_point 1 [0,1)^c)).
-    We need to show that 
-      (¬ there exists r : ℝ, r > 0 ∧ (for all x : ℝ, x : open_ball(1,r) ⇒ x : [0,1)^c)).
+  - We conclude that (1 : ℝ\[0,1)).
+  - We need to show that (¬ 1 is an interior point of ℝ\[0,1)).
+    Expand the definition of interior point.
+    That is, write the goal as
+      (¬ ∃ r : ℝ, r > 0 ∧ (∀ x : ℝ, x : B(1,r) ⇒ x : ℝ\[0,1))).
     It suffices to show that
-      (for all r : ℝ, r > 0 ⇒ (there exists x : ℝ, x : open_ball(1,r) ∧ ¬ x : [0,1)^c)).
+      (∀ r : ℝ, r > 0 ⇒ (∃ x : ℝ, x : B(1,r) ∧ x : [0,1))).
     Take r : ℝ. Assume that (r > 0).
     Choose x := (Rmax(1/2, 1 - r/2)).
-    We show both (x : open_ball(1,r)) and (¬ x : [0,1)^c).
+    We show both (x : B(1,r)) and (x : [0,1)).
     + We need to show that (| x - 1 | < r).
       It suffices to show that (-r < x - 1 < r).
       We show both (-r < x - 1) and (x - 1 < r).
       * It holds that (1 - r/2 ≤ Rmax(1/2, 1 - r/2)).
         We conclude that (& -r < -r/2 = 1 - r/2 - 1 ≤ Rmax(1/2, 1 - r/2) - 1 = x - 1).
       * We conclude that (& x - 1 = Rmax(1/2, 1 - r/2) - 1 < 0 < r).
-    + We need to show that (¬ x : [0,1)^c).
-      It suffices to show that (x : [0,1)).
+    + We need to show that (x : [0,1)).
       We need to show that (0 ≤ x ∧ x < 1).
       We show both (0 ≤ x) and (x < 1).
       * We conclude that (& 0 ≤ 1/2 ≤ Rmax(1/2, 1 - r/2) = x).
@@ -59,23 +43,25 @@ Qed.
 ```
 
 ## Features
-* Less cryptic, **sentence-like statements for build-in Coq tactics**.
+* Less cryptic, **controlled natural language formulations for build-in Coq tactics**.
+* Commonplace **mathematical notation** such as `ℝ` or `A is closed`.
+* **Enforced signposting**: after a case distinction, for example, one **has** to state which case is to be shown.
+* Reasoning with **chains of (in)equalities**.
 * Automation to **hide details not used in written proofs**.
-* **Enforce explicit steps**: for example, after splitting the proof of a conjunstion, one has to write what is to be shown (and this will be checked).
 * **Help messages** and more **elaborate error messages**.
 * **Runtime-configurable presets of hint databases** used by the automation.
 * All tactics are implemented in Ltac2.
-* **Unit-tests for all tactics**. These are run at compile-time, to ensure a working version is compiled. Unit-tests raise an error if they fail. They are located in the directory `waterproof/test`.
+<!--* **Unit-tests for all tactics**. These are run at compile-time, to ensure a working version is compiled. Unit-tests raise an error if they fail. They are located in the directory `waterproof/test`.-->
+
 
 ## Usage
-To use the tactics in a `.v` file, use the following import:
+To use the tactics in a `.v` file, use the import:
 ```coq
 Require Import Waterproof.AllTactics.
 ```
-For the custom notations, also add the following imports:
+For the custom notations, also add:
 ```coq
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.definitions.set_definitions.
 ```
 
 ## Automation
@@ -85,11 +71,11 @@ which employs `auto` and `eauto` (and optionally also `intuition`),
 together with a customizable set of hint-databases.
 
 ### Configuration
-The baviour of the automated tactics can be configured by imporing specific files.
+The behaviour of the automated tactics can be configured by importing specific files.
 
 * **Adding a Database**: import the specific file in `waterproof/load_database`. Example:
     ```coq
-    Require Import Waterproof.load_database.Sets.
+    Require Import Waterproof.load_database.RealNumbers.
     ```
 * **Search depth**: import any of the files in `waterproof/set_seach_depth`. Example:
     ```coq
@@ -104,10 +90,8 @@ The baviour of the automated tactics can be configured by imporing specific file
     ```coq
     Require Import Waterproof.set_intuition.Disabled.
     ```
-### Examples of automation features
-A few highlights of the automation features are shown below.
 
-<!--(deprecated)#### Rewriting equalities
+<!--(deprecated)## Rewriting equalities
 One can use literal equalities to rewrite goals and hypotheses. This alleviates the need to know the names of build-in Coq lemmas and theorems. The automation features will verify the literal, use it as a temporal lemma to rewrite the target, and remove it again from the proof state.
 Example:
 ```coq
@@ -125,21 +109,19 @@ Used by tactics:
 * `Write goal using (constr) as (constr).` (to rewrite a the goal and verify the result is expected)
 * `Write (ident) using (constr) as (constr).` (to rewrite a hypothesis and verify the result is expected)-->
 
-#### Chains of (in)equalities
-In written proofs, a chain of statements of the form *s<sub>1</sub> < s<sub>2</sub> = s<sub>3</sub> ≤ ... < s<sub>n</sub>* are often used, where each *s<sub>i</sub>* is a mathematical expression.
-Waterproof allows a similar notation in Coq:
-```coq
-Lemma example: forall a b c: R, (a < b ∧ b < c) -> (a < c).
-    Take a, b, c, : R.
-    Assume that (a < b ∧ b < c) (i).
-    Because (i) both (a < b) and (b < c) hold.
-    We conclude that (& a < b < c).
-Qed.
-```
+## Chains of (in)equalities
+In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.
+Waterproof allows you to use a similar notation in Coq.
+For example, the `sample_proof.v` file contains the statement
 
+```coq
+We conclude that (& -r < -r/2 = 1 - r/2 - 1 ≤ Rmax(1/2, 1 - r/2) - 1 = x - 1).
+```
+The chain of inequalities is used to show that `-r < x - 1`.
 
 ## Background
-The Waterproof tactics-library is developed as part of the educational [Waterproof](https://github.com/impermeable/waterproof) GUI. 
-The tactics are designed to be used by mathematics students who are unfamiliar with Coq. This is also the reason the tactics require the user to be explicit: students are must learn to write readable proofs.
+The coq-waterproof library is developed as part of the educational [Waterproof](https://github.com/impermeable/waterproof) editor for Coq.
+The tactics are designed to be used by first-year mathematics students who are unfamiliar with Coq. This is also why the tactics require the user to be explicit: the students have to learn to write readable proofs.
 
 The library was originally written by Jim Portegies in Ltac1. It was extended and ported to Ltac2 by Cosmin Manea, Lulof Pirée, Adrian Vrămuleţ and Tudor Voicu as part of the 'Waterfowl' bachelor Software Engineering Project at the [Eindhoven University of Technology](https://www.tue.nl/en/) (in May-June 2021). Since then it has been under further development by Jelle Wemmenhove and Jim Portegies.
+
