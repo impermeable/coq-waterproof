@@ -46,11 +46,11 @@ Qed.
 * Less cryptic, **controlled natural language formulations for build-in Coq tactics**.
 * Commonplace **mathematical notation** such as `ℝ` or `A is closed`.
 * **Enforced signposting:** after a case distinction, for example, one **has** to state which case is to be shown.
-* Reasoning with **chains of (in)equalities**.
+* Allows for reasoning with **chains of (in)equalities**.
 * Automation to **hide details not used in written proofs**.
 * **Help messages** and more **elaborate error messages**.
 * **Runtime-configurable presets of hint databases** used by the automation.
-* All tactics are implemented in Ltac2.
+* All tactics implemented in Ltac2.
 <!--* **Unit-tests for all tactics**. These are run at compile-time, to ensure a working version is compiled. Unit-tests raise an error if they fail. They are located in the directory `waterproof/test`.-->
 
 
