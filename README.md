@@ -45,7 +45,7 @@ Qed.
 ## Features
 * Less cryptic, **controlled natural language formulations for build-in Coq tactics**.
 * Commonplace **mathematical notation** such as `ℝ` or `A is closed`.
-* **Enforced signposting**: after a case distinction, for example, one **has** to state which case is to be shown.
+* **Enforced signposting:** after a case distinction, for example, one **has** to state which case is to be shown.
 * Reasoning with **chains of (in)equalities**.
 * Automation to **hide details not used in written proofs**.
 * **Help messages** and more **elaborate error messages**.
