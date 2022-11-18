@@ -5,7 +5,7 @@ Mathematicians unfamiliar with the Coq syntax are able to read the resulting pro
 
 
 ## Example
-The following snippet from the `sample_proof.v` file gives a taste of a proof written using coq-waterproof.
+The following snippet from `sample_proof.v` gives a taste of a proof written using coq-waterproof.
 ```coq
 Goal (¬ [0,1) is closed).
 Proof.
@@ -112,7 +112,7 @@ Used by tactics:
 ## Chains of (in)equalities
 In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.
 Waterproof allows you to use a similar notation in Coq.
-For example, the `sample_proof.v` file contains the statement
+For example, `sample_proof.v` contains the statement
 
 ```coq
 We conclude that (& -r < -r/2 = 1 - r/2 - 1 ≤ Rmax(1/2, 1 - r/2) - 1 = x - 1).
