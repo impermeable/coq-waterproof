@@ -87,7 +87,7 @@ Local Ltac2 run_automation_without_intuition (search_depth: int option)
                                           (lemmas: (unit -> constr) list) :=
     first [ solve [Std.auto Std.Off (Some 2) lemmas databases]
     | solve [Std.auto Std.Off search_depth lemmas databases]
-    | solve [Std.eauto Std.Off search_depth None lemmas databases]
+    | solve [Std.eauto Std.Off search_depth lemmas databases]
     | fail_automation (Some (Control.goal()))
     ].
 
