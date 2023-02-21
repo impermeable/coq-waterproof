@@ -268,6 +268,8 @@ Global Hint Resolve div_sign_flip : reals.
 Global Hint Resolve div_pos : reals.
 Global Hint Resolve inv_remove : reals.
 Global Hint Resolve Rinv_involutive : reals.
+Global Hint Resolve Rabs_def1 : reals.
+Global Hint Resolve Rabs_le : reals.
 Global Hint Resolve Rabs_left : reals.
 Global Hint Resolve Rabs_right : reals.
 Global Hint Resolve Rabs_left1 : reals.
