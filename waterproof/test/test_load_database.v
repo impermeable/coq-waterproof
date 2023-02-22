@@ -448,7 +448,13 @@ Goal forall x y:R, (x+y)^2 = Rabs(x^2) + 2*x*y + y^2.
     assert_raises_error result.
 Abort.
 
-Axiom abs_sqr : forall x:R, Rabs(x^2) = x^2.
+Lemma abs_sqr : forall x:R, Rabs(x^2) = x^2.
+Proof.
+  intro x.
+  apply Rabs_pos_eq.
+  apply pow2_ge_0.
+Qed.
+
 Global Hint Resolve abs_sqr: dummy.
 Lemma lm_abs_srq : forall x:R, Rabs(x^2) = x^2.
     solve[auto with nocore dummy].

@@ -81,10 +81,10 @@ Goal (& 1 < 2 < 3) -> (& 4 = 100 = 100) -> (1 < 3).
 Proof.
   intros H1 H2.
   cbn in H1, H2.
-Admitted.
+Abort.
 (* Usage in goal *)
 Goal (& 1 < 2 <= 3 < 4).
 Proof.
   repeat split; cbn.
-Admitted.
+Abort.
 

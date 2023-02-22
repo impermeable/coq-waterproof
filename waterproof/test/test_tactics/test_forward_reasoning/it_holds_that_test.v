@@ -47,7 +47,12 @@ Qed.
 (* This axiom does not make sense, 
     but therefore we can be sure that [waterprove]
     does not know it without *explicitly* being told to use it.*)
-    Axiom zero_is_ten: 0 = 10.
+Local Parameter x_var : R.
+Local Parameter H_x_is_10 : x_var = 10.
+Lemma x_is_10 : x_var = 10.
+Proof.
+  exact H_x_is_10.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [By ... it holds that ... : ...] *)
@@ -76,10 +81,10 @@ Abort.
 Lemma test_by_it_holds_2: True.
 Proof.
     (* This is just to test if the extra lemma is really needed: *)
-    let failure () := It holds that (10 = 0) in
+    let failure () := It holds that (x_var = 10) in
     assert_raises_error failure.
     
-    By zero_is_ten it holds that (10 = 0).
+    By (H_x_is_10) it holds that (x_var = 10).
 Abort.
 
 (** * Test 3
