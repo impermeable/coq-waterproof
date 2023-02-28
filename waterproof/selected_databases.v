@@ -35,6 +35,7 @@ Require Import Waterproof.auxiliary.
 Require Import Waterproof.databases.
 
 Ltac2 Type WaterproofDatabase := [
+    | WaterproofDBAlgebra
     | WaterproofDBMultiplication
     | WaterproofDBPlusMinus
     | WaterproofDBZeroOne
@@ -127,6 +128,7 @@ Ltac2 print_search_depth_set_to (new_depth: int) :=
 *)
 Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     match label with
+    | WaterproofDBAlgebra =>            (@waterproof_algebra)::[]
     | WaterproofDBMultiplication =>     (@eq_mult)::(@eq_opp)::[]
     | WaterproofDBPlusMinus =>          (@eq_plus)::(@eq_minus)::[]
     | WaterproofDBZeroOne =>            (@eq_zero)::(@eq_one)::(@eq_opp)::[]
