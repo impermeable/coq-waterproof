@@ -45,3 +45,18 @@ Ltac2 simpl_ineq_chains () :=
             cbn in $h
         end
     ).
+
+(** ** split_conjunctions 
+    iteratively splits all conjunctions in the hypothesis 
+    into individual statements.
+*)
+Ltac2 split_conjunctions () :=
+    repeat(
+        match! goal with
+        | [h : _ /\ _  |- _] =>
+            let h_val := Control.hyp h in
+            let h1 := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__hl in 
+            let h2 := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__hr in 
+            destruct $h_val as [$h1 $h2]
+        end
+    ).

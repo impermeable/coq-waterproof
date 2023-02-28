@@ -159,6 +159,10 @@ Global Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : 
 Global Hint Extern 3 (~ (Rlt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
 Global Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
 Global Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
+Global Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : waterproof_algebra.
+Global Hint Resolve f_equal : waterproof_algebra.
+Global Hint Resolve f_equal2 : waterproof_algebra.
+Global Hint Extern 1 ( _ = _ ) => congruence : waterproof_algebra.
 
 Global Hint Extern 3 ( Rle _ _ ) => cbn; nra : reals.
 Global Hint Extern 3 ( Rge _ _ ) => cbn; nra : reals.
