@@ -31,18 +31,19 @@ From Ltac2 Require Import Message.
 
 Load test_auxiliary.
 
+Goal True.
 (*
 --------------------------------------------------------------------------------
 *) (** *    Testcases for [assert_list_equal]
 *)
-Ltac2 Eval assert_list_equal (constr:(1)::constr:(2)::constr:(3)::[])
+assert_list_equal (constr:(1)::constr:(2)::constr:(3)::[])
                              (constr:(1)::constr:(2)::constr:(3)::[]).
 
-Ltac2 Eval assert_list_equal [] [].                             
+assert_list_equal [] [].                             
 
-Ltac2 Eval assert_raises_error (fun () =>
+assert_raises_error (fun () =>
 assert_list_equal (constr:(1)::constr:(3)::[]) (constr:(2)::constr:(3)::[]) ).
-
+Abort.
 (*
 --------------------------------------------------------------------------------
 *)(** * Testcase for [assert_hyp_exists]
@@ -68,29 +69,29 @@ Goal forall n: nat, n = 1 -> n = 1.
     assert_raises_error (fun () => assert_hyp_has_type @n constr:(bool)).
 Abort.
 
-
+Goal True.
 (*
 --------------------------------------------------------------------------------
 *) (** *    Testcases for [assert_constr_is_true]
 *)
-Ltac2 Eval assert_constr_is_true constr:(true).
-Ltac2 Eval assert_raises_error 
+assert_constr_is_true constr:(true).
+assert_raises_error 
     (fun () => assert_constr_is_true constr:(false)).
-    Ltac2 Eval assert_raises_error 
+assert_raises_error 
     (fun () => assert_constr_is_true constr:(1)).
 
 (*
 --------------------------------------------------------------------------------
 *) (** *    Testcases for [assert_is_true] and [assert_is_false].
 *)
-Ltac2 Eval assert_is_true (true).
-Ltac2 Eval assert_raises_error 
+assert_is_true (true).
+assert_raises_error 
     (fun () => assert_is_true false).
 
-Ltac2 Eval assert_is_false (false).
-Ltac2 Eval assert_raises_error 
+assert_is_false (false).
+assert_raises_error 
     (fun () => assert_is_false true).
-
+Abort.
 (*
 --------------------------------------------------------------------------------
 *) (** * Testcases for [assert_goal_is]
@@ -119,8 +120,9 @@ Abort.
 --------------------------------------------------------------------------------
 *) (** * Testcases for [assert_constr_equal]
 *)
-
-Ltac2 Eval assert_constr_equal constr:(1 < 2) constr:(1 < 2).
-Ltac2 Eval let result () := assert_constr_equal constr:(1 < 2) 
+Goal True.
+assert_constr_equal constr:(1 < 2) constr:(1 < 2).
+let result () := assert_constr_equal constr:(1 < 2) 
                                                 constr:(1 > 2) in
     assert_raises_error result.
+Abort.

@@ -43,13 +43,9 @@ Require Import Waterproof.load_database.DisableWildcard.
 
 Local Open Scope R_scope.
 
-
-Ltac2 Eval print (of_string "Initial database selection is:").
 (* Note: [core] is always *implicitly* included. *)
 
 Require Import load_database.All.
-Ltac2 Eval global_database_selection. 
-
 
 (*
 --------------------------------------------------------------------------------
@@ -66,17 +62,12 @@ Qed.
 
 Ltac2 Set global_database_selection as old_selection := [].
 
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
-
 (** * Test 1b
     Lemma that should be NOT proveable with [nocore].
 *)
 Lemma load_db_test_1b: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-
 Abort.
 
 (*
@@ -87,10 +78,6 @@ Abort.
 (* loding the specified database*)
 Require Import load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
-
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
 
 (** * Test 2a
     Test for sufficiency. 
@@ -120,10 +107,6 @@ Ltac2 Set global_database_selection as old_selection := [].
 Require Import load_database.PlusMinus.
 Require Import Waterproof.set_search_depth.To_3.
 
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
-
 (** * Test 2c
     Test for necessity, which passes if an error is raised, i.e. when
     the specified database is missing. 
@@ -131,7 +114,6 @@ Ltac2 Eval global_database_selection.
 Lemma load_db_test_2c: forall x y:R, (x + y)*x = x*x + x*y.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-
 Abort.
 
 
@@ -148,10 +130,6 @@ Ltac2 Set global_database_selection as old_selection := [].
 (* loding the specified database*)
 Require Import load_database.PlusMinus.
 Require Import Waterproof.set_search_depth.To_3.
-
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
 
 (** * Test 3a
     Test for sufficiency. 
@@ -171,7 +149,6 @@ Qed.
 Lemma load_db_test_3b: forall x y:R, x*y = y *x.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-
 Abort.
 
 (* reset the selection of databases*)
@@ -181,10 +158,6 @@ Ltac2 Set global_database_selection as old_selection := [].
 Require Import load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
 
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
-
 (** * Test 3c
     Test for necessity, which passes if an error is raised, i.e. when
     the specified database is missing. 
@@ -192,7 +165,6 @@ Ltac2 Eval global_database_selection.
 Lemma load_db_test_3c: forall x y:R, x + x + y = x + y + x.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-
 Abort.
 
 (* reset the selection of databases*)
@@ -207,10 +179,6 @@ Ltac2 Set global_database_selection as old_selection := [].
 (* loding the specified database*)
 Require Import load_database.ZeroOne.
 Require Import Waterproof.set_search_depth.To_3.
-
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
 
 (** * Test 4a
     Test for sufficiency. 
@@ -240,10 +208,6 @@ Ltac2 Set global_database_selection as old_selection := [].
 Require Import load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
 
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
-
 (** * Test 4c
     Test for necessity, which passes if an error is raised, i.e. when
     the specified database is missing. 
@@ -251,7 +215,6 @@ Ltac2 Eval global_database_selection.
 Lemma load_db_test_4c: forall x y:R, x*1 + 1 + 0 = x +1.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-
 Abort.
 
 (* reset the selection of databases*)
@@ -260,8 +223,6 @@ Ltac2 Set global_database_selection as old_selection := [].
 
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBMultiplication)::old_selection.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 
 (** * Test 12
     Same as test 2, but now the WRONG database is loaded.
@@ -275,8 +236,6 @@ Abort.
 Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBReals)::old_selection.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 
 (** * Test 13
     Same as test 2, but now the REQUIRED database is loaded.
@@ -289,9 +248,6 @@ Qed.
 (*Empty the database*)
 Ltac2 Set global_database_selection as old_selection :=[].
 Require Import load_database.All.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
 
 (** * Test 14
     Similarly, this can be solved with the WaterproofDBGeneral, 
@@ -328,16 +284,12 @@ Proof.
     Ltac2 Set global_database_selection as old_selection :=[].
     Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBZeroOne)::old_selection.
-    Ltac2 Eval print (of_string "Current database selection is:").
-    Ltac2 Eval global_database_selection.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
 Abort.
 
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBMultiplication)::old_selection.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 Ltac2 Set global_search_depth := 1.
 
 (** * Test 17
@@ -372,8 +324,6 @@ Ltac2 Set global_database_selection as old_selection :=
     This test should not be solved, since it has all 
     databases except the required one.
 *)
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 Goal forall a:R, ln(exp a) = a.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
@@ -382,8 +332,6 @@ Abort.
 Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBExponential)::old_selection.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 (** * Test 20
     This test should work just fine now.
 *)
@@ -402,8 +350,6 @@ Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBSquareRoot)::old_selection.
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBExponential)::old_selection.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 
 (** * Test 21
     This test should not be solved, since it has all 
@@ -417,8 +363,6 @@ Abort.
 Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBAbsoluteValue)::old_selection.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
 
 (** * Test 22
     This test should work just fine now.

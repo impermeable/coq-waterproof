@@ -32,8 +32,8 @@ Require Import Waterproof.test_auxiliary.
 *) (** *  Testcase for [replace_at_pos]
 *)
 
-Ltac2 Eval 
-    let result := (replace_at_pos "hollo" 1 (Char.of_int 101)) in
+Goal True.
+let result := (replace_at_pos "hollo" 1 (Char.of_int 101)) in
     assert_string_equal result "hello".
 
 
@@ -42,12 +42,10 @@ Ltac2 Eval
 *) (** *     Testcases for [concat_strings]
 *)
 
-Ltac2 Eval 
-    let result := (concat_strings "hello " "world") in
+let result := (concat_strings "hello " "world") in
     assert_string_equal result "hello world".
 
-Ltac2 Eval 
-    let result := (concat_strings "1" "2") in
+let result := (concat_strings "1" "2") in
     assert_string_equal result "12".
 
 (*
@@ -55,8 +53,7 @@ Ltac2 Eval
 *) (** *     Testcase for [copy_suffix_to_target]
 *)
 
-Ltac2 Eval
-    let result := (copy_suffix_to_target 12 1 
+let result := (copy_suffix_to_target 12 1 
                    "Hello world Unicorns!" "~_________~") in
     assert_string_equal result "~Unicorns!~".
 
@@ -64,12 +61,13 @@ Ltac2 Eval
 --------------------------------------------------------------------------------
 *) (**    Testcase for [add_to_ident_name]
 *)
-Ltac2 Eval Ident.equal @unicorn (add_to_ident_name @uni "corn").
+assert_is_true (Ident.equal @unicorn (add_to_ident_name @uni "corn")).
 
 (*
 --------------------------------------------------------------------------------
 *) (** * Testcases for [string_equal]
 *)
-Ltac2 Eval assert_is_true (string_equal "hello" "hello").
-Ltac2 Eval assert_is_false (string_equal "hello" "Hello").
-Ltac2 Eval assert_is_false (string_equal "hello" "hell").
+assert_is_true (string_equal "hello" "hello").
+assert_is_false (string_equal "hello" "Hello").
+assert_is_false (string_equal "hello" "hell").
+Abort.

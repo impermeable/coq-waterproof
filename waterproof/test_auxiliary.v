@@ -28,17 +28,27 @@ From Ltac2 Require Option.
 From Ltac2 Require Import Message.
 
 Require Import Waterproof.string_auxiliary.
+Require Import Waterproof.auxiliary.
 
-Ltac2 Type exn ::= [ TestFailedError(string) ].
+(* TODO: make this an integer *)
+Ltac2 mutable test_verbosity := false.
 
-Ltac2 fail_test (s:string) := 
-    Control.zero (TestFailedError s).
+Ltac2 Type exn ::= [ TestFailedError(message) ].
+
+Ltac2 fail_test (msg:message) := 
+    Control.zero (TestFailedError msg).
 
 (*  Same function as [type_of] in [auxiliary.v].
         Repeated here to avoid double imports
         in modules that import both 
         [auxiliary.v] AND [test_auxiliary.v]. *)
 Definition type_of_test_aux {T : Type} (x : T) := T.
+
+Ltac2 print_success (msg : message) := 
+  match test_verbosity with 
+  |  false => ()
+  |  _ => print msg
+  end.
 
 (*
     Check if the function "f" raises an error when evaluated.
@@ -52,8 +62,8 @@ Definition type_of_test_aux {T : Type} (x : T) := T.
 *)
 Ltac2 assert_raises_error f :=
     match Control.case f with
-    | Val _ => fail_test "Should raise an error"
-    | Err exn => print (concat 
+    | Val _ => fail_test (of_string "Should raise an error")
+    | Err exn => print_success (concat 
         (of_string "Test passed, got error:") 
         (of_exn exn))
     end.
@@ -78,18 +88,18 @@ Ltac2 rec assert_list_equal (x:constr list) (y: constr list) :=
         | y_head::y_tail =>
             match (Constr.equal x_head y_head) with
             | true => assert_list_equal x_tail y_tail
-            | false => print(concat (of_string "Unequal elements:") 
+            | false => fail_test (concat (of_string "Unequal elements:") 
                                     (concat (of_constr x_head) 
                                             (of_constr y_head)
                                     )
-                            ); fail_test "List have different element"
+                            )
             end
-        | [] => fail_test "First list has more elements"
+        | [] => fail_test (of_string "First list has more elements")
         end
     | [] => 
         match y with
-            | [] => print (of_string "Test passed: lists indeed equal")
-            | y_head::y_tai => fail_test "Second list has more elements"
+            | [] => print_success (of_string "Test passed: lists indeed equal")
+            | y_head::y_tai => fail_test (of_string "Second list has more elements")
         end
     end.
 
@@ -106,8 +116,8 @@ Ltac2 rec assert_list_equal (x:constr list) (y: constr list) :=
 *)
 Ltac2 assert_hyp_exists (h: ident) :=
     match Control.case (fun () => Control.hyp h) with
-    | Val _ => print(concat (of_string "Indeed hyp exists:") (of_ident h))
-    | Err exn => print (of_exn exn); fail_test "Hyp not found"
+    | Val _ => print_success(concat (of_string "Indeed hyp exists:") (of_ident h))
+    | Err exn => fail_test (concat (of_exn exn) (of_string "Hyp not found"))
     end.
 
 (** * assert_hyp_has_type
@@ -131,18 +141,17 @@ Ltac2 assert_hyp_has_type (h: ident) (t: constr) :=
     let h_normalized :=  (eval cbv in (type_of_test_aux $h_val)) in
     let t_normalized :=  (eval cbv in $t) in
     match Constr.equal h_normalized t_normalized with
-    | true => print (concat (concat (of_string "Hypothesis '") (of_ident h))
+    | true => print_success (concat (concat (of_string "Hypothesis '") (of_ident h))
                             (concat (of_string "' indeed has type: ") 
                                     (of_constr t))
                     )
-    | false => print (
-            concat  (concat  (of_string "Expected type: ") 
+    | false => fail_test (
+            concat  (concat  (of_string "Hypothesis has wrong type. Expected type: ") 
                             (of_constr t))
                     (concat (of_string ", actual type: ") 
                             (of_constr 
                             (eval cbv in (type_of_test_aux $h_val))))
-            );
-        fail_test "Hyp has wrong type"
+            )
     end.
 
 (** * assert_constr_is_true
@@ -158,8 +167,8 @@ Ltac2 assert_hyp_has_type (h: ident) (t: constr) :=
 *)
 Ltac2 assert_constr_is_true (b:constr) :=
     match Constr.equal b constr:(true) with
-    | true => print (of_string "Test passed: received constr:(true)")
-    | false => fail_test "Did not get a constr equal to a bool with value true"
+    | true => print_success (of_string "Test passed: received constr:(true)")
+    | false => fail_test (of_string "Did not get a constr equal to a bool with value true")
     end.
 
 (** * assert_is_true
@@ -174,8 +183,8 @@ Ltac2 assert_constr_is_true (b:constr) :=
 *)
 Ltac2 assert_is_true (b:bool) :=
     match b with
-    | true => print (of_string "Test passed: received true")
-    | false => fail_test "Expected Ltac2 true, got Ltac2 bool 'false'"
+    | true => print_success (of_string "Test passed: received true")
+    | false => fail_test (of_string "Expected Ltac2 true, got Ltac2 bool 'false'")
     end.
 
 (** * assert_is_false
@@ -190,8 +199,8 @@ Ltac2 assert_is_true (b:bool) :=
 *)
 Ltac2 assert_is_false (b:bool) :=
     match b with
-    | false => print (of_string "Test passed: received false")
-    |  true => fail_test "Expected Ltac2 FALSE, got Ltac2 bool 'true'"
+    | false => print_success (of_string "Test passed: received false")
+    |  true => fail_test (of_string "Expected Ltac2 FALSE, got Ltac2 bool 'true'")
     end.
 
 (** * assert_string_equal
@@ -206,8 +215,8 @@ Ltac2 assert_is_false (b:bool) :=
 *)
 Ltac2 assert_string_equal (s1:string) (s2:string) :=
     match string_equal s1 s2 with
-    | true => print (of_string "Test passed: strings are equal")
-    | false => fail_test "Strings not equal"
+    | true => print_success (of_string "Test passed: strings are equal")
+    | false => fail_test (of_string "Strings not equal")
     end.
 
 
@@ -228,11 +237,35 @@ Ltac2 assert_goal_is (target:constr) :=
     let g' :=  (eval cbv in $g) in
     let t' :=  (eval cbv in $target) in
     match Constr.equal g' t' with
-    | true => print (of_string "Target is indeed equal to the goal.")
-    | false => fail_test "Target not equal to the goal."
+    | true => print_success (of_string "Target is indeed equal to the goal.")
+    | false => fail_test (of_string "Target not equal to the goal.")
     end.
 
+(** * assert_type_equal 
+    Check if the type of a term corresponds to an expected type.
+    
+    Arguments:
+        - [term : constr] the term to determine the type of
+        - [expected_type : constr] the expected type
 
+    Raises exceptions:
+        - [TestFailedError] if the type of term doesn't correspond to expected_type.
+*)
+Ltac2 assert_type_equal (term:constr) (expected_type:constr) :=
+    match (Constr.equal 
+        (eval cbv in (Aux.type_of $term))
+        (eval cbv in $expected_type)) with
+    | true => print_success (of_string "Type is as expected")
+    | false => fail_test (concat 
+             (concat
+                 (of_string "Type not as expected, got: ")
+                 (of_constr (eval cbv in (Aux.type_of $term)))
+             )
+             (concat
+                 (of_string "but expected: ")
+                 (of_constr (eval cbv in ($expected_type))))
+    )
+    end.
 
 (** * assert_constr_equal
     Check if two [constr] are equal without normalization.
@@ -245,9 +278,8 @@ Ltac2 assert_goal_is (target:constr) :=
 *)
 Ltac2 assert_constr_equal (c1: constr) (c2: constr) :=
     match Constr.equal c1 c2 with
-    | true => print (of_string "Constr indeed equal.")
-    | false => print (concat
-
+    | true => print_success (of_string "Constr indeed equal.")
+    | false => fail_test (concat
         (concat
             (of_string "Constr not equal, got: ")
             (of_constr c1)
@@ -256,5 +288,5 @@ Ltac2 assert_constr_equal (c1: constr) (c2: constr) :=
             (of_string " and: ")
             (of_constr c2)
         )
-    ); fail_test "Constr not equal."
+    )
     end.

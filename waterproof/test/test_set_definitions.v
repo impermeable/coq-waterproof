@@ -23,7 +23,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
-
 Require Import Waterproof.definitions.set_definitions.
 Require Import Waterproof.notations.notations.
 Require Import Reals.
@@ -35,9 +34,9 @@ Local Parameter P : R -> Prop.
 Definition A := as_subset R P.
 
 Local Parameter x : R.
-Check (x : A).
-Check (is_lub A).
-Check (x : [0,1]).
+Definition type_check_1 : Prop := (x : A).
+Definition type_check_2 : (R -> Prop) := is_lub A.
+Definition type_check_3 : Prop :=  (x : [0,1]).
 
 Goal is_upper_bound [0,1] 1.
 Proof.

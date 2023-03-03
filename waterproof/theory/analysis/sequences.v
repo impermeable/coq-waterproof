@@ -85,7 +85,6 @@ Lemma convergence_equivalence : converges_to = Un_cv.
 Proof.
     trivial.
 Qed.
-Locate converges_to.
 
 (** ## Preparation for a simple limit*)
 Lemma archimed_mod :
@@ -101,7 +100,7 @@ Proof.
         We conclude that (1 > 0).
       }
       It holds that (x <= INR 0).
-      It follows that (INR 1 > x).
+      It follows that (n > x).
     - Case (0 < x).
       By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
       It holds that (IZR( up x ) > x).

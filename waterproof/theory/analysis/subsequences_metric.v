@@ -122,9 +122,6 @@ Proof.
     Expand the definition of is_increasing. (*TODO: the layout of is_increasing is confusing*)
     That is, write the goal as 
       ((for all k : ℕ, (g k ≤ g (k + 1))%nat) ⇨ for all k l : ℕ, (k ≤ l ⇨ g k ≤ g l)%nat ).
-    Check family.
-    Locate family.
-    Check ℕ.
     Assume that (∀ k : ℕ, (g k) ≤ (g (k + 1)))%nat.
     Take k : ℕ.
     We use induction on l.

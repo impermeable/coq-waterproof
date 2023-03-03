@@ -37,10 +37,8 @@ Goal forall x:nat, x = x.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
-
-    (* Print some whitelines*)
-    Ltac2 Eval print (of_string "
-
+    print(of_string "
+    
     ").
 Abort.
 
@@ -52,10 +50,8 @@ Goal 0=0 -> 0=0.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
+    print(of_string "
     
-    (* Print some whitelines*)
-    Ltac2 Eval print (of_string "
-
     ").
 Abort.
 
@@ -66,10 +62,8 @@ Goal nat -> nat.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
+    print(of_string "
     
-    (* Print some whitelines*)
-    Ltac2 Eval print (of_string "
-
     ").
 Abort.
 
@@ -81,6 +75,9 @@ Goal exists x:nat, x = 1.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
+    print(of_string "
+    
+    ").
 Abort.
 
 
@@ -93,6 +90,9 @@ Goal forall n, n + 0 = n.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
+    print(of_string "
+    
+    ").
 Abort.
 
 (** * Test 5
@@ -102,6 +102,9 @@ Goal not (0 = 1).
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
+    print(of_string "
+    
+    ").
 Abort.
 
 (** * Test 6
@@ -111,6 +114,9 @@ Goal False.
     print (goal_to_hint (Control.goal ())).
     (* Should print exactly the same:*)
     Help.
+    print(of_string "
+    
+    ").
 Abort.
 
 
@@ -118,23 +124,35 @@ Abort.
 Goal (0 = 0) /\ (0 = 1).
 Proof.
   Help.
+  print(of_string "
+    
+").
 Abort.
 
 (** * Test 8, should print hint for disjunction. *)
 Goal (0 = 0) \/ (0 = 1).
 Proof.
   Help.
+print(of_string "
+    
+    ").
 Abort.
 
 (** * Test 9, should print hint for trivial statement. *)
 Goal (0 = 0).
 Proof.
   Help.
+print(of_string "
+    
+    ").
 Abort.
 
 (** * Test 10, should not print hint for non-trivial statement. *)
 Goal (0 = 1).
 Proof.
   Help.
+print(of_string "
+    
+    ").
 Abort.
 

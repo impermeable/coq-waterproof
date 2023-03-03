@@ -29,26 +29,7 @@ Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.waterprove.waterprove.
 
-
-
-
-
-Ltac2 Eval print (of_string "Initial database selection is:").
-Ltac2 Eval global_database_selection. 
-
 Require Import load_database.Multiplication.
 Require Import load_database.PlusMinus.
-Ltac2 Eval print (of_string "Current database selection is:").
-Ltac2 Eval global_database_selection.
-
-
-
-
-
-
-Ltac2 Eval print (of_string "Initial search depth is:").
-Ltac2 Eval global_search_depth. 
 
 Require Import Waterproof.set_search_depth.To_1.
-Ltac2 Eval print (of_string "Current search depth is:").
-Ltac2 Eval global_search_depth.

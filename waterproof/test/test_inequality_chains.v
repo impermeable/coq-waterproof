@@ -57,12 +57,12 @@ Abort.
 
 (** More tests *)
 (* Valid (though incorrect) inputs *)
-Check (& 1 = 2 = 2).
-Check (& 1 = 2 = 3 = 4).
-Check (& 1 = 2 < 3 = 4).
-Check (& 1 = 2 < 3 ≤ 4).
-Check (& 1 = 2 > 3 = 4).
-Check (& 1 ≥ 2 > 3 = 4).
+Goal (& 1 = 2 = 2). Abort.
+Goal (& 1 = 2 = 3 = 4). Abort.
+Goal (& 1 = 2 < 3 = 4). Abort.
+Goal (& 1 = 2 < 3 ≤ 4). Abort.
+Goal (& 1 = 2 > 3 = 4). Abort.
+Goal (& 1 ≥ 2 > 3 = 4). Abort.
 (* Invalid input: combining < and > in one chain *)
 Check (& 1 < 2 = 3 > 4). (* Does type check, but the kernel has not found correct instance for '>' *)
 Fail Goal (& 1 < 2 = 3 > 4). (* Esoteric error. *)

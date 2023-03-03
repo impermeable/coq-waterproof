@@ -44,9 +44,6 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [We conclude that ... ] *)
-Ltac2 Eval (print (of_string "
-
-Testcases for [We conclude that ...]:" )).
 
 (** * Test 1
     Base case: should easily be possible to finish the goal.
@@ -110,9 +107,6 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [By ... we conclude that ... ] *)
-Ltac2 Eval (print (of_string "
-
-Testcases for [By ... we conclude that ...]:" )).
 
 (** * Test 1
     Base case: should easily be possible to finish the goal,
