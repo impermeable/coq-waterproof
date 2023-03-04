@@ -25,13 +25,16 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
+From Ltac2 Require Import Int.
 
 Require Import Waterproof.string_auxiliary.
 Require Import Waterproof.auxiliary.
 
-(* TODO: make this an integer *)
-Ltac2 mutable test_verbosity := false.
+(** * Introduce global test verbosity. *)
+Ltac2 mutable test_verbosity () := 0.
 
 Ltac2 Type exn ::= [ TestFailedError(message) ].
 
@@ -44,8 +47,17 @@ Ltac2 fail_test (msg:message) :=
         [auxiliary.v] AND [test_auxiliary.v]. *)
 Definition type_of_test_aux {T : Type} (x : T) := T.
 
+(** * print_success
+    A function that prints a message in case
+    a test is passed. The function only prints 
+    if the global test_verbosity is larger than or equal 
+    than 1.
+
+    Arguments:
+        - [msg : message] The message to print on success.
+*)
 Ltac2 print_success (msg : message) := 
-  match test_verbosity with 
+  match (ge (test_verbosity ()) 1) with 
   |  false => ()
   |  _ => print msg
   end.

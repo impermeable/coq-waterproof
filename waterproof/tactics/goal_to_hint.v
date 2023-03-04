@@ -24,6 +24,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
+
+
+Require Import Waterproof.message.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.tactics.goal_wrappers.
@@ -33,54 +36,54 @@ Ltac2 Type exn ::= [ GoalHintError(string) ].
 Local Ltac2 create_forall_message (v_type: constr) :=
   Message.concat
             (Message.concat
-                (Message.of_string "The goal is to show a ‘for all’-statement (∀).
+                (of_string "The goal is to show a ‘for all’-statement (∀).
 Introduce an arbitrary variable of type ")
                 (Message.of_constr v_type)
             )
-            ( Message.of_string ".
+            ( of_string ".
 Use ‘Take ... : (...).’.").
 
 Local Ltac2 create_implication_message (premise: constr) :=
     Message.concat
         (Message.concat
-            (Message.of_string "The goal is to show an implication (⇒).
+            (of_string "The goal is to show an implication (⇒).
 Assume the premise ")
             (Message.of_constr premise)
         )
-        ( Message.of_string ".
+        ( of_string ".
 Use ‘Assume that (...).’.").
 
 Local Ltac2 create_function_message (premise: constr) :=
     Message.concat
         (Message.concat
-            (Message.of_string "The goal is to construct a map (⇒).
+            (of_string "The goal is to construct a map (⇒).
 Introduce an arbitrary variable of type ")
                 (Message.of_constr premise)
             )
-            ( Message.of_string ".
+            ( of_string ".
 Use ‘Take ... : (...).’.").
 
 Local Ltac2 create_exists_message (premise: constr) :=
     Message.concat
         (Message.concat
-            (Message.of_string "The goal is to show a ‘there exists’-statement (∃).
+            (of_string "The goal is to show a ‘there exists’-statement (∃).
 Choose a specific variable of type ")
                 (Message.of_constr premise)
         )
-        ( Message.of_string ".
+        ( of_string ".
 Use ‘Choose ... := (...).’ or ‘Choose (...).’.").
 
 Local Ltac2 create_goal_wrapped_message () :=
-    Message.of_string "Follow the advice in the goal window.".
+    of_string "Follow the advice in the goal window.".
 
 Local Ltac2 create_not_message (negated_type : constr) := 
   Message.concat
      (Message.concat
          (Message.concat
-             (Message.of_string "The goal is to show a negation (¬).
+             (of_string "The goal is to show a negation (¬).
 Assume that the negated expression ") (Message.of_constr negated_type)) 
-(Message.of_string " holds, then show a contradiction."))
-(Message.of_string "
+(of_string " holds, then show a contradiction."))
+(of_string "
 Use ‘Assume that (...).’ to do the first step.").
 
 
@@ -123,10 +126,10 @@ Ltac2 goal_to_hint (g:constr) :=
         end
     | forall v:?v_type, _ => create_forall_message v_type
     | exists v:?v_type, _ => create_exists_message v_type
-    | _ /\ _ => Message.of_string
+    | _ /\ _ => of_string
 "The goal is to show a conjunction (∧).
 Show both statements, use ‘We show both statements.’"
-    | _ \/ _ => Message.of_string
+    | _ \/ _ => of_string
 "The goal is to show a disjunction (∨).
 Show one of the statements, use ‘It suffices to show that (...).’ with the dots replaced with the statement you decide to show."
     | Case.Wrapper _ _                => create_goal_wrapped_message ()
@@ -140,7 +143,7 @@ Show one of the statements, use ‘It suffices to show that (...).’ with the d
     | False  => create_goal_wrapped_message ()
     | _ => 
         match Control.case solvable_by_core_auto with
-        | Val _ => Message.of_string "The goal can be shown immediately, use ‘We conclude that (...).’."
+        | Val _ => of_string "The goal can be shown immediately, use ‘We conclude that (...).’."
         | Err exn => Control.zero (GoalHintError "No hint available for this goal.")
         end
     end.
@@ -165,10 +168,10 @@ Ltac2 print_goal_hint (g: constr option) :=
     match Control.case f with
     | Val mess => 
         match mess with
-        | (mess, _) => Message.print mess
+        | (mess, _) => print mess
         | _ => ()
         end
-    | Err exn => Message.print (Message.of_string "No hint available for this goal.")
+    | Err exn => print (of_string "No hint available for this goal.")
     end.
 
 (** * Help tactic

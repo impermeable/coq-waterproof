@@ -25,7 +25,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
 (* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.selected_databases.

@@ -27,7 +27,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
 
 Load test_auxiliary.
 
@@ -114,6 +116,13 @@ Proof.
     let t := constr:(forall x:nat, x < 0) in
     let result () := assert_goal_is t in
     assert_raises_error result.
+Abort.
+
+(** * Testcases for [assert_type_equal]
+*)
+
+Goal True.
+assert_type_equal constr:(5) constr:(nat).
 Abort.
 
 (*

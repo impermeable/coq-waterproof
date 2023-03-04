@@ -26,9 +26,19 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+From Ltac2 Require Import Int.
+
+Require Import Waterproof.test_auxiliary.
+
+
+Require Import Waterproof.message.
 
 Load goal_to_hint.
+
+Ltac2 store_verbosity := verbosity.
+
+Ltac2 Set verbosity := fun () => if (le (test_verbosity ()) 0) 
+    then -1 else (store_verbosity ()).
 
 (** * Test 1
     Should print a hint for a ∀-goal twice.
@@ -156,3 +166,4 @@ print(of_string "
     ").
 Abort.
 
+Ltac2 Set verbosity := store_verbosity.
