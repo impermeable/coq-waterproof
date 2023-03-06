@@ -33,11 +33,7 @@ Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard.
 
-
-Ltac2 Eval global_database_selection.
-
 Open Scope R_scope.
-
 
 Notation is_bounded_above := bound.
 Notation is_sup := is_lub.
@@ -251,7 +247,7 @@ Proof.
     Obtain m according to (i), so for m : R it holds that (is_lower_bound A m).
     
     Choose M := (-m).
-    By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) (-m)).
+    By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) (M)).
 Qed.
 
 

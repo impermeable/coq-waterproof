@@ -71,7 +71,6 @@ Goal (exists n : nat, n + 1 = n)%nat -> False.
 Proof.
   intro i.
   Obtain n according to (i), so for n : nat it holds that (n + 1 = n)%nat.
-  Check (i).
 Abort.
 
 (** Test 5: tactic also works for destructing sig types *)

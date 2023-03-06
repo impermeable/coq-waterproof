@@ -23,7 +23,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
 
 Require Import Reals.
 Require Import Waterproof.set_search_depth.To_5.
@@ -34,8 +36,6 @@ Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.load_database.All.
 Require Import Waterproof.load_database.DisableWildcard.
-
-Ltac2 Eval global_database_selection.
 
 (* lra only works in the [R_scope] *)
 Local Open Scope R_scope.
@@ -56,9 +56,6 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [By ... it holds that ... : ...] *)
-Ltac2 Eval (print (of_string "
-
-Testcases for [By ... it holds that ... : ...]:" )).
 
 (** * Test 1
     Base case: intoduce a sublemma with a lemma that proves it
@@ -102,10 +99,6 @@ Abort.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [It holds that ... : ...] *)
-Ltac2 Eval (print (of_string "
-
-Testcases for [It holds that ... : ...]:" )).
-
 
 (** * Test 1
     Base case: intoduce a sublemma that can be proven immediately.
@@ -137,9 +130,6 @@ Open Scope nat_scope.
 Inductive even : nat -> Prop :=
     even0 : even 0
   | evenS : forall x:nat, even x -> even (S (S x)).
-
-
-Ltac2 Eval global_database_selection.
 
 Lemma it_holds_example: forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.

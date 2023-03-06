@@ -28,7 +28,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
 
 
 From Waterproof Require Import auxiliary.

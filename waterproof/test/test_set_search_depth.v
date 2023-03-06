@@ -29,18 +29,16 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
 
 Require Import Reals.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.waterprove.waterprove.
 
-Ltac2 Eval print (of_string "Initial search depth is:").
-Ltac2 Eval global_search_depth. 
 Require Import Waterproof.set_search_depth.To_1.
-Ltac2 Eval print (of_string "Current search depth is:").
-Ltac2 Eval global_search_depth. 
 
 Open Scope R_scope.
 
@@ -73,8 +71,6 @@ Abort.
 *)
 
 Require Import Waterproof.set_search_depth.To_2.
-Ltac2 Eval print (of_string "Current search depth is:").
-Ltac2 Eval global_search_depth. 
 
 (** * Test 3
     Same as test 2, but now search depth should be sufficient.

@@ -22,7 +22,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+From Ltac2 Require Import Int.
+
+
+Require Import Waterproof.message.
 Require Import Reals.
 Require Import micromega.Lra.
 
@@ -34,6 +37,10 @@ Require Import Waterproof.load_database.RealsAndIntegers.
 Load we_conclude_that.
 Require Import Waterproof.load_database.DisableWildcard.
 
+Ltac2 store_verbosity := verbosity.
+
+Ltac2 Set verbosity := fun () => if (le (test_verbosity ()) 0) 
+    then -1 else (store_verbosity ()).
 
 (* lra only works in the [R_scope] *)
 Open Scope R_scope.
@@ -44,9 +51,6 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [We conclude that ... ] *)
-Ltac2 Eval (print (of_string "
-
-Testcases for [We conclude that ...]:" )).
 
 (** * Test 1
     Base case: should easily be possible to finish the goal.
@@ -71,7 +75,7 @@ Abort.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
-    Ltac2 Eval (print (of_string "Should raise warning:")).
+    print (of_string "Should raise warning:").
     We conclude that (1+1 = 2).
 Qed.
 
@@ -110,9 +114,6 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [By ... we conclude that ... ] *)
-Ltac2 Eval (print (of_string "
-
-Testcases for [By ... we conclude that ...]:" )).
 
 (** * Test 1
     Base case: should easily be possible to finish the goal,
@@ -156,7 +157,7 @@ Qed.*)
 *)
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
-    Ltac2 Eval (print (of_string "Should raise warning:")).
+    print (of_string "Should raise warning:").
     By zero_lt_one we conclude that (2 = 2).
 Qed.
 
@@ -281,7 +282,4 @@ intro p.
 Fail We conclude that (& x = y = z). (* Expected: unable to find proof (y = z) *)
 Abort.
 
-
-
-
-
+Ltac2 Set verbosity := store_verbosity.

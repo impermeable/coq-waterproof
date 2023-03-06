@@ -29,7 +29,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-From Ltac2 Require Import Message.
+
+Require Import Waterproof.message.
+Require Import Waterproof.test_auxiliary.
 (** Source code:
 
 * Notations.v
@@ -52,31 +54,33 @@ Ltac2 @ external auto : debug -> int option ->
     unit := "ltac2" "tac_auto".
 *)
 
-Ltac2 Notation "fake_auto" dbs(opt(seq("with", hintdb))) 
-    := default_db dbs.
+Ltac2 fake_default_db dbs := match dbs with
+| None => "No database provided"
+| Some dbs =>
+  match dbs with
+  | None => "Empty list provided"
+  | Some l => "List provided"
+  end
+end.
 
+Ltac2 Notation "fake_auto" dbs(opt(seq("with", hintdb))) 
+    := fake_default_db dbs.
+
+Goal True.
 (* To use the default, i.e. [core], 
     pass [Some ([])] to Std.auto
-    
-    Evidence: the following gives:
-    [Some ([])]
 *)
-Ltac2 Eval fake_auto.
+assert_string_equal (fake_auto) "No database provided".
 
 (* To use [with *], 
     i.e. all imported databases that Coq can find, 
     pass [None] to Std.auto
-    
-    Evidence: the following gives:
-    ['a list option = None]
 *)
-Ltac2 Eval fake_auto with *.
+assert_string_equal (fake_auto with *) "Empty list provided".
 
 (* To use [with somedb], 
     pass a list of idents
     (e.g. [Some ((@somedb)::[])]) to Std.auto.
-    
-    Evidence: the following gives:
-    [ident list option = Some ([@nocore])]
 *)
-Ltac2 Eval fake_auto with nocore.
+assert_string_equal (fake_auto with nocore) "List provided".
+Abort.

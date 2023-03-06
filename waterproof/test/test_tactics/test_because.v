@@ -94,7 +94,6 @@ Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro i.
     Fail Because (i) both (n = n) (i) and (n + 1 = n + 1) hold.
     Because (i) both (n = n) and (n + 1 = n + 1) hold.
-    Check i.
 Abort.
 
 (** Test 8 : Tests if the 'Because ... either ... or ...' tactic does not 
@@ -104,5 +103,4 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro i.
     Fail Because (i) either (n = n) (i) or (n + 1 = n + 1) holds.
     Because (i) either (n = n) or (n + 1 = n + 1) holds.
-    Check i.
 Abort.

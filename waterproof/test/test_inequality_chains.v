@@ -24,6 +24,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 (* Tests for (in)equality chains *)
 
+From Ltac2 Require Import Ltac2.
+Require Import Waterproof.auxiliary.
+Require Import Waterproof.test_auxiliary.
+
 Load inequality_chains.
 
 (* Test 0: check if notations work. *)
@@ -57,24 +61,29 @@ Abort.
 
 (** More tests *)
 (* Valid (though incorrect) inputs *)
-Check (& 1 = 2 = 2).
-Check (& 1 = 2 = 3 = 4).
-Check (& 1 = 2 < 3 = 4).
-Check (& 1 = 2 < 3 ≤ 4).
-Check (& 1 = 2 > 3 = 4).
-Check (& 1 ≥ 2 > 3 = 4).
+Goal (& 1 = 2 = 2). Abort.
+Goal (& 1 = 2 = 3 = 4). Abort.
+Goal (& 1 = 2 < 3 = 4). Abort.
+Goal (& 1 = 2 < 3 ≤ 4). Abort.
+Goal (& 1 = 2 > 3 = 4). Abort.
+Goal (& 1 ≥ 2 > 3 = 4). Abort.
 (* Invalid input: combining < and > in one chain *)
-Check (& 1 < 2 = 3 > 4). (* Does type check, but the kernel has not found correct instance for '>' *)
+Goal True.
+Fail pose (Aux.type_of (& 1 < 2 = 3 > 4)).
+epose (Aux.type_of (& 1 < 2 = 3 > 4)). (* Does type check, evars are added ... *)
+Abort.
 Fail Goal (& 1 < 2 = 3 > 4). (* Esoteric error. *)
 (* Check for correctness global, weak global and total stamements. *)
-Eval cbn in (& 1 = 2 = 3 = 4). (* Expected: (1 = 2 /\ 2 = 3) /\ 3 = 4 *)
-(*Eval cbn in (global_statement (& 1 = 2 = 3 = 4)). (* Expected: 1 = 4 , :( *) (* Untestable *)*)
-Eval cbn in (& 1 < 2 = 3 < 4). (* Expected: (1 < 2 /\ 2 = 3) /\ 3 < 4 *)
+Goal True.
+assert_constr_equal (eval cbn in (& 1 = 2 = 3 = 4)) constr:((1 = 2 /\ 2 = 3) /\ 3 = 4).
+(* Eval cbn in (global_statement (& 1 = 2 = 3 = 4)).*) (* Expected: 1 = 4 , :( *) (* Untestable *)
+assert_constr_equal (eval cbn in (& 1 < 2 = 3 < 4)) constr:((1 < 2 /\ 2 = 3) /\ 3 < 4).
 (*Eval cbn in (global_statement (1 &< 2 &< 3 &= 4)). (* Expected: 1 < 4 *) (* Untestable *)*)
 (*Eval cbn in (weak_global_statement (1 &< 2 &< 3 &= 4)). (* Expected: 1 <= 4*) (* Untestable *)*)
-Eval cbn in (& 1 > 2 > 3 = 4). (* Expected: (1 > 2 /\ 2 > 3) /\ 3 = 4 *)
+assert_constr_equal (eval cbn in (& 1 > 2 > 3 = 4)) constr:((1 > 2 /\ 2 > 3) /\ 3 = 4). (* Expected: (1 > 2 /\ 2 > 3) /\ 3 = 4 *)
 (*Eval cbn in (global_statement (1 &> 2 &> 3 &= 4)). (* Expected: 1 > 4 *) (* Untestable *)*)
 (*Eval cbn in (weak_global_statement (1 &> 2 &> 3 &= 4)). (* Expected: 1 >= 4 *) (* Untestable *)*)
+Abort.
 
 (* Usage in hypotheses *)
 Goal (& 1 < 2 < 3) -> (& 4 = 100 = 100) -> (1 < 3).

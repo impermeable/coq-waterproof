@@ -24,7 +24,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-From Ltac2 Require Import Message.
+
+
+Require Import Waterproof.message.
 Require Import Reals.
 Require Import Sets.Ensembles.
 Require Import Sets.Classical_sets.

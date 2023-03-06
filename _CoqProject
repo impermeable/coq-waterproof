@@ -4,6 +4,7 @@
 # Files should be compiled in the correct order.
 
 # These do not depend on other files of the Waterproof-library.
+waterproof/message.v
 waterproof/auxiliary.v
 waterproof/string_auxiliary.v
 waterproof/definitions/set_definitions.v
@@ -86,6 +87,7 @@ waterproof/AllConstructiveTactics.v
 
 # Testcases. Not needed by the end-user,
 # but used to enforce they all pass for compilation.
+waterproof/test/test_message.v
 waterproof/test/reverse_engineer/auto_hintdb_arg.v
 waterproof/test/string_auxiliary_test.v
 waterproof/test/test_auxiliary_test.v

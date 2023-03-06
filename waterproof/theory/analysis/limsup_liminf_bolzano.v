@@ -185,6 +185,7 @@ Proof.
     We need to show that (is_index_seq m ∧ Un_cv (fun k ↦ a(m(k)), L)).
     We show both statements.
     - We need to show that (is_index_seq m).
+      It suffices to show that (is_index_seq n).
       By (v) we conclude that (is_index_seq n).
     - We need to show that (Un_cv (fun k ↦ a(n(k)), L)).
       (** TODO: an equivalent to "apply with" would be nice here *)
@@ -224,6 +225,7 @@ Proof.
       (is_index_seq n0 ∧ Un_cv (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
     Choose n := n0.
     Choose l := (proj1_sig (_,_,lim_sup_bdd a (i) (iii))).
+    It suffices to show that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
     We conclude that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
 Qed.
 

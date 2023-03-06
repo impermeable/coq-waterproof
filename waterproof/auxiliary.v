@@ -26,6 +26,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
+Require Import Waterproof.message.
+
 Module Aux.
 
 (* Defensive programming error *)
@@ -116,10 +118,10 @@ Local Ltac2 rec print_all_hyps_rec (x : (ident * constr option * constr) list) :
     match x with
     | head::tail =>
         match head with
-        | (name, dunno, type) => Message.print
+        | (name, dunno, type) => print
             (Message.concat 
                 (Message.concat (Message.of_ident name) 
-                                (Message.of_string " : "))
+                                (of_string " : "))
                 (Message.of_constr type)
             );
             print_all_hyps_rec tail
@@ -146,8 +148,8 @@ Ltac2 print_all_hyps () := print_all_hyps_rec (Control.hyps ()).
 *)
 Ltac2 print_bool (b: bool) :=
     match b with
-    | true => Message.print (Message.of_string "true")
-    | false => Message.print (Message.of_string "false")
+    | true => print (of_string "true")
+    | false => print (of_string "false")
     end.
 
 (** * ltac2_assert
