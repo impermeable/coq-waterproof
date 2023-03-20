@@ -35,6 +35,9 @@ Load inequality_chains.
 Goal (& 3 < 4 <= 5 ≤ 7).
 Abort.
 
+Goal forall A : Type, forall a : A, & a = a = a = a.
+Abort.
+
 (* Test 1: sample proof *)
 Goal (3 < 5) /\ (5 = 2 + 3) <-> (& 3 < 5 = 2 + 3).
 split.
@@ -97,3 +100,39 @@ Proof.
   repeat split; cbn.
 Abort.
 
+(** Test whether one can provide a custom relation for an EqualInterpretation.
+*)
+Local Parameter X : Type.
+Require Import Relations.
+Locate relation.
+Local Parameter rel : relation X.
+
+#[local] Instance equal_setoid_interpretation : EqualInterpretation X :=
+  { eq_rel_to_pred my_rel x y := rel x y
+  }.
+
+Local Parameter y : X.
+
+Goal (& y = y = y).
+change (rel y y /\ rel y y).
+Abort.
+
+Goal forall x : X, (& x = x = x).
+intro x.
+(* Test that the correct interpretation has been chosen *)
+change (rel x x /\ rel x x).
+Abort.
+
+(** Test whether coercions from the naturals work for equalities over the reals numbers.
+*)
+Local Parameter rel_R : relation R.
+
+#[local] Instance equal_setoid_interpretation_R : EqualInterpretation R :=
+  { eq_rel_to_pred my_rel x y := rel_R x y
+  }.
+
+Goal forall x : R, (& 0%nat = x = 3%nat).
+intro x.
+(* Test that the correct interpretation has been chosen *)
+change (rel_R 0%R x /\ rel_R x (1 + 1 + 1)%R).
+Abort.
