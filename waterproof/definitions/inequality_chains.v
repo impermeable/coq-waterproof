@@ -188,15 +188,30 @@ Notation "≥ y" :=  (chain_ge, y) (at level 69, y at next level) : chain_scope.
 Notation "& x ly lz .. lw" := (total_statement (chain_link .. (chain_link (chain_base x ly%chain) lz%chain) .. lw%chain))
   (at level 70, x at next level, ly at next level, lw at next level).
 
+(* Functions to turn the abstract [EqualRel] relation into their concrete interpretations,
+   which could as a use case also be a setoid inpterpretation.
+   We use type classes to be able to use the same name for these functions across types that implement them.
+  *)
+Class EqualInterpretation (T : Type) :=
+  { eq_rel_to_pred : EqualRel -> T -> T -> Prop
+  }.
+
+(* Particular instance of the ordinary Leibniz equality as an EqualInterpretation.
+*)
+#[export] Instance equal_interpretation (T : Type) : EqualInterpretation T :=
+  { eq_rel_to_pred rel x y := x = y
+  }.
+
 (** Global & total statement - EqualChain *)
-Definition ec_global_statement (T : Type) (c : EqualChain T) : Prop :=
-  ec_head c = ec_tail c.
-Fixpoint ec_total_statement (T : Type) (c : EqualChain T) : Prop :=
+Definition ec_global_statement (T : Type) `{! EqualInterpretation T} (c : EqualChain T) : Prop :=
+  eq_rel_to_pred chain_eq (ec_head c) (ec_tail c).
+Fixpoint ec_total_statement (T : Type) `{! EqualInterpretation T} (c : EqualChain T) : Prop :=
 match c with
-| base_ec _ x (_,y)     => (x = y)
-| link_ec_eq _ ec (_,z) => (ec_total_statement _ ec) /\ (ec_tail ec = z)
+| base_ec _ x (_,y)     => eq_rel_to_pred chain_eq x y
+| link_ec_eq _ ec (_,z) => (ec_total_statement _ ec) /\ (eq_rel_to_pred chain_eq (ec_tail ec) z)
 end.
-#[export] Instance ec_interpretable (T : Type) : InterpretableChain T EqualChain :=
+
+#[export] Instance ec_interpretable (T : Type) `{! EqualInterpretation T}: InterpretableChain T EqualChain :=
   { global_statement := ec_global_statement T
   ; weak_global_statement := ec_global_statement T
   ; total_statement := ec_total_statement T
