@@ -25,6 +25,9 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 
 Require Import Waterproof.AllTactics.
+Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.load_database.Subsets.
+Require Import Waterproof.load_database.ClassicalLogic.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
