@@ -43,12 +43,11 @@ Require Import Waterproof.selected_databases.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard.
 
-Local Open Scope R_scope.
-
 (* Note: [core] is always *implicitly* included. *)
 
-Require Import load_database.All.
-
+Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.load_database.All.
+Local Open Scope R_scope.
 (*
 --------------------------------------------------------------------------------
 *)(** * Testcases for empty selection
@@ -78,7 +77,7 @@ Abort.
 *)
 
 (* loding the specified database*)
-Require Import load_database.Multiplication.
+Require Import Waterproof.load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 2a
@@ -106,7 +105,7 @@ Abort.
 Ltac2 Set global_database_selection as old_selection := [].
 
 (* loding databases other than the specified one*)
-Require Import load_database.PlusMinus.
+Require Import Waterproof.load_database.PlusMinus.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 2c
@@ -130,7 +129,7 @@ Ltac2 Set global_database_selection as old_selection := [].
 *)
 
 (* loding the specified database*)
-Require Import load_database.PlusMinus.
+Require Import Waterproof.load_database.PlusMinus.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 3a
@@ -157,7 +156,7 @@ Abort.
 Ltac2 Set global_database_selection as old_selection := [].
 
 (* loding databases other than the specified one*)
-Require Import load_database.Multiplication.
+Require Import Waterproof.load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 3c
@@ -179,7 +178,7 @@ Ltac2 Set global_database_selection as old_selection := [].
 *)
 
 (* loding the specified database*)
-Require Import load_database.ZeroOne.
+Require Import Waterproof.load_database.ZeroOne.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 4a
@@ -207,7 +206,7 @@ Abort.
 Ltac2 Set global_database_selection as old_selection := [].
 
 (* loding databases other than the specified one*)
-Require Import load_database.Multiplication.
+Require Import Waterproof.load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 4c
@@ -249,7 +248,7 @@ Qed.
 
 (*Empty the database*)
 Ltac2 Set global_database_selection as old_selection :=[].
-Require Import load_database.All.
+Require Import Waterproof.load_database.All.
 
 (** * Test 14
     Similarly, this can be solved with the WaterproofDBGeneral, 
@@ -414,7 +413,3 @@ Goal forall x : R, ~ (x > x).
 intro x.
 solve [auto with reals].
 Qed.
-
-
-
-

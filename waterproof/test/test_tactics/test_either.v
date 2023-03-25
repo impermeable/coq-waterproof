@@ -30,6 +30,7 @@ From Ltac2 Require Import Ltac2.
 Load either.
 Load RealNumbers.
 Require Import Reals.
+Require Import Waterproof.populate_database.other_databases.
 Local Open Scope R_scope.
 
 (** Test 0: This tests to see if x <= 0 or 0 < x*)

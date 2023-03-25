@@ -34,7 +34,7 @@ From Ltac2 Require Import Option.
 
 Require Import Waterproof.message.
 Require Import Waterproof.auxiliary.
-Require Import Waterproof.populate_database.other_databases.
+(* Require Import Waterproof.populate_database.other_databases.*)
 
 Ltac2 Type WaterproofDatabase := [
     | WaterproofDBAlgebra
@@ -80,8 +80,8 @@ Ltac2 Type WaterproofDatabase := [
 Ltac2 mutable global_database_selection := ([]:WaterproofDatabase list).
 Ltac2 mutable global_negation_database_selection := ([]:WaterproofDatabase list).
 Ltac2 mutable global_decidability_database_selection := ([]:WaterproofDatabase list).
-(** TODO: the core needs to go somewhere else *)
-Ltac2 mutable global_first_attempt_database_selection := ((WaterproofDBCore)::[]:WaterproofDatabase list).
+(** TODO: Should the core database be explicitly added? *)
+Ltac2 mutable global_first_attempt_database_selection := ([]:WaterproofDatabase list).
 
 (** * global_search_depth
     Global variable that specifies the maximum search depth
