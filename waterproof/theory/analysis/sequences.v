@@ -26,6 +26,8 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
+Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.populate_database.other_databases.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
@@ -100,7 +102,7 @@ Proof.
         We conclude that (1 > 0).
       }
       It holds that (x <= INR 0).
-      It follows that (n > x).
+      We conclude that (n > x).
     - Case (0 < x).
       By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
       It holds that (IZR( up x ) > x).

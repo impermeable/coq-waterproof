@@ -1,7 +1,10 @@
 Require Import Reals.
 Require Import Classical_Prop.
+Require Import Waterproof.theory.logic_and_set_theory.subsets.
+Require Import Waterproof.theory.analysis.reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
+Require Import Waterproof.load_database.Subsets.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
 

@@ -31,3 +31,6 @@ Require Import Waterproof.selected_databases.
 
 Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBClassicalLogic)::old_selection.
+
+Ltac2 Set global_first_attempt_database_selection as old_selection :=
+    (WaterproofDBClassicalLogic)::old_selection.

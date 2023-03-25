@@ -1,4 +1,6 @@
 Require Import Reals.
+Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.theory.analysis.reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.load_database.RealsAndIntegers.

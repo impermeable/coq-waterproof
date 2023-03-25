@@ -33,6 +33,7 @@ Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.set_search_depth.To_5.
+Require Import Waterproof.theory.analysis.reals.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Load we_conclude_that.
 Require Import Waterproof.load_database.DisableWildcard.

@@ -34,7 +34,8 @@ Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
-Require Import Waterproof.load_database.All.
+Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.load_database.DisableWildcard.
 
 (* lra only works in the [R_scope] *)

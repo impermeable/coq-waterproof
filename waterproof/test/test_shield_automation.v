@@ -5,8 +5,9 @@ Require Import Rfunctions.
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load_database.All.
-
+Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.load_database.RealsAndIntegers.
 
 Local Open Scope R_scope.
 
@@ -112,6 +113,10 @@ Abort.
 
 
 (** Testing de Morgan laws. *)
+
+Require Import Waterproof.theory.logic_and_set_theory.classical_logic.
+Require Import Waterproof.theory.logic_and_set_theory.constructive_logic.
+Require Import Waterproof.load_database.ClassicalLogic.
 
 (** Level 1 *)
 Local Parameter P1 : R -> Prop.

@@ -24,7 +24,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 (* Tests for (in)equality chains and the reals database *)
 
-Load databases.
+Load other_databases.
 From Ltac2 Require Import Ltac2.
 Require Import simplify_chains.
 Open Scope nat_scope.
