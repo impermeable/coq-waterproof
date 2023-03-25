@@ -81,7 +81,7 @@ Ltac2 mutable global_database_selection := ([]:WaterproofDatabase list).
 Ltac2 mutable global_negation_database_selection := ([]:WaterproofDatabase list).
 Ltac2 mutable global_decidability_database_selection := ([]:WaterproofDatabase list).
 (** TODO: the core needs to go somewhere else *)
-Ltac2 mutable global_first_attempt_database_selection := (WaterproofDBCore::[]:WaterproofDatabase list).
+Ltac2 mutable global_first_attempt_database_selection := ((WaterproofDBCore)::(WaterproofDBClassicalLogic)::(WaterproofDBSubsets)::[]:WaterproofDatabase list).
 
 (** * global_search_depth
     Global variable that specifies the maximum search depth

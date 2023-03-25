@@ -79,7 +79,7 @@ try making a smaller step."))
 *)
 
 Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
-    let first_attempt () := run_automation prop lemmas 3 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
+    let first_attempt () := run_automation prop lemmas 3 (Some (load_databases global_first_attempt_database_selection)) false
     in
     let second_attempt () := 
         match shield with

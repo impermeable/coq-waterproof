@@ -1,6 +1,11 @@
 Require Import Reals.
 Require Import Classical_Prop.
 Require Import Waterproof.theory.logic_and_set_theory.subsets.
+Require Import Waterproof.theory.logic_and_set_theory.classical_logic.
+Require Import Waterproof.theory.logic_and_set_theory.constructive_logic.
+Require Import Waterproof.load_database.ClassicalLogic.
+Require Import Waterproof.load_database.Subsets.
+Require Import Waterproof.populate_database.other_databases.
 Require Import Waterproof.theory.analysis.reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
@@ -85,6 +90,9 @@ Global Hint Resolve one_in_complement_interval_closed_zero_open_one : reals.
 
 Global Hint Resolve Rabs_def1 : reals.
 Global Hint Resolve not_and_or : classical_logic.
+
+Require Import Waterproof.selected_databases.
+Ltac2 Eval global_first_attempt_database_selection.
 
 Lemma not_in_compl_implies_in (A : subset R) (x : R) : (¬ x : ℝ\A) -> (x : A).
 Proof. Assume that (¬ x : ℝ\A). It holds that (¬ ¬ x : A). We conclude that (x : A). Qed.
