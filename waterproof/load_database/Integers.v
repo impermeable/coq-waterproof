@@ -30,6 +30,6 @@ Require Import Waterproof.selected_databases.
 
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBIntegers)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBIntegers)::(old_selection ())::[]).
 Ltac2 Set global_negation_database_selection as old_selection :=
-    (WaterproofNegationDBIntegers)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofNegationDBIntegers)::(old_selection ())::[]).

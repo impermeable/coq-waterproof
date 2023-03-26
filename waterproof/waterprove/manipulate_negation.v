@@ -249,7 +249,7 @@ Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
                   end
                   | (* Try context specific manipulation, e.g. negating order relations *)
                     let g := Control.goal () in
-                    let hint_databases := Some (load_databases global_negation_database_selection) in
+                    let hint_databases := Some (global_negation_database_selection ()) in
                     run_automation g [] 1 hint_databases false
                   ] ) ]
       in
@@ -327,7 +327,7 @@ Local Ltac2 manipulate_negation_in (h_id : ident) :=
                 end
               | (* Try context specific manipulation, e.g. negating order relations *)
                 let g := Control.goal () in
-                let hint_databases := Some (load_databases global_negation_database_selection) in
+                let hint_databases := Some (global_negation_database_selection ()) in
                 run_automation g [] global_search_depth hint_databases false
               ]
       in

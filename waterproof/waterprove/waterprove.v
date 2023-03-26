@@ -99,7 +99,7 @@ Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (sh
             let databases :=
                 match global_use_all_databases with
                 | true => None
-                | false => Some (load_databases global_database_selection) 
+                | false => Some (global_database_selection ())
                 end
             in
             run_automation prop lemmas global_search_depth 

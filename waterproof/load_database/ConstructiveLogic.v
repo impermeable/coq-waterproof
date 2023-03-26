@@ -30,4 +30,4 @@ Require Import Waterproof.selected_databases.
 
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBConstructiveLogic)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBConstructiveLogic)::(old_selection ())::[]).

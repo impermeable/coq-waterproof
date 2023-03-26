@@ -78,8 +78,8 @@ Ltac2 Type WaterproofDatabase := [
     with [ident] literals. 
     Hence the indirection via [WaterproofDatabase] labels.
 *)
-Ltac2 mutable global_database_selection := ([]:WaterproofDatabase list).
-Ltac2 mutable global_negation_database_selection := ([]:WaterproofDatabase list).
+Ltac2 mutable global_database_selection := fun () => ([]:ident list).
+Ltac2 mutable global_negation_database_selection := fun () => ([]:ident list).
 Ltac2 mutable global_decidability_database_selection := fun () => ([]:ident list).
 (** TODO: Should the core database be explicitly added? *)
 Ltac2 mutable global_first_attempt_database_selection := fun () => ([]:ident list).

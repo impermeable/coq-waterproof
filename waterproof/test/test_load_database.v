@@ -65,7 +65,7 @@ Lemma load_db_test_1a: True.
     waterprove (Control.goal ()) [] false.
 Qed.
 
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (** * Test 1b
     Lemma that should be NOT proveable with [nocore].
@@ -106,7 +106,7 @@ Lemma load_db_test_2b: forall x y:R, x + y = y + x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
 Require Import Waterproof.load_database.PlusMinus.
@@ -124,7 +124,7 @@ Abort.
 
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 
 (*
@@ -157,7 +157,7 @@ Lemma load_db_test_3b: forall x y:R, x*y = y *x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
 Require Import Waterproof.load_database.Multiplication.
@@ -173,7 +173,7 @@ Lemma load_db_test_3c: forall x y:R, x + x + y = x + y + x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 
 (*
@@ -207,7 +207,7 @@ Lemma load_db_test_4b: forall x y:R, x*y = y *x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
 Require Import Waterproof.load_database.Multiplication.
@@ -223,11 +223,11 @@ Lemma load_db_test_4c: forall x y:R, x*1 + 1 + 0 = x +1.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBMultiplication)::(old_selection ())::[]).
 
 (** * Test 12
     Same as test 2, but now the WRONG database is loaded.
@@ -238,9 +238,9 @@ Lemma load_db_test_12: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Abort.
 
 (* Empty the database *)
-Ltac2 Set global_database_selection as old_selection :=[].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBReals)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBReals)::(old_selection ())::[]).
 
 (** * Test 13
     Same as test 2, but now the REQUIRED database is loaded.
@@ -251,7 +251,7 @@ Lemma load_db_test_13: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Qed.
 
 (*Empty the database*)
-Ltac2 Set global_database_selection as old_selection :=[].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 Require Import Waterproof.load_database.All.
 
@@ -274,7 +274,7 @@ Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Qed.
 
 (*Empty the database*)
-Ltac2 Set global_database_selection as old_selection :=[].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 
 (** * Test 15
@@ -287,7 +287,7 @@ Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Qed.
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBMultiplication)::(old_selection ())::[]).
 Ltac2 Set global_search_depth := 4.
 (** * Test 16
     This goal requires can not be solved by only one database.
@@ -296,15 +296,15 @@ Goal forall x y, x * y = y * x + 0.
 Proof.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-    Ltac2 Set global_database_selection as old_selection :=[].
+    Ltac2 Set global_database_selection as old_selection := fun () => [].
     Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBZeroOne)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBZeroOne)::(old_selection ())::[]).
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
 Abort.
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBMultiplication)::(old_selection ())::[]).
 Ltac2 Set global_search_depth := 1.
 
 (** * Test 17
@@ -329,11 +329,11 @@ Proof.
     waterprove (Control.goal ()) [] false.
 Qed.
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBPlusMinus)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBPlusMinus)::(old_selection ())::[]).
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBSquareRoot)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBSquareRoot)::(old_selection ())::[]).
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBAbsoluteValue)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBAbsoluteValue)::(old_selection ())::[]).
 
 (** * Test 19
     This test should not be solved, since it has all 
@@ -344,9 +344,9 @@ Goal forall a:R, ln(exp a) = a.
     assert_raises_error result.
 Abort.
 
-Ltac2 Set global_database_selection as old_selection :=[].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBExponential)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBExponential)::(old_selection ())::[]).
 (** * Test 20
     This test should work just fine now.
 *)
@@ -356,15 +356,22 @@ Goal forall a:R, ln(exp a) = a.
 Abort.
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBZeroOne)::old_selection.
+    fun () => combine_ident_lists (
+        (load_db_of_label WaterproofDBZeroOne)::
+        (load_db_of_label WaterproofDBMultiplication)::
+        (load_db_of_label WaterproofDBPlusMinus)::
+        (load_db_of_label WaterproofDBSquareRoot)::
+        (load_db_of_label WaterproofDBExponential)::
+        (old_selection ())::[]
+        ).
+(*Ltac2 Set global_database_selection as old_selection :=
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBMultiplication)::(old_selection ())::[]).
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBPlusMinus)::(old_selection ())::[]).
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBPlusMinus)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBSquareRoot)::(old_selection ())::[]).
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBSquareRoot)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBExponential)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBExponential)::(old_selection ())::[]).*)
 
 (** * Test 21
     This test should not be solved, since it has all 
@@ -375,9 +382,9 @@ Goal forall a:R, Rabs(a) = Rabs(-a).
     assert_raises_error result.
 Abort.
 
-Ltac2 Set global_database_selection as old_selection :=[].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBAbsoluteValue)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBAbsoluteValue)::(old_selection ())::[]).
 
 (** * Test 22
     This test should work just fine now.
@@ -387,7 +394,7 @@ Goal forall a:R, Rabs(a) = Rabs(-a).
     waterprove (Control.goal ()) [] false.
 Abort.
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBReals)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDBReals)::(old_selection ())::[]).
 
 (** * Test 23
     Another test that uses two databases, for good measure.
