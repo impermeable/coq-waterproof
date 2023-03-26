@@ -72,17 +72,8 @@ Global Hint Extern 3 (pred R _ _) => simpl; lra : reals.
 (* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
 Global Hint Extern 0 (total_statement _) => repeat split; cbn : core.
 
-Global Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : waterproof_algebra.
-Global Hint Resolve f_equal : waterproof_algebra.
-Global Hint Resolve f_equal2 : waterproof_algebra.
-Global Hint Extern 1 ( _ = _ ) => congruence : waterproof_algebra.
 
-Global Hint Extern 3 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
-Global Hint Extern 3 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( le _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+
 
 
 Require Import Reals.

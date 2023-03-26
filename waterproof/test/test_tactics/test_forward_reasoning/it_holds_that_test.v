@@ -33,7 +33,7 @@ Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.load_database.RealsAndIntegers.

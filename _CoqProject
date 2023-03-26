@@ -139,6 +139,8 @@ waterproof/theory/analysis/continuity_domain_R.v
 waterproof/theory/analysis/continuity_domain_nat.v
 
 # Populate databases
+waterproof/populate_database/waterproof_core.v
+waterproof/populate_database/waterproof_integers.v
 waterproof/populate_database/waterproof_reals.v
 waterproof/populate_database/waterproof_classical_logic.v
 waterproof/populate_database/waterproof_constructive_logic.v

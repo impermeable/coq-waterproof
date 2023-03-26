@@ -26,6 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Load other_databases.
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.populate_database.waterproof_integers.
 Require Import simplify_chains.
 Open Scope nat_scope.
 (* Test 0: check if notations work. *)
