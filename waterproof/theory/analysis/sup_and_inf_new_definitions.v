@@ -37,7 +37,7 @@ Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard.
 
 (* TODO: this shouldn't really be here ... *)
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 
 Open Scope R_scope.
 

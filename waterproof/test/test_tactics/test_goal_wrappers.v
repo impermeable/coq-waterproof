@@ -38,7 +38,7 @@ Load RealNumbers.
 Load unfold.
 Require Import Reals.
 Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 
 Local Open Scope R_scope.
 Goal R -> False.

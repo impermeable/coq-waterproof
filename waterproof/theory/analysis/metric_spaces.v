@@ -4,7 +4,7 @@ Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
 Require Import Waterproof.theory.analysis.reals. (* Req_true is in here *)
 Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 Require Import Waterproof.load_database.RealNumbers.
 Require Import micromega.Lra.
 

@@ -28,7 +28,7 @@ Require Import ClassicalChoice.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.

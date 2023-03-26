@@ -26,7 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Load manipulate_negation.
 Require Import Reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 
 (** Test 0: large example from real analysis.*)
 Open Scope R_scope.

@@ -36,7 +36,7 @@ Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.populate_database.waterproof_core.
 Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Load we_conclude_that.
 Require Import Waterproof.load_database.DisableWildcard.

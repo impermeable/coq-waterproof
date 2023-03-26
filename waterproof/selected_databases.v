@@ -34,7 +34,7 @@ From Ltac2 Require Import Option.
 
 Require Import Waterproof.message.
 Require Import Waterproof.auxiliary.
-(* Require Import Waterproof.populate_database.other_databases.*)
+(* Require Import Waterproof.populate_database.all_databases.*)
 
 Ltac2 Type WaterproofDatabase := [
     | WaterproofDBAlgebra

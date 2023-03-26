@@ -31,7 +31,7 @@ Load either.
 Load RealNumbers.
 Require Import Reals.
 Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 Local Open Scope R_scope.
 
 (** Test 0: This tests to see if x <= 0 or 0 < x*)

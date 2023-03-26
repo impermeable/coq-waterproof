@@ -35,7 +35,7 @@ Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard.
 
 (* TODO: this shouldn't really be here ... *)
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 
 Global Hint Resolve Rabs_Rabsolu : reals.
 (** ## Creating a subsequence of elements satisfying a certain property

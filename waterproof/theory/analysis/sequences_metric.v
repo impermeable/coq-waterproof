@@ -38,7 +38,7 @@ Ltac2 Notation "Expand" "the" "definition" "of" "converges" "to" cl(opt(seq("in"
 
 (* Index shift*)
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Lemma relation_shift {X : Metric_Space} (a : nat -> Base X) (k : nat) (n : nat) (n_ge_k : (n ≥ k)%nat) : 
   a ((n - k) + k)%nat = a n.

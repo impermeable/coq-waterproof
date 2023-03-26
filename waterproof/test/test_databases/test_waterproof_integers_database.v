@@ -24,7 +24,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 (* Tests for (in)equality chains and the reals database *)
 
-Load other_databases.
+Load all_databases.
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.definitions.inequality_chains.

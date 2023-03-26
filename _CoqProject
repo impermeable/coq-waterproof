@@ -161,7 +161,7 @@ waterproof/populate_database/waterproof_eq_minus.v
 waterproof/populate_database/waterproof_eq_abs.v
 waterproof/populate_database/waterproof_eq_sqr.v
 waterproof/populate_database/waterproof_eq_exp.v
-waterproof/populate_database/other_databases.v
+waterproof/populate_database/all_databases.v
 
 # Testcases for theory files and databases
 waterproof/test/test_load_database.v

@@ -1,5 +1,5 @@
 Require Import Reals.
-Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.populate_database.all_databases.
 Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.AllTactics.
