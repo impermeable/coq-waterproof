@@ -18,7 +18,6 @@ waterproof/waterprove/simplify_subsets.v
 waterproof/tactics/simplify_chains.v
 
 # These depend multiple other file of the Waterproof-library.
-waterproof/populate_database/other_databases.v
 waterproof/selected_databases.v
 waterproof/waterprove/automation_subroutine.v
 waterproof/waterprove/manipulate_negation.v
@@ -138,6 +137,12 @@ waterproof/theory/analysis/sequential_accumulation_points.v
 waterproof/theory/analysis/limsup_liminf_bolzano.v
 waterproof/theory/analysis/continuity_domain_R.v
 waterproof/theory/analysis/continuity_domain_nat.v
+
+# Populate databases
+waterproof/populate_database/waterproof_reals.v
+waterproof/populate_database/waterproof_classical_logic.v
+waterproof/populate_database/waterproof_constructive_logic.v
+waterproof/populate_database/other_databases.v
 
 # Testcases for theory files and databases
 waterproof/test/test_load_database.v

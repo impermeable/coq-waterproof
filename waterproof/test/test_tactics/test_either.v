@@ -30,7 +30,7 @@ From Ltac2 Require Import Ltac2.
 Load either.
 Load RealNumbers.
 Require Import Reals.
-Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.populate_database.other_databases.
 Local Open Scope R_scope.
 

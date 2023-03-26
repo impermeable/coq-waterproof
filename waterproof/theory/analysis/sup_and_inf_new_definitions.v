@@ -25,7 +25,7 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 
 Require Import Waterproof.selected_databases.
-Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.load_database.ClassicalLogic.
 Require Import Waterproof.load_database.RealsAndIntegers.

@@ -7,7 +7,7 @@ Require Import Waterproof.theory.logic_and_set_theory.constructive_logic.
 Require Import Waterproof.load_database.ClassicalLogic.
 Require Import Waterproof.load_database.Subsets.
 Require Import Waterproof.populate_database.other_databases.
-Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.load_database.Subsets.

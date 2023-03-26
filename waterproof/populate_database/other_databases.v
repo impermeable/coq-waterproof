@@ -61,22 +61,6 @@ Global Hint Extern 3 => intuition (auto 2 with core) : intuition.
 
 Global Hint Extern 3 => firstorder (auto 2 with core) : firstorder.
 
-(** ** Logic database *) 
-
-(** ## De Morgan laws for quantifiers according to classical logic *)
-Require Import Classical_Pred_Type.
-
-Global Hint Resolve not_ex_all_not : constructive_logic.
-Global Hint Resolve ex_not_not_all : constructive_logic.
-Global Hint Resolve all_not_not_ex : constructive_logic.
-
-Global Hint Resolve not_ex_all_not : classical_logic.
-Global Hint Resolve ex_not_not_all : classical_logic.
-Global Hint Resolve all_not_not_ex : classical_logic.
-Global Hint Resolve not_all_not_ex : classical_logic.
-Global Hint Resolve not_all_ex_not : classical_logic.
-(* not_ex_not_all cannot be used as a hint. *)
-(* Global Hint Resolve not_ex_not_all : classical_logic. *)
 
 Open Scope R_scope.
 

@@ -3,7 +3,7 @@ Require Import Waterproof.tactics.unfold.
 
 Require Import Waterproof.notations.notations.
 Require Import Reals.
-Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.populate_database.waterproof_reals.
 Open Scope R_scope.
 
 (** * Sequences in metric spaces *)

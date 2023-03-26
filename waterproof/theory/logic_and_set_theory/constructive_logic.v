@@ -24,9 +24,4 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-(** TODO: fix this import. *)
-Require Import Classical_Pred_Type.
-
-Global Hint Resolve not_ex_all_not : constructive_logic.
-Global Hint Resolve ex_not_not_all : constructive_logic.
-Global Hint Resolve all_not_not_ex : constructive_logic.
+(** Empty file for now ... *)

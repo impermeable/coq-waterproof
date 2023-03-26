@@ -35,7 +35,7 @@ Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.populate_database.other_databases.
 Require Import Waterproof.selected_databases.
-Require Import Waterproof.theory.analysis.reals.
+Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.load_database.DisableWildcard.
 
