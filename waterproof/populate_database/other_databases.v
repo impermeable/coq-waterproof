@@ -85,89 +85,13 @@ Global Hint Extern 3 => ltac2:(simpl_member_subset ()); lra : reals. (*TODO: do 
 (* Global Hint Extern 3 => ltac2:(simpl_member_subset ()); lia : waterproof_integers. (* not yet needed? *) *)
 Global Hint Extern 3 (pred R _ _) => simpl; lra : reals.
 
-Open Scope subset_scope.
-Lemma left_in_closed_open {a b : R} : (a < b) -> (a : [a,b)).
-Proof.
-  intro a_lt_b.
-  split.
-  - apply Rle_refl.
-  - exact a_lt_b.
-Qed.
-Lemma right_in_open_closed {a b : R} : (a < b) -> (b : (a,b]).
-Proof.
-  intro a_lt_b.
-  split.
-  - exact a_lt_b.
-  - apply Rle_refl.
-Qed.
-Global Hint Resolve left_in_closed_open left_in_closed_open : subsets.
-Close Scope subset_scope.
-
-
-(** *** The reals database *)
-Lemma Req_true : forall x y : R, x = y -> Reqb x y = true.
-Proof.
-    intros. 
-    destruct (Reqb_eq x y). 
-    apply (H1 H).
-Qed.
-
-Lemma true_Req : forall x y : R, Reqb x y = true -> x = y.
-Proof.
-    intros.
-    destruct (Reqb_eq x y). 
-    apply (H0 H).
-Qed.
-
-Lemma Req_false : forall x y : R, x <> y -> Reqb x y = false.
-Proof.
-    intros. 
-    unfold Reqb. 
-    destruct Req_dec. 
-    contradiction. 
-    trivial.
-Qed.
-
-Lemma false_Req : forall x y : R, Reqb x y = false -> x <> y.
-Proof.
-    intros. 
-    destruct (Req_dec x y). 
-    rewrite (Req_true x y e) in H. 
-    assert (H1 : true <> false). 
-    auto with *. 
-    contradiction.
-    apply n.
-Qed.
-
 (* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
 Global Hint Extern 0 (total_statement _) => repeat split; cbn : core.
 
-Global Hint Resolve eq_sym : reals.
-Global Hint Resolve false_Req : reals.
-Global Hint Resolve true_Req : reals.
-
-(** TODO: find a different solution for the simplification of inequality chains? *)
-Global Hint Extern 3 ( @eq R _ _ ) => ltac2:(simpl_ineq_chains ()); field : reals.
-
-Global Hint Extern 3 ( Rle _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 ( Rge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 ( Rlt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 ( Rgt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-
-Global Hint Extern 3 (~ (Rle _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (Rlt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
-Global Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : reals.
 Global Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : waterproof_algebra.
 Global Hint Resolve f_equal : waterproof_algebra.
 Global Hint Resolve f_equal2 : waterproof_algebra.
 Global Hint Extern 1 ( _ = _ ) => congruence : waterproof_algebra.
-
-Global Hint Extern 3 ( Rle _ _ ) => cbn; nra : reals.
-Global Hint Extern 3 ( Rge _ _ ) => cbn; nra : reals.
-Global Hint Extern 3 ( Rlt _ _ ) => cbn; nra : reals.
-Global Hint Extern 3 ( Rgt _ _ ) => cbn; nra : reals.
 
 Global Hint Extern 3 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
 Global Hint Extern 3 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
@@ -176,115 +100,6 @@ Global Hint Extern 3 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wate
 Global Hint Extern 3 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
 Global Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
 
-Global Hint Resolve Rmin_l : reals.
-Global Hint Resolve Rmin_r : reals.
-Global Hint Resolve Rmax_l : reals.
-Global Hint Resolve Rmax_r : reals.
-Global Hint Resolve Rle_max_compat_l : reals.
-Global Hint Resolve Rle_max_compat_r : reals.
-Global Hint Resolve Rmax_lub : reals.
-Global Hint Resolve Rmax_lub_lt : reals.
-Global Hint Resolve Rmax_left : reals.
-Global Hint Resolve Rmax_right : reals.
-Global Hint Resolve Rmin_left : reals.
-Global Hint Resolve Rmin_right : reals.
-Global Hint Resolve Rmin_glb : reals.
-Global Hint Resolve Rmin_glb_lt : reals.
-
-(** ## Lemmas regarding identities for absolute values and inverses*)
-Lemma div_sign_flip : forall r1 r2 : R, r1 > 0 -> r2 > 0 -> r1 > 1 / r2 -> 1 / r1 < r2.
-Proof.
-    intros.
-    unfold Rdiv in *.
-    rewrite Rmult_1_l in *.
-    rewrite <- (Rinv_inv r2).
-    apply (Rinv_lt_contravar (/ r2) r1).
-    apply Rmult_lt_0_compat. 
-    apply Rinv_0_lt_compat. 
-    apply H0. 
-    apply H.
-    apply H1.
-Qed.
-
-Lemma div_pos : forall r1 r2 : R, r1 > 0 ->1 / r1 > 0.
-Proof.
-    intros. 
-    unfold Rdiv. 
-    rewrite Rmult_1_l. 
-    apply Rinv_0_lt_compat. 
-    apply H.
-Qed.
-
-Lemma Rabs_zero : forall r : R, Rabs (r - 0) = Rabs r.
-Proof.
-    intros. 
-    rewrite Rminus_0_r. 
-    trivial.
-Qed.
-
-Lemma inv_remove : forall r1 r2 : R, 0 < r1 -> 0 < r2 -> 1 / r1 < 1 / r2 -> r1 > r2.
-Proof.
-    intros.
-    unfold Rdiv in *. 
-    rewrite Rmult_1_l in *.
-    rewrite <- (Rinv_inv r1), <- (Rinv_inv r2).
-    apply (Rinv_lt_contravar (/ r1) (/ r2)). 
-    apply Rmult_lt_0_compat. 
-    apply Rinv_0_lt_compat. 
-    apply H.
-    apply Rinv_0_lt_compat. 
-    apply H0. 
-    rewrite Rmult_1_l in *. 
-    apply H1.
-    all: apply Rgt_not_eq; assumption.
-Qed.
-
-Lemma Rle_abs_min : forall x : R, -x <= Rabs x.
-Proof.
-    intros. 
-    rewrite <- (Rabs_Ropp (x)). 
-    apply Rle_abs.
-Qed.
-
-Lemma Rge_min_abs : forall x : R, x >= -Rabs x.
-Proof.
-    intros. 
-    rewrite <- (Ropp_involutive x). 
-    apply Ropp_le_ge_contravar.
-    rewrite (Rabs_Ropp (- x)). 
-    apply Rle_abs.
-Qed.
-
-Lemma Rmax_abs : forall a b : R, Rmax (Rabs a) (Rabs b) >= 0.
-Proof.
-    intros.
-    apply (Rge_trans _ (Rabs a) _).
-    apply Rle_ge.
-    apply Rmax_l.
-    apply (Rle_ge 0 (Rabs a)).
-    apply Rabs_pos.
-Qed.
-
-
-Global Hint Resolve div_sign_flip : reals.
-Global Hint Resolve div_pos : reals.
-Global Hint Resolve inv_remove : reals.
-Global Hint Resolve Rinv_inv : reals.
-Global Hint Resolve Rabs_def1 : reals.
-Global Hint Resolve Rabs_le : reals.
-Global Hint Resolve Rabs_left : reals.
-Global Hint Resolve Rabs_right : reals.
-Global Hint Resolve Rabs_left1 : reals.
-Global Hint Resolve Rabs_pos_lt : reals.
-Global Hint Resolve Rabs_zero : reals.
-Global Hint Resolve Rle_abs : reals.
-Global Hint Resolve Rabs_pos : reals.
-Global Hint Resolve Rle_abs_min : reals.
-Global Hint Resolve Rge_min_abs : reals.
-Global Hint Resolve Rmax_abs : reals.
-Global Hint Resolve Rinv_0_lt_compat : reals.
-
-Global Hint Extern 1 => rewrite Rabs_zero : reals.
 
 Require Import Reals.
 Local Open Scope R_scope.
@@ -481,56 +296,6 @@ Local Open Scope R_scope.
 Global Hint Extern 1 => unfold Rgt : decidability_reals.
 
 Global Hint Resolve Req_EM_T : decidability_reals.
-
-(** Lemmas to write e.g. `{r1 ≤ r2} + {r2 < r1}`.*)
-Global Hint Resolve Rlt_le_dec : decidability_reals.
-Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
-Proof.
-    intros.
-    destruct (total_order_T r1 r2). 
-    destruct s.
-    exact (left r).
-    exact (right (Req_ge r1 r2 e)). 
-    exact (right (Rle_ge r2 r1 (Rlt_le r2 r1 r))).
-Qed.
-Global Hint Resolve Rlt_ge_dec : decidability_reals.
-
-(** Lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
-Global Hint Resolve Rlt_dec Rle_dec Rge_dec : decidability_reals.
-Lemma Rle_ge_dec : forall r1 r2, {r1 <= r2} + {~ r2 >= r1}.
-Proof.
-    intros.
-    destruct (total_order_T r1 r2).
-    destruct s.
-    ltac1:(apply (left (Rlt_le r1 r2 r))).
-    ltac1:(apply (left (Req_le r1 r2 e))).
-    ltac1:(apply (right (Rlt_not_ge r2 r1 r))).
-Qed.
-Lemma Rge_le_dec : forall r1 r2, {r1 >= r2} + {~ r2 <= r1}.
-Proof.
-    intros.
-    destruct (total_order_T r1 r2). 
-    destruct s.
-    ltac1:(apply (right (Rlt_not_le r2 r1 r))).
-    ltac1:(apply (left (Req_ge r1 r2 e))).
-    ltac1:(apply (left (Rgt_ge r1 r2 r))).
-Qed.
-Global Hint Resolve Rle_ge_dec Rge_le_dec : decidability_reals.
-
-(** Lemmas to split e.g. `{r1 <= r2} into {r1 < r2} + {r1 = r2}`.*)
-Lemma Rge_lt_or_eq_dec : forall r1 r2, (r1 >= r2) -> {r2 < r1} + {r1 = r2}.
-Proof.
-    intros.
-    destruct (total_order_T r2 r1).
-    - destruct s.
-      + left. exact r.
-      + right. symmetry. exact e.
-    - ltac1:(exfalso).
-      exact (Rlt_not_ge _ _ r H).
-Qed.
-Global Hint Resolve Rle_lt_or_eq_dec Rge_lt_or_eq_dec : decidability_reals.
-
-Global Hint Resolve total_order_T : decidability_reals. (* x < y, x = y or y < x*)
 
 (* Natural numbers *)
 Global Hint Resolve Nat.eq_dec : decidability_nat. (* TODO: add more! *)
