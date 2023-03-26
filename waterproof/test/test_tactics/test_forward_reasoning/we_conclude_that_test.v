@@ -33,6 +33,7 @@ Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.set_search_depth.To_5.
+Require Import Waterproof.populate_database.waterproof_core.
 Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.populate_database.other_databases.
@@ -225,7 +226,7 @@ Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
 intro eps.
 intro eps_gt_0.
 assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
-auto with reals.
+auto with waterproof_core reals.
 auto with reals.
 Qed.
 

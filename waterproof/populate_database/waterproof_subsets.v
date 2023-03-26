@@ -1,12 +1,12 @@
-(** * Subsets
+(** * Populate the Waterproof subsets database
 
 Authors:
     - Jim Portegies
     - Jelle Wemmenhove
 
-Creation date: 25 Mar 2023.
+Creation date: 26 Mar 2023.
 
-This file derives additional lemmas about subsets.
+This file populates the Waterproof subsets database.
 
 This file is part of Waterproof-lib.
 
@@ -24,24 +24,8 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-Require Import Waterproof.notations.notations.
-Require Import Waterproof.definitions.set_definitions.
-Require Import Reals.
-Open Scope R_scope.
+(** * Populate the Waterproof subsets database. *)
 
-Open Scope subset_scope.
-Lemma left_in_closed_open {a b : R} : (a < b) -> (a : [a,b)).
-Proof.
-  intro a_lt_b.
-  split.
-  - apply Rle_refl.
-  - exact a_lt_b.
-Qed.
-Lemma right_in_open_closed {a b : R} : (a < b) -> (b : (a,b]).
-Proof.
-  intro a_lt_b.
-  split.
-  - exact a_lt_b.
-  - apply Rle_refl.
-Qed.
-Close Scope subset_scope.
+Require Import Waterproof.theory.logic_and_set_theory.subsets.
+
+Global Hint Resolve left_in_closed_open left_in_closed_open : subsets.

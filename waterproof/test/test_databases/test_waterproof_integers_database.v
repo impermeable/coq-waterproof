@@ -26,6 +26,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Load other_databases.
 From Ltac2 Require Import Ltac2.
+Require Import Waterproof.notations.notations.
+Require Import Waterproof.definitions.inequality_chains.
+Require Import Waterproof.populate_database.waterproof_core.
 Require Import Waterproof.populate_database.waterproof_integers.
 Require Import simplify_chains.
 Open Scope nat_scope.
@@ -45,11 +48,11 @@ Qed.
 
 Require Import Lia.
 Goal (& 3 < 4 <= 5).
-solve [auto with waterproof_integers].
+solve [auto with waterproof_core waterproof_integers].
 Qed.
 
 Goal (& 3 = 3 = 3).
-solve [auto with waterproof_integers].
+solve [auto with waterproof_core waterproof_integers].
 Qed.
 
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)

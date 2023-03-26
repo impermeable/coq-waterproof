@@ -35,6 +35,7 @@ Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.selected_databases.
+Require Import Waterproof.populate_database.waterproof_core.
 Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.load_database.DisableWildcard.

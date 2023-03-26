@@ -1,4 +1,4 @@
-(** * [databases.v]
+(** * Populate a collection of databases
 
 Authors: 
     - Adrian Vramulet (1284487)
@@ -35,18 +35,11 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-
-Require Import Coq.Logic.PropExtensionality.
-Require Import Waterproof.definitions.set_definitions.
-Require Import Waterproof.definitions.inequality_chains.
-Require Import Waterproof.notations.notations.
-Require Import Reals.
-Require Import Reals.ROrderedType.
-Require Import Coq.micromega.Lra.
-Require Import Coq.micromega.Lia.
-Require Import Waterproof.tactics.simplify_chains.
-Require Import Waterproof.waterprove.simplify_subsets.
-
+Require Import Waterproof.populate_database.waterproof_core.
+Require Import Waterproof.populate_database.waterproof_constructive_logic.
+Require Import Waterproof.populate_database.waterproof_classical_logic.
+Require Import Waterproof.populate_database.waterproof_reals.
+Require Import Waterproof.populate_database.waterproof_subsets.
 Require Import Waterproof.populate_database.waterproof_intuition.
 Require Import Waterproof.populate_database.waterproof_firstorder.
 Require Import Waterproof.populate_database.waterproof_negation_nat.
@@ -63,6 +56,3 @@ Require Import Waterproof.populate_database.waterproof_eq_minus.
 Require Import Waterproof.populate_database.waterproof_eq_abs.
 Require Import Waterproof.populate_database.waterproof_eq_sqr.
 Require Import Waterproof.populate_database.waterproof_eq_exp.
-
-(* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
-Global Hint Extern 0 (total_statement _) => repeat split; cbn : core.

@@ -26,7 +26,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 (** * Populate the waterproof_core database. *)
 
+Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.tactics.simplify_chains.
+
+(* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
+Global Hint Extern 0 (total_statement _) => repeat split; cbn : waterproof_core.
 
 Global Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : waterproof_core.
 Global Hint Resolve f_equal : waterproof_core.
