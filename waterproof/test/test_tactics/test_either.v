@@ -138,8 +138,6 @@ Abort.
 (** Test 11: Now load classical informative decidability and try again *)
 Ltac2 old_selection := global_decidability_database_selection.
 Ltac2 Set global_decidability_database_selection := fun () => (@waterproof_decidability_classical)::[].
-(* Require Import Waterproof.load_database.Algebra.*)
-Ltac2 Eval global_decidability_database_selection.
 Goal False.
 Either (A) or (~A).
 Abort.

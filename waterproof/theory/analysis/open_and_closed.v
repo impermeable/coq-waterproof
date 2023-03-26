@@ -93,8 +93,6 @@ Global Hint Resolve one_in_complement_interval_closed_zero_open_one : reals.
 Global Hint Resolve Rabs_def1 : reals.
 Global Hint Resolve not_and_or : classical_logic.
 
-Ltac2 Eval global_first_attempt_database_selection.
-
 Lemma not_in_compl_implies_in (A : subset R) (x : R) : (¬ x : ℝ\A) -> (x : A).
 Proof. Assume that (¬ x : ℝ\A). It holds that (¬ ¬ x : A). We conclude that (x : A). Qed.
 Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x : A) -> (¬ x : ℝ\A).

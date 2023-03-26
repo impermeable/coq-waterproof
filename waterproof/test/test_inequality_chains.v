@@ -104,7 +104,6 @@ Abort.
 *)
 Local Parameter X : Type.
 Require Import Relations.
-Locate relation.
 Local Parameter rel : relation X.
 
 #[local] Instance equal_setoid_interpretation : EqualInterpretation X :=
