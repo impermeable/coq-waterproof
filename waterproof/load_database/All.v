@@ -30,16 +30,20 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.selected_databases.
 
-
-Require Export Waterproof.load_database.Multiplication.
-Require Export Waterproof.load_database.ZeroOne.
 Require Export Waterproof.load_database.AbsoluteValue.
+Require Export Waterproof.load_database.Additional.
+Require Export Waterproof.load_database.Algebra.
+Require Export Waterproof.load_database.ClassicalLogic.
+(* Constructive logic should be contained in classical logic *)
 Require Export Waterproof.load_database.Exponential.
+Require Export Waterproof.load_database.Firstorder.
+(* Integers should be contained in RealsAndIntegers *)
+Require Export Waterproof.load_database.Intuition.
+Require Export Waterproof.load_database.Multiplication.
 Require Export Waterproof.load_database.PlusMinus.
-Require Export Waterproof.load_database.SquareRoot.
+(* Realnumbers should be contained in RealsAndIntegers *)
 Require Export Waterproof.load_database.RealsAndIntegers.
 Require Export Waterproof.load_database.Sets.
-Require Export Waterproof.load_database.Additional.
+Require Export Waterproof.load_database.SquareRoot.
 Require Export Waterproof.load_database.Subsets.
-Require Export Waterproof.load_database.ClassicalLogic.
-Require Export Waterproof.load_database.Algebra.
+Require Export Waterproof.load_database.ZeroOne.
