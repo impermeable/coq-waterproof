@@ -47,12 +47,6 @@ Require Import Coq.micromega.Lia.
 Require Import Waterproof.tactics.simplify_chains.
 Require Import Waterproof.waterprove.simplify_subsets.
 
-(** ** Additional database *)
-
-(* This is currently just a placeholder *)
-
-Global Hint Resolve Rmax_l : additional.
-
 Require Import Waterproof.populate_database.waterproof_intuition.
 Require Import Waterproof.populate_database.waterproof_firstorder.
 Require Import Waterproof.populate_database.waterproof_negation_nat.

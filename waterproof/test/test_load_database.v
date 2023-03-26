@@ -252,7 +252,17 @@ Qed.
 
 (*Empty the database*)
 Ltac2 Set global_database_selection as old_selection :=[].
+
 Require Import Waterproof.load_database.All.
+
+(** Before putting something in the additional database, proving after loading all won't work. *)
+
+Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
+    intros.
+    Fail waterprove (Control.goal ()) [] false.
+Abort.
+
+Local Hint Resolve Rmax_r : additional.
 
 (** * Test 14
     Similarly, this can be solved with the WaterproofDBGeneral, 
