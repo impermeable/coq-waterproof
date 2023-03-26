@@ -28,25 +28,25 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite R_dist_eq) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite R_dist_eq) :  eq_abs. 
   (* ||a - a|| = 0 *)
-Global Hint Extern 1 => (rewrite R_dist_mult_l) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite R_dist_mult_l) :  eq_abs. 
   (* ||a * b - a * c|| = ||a|| * ||b - c|| *)
-Global Hint Extern 1 => (rewrite R_dist_sym) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite R_dist_sym) :  eq_abs. 
   (*||a - b|| = ||b - a||*)
 (** #### Absolute value (Rabs)
 We have the following properties:*)
-Global Hint Extern 1 => (rewrite Rabs_minus_sym) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite Rabs_minus_sym) :  eq_abs. 
   (* |a - b| = |b - a|, using Rabs *)
-Global Hint Extern 1 => (rewrite Rabs_Rabsolu) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite Rabs_Rabsolu) :  eq_abs. 
   (* | |a| | = |a| *)
-Global Hint Extern 1 => (rewrite Rabs_Ropp) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite Rabs_Ropp) :  eq_abs. 
   (* |-a| = |a| *)
-Global Hint Extern 1 => (rewrite Rabs_mult) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite Rabs_mult) :  eq_abs. 
   (* |a * b| = |a| * |b| *)
-Global Hint Extern 1 => (rewrite Rsqr_abs) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite Rsqr_abs) :  eq_abs. 
   (* a^2 = |a|^2 *)
-Global Hint Extern 1 => (rewrite sqrt_Rsqr_abs) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite sqrt_Rsqr_abs) :  eq_abs. 
   (* sqrt(a^2) = |a| *)
-Global Hint Extern 1 => (rewrite pow2_abs) :  eq_abs. 
+#[export] Hint Extern 1 => (rewrite pow2_abs) :  eq_abs. 
   (* | a |^2 = a^2*)

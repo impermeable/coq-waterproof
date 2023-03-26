@@ -28,13 +28,13 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite Rmult_comm) :  eq_mult. (* x * y = y * x *)
+#[export] Hint Extern 1 => (rewrite Rmult_comm) :  eq_mult. (* x * y = y * x *)
 
 (** #### Associativity
 We have the following associative properties:*)
 
-Global Hint Extern 1 => (rewrite Rmult_assoc) :  eq_mult. (* x * y * z = x * (y * z) *)
-Global Hint Extern 1 => (rewrite Rmult_plus_distr_l) :  eq_mult eq_plus. 
+#[export] Hint Extern 1 => (rewrite Rmult_assoc) :  eq_mult. (* x * y * z = x * (y * z) *)
+#[export] Hint Extern 1 => (rewrite Rmult_plus_distr_l) :  eq_mult eq_plus. 
   (* x * (y+z) = x * y + x * z *)
-Global Hint Extern 1 => (rewrite Rmult_plus_distr_r) :  eq_mult eq_plus. 
+#[export] Hint Extern 1 => (rewrite Rmult_plus_distr_r) :  eq_mult eq_plus. 
   (* (x+y) * z = x * z + y * z *)

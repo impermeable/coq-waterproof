@@ -28,25 +28,25 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite Ropp_minus_distr) :  eq_opp. 
+#[export] Hint Extern 1 => (rewrite Ropp_minus_distr) :  eq_opp. 
   (* - (x - y) = y - x *)
-Global Hint Extern 1 => (rewrite Ropp_minus_distr') :  eq_opp. 
+#[export] Hint Extern 1 => (rewrite Ropp_minus_distr') :  eq_opp. 
   (* - (y - x) = x - y *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_l) :  eq_opp. 
+#[export] Hint Extern 1 => (rewrite Ropp_mult_distr_l) :  eq_opp. 
   (* - (x * y) = - x * y *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_r) :  eq_opp.
+#[export] Hint Extern 1 => (rewrite Ropp_mult_distr_r) :  eq_opp.
   (* - (x * y) = x * - y *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_l_reverse) :  eq_opp. 
+#[export] Hint Extern 1 => (rewrite Ropp_mult_distr_l_reverse) :  eq_opp. 
   (* - x * y = - (x * y) *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_r_reverse) :  eq_opp. 
+#[export] Hint Extern 1 => (rewrite Ropp_mult_distr_r_reverse) :  eq_opp. 
   (* x * - y = - (x * y) *)
-Global Hint Extern 1 => (rewrite Ropp_plus_distr) :  eq_opp. 
+#[export] Hint Extern 1 => (rewrite Ropp_plus_distr) :  eq_opp. 
   (* - (x + y) = - x + - y. *)
 
 (** #### Other 
 We have some other properties:*)
-Global Hint Extern 1 => (rewrite Ropp_involutive) :  eq_opp. (* --a = a *)
-Global Hint Extern 1 => (rewrite Rmult_opp_opp) :  eq_opp. (* -a * -b = a * b *)
-Global Hint Extern 1 => (rewrite Ropp_div) :  eq_opp. (* - a / b = - (a / b) *)
-Global Hint Extern 1 => (rewrite Rplus_opp_l) :  eq_opp. (* -a  + a = 0 *)
-Global Hint Extern 1 => (rewrite Rplus_opp_r) :  eq_opp. (* a  + -a = 0 *)
+#[export] Hint Extern 1 => (rewrite Ropp_involutive) :  eq_opp. (* --a = a *)
+#[export] Hint Extern 1 => (rewrite Rmult_opp_opp) :  eq_opp. (* -a * -b = a * b *)
+#[export] Hint Extern 1 => (rewrite Ropp_div) :  eq_opp. (* - a / b = - (a / b) *)
+#[export] Hint Extern 1 => (rewrite Rplus_opp_l) :  eq_opp. (* -a  + a = 0 *)
+#[export] Hint Extern 1 => (rewrite Rplus_opp_r) :  eq_opp. (* a  + -a = 0 *)

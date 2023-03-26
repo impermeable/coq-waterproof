@@ -30,4 +30,4 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 
 (* Natural numbers *)
-Global Hint Resolve Nat.eq_dec : decidability_nat. (* TODO: add more! *)
+#[export] Hint Resolve Nat.eq_dec : decidability_nat. (* TODO: add more! *)

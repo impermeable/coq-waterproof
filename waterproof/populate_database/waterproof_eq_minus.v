@@ -28,6 +28,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite Rdiv_minus_distr) :  eq_minus. 
+#[export] Hint Extern 1 => (rewrite Rdiv_minus_distr) :  eq_minus. 
   (* (x - y) / z = x / z - y / z *)
-Global Hint Extern 1 => (unfold Rminus) : eq_minus.
+#[export] Hint Extern 1 => (unfold Rminus) : eq_minus.

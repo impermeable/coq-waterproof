@@ -29,10 +29,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 
 (** We have the following properties for equations with 0:*)
-Global Hint Extern 1 => (rewrite Rplus_0_l) :  eq_zero. (* 0 + x = x *)
-Global Hint Extern 1 => (rewrite Rplus_0_r) :  eq_zero. (* x + 0 = x *)
-Global Hint Extern 1 => (rewrite Rminus_0_l) :  eq_zero. (* 0 - x = - x *)
-Global Hint Extern 1 => (rewrite Rminus_0_r) :  eq_zero. (* x - 0 = x *)
-Global Hint Extern 1 => (rewrite Rmult_0_l) :  eq_zero. (* 0 * x = 0 *)
-Global Hint Extern 1 => (rewrite Rmult_0_r) :  eq_zero. (* x * 0 = 0 *)
-Global Hint Extern 1 => (rewrite pow_O) :  eq_zero. (* x ^ 0 = 1 *)
+#[export] Hint Extern 1 => (rewrite Rplus_0_l) :  eq_zero. (* 0 + x = x *)
+#[export] Hint Extern 1 => (rewrite Rplus_0_r) :  eq_zero. (* x + 0 = x *)
+#[export] Hint Extern 1 => (rewrite Rminus_0_l) :  eq_zero. (* 0 - x = - x *)
+#[export] Hint Extern 1 => (rewrite Rminus_0_r) :  eq_zero. (* x - 0 = x *)
+#[export] Hint Extern 1 => (rewrite Rmult_0_l) :  eq_zero. (* 0 * x = 0 *)
+#[export] Hint Extern 1 => (rewrite Rmult_0_r) :  eq_zero. (* x * 0 = 0 *)
+#[export] Hint Extern 1 => (rewrite pow_O) :  eq_zero. (* x ^ 0 = 1 *)

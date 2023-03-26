@@ -28,7 +28,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
-Global Hint Extern 1 => (rewrite exp_Ropp) :  eq_exp. (* exp (-a) = / exp a*)
-Global Hint Extern 1 => (rewrite exp_plus) :  eq_exp. (* exp(a+b) = exp(a) * exp(b) *)
-Global Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
+#[export] Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
+#[export] Hint Extern 1 => (rewrite exp_Ropp) :  eq_exp. (* exp (-a) = / exp a*)
+#[export] Hint Extern 1 => (rewrite exp_plus) :  eq_exp. (* exp(a+b) = exp(a) * exp(b) *)
+#[export] Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)

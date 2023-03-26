@@ -30,6 +30,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 
 (** * Naturals *)
-Global Hint Resolve Nat.le_ngt : negation_nat.
-Global Hint Resolve not_lt : negation_nat.
-Global Hint Resolve not_le : negation_nat.
+#[export] Hint Resolve Nat.le_ngt : negation_nat.
+#[export] Hint Resolve not_lt : negation_nat.
+#[export] Hint Resolve not_le : negation_nat.

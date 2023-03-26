@@ -35,24 +35,25 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-Require Import Waterproof.populate_database.waterproof_core.
-Require Import Waterproof.populate_database.waterproof_constructive_logic.
-Require Import Waterproof.populate_database.waterproof_classical_logic.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.waterproof_subsets.
-Require Import Waterproof.populate_database.waterproof_intuition.
-Require Import Waterproof.populate_database.waterproof_firstorder.
-Require Import Waterproof.populate_database.waterproof_negation_nat.
-Require Import Waterproof.populate_database.waterproof_negation_int.
-Require Import Waterproof.populate_database.waterproof_negation_reals.
-Require Import Waterproof.populate_database.waterproof_decidability_reals.
-Require Import Waterproof.populate_database.waterproof_decidability_nat.
-Require Import Waterproof.populate_database.waterproof_eq_plus.
-Require Import Waterproof.populate_database.waterproof_eq_zero.
-Require Import Waterproof.populate_database.waterproof_eq_opp.
-Require Import Waterproof.populate_database.waterproof_eq_one.
-Require Import Waterproof.populate_database.waterproof_eq_mult.
-Require Import Waterproof.populate_database.waterproof_eq_minus.
-Require Import Waterproof.populate_database.waterproof_eq_abs.
-Require Import Waterproof.populate_database.waterproof_eq_sqr.
-Require Import Waterproof.populate_database.waterproof_eq_exp.
+Require Export Waterproof.populate_database.waterproof_core.
+Require Export Waterproof.populate_database.waterproof_constructive_logic.
+Require Export Waterproof.populate_database.waterproof_classical_logic.
+Require Export Waterproof.populate_database.waterproof_reals.
+Require Export Waterproof.populate_database.waterproof_integers.
+Require Export Waterproof.populate_database.waterproof_subsets.
+Require Export Waterproof.populate_database.waterproof_intuition.
+Require Export Waterproof.populate_database.waterproof_firstorder.
+Require Export Waterproof.populate_database.waterproof_negation_nat.
+Require Export Waterproof.populate_database.waterproof_negation_int.
+Require Export Waterproof.populate_database.waterproof_negation_reals.
+Require Export Waterproof.populate_database.waterproof_decidability_reals.
+Require Export Waterproof.populate_database.waterproof_decidability_nat.
+Require Export Waterproof.populate_database.waterproof_eq_plus.
+Require Export Waterproof.populate_database.waterproof_eq_zero.
+Require Export Waterproof.populate_database.waterproof_eq_opp.
+Require Export Waterproof.populate_database.waterproof_eq_one.
+Require Export Waterproof.populate_database.waterproof_eq_mult.
+Require Export Waterproof.populate_database.waterproof_eq_minus.
+Require Export Waterproof.populate_database.waterproof_eq_abs.
+Require Export Waterproof.populate_database.waterproof_eq_sqr.
+Require Export Waterproof.populate_database.waterproof_eq_exp.

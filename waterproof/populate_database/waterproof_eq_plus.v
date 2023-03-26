@@ -28,8 +28,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite Rplus_comm) :  eq_plus. (* x + y = y + x *)
-Global Hint Extern 1 => (rewrite Rplus_assoc) :  eq_plus. (* x + y + z = x + (y + z) *)
-Global Hint Extern 1 => (rewrite Rdiv_plus_distr) :  eq_plus. (* (x + y) / z = x / z + y / z *)
-Global Hint Extern 1 => (rewrite Rmult_plus_distr_l) : eq_plus.
-Global Hint Extern 1 => (rewrite Rmult_plus_distr_r) : eq_plus.
+#[export] Hint Extern 1 => (rewrite Rplus_comm) :  eq_plus. (* x + y = y + x *)
+#[export] Hint Extern 1 => (rewrite Rplus_assoc) :  eq_plus. (* x + y + z = x + (y + z) *)
+#[export] Hint Extern 1 => (rewrite Rdiv_plus_distr) :  eq_plus. (* (x + y) / z = x / z + y / z *)
+#[export] Hint Extern 1 => (rewrite Rmult_plus_distr_l) : eq_plus.
+#[export] Hint Extern 1 => (rewrite Rmult_plus_distr_r) : eq_plus.

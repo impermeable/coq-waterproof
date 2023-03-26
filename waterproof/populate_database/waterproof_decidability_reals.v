@@ -31,16 +31,16 @@ Require Import Waterproof.theory.analysis.reals.
 
 (** Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
     We cannot do the same for >= as it is not defined as <= .*)
-Global Hint Extern 1 => unfold Rgt : decidability_reals.
+#[export] Hint Extern 1 => unfold Rgt : decidability_reals.
 
-Global Hint Resolve Req_EM_T : decidability_reals.
-Global Hint Resolve Rlt_le_dec : decidability_reals.
-Global Hint Resolve Rlt_ge_dec : decidability_reals.
+#[export] Hint Resolve Req_EM_T : decidability_reals.
+#[export] Hint Resolve Rlt_le_dec : decidability_reals.
+#[export] Hint Resolve Rlt_ge_dec : decidability_reals.
 
 (** Lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
-Global Hint Resolve Rlt_dec Rle_dec Rge_dec : decidability_reals.
-Global Hint Resolve Rle_ge_dec Rge_le_dec : decidability_reals.
-Global Hint Resolve Rle_lt_or_eq_dec Rge_lt_or_eq_dec : decidability_reals.
+#[export] Hint Resolve Rlt_dec Rle_dec Rge_dec : decidability_reals.
+#[export] Hint Resolve Rle_ge_dec Rge_le_dec : decidability_reals.
+#[export] Hint Resolve Rle_lt_or_eq_dec Rge_lt_or_eq_dec : decidability_reals.
 
-Global Hint Resolve total_order_T : decidability_reals. (* x < y, x = y or y < x*)
+#[export] Hint Resolve total_order_T : decidability_reals. (* x < y, x = y or y < x*)
 

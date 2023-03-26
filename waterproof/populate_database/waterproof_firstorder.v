@@ -28,4 +28,4 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 (** ** Firstorder database *)
 
-Global Hint Extern 3 => firstorder (auto 2 with core) : firstorder.
+#[export] Hint Extern 3 => firstorder (auto 2 with core) : firstorder.

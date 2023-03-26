@@ -28,4 +28,4 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 (** ** Intuition database *)
 
-Global Hint Extern 3 => intuition (auto 2 with core) : intuition.
+#[export] Hint Extern 3 => intuition (auto 2 with core) : intuition.

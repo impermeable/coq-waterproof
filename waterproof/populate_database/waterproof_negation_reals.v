@@ -28,19 +28,19 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Resolve Rnot_le_lt : negation_reals.
-Global Hint Resolve Rnot_ge_gt : negation_reals.
-Global Hint Resolve Rnot_le_gt : negation_reals.
-Global Hint Resolve Rnot_ge_lt : negation_reals.
-Global Hint Resolve Rnot_lt_le : negation_reals.
-Global Hint Resolve Rnot_gt_le : negation_reals.
-Global Hint Resolve Rnot_gt_ge : negation_reals.
-Global Hint Resolve Rnot_lt_ge : negation_reals.
+#[export] Hint Resolve Rnot_le_lt : negation_reals.
+#[export] Hint Resolve Rnot_ge_gt : negation_reals.
+#[export] Hint Resolve Rnot_le_gt : negation_reals.
+#[export] Hint Resolve Rnot_ge_lt : negation_reals.
+#[export] Hint Resolve Rnot_lt_le : negation_reals.
+#[export] Hint Resolve Rnot_gt_le : negation_reals.
+#[export] Hint Resolve Rnot_gt_ge : negation_reals.
+#[export] Hint Resolve Rnot_lt_ge : negation_reals.
 
-Global Hint Resolve Rlt_not_le : negation_reals.
-Global Hint Resolve Rgt_not_le : negation_reals.
-Global Hint Resolve Rlt_not_ge : negation_reals.
-Global Hint Resolve Rle_not_lt : negation_reals.
-Global Hint Resolve Rge_not_lt : negation_reals.
-Global Hint Resolve Rle_not_gt : negation_reals.
-Global Hint Resolve Rge_not_gt : negation_reals.
+#[export] Hint Resolve Rlt_not_le : negation_reals.
+#[export] Hint Resolve Rgt_not_le : negation_reals.
+#[export] Hint Resolve Rlt_not_ge : negation_reals.
+#[export] Hint Resolve Rle_not_lt : negation_reals.
+#[export] Hint Resolve Rge_not_lt : negation_reals.
+#[export] Hint Resolve Rle_not_gt : negation_reals.
+#[export] Hint Resolve Rge_not_gt : negation_reals.

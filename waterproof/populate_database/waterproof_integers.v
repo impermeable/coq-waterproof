@@ -31,9 +31,9 @@ Require Import Reals.
 Require Import Coq.micromega.Lia.
 Require Import Waterproof.tactics.simplify_chains.
 
-Global Hint Extern 3 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
-Global Hint Extern 3 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( le _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
-Global Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+#[export] Hint Extern 3 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ring : waterproof_integers.
+#[export] Hint Extern 3 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+#[export] Hint Extern 3 ( le _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+#[export] Hint Extern 3 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+#[export] Hint Extern 3 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.
+#[export] Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : waterproof_integers.

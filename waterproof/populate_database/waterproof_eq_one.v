@@ -28,8 +28,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Reals.
 
-Global Hint Extern 1 => (rewrite Rmult_1_l) :  eq_one. (* 1 * x = x *)
-Global Hint Extern 1 => (rewrite Rmult_1_r) :  eq_one. (* x * 1 = x *)
-Global Hint Extern 1 => (rewrite Rinv_1) :  eq_one. (* x / 1 = x *)
-Global Hint Extern 1 => (rewrite pow_1) :  eq_one. (* x ^ 1 = x *)
-Global Hint Extern 1 => (rewrite Rinv_inv) : eq_one. (* / / x = x *)
+#[export] Hint Extern 1 => (rewrite Rmult_1_l) :  eq_one. (* 1 * x = x *)
+#[export] Hint Extern 1 => (rewrite Rmult_1_r) :  eq_one. (* x * 1 = x *)
+#[export] Hint Extern 1 => (rewrite Rinv_1) :  eq_one. (* x / 1 = x *)
+#[export] Hint Extern 1 => (rewrite pow_1) :  eq_one. (* x ^ 1 = x *)
+#[export] Hint Extern 1 => (rewrite Rinv_inv) : eq_one. (* / / x = x *)

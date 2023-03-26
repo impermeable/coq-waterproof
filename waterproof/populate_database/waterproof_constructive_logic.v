@@ -27,6 +27,6 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 (** TODO: fix this import. *)
 Require Import Classical_Pred_Type.
 
-Global Hint Resolve not_ex_all_not : constructive_logic.
-Global Hint Resolve ex_not_not_all : constructive_logic.
-Global Hint Resolve all_not_not_ex : constructive_logic.
+#[export] Hint Resolve not_ex_all_not : constructive_logic.
+#[export] Hint Resolve ex_not_not_all : constructive_logic.
+#[export] Hint Resolve all_not_not_ex : constructive_logic.

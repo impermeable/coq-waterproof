@@ -28,4 +28,4 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Waterproof.theory.logic_and_set_theory.subsets.
 
-Global Hint Resolve left_in_closed_open left_in_closed_open : subsets.
+#[export] Hint Resolve left_in_closed_open left_in_closed_open : subsets.

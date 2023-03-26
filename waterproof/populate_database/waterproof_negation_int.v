@@ -29,11 +29,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 
 (** * Integers *) (* TODO add more to make automation faster*)
-Global Hint Resolve  Zle_not_lt : negation_int.
-Global Hint Resolve  Zlt_not_le : negation_int.
-Global Hint Resolve  Zle_not_gt : negation_int.
-Global Hint Resolve  Zgt_not_le : negation_int.
-Global Hint Resolve  Znot_lt_ge : negation_int.
-Global Hint Resolve  Znot_lt_ge : negation_int.
-Global Hint Resolve  Znot_gt_le : negation_int.
-Global Hint Resolve  Znot_le_gt : negation_int.
+#[export] Hint Resolve  Zle_not_lt : negation_int.
+#[export] Hint Resolve  Zlt_not_le : negation_int.
+#[export] Hint Resolve  Zle_not_gt : negation_int.
+#[export] Hint Resolve  Zgt_not_le : negation_int.
+#[export] Hint Resolve  Znot_lt_ge : negation_int.
+#[export] Hint Resolve  Znot_lt_ge : negation_int.
+#[export] Hint Resolve  Znot_gt_le : negation_int.
+#[export] Hint Resolve  Znot_le_gt : negation_int.
