@@ -151,6 +151,8 @@ waterproof/populate_database/waterproof_negation_reals.v
 waterproof/populate_database/waterproof_decidability_reals.v
 waterproof/populate_database/waterproof_classical_logic.v
 waterproof/populate_database/waterproof_constructive_logic.v
+waterproof/populate_database/waterproof_eq_plus.v
+waterproof/populate_database/waterproof_eq_zero.v
 waterproof/populate_database/other_databases.v
 
 # Testcases for theory files and databases
