@@ -140,8 +140,15 @@ waterproof/theory/analysis/continuity_domain_nat.v
 
 # Populate databases
 waterproof/populate_database/waterproof_core.v
+waterproof/populate_database/waterproof_intuition.v
+waterproof/populate_database/waterproof_firstorder.v
+waterproof/populate_database/waterproof_negation_nat.v
+waterproof/populate_database/waterproof_decidability_nat.v
 waterproof/populate_database/waterproof_integers.v
 waterproof/populate_database/waterproof_reals.v
+waterproof/populate_database/waterproof_negation_int.v
+waterproof/populate_database/waterproof_negation_reals.v
+waterproof/populate_database/waterproof_decidability_reals.v
 waterproof/populate_database/waterproof_classical_logic.v
 waterproof/populate_database/waterproof_constructive_logic.v
 waterproof/populate_database/other_databases.v

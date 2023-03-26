@@ -53,13 +53,8 @@ Require Import Waterproof.waterprove.simplify_subsets.
 
 Global Hint Resolve Rmax_l : additional.
 
-(** ** Intuition database *)
-
-Global Hint Extern 3 => intuition (auto 2 with core) : intuition.
-
-(** ** Firstorder database *)
-
-Global Hint Extern 3 => firstorder (auto 2 with core) : firstorder.
+Require Import Waterproof.populate_database.waterproof_intuition.
+Require Import Waterproof.populate_database.waterproof_firstorder.
 
 
 Open Scope R_scope.
@@ -222,55 +217,22 @@ Close Scope R_scope.
 
 (** ## Lemmas for dealing with negations in specific contexts, e.g. negated order relations
 *)
-(** * Naturals *)
-Global Hint Resolve Nat.le_ngt : negation_nat.
-Global Hint Resolve not_lt : negation_nat.
-Global Hint Resolve not_le : negation_nat.
+Require Import Waterproof.populate_database.waterproof_negation_nat.
 
-(** * Integers *) (* TODO add more to make automation faster*)
-Global Hint Resolve  Zle_not_lt : negation_int.
-Global Hint Resolve  Zlt_not_le : negation_int.
-Global Hint Resolve  Zle_not_gt : negation_int.
-Global Hint Resolve  Zgt_not_le : negation_int.
-Global Hint Resolve  Znot_lt_ge : negation_int.
-Global Hint Resolve  Znot_lt_ge : negation_int.
-Global Hint Resolve  Znot_gt_le : negation_int.
-Global Hint Resolve  Znot_le_gt : negation_int.
+
+
+Require Import Waterproof.populate_database.waterproof_negation_int.
 
 (** * Reals *) (* TODO add more to make automation faster*)
 
-Global Hint Resolve Rnot_le_lt : negation_reals.
-Global Hint Resolve Rnot_ge_gt : negation_reals.
-Global Hint Resolve Rnot_le_gt : negation_reals.
-Global Hint Resolve Rnot_ge_lt : negation_reals.
-Global Hint Resolve Rnot_lt_le : negation_reals.
-Global Hint Resolve Rnot_gt_le : negation_reals.
-Global Hint Resolve Rnot_gt_ge : negation_reals.
-Global Hint Resolve Rnot_lt_ge : negation_reals.
-
-Global Hint Resolve Rlt_not_le : negation_reals.
-Global Hint Resolve Rgt_not_le : negation_reals.
-Global Hint Resolve Rlt_not_ge : negation_reals.
-Global Hint Resolve Rle_not_lt : negation_reals.
-Global Hint Resolve Rge_not_lt : negation_reals.
-Global Hint Resolve Rle_not_gt : negation_reals.
-Global Hint Resolve Rge_not_gt : negation_reals.
-
-
-
+Require Import Waterproof.populate_database.waterproof_negation_reals.
 
 
 (** ## Lemmas for decidability. *)
 (** * Reals *)
 Local Open Scope R_scope.
 
-(** Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
-    We cannot do the same for >= as it is not defined as <= .*)
-Global Hint Extern 1 => unfold Rgt : decidability_reals.
-
-Global Hint Resolve Req_EM_T : decidability_reals.
-
-(* Natural numbers *)
-Global Hint Resolve Nat.eq_dec : decidability_nat. (* TODO: add more! *)
+Require Import Waterproof.populate_database.waterproof_decidability_reals.
+Require Import Waterproof.populate_database.waterproof_decidability_nat.
 
 Close Scope R_scope.
