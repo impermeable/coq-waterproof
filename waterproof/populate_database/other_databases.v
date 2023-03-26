@@ -62,114 +62,13 @@ Require Import Waterproof.populate_database.waterproof_decidability_reals.
 Require Import Waterproof.populate_database.waterproof_decidability_nat.
 Require Import Waterproof.populate_database.waterproof_eq_plus.
 Require Import Waterproof.populate_database.waterproof_eq_zero.
+Require Import Waterproof.populate_database.waterproof_eq_opp.
+Require Import Waterproof.populate_database.waterproof_eq_one.
+Require Import Waterproof.populate_database.waterproof_eq_mult.
+Require Import Waterproof.populate_database.waterproof_eq_minus.
+Require Import Waterproof.populate_database.waterproof_eq_abs.
+Require Import Waterproof.populate_database.waterproof_eq_sqr.
+Require Import Waterproof.populate_database.waterproof_eq_exp.
 
 (* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
 Global Hint Extern 0 (total_statement _) => repeat split; cbn : core.
-
-(** #### Commutativity:
-We have the following commutative properties:*)
-
-Global Hint Extern 1 => (rewrite Rmult_comm) :  eq_mult. (* x * y = y * x *)
-
-(** #### Associativity
-We have the following associative properties:*)
-
-Global Hint Extern 1 => (rewrite Rmult_assoc) :  eq_mult. (* x * y * z = x * (y * z) *)
-
-(** #### Distributivity
-We have the following distributive properties:*)
-
-  
-Global Hint Extern 1 => (rewrite Rdiv_minus_distr) :  eq_minus. 
-  (* (x - y) / z = x / z - y / z *)
-Global Hint Extern 1 => (rewrite Rmult_plus_distr_l) :  eq_mult eq_plus. 
-  (* x * (y+z) = x * y + x * z *)
-Global Hint Extern 1 => (rewrite Rmult_plus_distr_r) :  eq_mult eq_plus. 
-  (* (x+y) * z = x * z + y * z *)
-
-(** #### Other
-We have some other properties:
-*)
-Global Hint Extern 1 => (unfold Rminus) : eq_minus.
-(** ### **Opposite rewriters**
-In this database, we will add properties with the additive inverse.*)
-(** #### Distributitivity
-We have the following distributive properties containing additive inverses:*)
-Global Hint Extern 1 => (rewrite Ropp_minus_distr) :  eq_opp. 
-  (* - (x - y) = y - x *)
-Global Hint Extern 1 => (rewrite Ropp_minus_distr') :  eq_opp. 
-  (* - (y - x) = x - y *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_l) :  eq_opp. 
-  (* - (x * y) = - x * y *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_r) :  eq_opp.
-  (* - (x * y) = x * - y *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_l_reverse) :  eq_opp. 
-  (* - x * y = - (x * y) *)
-Global Hint Extern 1 => (rewrite Ropp_mult_distr_r_reverse) :  eq_opp. 
-  (* x * - y = - (x * y) *)
-Global Hint Extern 1 => (rewrite Ropp_plus_distr) :  eq_opp. 
-  (* - (x + y) = - x + - y. *)
-
-(** #### Other 
-We have some other properties:*)
-Global Hint Extern 1 => (rewrite Ropp_involutive) :  eq_opp. (* --a = a *)
-Global Hint Extern 1 => (rewrite Rmult_opp_opp) :  eq_opp. (* -a * -b = a * b *)
-Global Hint Extern 1 => (rewrite Ropp_div) :  eq_opp. (* - a / b = - (a / b) *)
-Global Hint Extern 1 => (rewrite Rplus_opp_l) :  eq_opp. (* -a  + a = 0 *)
-Global Hint Extern 1 => (rewrite Rplus_opp_r) :  eq_opp. (* a  + -a = 0 *)
-
-(** #### Arithmetic with 1's
-We have the following properties for equations with 1:*)
-Global Hint Extern 1 => (rewrite Rmult_1_l) :  eq_one. (* 1 * x = x *)
-Global Hint Extern 1 => (rewrite Rmult_1_r) :  eq_one. (* x * 1 = x *)
-Global Hint Extern 1 => (rewrite Rinv_1) :  eq_one. (* x / 1 = x *)
-Global Hint Extern 1 => (rewrite pow_1) :  eq_one. (* x ^ 1 = x *)
-Global Hint Extern 1 => (rewrite Rinv_inv) : eq_one. (* / / x = x *)
-
-(** ### **Distances and absolute values**
-There are a number of trivial steps regarding distances, or absolute values.
-
-#### Distance (R_dist)
-We have the following properties:*)
-Global Hint Extern 1 => (rewrite R_dist_eq) :  eq_abs. 
-  (* ||a - a|| = 0 *)
-Global Hint Extern 1 => (rewrite R_dist_mult_l) :  eq_abs. 
-  (* ||a * b - a * c|| = ||a|| * ||b - c|| *)
-Global Hint Extern 1 => (rewrite R_dist_sym) :  eq_abs. 
-  (*||a - b|| = ||b - a||*)
-(** #### Absolute value (Rabs)
-We have the following properties:*)
-Global Hint Extern 1 => (rewrite Rabs_minus_sym) :  eq_abs. 
-  (* |a - b| = |b - a|, using Rabs *)
-Global Hint Extern 1 => (rewrite Rabs_Rabsolu) :  eq_abs. 
-  (* | |a| | = |a| *)
-Global Hint Extern 1 => (rewrite Rabs_Ropp) :  eq_abs. 
-  (* |-a| = |a| *)
-Global Hint Extern 1 => (rewrite Rabs_mult) :  eq_abs. 
-  (* |a * b| = |a| * |b| *)
-Global Hint Extern 1 => (rewrite Rsqr_abs) :  eq_abs. 
-  (* a^2 = |a|^2 *)
-Global Hint Extern 1 => (rewrite sqrt_Rsqr_abs) :  eq_abs. 
-  (* sqrt(a^2) = |a| *)
-Global Hint Extern 1 => (rewrite pow2_abs) :  eq_abs. 
-  (* | a |^2 = a^2*)
-
-(** ### **Squares**
-There are a number of trivial steps regarding squares.
-We have the following properties:*)
-Global Hint Extern 1 => (rewrite Rsqr_pow2) :  eq_sqr. (* a² = a ^ 2 *)
-Global Hint Extern 1 => (rewrite Rsqr_plus) :  eq_sqr. (* (a-b)² = a² + b² + 2*a*b *)
-Global Hint Extern 1 => (rewrite Rsqr_plus_minus) :  eq_sqr. (* (a+b)*(a-b) = a² - b² *)
-Global Hint Extern 1 => (rewrite Rsqr_minus) :  eq_sqr. (* (a-b)² = a² + b² - 2*a*b *)
-Global Hint Extern 1 => (rewrite Rsqr_minus_plus) :  eq_sqr. (* (a-b)*(a+b) = a² - b² *)
-Global Hint Extern 1 => (rewrite Rsqr_neg) :  eq_sqr. (* a² = (-a)² *)
-Global Hint Extern 1 => (rewrite Rsqr_neg_minus) :  eq_sqr. (* (a-b)² = (b-a)² *)
-Global Hint Extern 1 => (rewrite Rsqr_mult) :  eq_sqr. (* (a*b)² = a² * b² *)
-
-(** ### **Exponentials**
-There are a number of trivial steps regarding exponentials. We have the following properties:*)
-Global Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
-Global Hint Extern 1 => (rewrite exp_Ropp) :  eq_exp. (* exp (-a) = / exp a*)
-Global Hint Extern 1 => (rewrite exp_plus) :  eq_exp. (* exp(a+b) = exp(a) * exp(b) *)
-Global Hint Extern 1 => (rewrite ln_exp) :  eq_exp. (* ln (exp a)) = a *)
-

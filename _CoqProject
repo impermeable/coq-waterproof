@@ -153,6 +153,13 @@ waterproof/populate_database/waterproof_classical_logic.v
 waterproof/populate_database/waterproof_constructive_logic.v
 waterproof/populate_database/waterproof_eq_plus.v
 waterproof/populate_database/waterproof_eq_zero.v
+waterproof/populate_database/waterproof_eq_opp.v
+waterproof/populate_database/waterproof_eq_one.v
+waterproof/populate_database/waterproof_eq_mult.v
+waterproof/populate_database/waterproof_eq_minus.v
+waterproof/populate_database/waterproof_eq_abs.v
+waterproof/populate_database/waterproof_eq_sqr.v
+waterproof/populate_database/waterproof_eq_exp.v
 waterproof/populate_database/other_databases.v
 
 # Testcases for theory files and databases
