@@ -364,14 +364,6 @@ Ltac2 Set global_database_selection as old_selection :=
         (load_db_of_label WaterproofDBExponential)::
         (old_selection ())::[]
         ).
-(*Ltac2 Set global_database_selection as old_selection :=
-    fun () => combine_ident_lists ((load_db_of_label WaterproofDBMultiplication)::(old_selection ())::[]).
-Ltac2 Set global_database_selection as old_selection :=
-    fun () => combine_ident_lists ((load_db_of_label WaterproofDBPlusMinus)::(old_selection ())::[]).
-Ltac2 Set global_database_selection as old_selection :=
-    fun () => combine_ident_lists ((load_db_of_label WaterproofDBSquareRoot)::(old_selection ())::[]).
-Ltac2 Set global_database_selection as old_selection :=
-    fun () => combine_ident_lists ((load_db_of_label WaterproofDBExponential)::(old_selection ())::[]).*)
 
 (** * Test 21
     This test should not be solved, since it has all 

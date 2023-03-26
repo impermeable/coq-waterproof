@@ -33,6 +33,7 @@ Require Import Waterproof.tactics.simplify_chains.
 #[export] Hint Extern 0 (total_statement _) => repeat split; cbn : waterproof_core.
 
 #[export] Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : waterproof_core.
+#[export] Hint Resolve eq_sym : waterproof_core.
 #[export] Hint Resolve f_equal : waterproof_core.
 #[export] Hint Resolve f_equal2 : waterproof_core.
 #[export] Hint Extern 1 ( _ = _ ) => congruence : waterproof_core.
