@@ -80,9 +80,9 @@ Ltac2 Type WaterproofDatabase := [
 *)
 Ltac2 mutable global_database_selection := ([]:WaterproofDatabase list).
 Ltac2 mutable global_negation_database_selection := ([]:WaterproofDatabase list).
-Ltac2 mutable global_decidability_database_selection := ([]:WaterproofDatabase list).
+Ltac2 mutable global_decidability_database_selection := fun () => ([]:ident list).
 (** TODO: Should the core database be explicitly added? *)
-Ltac2 mutable global_first_attempt_database_selection := ([]:WaterproofDatabase list).
+Ltac2 mutable global_first_attempt_database_selection := fun () => ([]:ident list).
 
 (** * global_search_depth
     Global variable that specifies the maximum search depth
@@ -132,7 +132,7 @@ Ltac2 print_search_depth_set_to (new_depth: int) :=
             These names have been added to the scope of Coq,
             and can hence directly be used with [auto].
 *)
-Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
+Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     match label with
     | WaterproofDBCore =>               (@waterproof_core)::[]
     | WaterproofDBAlgebra =>            (@waterproof_core)::[]
@@ -162,6 +162,18 @@ Local Ltac2 load_db_of_label (label: WaterproofDatabase) :=
     | WaterproofDecidabilityDBClassical => (@waterproof_decidability_classical)::(@nocore)::[]
     | _ => Aux.cannot_happen ""
     end.
+
+(** Combine lists of idents. This can be used when 
+    loading databases. Currently lists are just concatenated.
+    TODO: should we merge the lists instead?
+    Arguments:
+        - [ill : ident list list] a list of ident lists
+
+    Returns:
+        - [ident list], list with idents.
+*)
+Ltac2 combine_ident_lists (ill : ident list list)
+    := List.concat ill.
 
 (* Subroutine of [load_databases] *)
 Local Ltac2 rec load_databases_rec 

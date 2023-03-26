@@ -33,4 +33,4 @@ Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBAlgebra)::old_selection.
 
 Ltac2 Set global_decidability_database_selection as old_selection :=
-    (WaterproofDecidabilityDBClassical)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDecidabilityDBClassical)::(old_selection ())::[]).

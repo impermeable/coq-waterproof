@@ -34,4 +34,4 @@ Ltac2 Set global_database_selection as old_selection :=
 Ltac2 Set global_negation_database_selection as old_selection :=
     (WaterproofNegationDBReals)::old_selection.
 Ltac2 Set global_decidability_database_selection as old_selection :=
-    (WaterproofDecidabilityDBReals)::old_selection.
+    fun () => combine_ident_lists ((load_db_of_label WaterproofDecidabilityDBReals)::(old_selection ())::[]).

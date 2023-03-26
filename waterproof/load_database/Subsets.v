@@ -33,4 +33,4 @@ Ltac2 Set global_database_selection as old_selection :=
     (WaterproofDBSubsets)::old_selection.
 
 Ltac2 Set global_first_attempt_database_selection as old_selection :=
-    (WaterproofDBSubsets)::old_selection.
+    fun () => (@subsets)::(old_selection ()).
