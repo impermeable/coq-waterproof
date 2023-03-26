@@ -129,4 +129,22 @@ Goal forall x : R, exists n : nat, INR(n) > x.
     - Case (0 < x). (* Note that this also works although the literal case is x > 0 =) *)
 Abort.
 
+(** Test 10: Without loading classical informative decidability, this shouldn't work *)
+Local Parameter A : Prop.
+Goal False.
+Fail Either (A) or (~A).
+Abort.
+
+(** Test 11: Now load classical informative decidability and try again *)
+Ltac2 old_selection := global_decidability_database_selection.
+Ltac2 Set global_decidability_database_selection := (WaterproofDecidabilityDBClassical)::[].
+(* Require Import Waterproof.load_database.Algebra.*)
+Ltac2 Eval global_decidability_database_selection.
+Goal False.
+Either (A) or (~A).
+Abort.
+
+(** Put back the original global decidability database selection. *)
+Ltac2 Set global_decidability_database_selection := old_selection.
+
 Close Scope R_scope.

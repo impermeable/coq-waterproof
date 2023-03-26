@@ -57,3 +57,6 @@ Require Export Waterproof.populate_database.waterproof_eq_minus.
 Require Export Waterproof.populate_database.waterproof_eq_abs.
 Require Export Waterproof.populate_database.waterproof_eq_sqr.
 Require Export Waterproof.populate_database.waterproof_eq_exp.
+
+(* TODO: should this be here? *)
+Require Export Waterproof.populate_database.waterproof_decidability_classical.

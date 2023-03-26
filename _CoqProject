@@ -142,6 +142,7 @@ waterproof/theory/analysis/continuity_domain_nat.v
 waterproof/populate_database/waterproof_core.v
 waterproof/populate_database/waterproof_intuition.v
 waterproof/populate_database/waterproof_firstorder.v
+waterproof/populate_database/waterproof_decidability_classical.v
 waterproof/populate_database/waterproof_negation_nat.v
 waterproof/populate_database/waterproof_decidability_nat.v
 waterproof/populate_database/waterproof_integers.v
@@ -167,3 +168,4 @@ waterproof/populate_database/all_databases.v
 waterproof/test/test_load_database.v
 waterproof/test/test_databases/test_reals_database.v
 waterproof/test/test_databases/test_waterproof_integers_database.v
+waterproof/test/test_databases/test_decidability_classical.v
