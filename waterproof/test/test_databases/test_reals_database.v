@@ -25,9 +25,12 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 (* Tests for (in)equality chains and the reals database *)
 
 
-Load reals.
+Require Import Waterproof.populate_database.waterproof_reals.
+Require Import Waterproof.populate_database.other_databases.
+Require Import Waterproof.definitions.inequality_chains.
+
+Require Import Reals.
 (** TODO: eventuall rely on the reals database above *)
-Load other_databases.
 Open Scope R_scope.
 (* Test 0: check if notations work. *)
 

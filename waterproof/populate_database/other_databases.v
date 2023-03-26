@@ -65,9 +65,7 @@ Global Hint Extern 3 => firstorder (auto 2 with core) : firstorder.
 Open Scope R_scope.
 
 (* subsets *)
-Global Hint Extern 3 => ltac2:(simpl_member_subset ()); lra : reals. (*TODO: do we need a hint database for (reals-and-subsets)?*)
-(* Global Hint Extern 3 => ltac2:(simpl_member_subset ()); lia : waterproof_integers. (* not yet needed? *) *)
-Global Hint Extern 3 (pred R _ _) => simpl; lra : reals.
+
 
 (* Hint to solve inequality chains. Redundant when using the waterprove subroutine. *)
 Global Hint Extern 0 (total_statement _) => repeat split; cbn : core.
