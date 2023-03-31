@@ -26,7 +26,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Load manipulate_negation.
 Require Import Reals.
-Require Import Waterproof.populate_database.all_databases.
+Require Import selected_databases.
+Ltac2 Set global_negation_database_selection := fun () => [ @nocore; @wp_negation_int; @wp_negation_nat; @wp_negation_reals].
 
 (** Test 0: large example from real analysis.*)
 Open Scope R_scope.
@@ -240,7 +241,8 @@ Proof.
   Fail solve_by_manipulating_negation_in @h.
 Abort.
 
-Require Import Waterproof.load_database.Integers.
+Require Import Waterproof.load.
+Import databases_RealsAndIntegers.
 (* Test 25 *)
 Goal forall n m : nat, ~(n < m) -> (n >= m).
 Proof.

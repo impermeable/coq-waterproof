@@ -265,9 +265,6 @@ Ltac2 solve_by_manipulating_negation () :=
   | [ h : _ |- _ ] => solve_by_manipulating_negation_in h
   end.
 
-Global Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : classical_logic.
-
-
 (*For debugging: do a single step *)
 Local Ltac2 manipulate_negation_in (h_id : ident) :=
   let h := Control.hyp h_id in

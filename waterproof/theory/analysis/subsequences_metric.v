@@ -251,10 +251,10 @@ Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" cl(opt(seq(
   expand_def_framework unfold_is_accumulation_point unfold_is_accumulation_point_in cl.
 
 
-Global Hint Resolve index_sequence_property : subsequences.
-Global Hint Extern 1 => (unfold ge) : subsequences.
-Global Hint Resolve double_is_even : subsequences.
-Global Hint Resolve index_sequence_property2 : subsequences.
+#[export] Hint Resolve index_sequence_property : subsequences.
+#[export] Hint Extern 1 => (unfold ge) : subsequences.
+#[export] Hint Resolve double_is_even : subsequences.
+#[export] Hint Resolve index_sequence_property2 : subsequences.
 
 Close Scope metric_scope.
 Close Scope R_scope.

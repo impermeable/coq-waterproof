@@ -27,15 +27,12 @@ Require Import Classical_Pred_Type.
 *)
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.populate_database.waterproof_integers.
-Require Import Waterproof.populate_database.waterproof_reals.
-(* TODO: this shouldn't really be here ... *)
-Require Import Waterproof.populate_database.all_databases.
-Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
+Require Import Waterproof.load.
+Import databases_RealsAndIntegers.
+
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.Intuition.
-Require Import Waterproof.load_database.ClassicalLogic.
+(* Require Import Waterproof.load_database.Intuition. *)
 Require Import Coq.Logic.Classical.
 
 Declare Scope sup_and_inf_scope.
@@ -306,6 +303,8 @@ Proof.
     Take A : (ℝ → Prop) and m : R.
     Assume that (is_inf A m).
     It holds that (is_lower_bound A m ∧ (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m)) (i).
+    Because (i) both (is_lower_bound A m) and
+      (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ m).
     We conclude that (is_lower_bound A m).
 Qed.
 

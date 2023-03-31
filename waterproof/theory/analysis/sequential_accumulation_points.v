@@ -6,22 +6,14 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.theory.logic_and_set_theory.subsets.
-Require Import Waterproof.populate_database.all_databases.
-Require Import Waterproof.load_database.ClassicalLogic.
-Require Import Waterproof.load_database.Subsets.
-Require Import Waterproof.load_database.Intuition.
-Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
+Require Import Waterproof.load.
+Import databases_RealsAndIntegers.
+Require Import Waterproof.load_database.Intuition.
 
+Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.theory.analysis.sequences.
 Require Import Waterproof.theory.analysis.subsequences.
-
-Global Hint Resolve Rabs_Rabsolu : reals.
 
 Open Scope R_scope.
 

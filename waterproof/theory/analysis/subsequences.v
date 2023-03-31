@@ -37,7 +37,7 @@ Require Import Waterproof.load_database.DisableWildcard.
 (* TODO: this shouldn't really be here ... *)
 Require Import Waterproof.populate_database.all_databases.
 
-Global Hint Resolve Rabs_Rabsolu : reals.
+#[export] Hint Resolve Rabs_Rabsolu : reals.
 (** ## Creating a subsequence of elements satisfying a certain property
 
 The purpose of this section is to provide a somewhat general strategy to construct subsequences of elements satisfying a certain property. *)

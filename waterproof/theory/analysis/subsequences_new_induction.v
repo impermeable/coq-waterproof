@@ -33,7 +33,7 @@ Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.load_database.DisableWildcard*).
 
-(* Global Hint Resolve Rabs_Rabsolu.*)
+(* #[export] Hint Resolve Rabs_Rabsolu.*)
 (** ## Creating a subsequence of elements satisfying a certain property
 
 The purpose of this section is to provide a somewhat general strategy to construct subsequences of elements satisfying a certain property. *)

@@ -35,10 +35,10 @@ Require Import Waterproof.load_database.DisableWildcard.
 
 Require Import Waterproof.theory.analysis.sequences.
 
-Global Hint Resolve Rabs_Rabsolu : reals.
-Global Hint Resolve Rabs_minus_sym : reals.
-Global Hint Resolve Rmult_lt_0_compat : reals.
-Global Hint Resolve Rinv_lt_contravar : reals.
+#[export] Hint Resolve Rabs_Rabsolu : reals.
+#[export] Hint Resolve Rabs_minus_sym : reals.
+#[export] Hint Resolve Rmult_lt_0_compat : reals.
+#[export] Hint Resolve Rinv_lt_contravar : reals.
 
 Open Scope R_scope.
 

@@ -8,7 +8,7 @@ Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : type_scope.
 (*Definition eqv_pred {X : Type} {P : X -> Prop} (x : X) :
   (pred (as_subset X P)) x <-> P x.
 Proof. reflexivity. Qed.
-Global Hint Resolve eqv_pred : subsets.*)
+#[export] Hint Resolve eqv_pred : subsets.*)
 
 Require Import Reals.
 Require Import Lra.

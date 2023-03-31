@@ -1,18 +1,9 @@
 Require Import Reals.
 Require Import Classical_Prop.
-Require Import Waterproof.selected_databases.
-Require Import Waterproof.theory.logic_and_set_theory.subsets.
-Require Import Waterproof.theory.logic_and_set_theory.classical_logic.
-Require Import Waterproof.theory.logic_and_set_theory.constructive_logic.
-Require Import Waterproof.load_database.ClassicalLogic.
-Require Import Waterproof.load_database.Subsets.
-Require Import Waterproof.populate_database.waterproof_integers.
-Require Import Waterproof.populate_database.all_databases.
-Require Import Waterproof.populate_database.waterproof_reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load_database.Subsets.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Import Waterproof.load.
+Import databases_RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
 
 Open Scope R_scope.
@@ -80,7 +71,7 @@ Proof.
   - We conclude that (0 <= 0).
   - We conclude that (0 < 1).
 Qed.
-Global Hint Resolve zero_in_interval_closed_zero_open_one : reals.
+#[export] Hint Resolve zero_in_interval_closed_zero_open_one : wp_reals.
 
 Lemma one_in_complement_interval_closed_zero_open_one : (1 : ℝ \ [0,1)).
 Proof.
@@ -88,17 +79,17 @@ Proof.
   It suffices to show that (~ 1 < 1).
   We conclude that (~ 1 < 1).
 Qed.
-Global Hint Resolve one_in_complement_interval_closed_zero_open_one : reals.
+#[export] Hint Resolve one_in_complement_interval_closed_zero_open_one : wp_reals.
 
-Global Hint Resolve Rabs_def1 : reals.
-Global Hint Resolve not_and_or : classical_logic.
+#[export] Hint Resolve Rabs_def1 : wp_reals.
+#[export] Hint Resolve not_and_or : wp_classical_logic.
 
 Lemma not_in_compl_implies_in (A : subset R) (x : R) : (¬ x : ℝ\A) -> (x : A).
 Proof. Assume that (¬ x : ℝ\A). It holds that (¬ ¬ x : A). We conclude that (x : A). Qed.
 Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x : A) -> (¬ x : ℝ\A).
 Proof. Assume that (x : A). We conclude that (¬ x : ℝ\A). Qed.
-Global Hint Resolve not_in_compl_implies_in : negation_reals.
-Global Hint Resolve in_implies_not_in_compl : negation_reals.
+#[export] Hint Resolve not_in_compl_implies_in : wp_negation_reals.
+#[export] Hint Resolve in_implies_not_in_compl : wp_negation_reals.
 
 
 Close Scope subset_scope.

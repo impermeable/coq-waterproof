@@ -40,17 +40,12 @@ Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.selected_databases.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
+Require Import Waterproof.populate_database.
+Import Waterproof.populate_database.wp_all.
 
 (* Note: [core] is always *implicitly* included. *)
 
 Require Import Waterproof.theory.logic_and_set_theory.subsets.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.waterproof_core.
-Require Import Waterproof.populate_database.waterproof_integers.
-Require Import Waterproof.populate_database.all_databases.
-Require Import Waterproof.load_database.All.
 Local Open Scope R_scope.
 (*
 --------------------------------------------------------------------------------
@@ -81,7 +76,7 @@ Abort.
 *)
 
 (* loding the specified database*)
-Require Import Waterproof.load_database.Multiplication.
+Ltac2 Set global_database_selection as old_selection := fun () => [ @wp_eq_mult].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 2a
@@ -109,7 +104,7 @@ Abort.
 Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
-Require Import Waterproof.load_database.PlusMinus.
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_plus; @wp_eq_minus].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 2c
@@ -132,8 +127,8 @@ Ltac2 Set global_database_selection as old_selection := fun () => [].
 *)(** * Testcases for WaterproofDBPlusMinus. 
 *)
 
-(* loding the specified database*)
-Require Import Waterproof.load_database.PlusMinus.
+(* loading the specified database*)
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_plus; @wp_eq_minus].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 3a
@@ -160,7 +155,7 @@ Abort.
 Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
-Require Import Waterproof.load_database.Multiplication.
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_mult].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 3c
@@ -182,7 +177,7 @@ Ltac2 Set global_database_selection as old_selection := fun () => [].
 *)
 
 (* loding the specified database*)
-Require Import Waterproof.load_database.ZeroOne.
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_one; @wp_eq_zero].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 4a
@@ -413,7 +408,7 @@ Proof.
   apply pow2_ge_0.
 Qed.
 
-Global Hint Resolve abs_sqr: dummy.
+#[local] Hint Resolve abs_sqr: dummy.
 Lemma lm_abs_srq : forall x:R, Rabs(x^2) = x^2.
     solve[auto with nocore dummy].
 Qed.
