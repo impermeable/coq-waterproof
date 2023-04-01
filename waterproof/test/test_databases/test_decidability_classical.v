@@ -22,10 +22,11 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-Require Import Waterproof.populate_database.waterproof_decidability_classical.
+Require Import Waterproof.populate_database.
+Import wp_decidability_classical.
 
 (** Test whether classical informative decidability can be shown. *)
 Goal forall P : Prop, {P} + {~P}.
 Proof.
-auto with waterproof_decidability_classical.
+auto with wp_decidability_classical.
 Qed.

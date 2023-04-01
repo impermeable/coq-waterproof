@@ -27,10 +27,9 @@ along with Waterproof-lib.    If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.populate_database.all_databases.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.theory.analysis.metric_spaces.
 Require Import Waterproof.theory.analysis.sequences_metric.
 

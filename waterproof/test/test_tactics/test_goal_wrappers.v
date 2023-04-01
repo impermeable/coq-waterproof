@@ -34,11 +34,10 @@ Load goal_wrappers.
     Case Wrapper
 *)
 Load either.
-Load RealNumbers.
 Load unfold.
 Require Import Reals.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.all_databases.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 
 Local Open Scope R_scope.
 Goal R -> False.

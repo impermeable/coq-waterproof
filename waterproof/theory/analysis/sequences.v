@@ -26,19 +26,15 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.populate_database.waterproof_integers.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.all_databases.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
 
-#[export] Hint Resolve Rabs_Rabsolu : reals.
-#[export] Hint Resolve Rabs_minus_sym : reals.
-#[export] Hint Resolve Rmult_lt_0_compat : reals.
-#[export] Hint Resolve Rinv_lt_contravar : reals.
+#[export] Hint Resolve Rabs_Rabsolu : wp_reals.
+#[export] Hint Resolve Rabs_minus_sym : wp_reals.
+#[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
+#[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
 Open Scope R_scope.
 Open Scope extra.

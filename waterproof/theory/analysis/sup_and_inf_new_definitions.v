@@ -26,8 +26,8 @@ Require Import Classical_Pred_Type.
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load.
-Import databases_RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 Require Import Waterproof.definitions.set_definitions.
 Require Import Waterproof.set_search_depth.To_5.
 
@@ -421,7 +421,8 @@ Proof.
     It holds that (¬(L ≤ m)).
     Contradiction.
 Qed.
-
+(** TODO remove *)
+Require Import Waterproof.waterprove.manipulate_negation.
 Lemma if_almost_maximizer_then_every_upp_bd_larger :
   ∀ (A : ℝ → Prop) (M : ℝ),
     (∀ (L : ℝ), L < M ⇒ ∃ a : ℝ, (A a) ∧ L < a)

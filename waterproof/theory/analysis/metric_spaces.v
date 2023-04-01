@@ -3,8 +3,8 @@ Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
 Require Import Waterproof.theory.analysis.reals. (* Req_true is in here *)
-Require Import Waterproof.load.
-Import databases_RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 Require Import micromega.Lra.
 Open Scope R_scope.
 

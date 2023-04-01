@@ -24,21 +24,20 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
+(* Set Default Timeout 1. *)
 
 Require Import Waterproof.message.
 
 Require Import Reals.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
+(* TODO: why is loading selected_databases necessary here? 
+   Is it because otherwise the databases are not set? *)
+Require Import Waterproof.selected_databases.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.populate_database.waterproof_integers.
-Require Import Waterproof.selected_databases.
-Require Import Waterproof.populate_database.waterproof_core.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.load_database.RealsAndIntegers.
-Require Import Waterproof.load_database.DisableWildcard.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 
 (* lra only works in the [R_scope] *)
 Local Open Scope R_scope.

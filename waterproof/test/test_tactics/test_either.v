@@ -28,10 +28,9 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 
 Load either.
-Load RealNumbers.
 Require Import Reals.
-Require Import Waterproof.populate_database.waterproof_reals.
-Require Import Waterproof.populate_database.all_databases.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 Local Open Scope R_scope.
 
 (** Test 0: This tests to see if x <= 0 or 0 < x*)
@@ -137,7 +136,7 @@ Abort.
 
 (** Test 11: Now load classical informative decidability and try again *)
 Ltac2 old_selection := global_decidability_database_selection.
-Ltac2 Set global_decidability_database_selection := fun () => (@waterproof_decidability_classical)::[].
+Ltac2 Set global_decidability_database_selection := fun () => (@wp_decidability_classical)::[].
 Goal False.
 Either (A) or (~A).
 Abort.

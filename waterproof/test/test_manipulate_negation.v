@@ -241,13 +241,11 @@ Proof.
   Fail solve_by_manipulating_negation_in @h.
 Abort.
 
-Require Import Waterproof.load.
-Import databases_RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 (* Test 25 *)
 Goal forall n m : nat, ~(n < m) -> (n >= m).
 Proof.
   intros n m h.
   solve_by_manipulating_negation_in @h.
 Abort.
-
-

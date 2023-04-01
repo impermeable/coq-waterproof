@@ -34,7 +34,8 @@ Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
 Require Import Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.set_intuition.Enabled.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.Sets.
+(*Require Import Waterproof.load_database.
+Import wp_sets.*)
 
 #[export] Hint Constructors Union Intersection Disjoint Full_set : sets.
 

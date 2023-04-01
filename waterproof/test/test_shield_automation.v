@@ -5,8 +5,8 @@ Require Import Rfunctions.
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load.
-Import databases_RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 
 Local Open Scope R_scope.
 

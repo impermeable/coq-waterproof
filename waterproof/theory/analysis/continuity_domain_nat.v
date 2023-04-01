@@ -3,8 +3,8 @@ Set Default Timeout 3.
 Require Import Reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load.
-Import databases_RealsAndIntegers.
+Require Waterproof.load.
+Import Waterproof.load.databases_RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
 (* Require Import Waterproof.load_database.Intuition. *)
 
