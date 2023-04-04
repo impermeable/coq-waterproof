@@ -102,13 +102,23 @@ End Integers.
 
 (** Database configuration file Intuition. *)
 Module Intuition <: Waterproof.load.db_config.
-Module preload_module := Waterproof.populate_database.wp_all.
+Module preload_module := Waterproof.populate_database.wp_intuition.
 Ltac2 append_databases := true.
 Ltac2 global_databases () := [ @wp_intuition].
 Ltac2 decidability_databases () := [].
 Ltac2 negation_databases () := [].
 Ltac2 first_attempt_databases () := [].
 End Intuition.
+
+(** Database configuration file Intuition. *)
+Module Sets <: Waterproof.load.db_config.
+Module preload_module := Waterproof.populate_database.wp_sets.
+Ltac2 append_databases := true.
+Ltac2 global_databases () := [ @wp_sets].
+Ltac2 decidability_databases () := [].
+Ltac2 negation_databases () := [].
+Ltac2 first_attempt_databases () := [].
+End Sets.
 
 (** Reset global database variables. *)
 

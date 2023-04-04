@@ -31,8 +31,6 @@ waterproof/set_search_depth/To_4.v
 waterproof/set_search_depth/To_5.v
 waterproof/set_intuition/Enabled.v
 waterproof/set_intuition/Disabled.v
-waterproof/load_database/DisableWildcard.v
-waterproof/load_database/EnableWildcard.v
 
 # Simple tactics
 waterproof/tactics/goal_wrappers.v

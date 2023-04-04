@@ -30,12 +30,15 @@ Require Waterproof.definitions.inequality_chains.
 Require Waterproof.tactics.simplify_chains.
 Require Reals.
 Require Coq.micromega.Lia.
+Require Sets.Ensembles.
+Require Sets.Classical_sets.
 Require Waterproof.waterprove.simplify_subsets.
 Require Coq.Logic.ClassicalEpsilon.
 Require Waterproof.theory.logic_and_set_theory.classical_logic.
 Require Waterproof.theory.logic_and_set_theory.subsets.
 Require Waterproof.theory.analysis.reals.
 Require Waterproof.theory.logic_and_set_theory.subsets.
+Require Waterproof.tactics.sets_tactics.sets_automation_tactics.
 
 Module wp_classical_logic <: preloader.
 
@@ -433,6 +436,19 @@ Import Waterproof.theory.logic_and_set_theory.subsets.
 
 End wp_subsets.
 
+Module wp_sets <: preloader.
+
+Import Sets.Ensembles.
+Import Sets.Classical_sets.
+Import Waterproof.tactics.sets_tactics.sets_automation_tactics.
+
+#[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
+(** Would like to add the following hint, but this undesirably interferes with workings of the other automation
+    tactics. Also, what weight to use? *)
+#[export] Hint Extern 5 (_ = _) => try (ltac2:(trivial_set_equality ())) : wp_sets.
+
+End wp_sets.
+
 Module wp_all <: preloader.
 
 Export wp_classical_logic.
@@ -458,5 +474,6 @@ Export wp_negation_nat.
 Export wp_negation_reals.
 Export wp_reals.
 Export wp_subsets.
+Export wp_sets.
 
 End wp_all.
