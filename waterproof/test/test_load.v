@@ -87,7 +87,7 @@ Module Import db_Integers := databases(Integers).
 (** Test: database selection should be equal to that of the Integers. *)
 Goal False.
 assert_list_equal Ident.equal Message.of_ident
-    (global_database_selection ()) ([ @arith; @zarith; @wp_core; @wp_classical_logic; @wp_constructive_logic; @wp_integers]).
+    (global_database_selection ()) ([ @arith; @wp_classical_logic; @wp_constructive_logic; @wp_core; @wp_integers; @zarith]).
 Abort.
 
 Module Import db_Intuition := databases(Intuition).
@@ -95,5 +95,13 @@ Module Import db_Intuition := databases(Intuition).
 (** Test: database selection should now have those of Intuition added. *)
 Goal False.
 assert_list_equal Ident.equal Message.of_ident
-    (global_database_selection ()) ([ @wp_intuition; @arith; @zarith; @wp_core; @wp_classical_logic; @wp_constructive_logic; @wp_integers]).
+    (global_database_selection ()) ([ @arith; @wp_classical_logic; @wp_constructive_logic; @wp_core; @wp_integers; @wp_intuition; @zarith]).
+Abort.
+
+Module Import db_Integers_again := databases(Integers).
+
+(** Test: database selection shouldn't change after importing the integers database again *)
+Goal False.
+assert_list_equal Ident.equal Message.of_ident
+    (global_database_selection ()) ([ @arith; @wp_classical_logic; @wp_constructive_logic; @wp_core; @wp_integers; @wp_intuition; @zarith]).
 Abort.

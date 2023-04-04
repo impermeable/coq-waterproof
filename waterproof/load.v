@@ -23,7 +23,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.init_automation_global_variables.
+Require Import Waterproof.string_auxiliary.
 Require Import Waterproof.populate_database.
+
+Ltac2 cmp (id1 : ident) (id2 : ident) :=
+    string_cmp (Ident.to_string id1) (Ident.to_string id2).
 
 (** The module type db_config determines what should be in
     database configuration files.
@@ -58,22 +62,22 @@ Export X.preload_module.
 Ltac2 Set global_database_selection as old_selection := 
     fun () =>
         if X.append_databases
-            then List.concat ((X.global_databases ())::(old_selection ())::[])
+            then List.sort_uniq cmp (List.merge cmp (X.global_databases ()) (old_selection ()))
             else X.global_databases ().
 Ltac2 Set global_negation_database_selection as old_selection :=
     fun () => 
         if X.append_databases
-            then List.concat ((X.negation_databases ())::(old_selection ())::[])
+            then List.sort_uniq cmp (List.merge cmp (X.negation_databases ()) (old_selection ()))
             else X.negation_databases ().
 Ltac2 Set global_decidability_database_selection as old_selection :=
     fun () =>
         if X.append_databases
-            then List.concat ((X.decidability_databases ())::(old_selection ())::[])
+            then List.sort_uniq cmp (List.merge cmp (X.decidability_databases ()) (old_selection ()))
             else X.decidability_databases ().
 Ltac2 Set global_first_attempt_database_selection as old_selection :=
     fun () =>
         if X.append_databases
-            then List.concat ((X.first_attempt_databases ())::(old_selection ())::[])
+            then List.sort_uniq cmp (List.merge cmp (X.first_attempt_databases ()) (old_selection ()))
             else X.first_attempt_databases ().
 End databases.
 
@@ -91,7 +95,7 @@ Ltac2 first_attempt_databases () := [ @core; @wp_subsets; @wp_classical_logic].
 End RealsAndIntegers.
 
 (** Database configuration file Integers. *)
-Module Integers <: Waterproof.load.db_config.
+Module Integers <: db_config.
 Module preload_module := Waterproof.populate_database.wp_all.
 Ltac2 append_databases := true.
 Ltac2 global_databases () := [ @arith; @zarith; @wp_core; @wp_classical_logic; @wp_constructive_logic; @wp_integers].
@@ -101,7 +105,7 @@ Ltac2 first_attempt_databases () := [ @core; @wp_classical_logic].
 End Integers.
 
 (** Database configuration file Intuition. *)
-Module Intuition <: Waterproof.load.db_config.
+Module Intuition <: db_config.
 Module preload_module := Waterproof.populate_database.wp_intuition.
 Ltac2 append_databases := true.
 Ltac2 global_databases () := [ @wp_intuition].
@@ -111,7 +115,7 @@ Ltac2 first_attempt_databases () := [].
 End Intuition.
 
 (** Database configuration file Intuition. *)
-Module Sets <: Waterproof.load.db_config.
+Module Sets <: db_config.
 Module preload_module := Waterproof.populate_database.wp_sets.
 Ltac2 append_databases := true.
 Ltac2 global_databases () := [ @wp_sets].
