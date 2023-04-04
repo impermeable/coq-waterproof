@@ -84,6 +84,16 @@ End databases.
 (** ** Preset database configuration files
     (i.e. modules of module Type db_config) *)
 
+(** Database configuration file Algebra. *)
+Module Algebra <: db_config.
+Module preload_module := Waterproof.populate_database.wp_all.
+Ltac2 append_databases := true.
+Ltac2 global_databases () := [ @arith; @wp_algebra; @wp_classical_logic; @wp_constructive_logic; @wp_integers; @zarith].
+Ltac2 decidability_databases () := [ @nocore; @wp_decidability_classical; @wp_decidability_nat].
+Ltac2 negation_databases () := [ @nocore; @wp_negation_nat; @wp_negation_int].
+Ltac2 first_attempt_databases () := [ @core; @wp_classical_logic; @wp_constructive_logic; @wp_core].
+End Algebra.
+
 (** Database configuration file RealsAndIntegers. *)
 Module RealsAndIntegers <: db_config.
 Module preload_module := wp_all.
