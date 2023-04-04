@@ -24,10 +24,10 @@ Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
 
+Require Import Waterproof.selected_databases.
+
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
 
 Require Import Waterproof.set_search_depth.To_5.
 
@@ -35,6 +35,9 @@ Require Import Waterproof.theory.analysis.sequences.
 Require Import Waterproof.theory.analysis.subsequences.
 Require Import Waterproof.theory.analysis.sup_and_inf.
 Require Import Waterproof.theory.analysis.sequential_accumulation_points.
+
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 Open Scope R_scope.
 

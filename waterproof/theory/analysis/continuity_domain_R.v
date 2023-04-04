@@ -2,10 +2,9 @@ Require Import Rbase.
 Require Import Rbasic_fun.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.Intuition.
 
 Open Scope R_scope.
 

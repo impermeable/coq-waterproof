@@ -25,8 +25,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 (* Tests for (in)equality chains and the reals database *)
 
 
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 (* Require Import Waterproof.populate_database.all_databases.*)
 Require Import Waterproof.definitions.inequality_chains.
 

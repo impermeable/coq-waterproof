@@ -32,8 +32,8 @@ Require Import micromega.Lra.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.selected_databases.
 Require Import Waterproof.set_search_depth.To_5.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Load we_conclude_that.
 
 Ltac2 store_verbosity := verbosity.

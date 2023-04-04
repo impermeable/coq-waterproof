@@ -38,13 +38,16 @@ Goal True.
 --------------------------------------------------------------------------------
 *) (** *    Testcases for [assert_list_equal]
 *)
-assert_list_equal (constr:(1)::constr:(2)::constr:(3)::[])
+assert_list_equal Constr.equal Message.of_constr (constr:(1)::constr:(2)::constr:(3)::[])
                              (constr:(1)::constr:(2)::constr:(3)::[]).
 
-assert_list_equal [] [].                             
+assert_list_equal Constr.equal Message.of_constr [] [].                             
 
 assert_raises_error (fun () =>
-assert_list_equal (constr:(1)::constr:(3)::[]) (constr:(2)::constr:(3)::[]) ).
+assert_list_equal Constr.equal Message.of_constr (constr:(1)::constr:(3)::[]) (constr:(2)::constr:(3)::[]) ).
+
+assert_list_equal Ident.equal Message.of_ident ( [ @test_string_1; @test_string_2]) ( [ @test_string_1; @test_string_2]).
+
 Abort.
 (*
 --------------------------------------------------------------------------------

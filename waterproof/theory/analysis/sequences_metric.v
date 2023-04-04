@@ -4,8 +4,8 @@ Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
 
 Require Import Waterproof.notations.notations.
 Require Import Reals.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 (*Require Import Waterproof.populate_database.waterproof_integers.
 Require Import Waterproof.populate_database.waterproof_reals.*)
 Open Scope R_scope.

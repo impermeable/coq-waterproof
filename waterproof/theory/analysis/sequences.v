@@ -26,8 +26,8 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
 

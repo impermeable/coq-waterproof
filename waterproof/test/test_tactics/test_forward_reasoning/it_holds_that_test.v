@@ -36,8 +36,8 @@ Require Import Waterproof.selected_databases.
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Load it_holds_that.
 Require Import Waterproof.test_auxiliary.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 (* lra only works in the [R_scope] *)
 Local Open Scope R_scope.

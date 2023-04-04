@@ -29,8 +29,8 @@ From Ltac2 Require Import Ltac2.
 
 Load either.
 Require Import Reals.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Local Open Scope R_scope.
 
 (** Test 0: This tests to see if x <= 0 or 0 < x*)

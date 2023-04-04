@@ -28,8 +28,8 @@ Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import Waterproof.set_search_depth.To_5.
 
 (** ## Creating a subsequence of elements satisfying a certain property

@@ -27,11 +27,11 @@ along with Waterproof-lib.    If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.AllTactics.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.theory.analysis.metric_spaces.
 Require Import Waterproof.theory.analysis.sequences_metric.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 Open Scope R_scope.
 Open Scope metric_scope.

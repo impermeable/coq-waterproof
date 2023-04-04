@@ -36,8 +36,8 @@ Load goal_wrappers.
 Load either.
 Load unfold.
 Require Import Reals.
-Require Waterproof.load.
-Import Waterproof.load.databases_RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 Local Open Scope R_scope.
 Goal R -> False.
