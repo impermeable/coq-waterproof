@@ -26,7 +26,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Load manipulate_negation.
 Require Import Reals.
-Require Import selected_databases.
+Require Import init_automation_global_variables.
 Ltac2 Set global_negation_database_selection := fun () => [ @nocore; @wp_negation_int; @wp_negation_nat; @wp_negation_reals].
 
 (** Test 0: large example from real analysis.*)

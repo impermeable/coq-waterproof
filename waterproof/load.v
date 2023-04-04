@@ -22,7 +22,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.populate_database.
 
 (** The module type db_config determines what should be in

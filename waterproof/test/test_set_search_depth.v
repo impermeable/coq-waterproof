@@ -35,7 +35,7 @@ Require Import Waterproof.message.
 
 Require Import Reals.
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.waterprove.
 
 Require Import Waterproof.set_search_depth.To_1.

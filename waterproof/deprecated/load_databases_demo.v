@@ -28,7 +28,7 @@ From Ltac2 Require Option.
 Require Import Waterproof.message.
 
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.waterprove.
 
 Require Import load_database.Multiplication.

@@ -30,7 +30,7 @@ Require Import Reals.
 Require Import micromega.Lra.
 
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.load.
 Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).

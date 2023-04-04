@@ -25,7 +25,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.load.
 
 (** Test whether length of global database selection is zero*)

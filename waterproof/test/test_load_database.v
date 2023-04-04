@@ -39,7 +39,7 @@ Require Import Reals.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.populate_database.
 Import Waterproof.populate_database.wp_all.
 

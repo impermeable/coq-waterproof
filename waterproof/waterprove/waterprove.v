@@ -35,7 +35,7 @@ From Ltac2 Require Import Ltac2.
 Require Import Waterproof.message.
 
 Require Import Waterproof.definitions.inequality_chains.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.waterprove.manipulate_negation.
 

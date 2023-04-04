@@ -18,7 +18,7 @@ waterproof/waterprove/simplify_subsets.v
 waterproof/tactics/simplify_chains.v
 
 # These depend multiple other file of the Waterproof-library.
-waterproof/selected_databases.v
+waterproof/init_automation_global_variables.v
 waterproof/waterprove/automation_subroutine.v
 waterproof/waterprove/manipulate_negation.v
 waterproof/waterprove/waterprove.v

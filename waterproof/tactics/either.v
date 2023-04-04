@@ -30,7 +30,7 @@ From Ltac2 Require Import Ltac2.
 Require Import Waterproof.message.
 (* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Export Waterproof.tactics.goal_wrappers.
 

@@ -31,7 +31,7 @@ From Ltac2 Require Option.
 
 Require Import Waterproof.message.
 
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.set_search_depth.To_5.
 Require Import Waterproof.load_database.All.
