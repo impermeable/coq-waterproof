@@ -71,26 +71,33 @@ which employs `auto` and `eauto` (and optionally also `intuition`),
 together with a customizable set of hint-databases.
 
 ### Configuration
-The behaviour of the automated tactics can be configured by importing specific files.
+The behavior of the automatation tactics can be configured by importing specific files (and modules).
 
-* **Adding a Database**: import the specific file in `waterproof/load_database`. Example:
+* **Adding a Database**: Example:
     ```coq
-    Require Import Waterproof.load_database.RealNumbers.
+    Require Import Waterproof.load.
+    Module Import db_RealsAndIntegers := databases(RealsAndIntegers).
     ```
 * **Search depth**: import any of the files in `waterproof/set_seach_depth`. Example:
     ```coq
     Require Import Waterproof.set_search_depth.To_5.
     ```
-
-* **Enabling intuition**: Add the import
-    ```coq
-    Require Import Waterproof.set_intuition.Enabled.
-    ```
-    To disable it again, add:
-    ```coq
-    Require Import Waterproof.set_intuition.Disabled.
-    ```
-
+One can also write custom database config files. For example,
+```coq
+Require Import Waterproof.populate_database.
+Require Import Waterproof.load.
+    
+Module ExampleDBConfig <: db_config.
+  Module preload_module := wp_all.
+  Ltac2 append_databases := true.
+  Ltac2 global_databases () := [ @real; @wp_reals].
+  Ltac2 decidability_databases () := [ @nocore; @wp_decidability_classical].
+  Ltac2 negation_databases () := [ @nocore; @wp_negation_reals].
+  Ltac2 first_attempt_databases () := [].
+End ExampleDBConfig.
+    
+Module Import my_db := databases(ExampleDBConfig).
+```
 <!--(deprecated)## Rewriting equalities
 One can use literal equalities to rewrite goals and hypotheses. This alleviates the need to know the names of build-in Coq lemmas and theorems. The automation features will verify the literal, use it as a temporal lemma to rewrite the target, and remove it again from the proof state.
 Example:
