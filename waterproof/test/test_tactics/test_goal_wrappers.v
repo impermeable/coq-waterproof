@@ -34,9 +34,11 @@ Load goal_wrappers.
     Case Wrapper
 *)
 Load either.
-Load RealNumbers.
 Load unfold.
 Require Import Reals.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
+
 Local Open Scope R_scope.
 Goal R -> False.
     intro x.

@@ -27,7 +27,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 
 
 Ltac2 Set global_search_depth := 3.

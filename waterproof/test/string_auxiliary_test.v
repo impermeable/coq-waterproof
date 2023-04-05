@@ -72,4 +72,12 @@ assert_is_true (Ident.equal @unicorn (add_to_ident_name @uni "corn")).
 assert_is_true (string_equal "hello" "hello").
 assert_is_false (string_equal "hello" "Hello").
 assert_is_false (string_equal "hello" "hell").
+
+
+(** * Testcases for [string_cmp] *)
+assert_is_true (Int.equal (string_cmp "aaa" "aaa") 0).
+assert_is_true (Int.equal (string_cmp "aaa" "aaaa") -1).
+assert_is_true (Int.equal (string_cmp "aa" "a") (1)).
+assert_is_true (Int.equal (string_cmp "abb" "cab") (-1)).
+
 Abort.

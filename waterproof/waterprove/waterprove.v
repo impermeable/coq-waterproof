@@ -35,7 +35,7 @@ From Ltac2 Require Import Ltac2.
 Require Import Waterproof.message.
 
 Require Import Waterproof.definitions.inequality_chains.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.waterprove.manipulate_negation.
 
@@ -79,7 +79,7 @@ try making a smaller step."))
 *)
 
 Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
-    let first_attempt () := run_automation prop lemmas 3 (Some ((@subsets)::(@classical_logic)::(@core)::[])) false
+    let first_attempt () := run_automation prop lemmas 3 (Some (global_first_attempt_database_selection ())) false
     in
     let second_attempt () := 
         match shield with
@@ -99,7 +99,7 @@ Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (sh
             let databases :=
                 match global_use_all_databases with
                 | true => None
-                | false => Some (load_databases global_database_selection) 
+                | false => Some (global_database_selection ())
                 end
             in
             run_automation prop lemmas global_search_depth 

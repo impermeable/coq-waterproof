@@ -6,16 +6,12 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
-
 Require Import Waterproof.theory.analysis.sequences.
 Require Import Waterproof.theory.analysis.subsequences.
-
-Global Hint Resolve Rabs_Rabsolu : reals.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 Open Scope R_scope.
 

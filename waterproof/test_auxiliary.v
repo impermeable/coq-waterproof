@@ -81,28 +81,28 @@ Ltac2 assert_raises_error f :=
     end.
 
 (*
-    Check if two lists (of type "constr list") are equal. 
+    Check if two lists (of arbitrary type) are equal. 
     Raise an error if they have different lengths,
     or that there exists an index such that their value at that index
     differs.
 
     Arguments:
-        * x, y: (constr list), lists of constr's to be compared.
+        * x, y: ('a list), lists of arbitrary type to be compared.
 
     Raises Exceptions:
         * TestFailedError, if x and y have a different length.
         * TestFailedError, if there exists an i such that x[i] ≠ y[i].
 *)
-Ltac2 rec assert_list_equal (x:constr list) (y: constr list) :=
+Ltac2 rec assert_list_equal (f : 'a -> 'a -> bool) (of_a : 'a -> message) (x:'a list) (y: 'a list) :=    
     match x with
     | x_head::x_tail =>
         match y with
         | y_head::y_tail =>
-            match (Constr.equal x_head y_head) with
-            | true => assert_list_equal x_tail y_tail
+            match (f x_head y_head) with
+            | true => assert_list_equal f of_a x_tail y_tail
             | false => fail_test (concat (of_string "Unequal elements:") 
-                                    (concat (of_constr x_head) 
-                                            (of_constr y_head)
+                                    (concat (of_a x_head) 
+                                            (of_a y_head)
                                     )
                             )
             end

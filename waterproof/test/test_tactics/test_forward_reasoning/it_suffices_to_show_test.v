@@ -27,10 +27,8 @@ From Ltac2 Require Option.
 Require Import Waterproof.message.
 
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
 Load it_suffices_to_show.
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.load_database.DisableWildcard.
 
 (* -------------------------------------------------------------------------- *)
 (** * Testcases for [It suffices to show that ...] 
@@ -62,7 +60,8 @@ Proof.
     assert_raises_error result.
 Abort.
 
-Require Import Waterproof.load_database.Integers.
+Require Import Waterproof.load.
+Module Import db_Integers := databases(Integers).
 
 Local Parameter f : nat -> nat.
 Local Parameter f_increasing : forall m n : nat, m <= n -> f m <= f n.

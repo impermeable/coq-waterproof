@@ -4,12 +4,12 @@ Authors:
     - Tudor Voicu (1339532)
     - Adrian Vrămuleţ (1284487)
     - Cosmin Manea (small changes)
+    - Jim Portegies
 Creation date: 18 June 2021
 
-Test if importing any of the files in
-the directory [load_database] do actually change
-the global variable [global_database_selection],
-AND change the behaviour of [waterprove].
+Test whether the populate_database file loads the 
+databases and if changing the global variable [global_database_selection] 
+changes the behavior of [waterprove].
 
 --------------------------------------------------------------------------------
 
@@ -39,16 +39,14 @@ Require Import Reals.
 Require Import Waterproof.test_auxiliary.
 Require Import Waterproof.auxiliary.
 Require Import Waterproof.waterprove.waterprove.
-Require Import Waterproof.selected_databases.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
-
-Local Open Scope R_scope.
+Require Import Waterproof.init_automation_global_variables.
+Require Import Waterproof.populate_database.
+Import Waterproof.populate_database.wp_all.
 
 (* Note: [core] is always *implicitly* included. *)
 
-Require Import load_database.All.
-
+Require Import Waterproof.theory.logic_and_set_theory.subsets.
+Local Open Scope R_scope.
 (*
 --------------------------------------------------------------------------------
 *)(** * Testcases for empty selection
@@ -62,7 +60,7 @@ Lemma load_db_test_1a: True.
     waterprove (Control.goal ()) [] false.
 Qed.
 
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (** * Test 1b
     Lemma that should be NOT proveable with [nocore].
@@ -78,7 +76,7 @@ Abort.
 *)
 
 (* loding the specified database*)
-Require Import load_database.Multiplication.
+Ltac2 Set global_database_selection as old_selection := fun () => [ @wp_eq_mult].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 2a
@@ -103,10 +101,10 @@ Lemma load_db_test_2b: forall x y:R, x + y = y + x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
-Require Import load_database.PlusMinus.
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_plus; @wp_eq_minus].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 2c
@@ -121,7 +119,7 @@ Abort.
 
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 
 (*
@@ -129,8 +127,8 @@ Ltac2 Set global_database_selection as old_selection := [].
 *)(** * Testcases for WaterproofDBPlusMinus. 
 *)
 
-(* loding the specified database*)
-Require Import load_database.PlusMinus.
+(* loading the specified database*)
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_plus; @wp_eq_minus].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 3a
@@ -154,10 +152,10 @@ Lemma load_db_test_3b: forall x y:R, x*y = y *x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (* loding databases other than the specified one*)
-Require Import load_database.Multiplication.
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_mult].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 3c
@@ -170,7 +168,7 @@ Lemma load_db_test_3c: forall x y:R, x + x + y = x + y + x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 
 (*
@@ -179,7 +177,7 @@ Ltac2 Set global_database_selection as old_selection := [].
 *)
 
 (* loding the specified database*)
-Require Import load_database.ZeroOne.
+Ltac2 Set global_database_selection := fun () => [ @wp_eq_one; @wp_eq_zero].
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 4a
@@ -204,10 +202,10 @@ Lemma load_db_test_4b: forall x y:R, x*y = y *x.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
+Ltac2 Set global_database_selection as old_selection :=
+    fun () => [ @wp_eq_mult].
 
 (* loding databases other than the specified one*)
-Require Import load_database.Multiplication.
 Require Import Waterproof.set_search_depth.To_3.
 
 (** * Test 4c
@@ -220,11 +218,8 @@ Lemma load_db_test_4c: forall x y:R, x*1 + 1 + 0 = x +1.
 Abort.
 
 (* reset the selection of databases*)
-Ltac2 Set global_database_selection as old_selection := [].
-
-
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => [ @wp_eq_mult].
 
 (** * Test 12
     Same as test 2, but now the WRONG database is loaded.
@@ -235,9 +230,8 @@ Lemma load_db_test_12: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Abort.
 
 (* Empty the database *)
-Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBReals)::old_selection.
+    fun () => [ @wp_reals].
 
 (** * Test 13
     Same as test 2, but now the REQUIRED database is loaded.
@@ -248,21 +242,20 @@ Lemma load_db_test_13: forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Qed.
 
 (*Empty the database*)
-Ltac2 Set global_database_selection as old_selection :=[].
-Require Import load_database.All.
+Ltac2 Set global_database_selection as old_selection :=
+    fun () => [].
 
-(** * Test 14
-    Similarly, this can be solved with the WaterproofDBGeneral, 
-    since it contains all databases.
-*)
+(** Before putting something in the additional database, proving after loading all won't work. *)
+
 Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
     intros.
-    waterprove (Control.goal ()) [] false.
-Qed.
+    Fail waterprove (Control.goal ()) [] false.
+Abort.
+
+Local Hint Resolve Rmax_r : additional.
 
 (*Empty the database*)
-Ltac2 Set global_database_selection as old_selection :=[].
-
+Ltac2 Set global_database_selection as old_selection := fun () => [].
 
 (** * Test 15
     Since there exists a lemma for this goal, 
@@ -274,7 +267,7 @@ Goal forall x y:R, (x + y)^2 = x^2 + y^2 + 2*x*y.
 Qed.
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => [ @wp_eq_mult].
 Ltac2 Set global_search_depth := 4.
 (** * Test 16
     This goal requires can not be solved by only one database.
@@ -283,15 +276,14 @@ Goal forall x y, x * y = y * x + 0.
 Proof.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
-    Ltac2 Set global_database_selection as old_selection :=[].
     Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBZeroOne)::old_selection.
+        fun () => [ @wp_eq_zero].
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
 Abort.
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
+    fun () => [ @wp_eq_mult; @wp_eq_zero].
 Ltac2 Set global_search_depth := 1.
 
 (** * Test 17
@@ -316,24 +308,19 @@ Proof.
     waterprove (Control.goal ()) [] false.
 Qed.
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBPlusMinus)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBSquareRoot)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBAbsoluteValue)::old_selection.
+    fun () => [ @wp_eq_minus; @wp_eq_plus; @wp_eq_mult; @wp_eq_one; @wp_eq_zero; @wp_eq_sqr; @wp_eq_abs].
 
 (** * Test 19
-    This test should not be solved, since it has all 
-    databases except the required one.
+    This test should not be solved, since it doesn't have 
+    the required wp_eq_abs database.
 *)
 Goal forall a:R, ln(exp a) = a.
     let result () := waterprove (Control.goal ()) [] false in
     assert_raises_error result.
 Abort.
 
-Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBExponential)::old_selection.
+    fun () => [ @wp_eq_exp].
 (** * Test 20
     This test should work just fine now.
 *)
@@ -343,15 +330,11 @@ Goal forall a:R, ln(exp a) = a.
 Abort.
 
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBZeroOne)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBMultiplication)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBPlusMinus)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBSquareRoot)::old_selection.
-Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBExponential)::old_selection.
+    fun () =>
+        [ @wp_eq_zero; @wp_eq_one; @wp_eq_mult; 
+          @wp_eq_plus; @wp_eq_minus; @wp_eq_sqr;
+          @wp_eq_exp
+        ].
 
 (** * Test 21
     This test should not be solved, since it has all 
@@ -362,9 +345,8 @@ Goal forall a:R, Rabs(a) = Rabs(-a).
     assert_raises_error result.
 Abort.
 
-Ltac2 Set global_database_selection as old_selection :=[].
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBAbsoluteValue)::old_selection.
+    fun () => [ @wp_eq_abs].
 
 (** * Test 22
     This test should work just fine now.
@@ -374,7 +356,7 @@ Goal forall a:R, Rabs(a) = Rabs(-a).
     waterprove (Control.goal ()) [] false.
 Abort.
 Ltac2 Set global_database_selection as old_selection :=
-    (WaterproofDBReals)::old_selection.
+    fun () => [ @wp_eq_abs; @wp_reals].
 
 (** * Test 23
     Another test that uses two databases, for good measure.
@@ -401,7 +383,7 @@ Proof.
   apply pow2_ge_0.
 Qed.
 
-Global Hint Resolve abs_sqr: dummy.
+#[local] Hint Resolve abs_sqr: dummy.
 Lemma lm_abs_srq : forall x:R, Rabs(x^2) = x^2.
     solve[auto with nocore dummy].
 Qed.
@@ -412,9 +394,5 @@ Qed.
 *)
 Goal forall x : R, ~ (x > x).
 intro x.
-solve [auto with reals].
+solve [auto with wp_reals].
 Qed.
-
-
-
-

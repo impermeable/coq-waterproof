@@ -26,16 +26,15 @@ Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
 
-Global Hint Resolve Rabs_Rabsolu : reals.
-Global Hint Resolve Rabs_minus_sym : reals.
-Global Hint Resolve Rmult_lt_0_compat : reals.
-Global Hint Resolve Rinv_lt_contravar : reals.
+#[export] Hint Resolve Rabs_Rabsolu : wp_reals.
+#[export] Hint Resolve Rabs_minus_sym : wp_reals.
+#[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
+#[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
 Open Scope R_scope.
 Open Scope extra.
@@ -100,7 +99,7 @@ Proof.
         We conclude that (1 > 0).
       }
       It holds that (x <= INR 0).
-      It follows that (n > x).
+      We conclude that (n > x).
     - Case (0 < x).
       By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
       It holds that (IZR( up x ) > x).

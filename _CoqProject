@@ -18,31 +18,12 @@ waterproof/waterprove/simplify_subsets.v
 waterproof/tactics/simplify_chains.v
 
 # These depend multiple other file of the Waterproof-library.
-waterproof/databases.v
-waterproof/selected_databases.v
+waterproof/init_automation_global_variables.v
 waterproof/waterprove/automation_subroutine.v
 waterproof/waterprove/manipulate_negation.v
 waterproof/waterprove/waterprove.v
 
 # Files used to configure global state.
-waterproof/load_database/AbsoluteValue.v
-waterproof/load_database/Algebra.v
-waterproof/load_database/Exponential.v
-waterproof/load_database/Multiplication.v
-waterproof/load_database/PlusMinus.v
-waterproof/load_database/SquareRoot.v
-waterproof/load_database/ZeroOne.v
-waterproof/load_database/RealsAndIntegers.v
-waterproof/load_database/Subsets.v
-waterproof/load_database/Sets.v
-waterproof/load_database/Additional.v
-waterproof/load_database/RealNumbers.v
-waterproof/load_database/ConstructiveLogic.v
-waterproof/load_database/ClassicalLogic.v
-waterproof/load_database/Integers.v
-waterproof/load_database/Intuition.v
-waterproof/load_database/Firstorder.v
-waterproof/load_database/All.v
 waterproof/set_search_depth/To_1.v
 waterproof/set_search_depth/To_2.v
 waterproof/set_search_depth/To_3.v
@@ -50,8 +31,6 @@ waterproof/set_search_depth/To_4.v
 waterproof/set_search_depth/To_5.v
 waterproof/set_intuition/Enabled.v
 waterproof/set_intuition/Disabled.v
-waterproof/load_database/DisableWildcard.v
-waterproof/load_database/EnableWildcard.v
 
 # Simple tactics
 waterproof/tactics/goal_wrappers.v
@@ -68,7 +47,6 @@ waterproof/tactics/we_show_both_directions.v
 waterproof/tactics/we_show_both_statements.v
 waterproof/tactics/goal_to_hint.v
 
-
 # Automated tactics
 waterproof/tactics/forward_reasoning/forward_reasoning_aux.v
 waterproof/tactics/forward_reasoning/claims.v
@@ -83,7 +61,9 @@ waterproof/tactics/sets_tactics/sets_automation_tactics.v
 waterproof/AllTactics.v
 waterproof/AllConstructiveTactics.v
 
-# These depend on AllTactics.
+# Populate and load databases
+waterproof/populate_database.v
+waterproof/load.v
 
 # Testcases. Not needed by the end-user,
 # but used to enforce they all pass for compilation.
@@ -91,14 +71,11 @@ waterproof/test/test_message.v
 waterproof/test/reverse_engineer/auto_hintdb_arg.v
 waterproof/test/string_auxiliary_test.v
 waterproof/test/test_auxiliary_test.v
-waterproof/test/test_load_database.v
 waterproof/test/test_set_intuition.v
 waterproof/test/test_set_search_depth.v
 waterproof/test/test_manipulate_negation.v
 waterproof/test/test_set_definitions.v
 waterproof/test/test_inequality_chains.v
-waterproof/test/test_databases/test_reals_database.v
-waterproof/test/test_databases/test_waterproof_integers_database.v
 waterproof/test/test_tactics/assume_test.v
 waterproof/test/test_tactics/goal_to_hint_test.v
 waterproof/test/test_tactics/such_that_test.v
@@ -124,6 +101,9 @@ waterproof/test/test_shield_automation.v
 waterproof/test/test_tactics/test_simplify_chains.v
 
 # Waterproof theory files
+waterproof/theory/logic_and_set_theory/classical_logic.v
+waterproof/theory/logic_and_set_theory/constructive_logic.v
+waterproof/theory/logic_and_set_theory/subsets.v
 waterproof/theory/analysis/metric_spaces.v
 waterproof/theory/analysis/sequences_metric.v
 waterproof/theory/analysis/sup_and_inf.v
@@ -133,7 +113,15 @@ waterproof/theory/analysis/subsequences_metric.v
 waterproof/theory/analysis/subsequences.v
 waterproof/theory/analysis/series.v
 waterproof/theory/analysis/open_and_closed.v
+waterproof/theory/analysis/reals.v
 waterproof/theory/analysis/sequential_accumulation_points.v
 waterproof/theory/analysis/limsup_liminf_bolzano.v
 waterproof/theory/analysis/continuity_domain_R.v
 waterproof/theory/analysis/continuity_domain_nat.v
+
+# Testcases for theory files and databases
+waterproof/test/test_load_database.v
+waterproof/test/test_load.v
+waterproof/test/test_databases/test_reals_database.v
+waterproof/test/test_databases/test_waterproof_integers_database.v
+waterproof/test/test_databases/test_decidability_classical.v

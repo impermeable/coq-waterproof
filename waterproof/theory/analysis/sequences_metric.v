@@ -1,8 +1,13 @@
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.tactics.unfold.
+Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
 
 Require Import Waterproof.notations.notations.
 Require Import Reals.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
+(*Require Import Waterproof.populate_database.waterproof_integers.
+Require Import Waterproof.populate_database.waterproof_reals.*)
 Open Scope R_scope.
 
 (** * Sequences in metric spaces *)
@@ -35,16 +40,13 @@ Ltac2 Notation "Expand" "the" "definition" "of" "converges" "to" cl(opt(seq("in"
   expand_def_framework unfold_convergence unfold_convergence_in cl.
 
 (* Index shift*)
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.databases.
-Require Import Waterproof.load_database.RealsAndIntegers.
 Lemma relation_shift {X : Metric_Space} (a : nat -> Base X) (k : nat) (n : nat) (n_ge_k : (n ≥ k)%nat) : 
   a ((n - k) + k)%nat = a n.
 Proof.
 We conclude that (a (n - k + k) = a n)%nat.
 Qed.
 
-#[export] Hint Resolve relation_shift : waterproof_integers.
-#[export] Hint Extern 1 (_ = _) => (rewrite relation_shift) : waterproof_integers.
+#[export] Hint Resolve relation_shift : wp_integers.
+#[export] Hint Extern 1 (_ = _) => (rewrite relation_shift) : wp_integers.
 
 Close Scope R_scope.

@@ -5,8 +5,8 @@ Require Import Rfunctions.
 
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load_database.All.
-
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 Local Open Scope R_scope.
 
@@ -112,6 +112,12 @@ Abort.
 
 
 (** Testing de Morgan laws. *)
+
+(* Require Import Waterproof.theory.logic_and_set_theory.classical_logic.
+Require Import Waterproof.theory.logic_and_set_theory.constructive_logic.
+Require Import Waterproof.load_database.ClassicalLogic.*)
+Require Import Waterproof.waterprove.manipulate_negation.
+#[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
 
 (** Level 1 *)
 Local Parameter P1 : R -> Prop.

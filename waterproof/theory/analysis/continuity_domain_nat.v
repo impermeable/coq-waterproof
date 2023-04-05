@@ -1,10 +1,9 @@
 Require Import Reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.Intuition.
-
 
 Open Scope R_scope.
 
@@ -38,9 +37,7 @@ Proof.
   Take n, m : ℕ. Assume that (n = m).
   We conclude that (& |m - n| = |m - m| = m - m = 0 = n - n = |n - n|).
 Qed.
-Global Hint Resolve aux1 : reals.
-
-Global Hint Resolve Rabs_minus_sym : reals.
+#[export] Hint Resolve aux1 : wp_reals.
 (** Useful lemma *)
 Lemma useful_lemma : for all n m : ℕ, (n ≠ m) ⇒ (1 ≤ | m - n |).
 Proof.
@@ -53,7 +50,8 @@ Proof.
     It holds that (m + 1 - m = S m - m).
     It holds that ((S m) ≤ n).
     It holds that ((S m) - m ≤ n - m).
-    We conclude that (& 1 = m + 1 - m = (S m) - m ≤ n - m = |n - m| = |m - n|).
+    We conclude that
+        (& 1 = m + 1 - m = (S m) - m ≤ n - m = | n - m | = | m - n | ).
   + Case (n < m)%nat.
     It holds that (S n ≤ m)%nat.
     By S_INR it holds that (n + 1 = S n).
@@ -62,8 +60,6 @@ Proof.
     It holds that ((S n) - n ≤ m - n).
     We conclude that (& 1 = n + 1 - n = (S n) - n ≤ m - n = |m - n|).
 Qed.
-
-
 
 (** Notations *)
 Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).

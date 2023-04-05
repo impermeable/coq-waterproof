@@ -30,12 +30,11 @@ Require Import Reals.
 Require Import micromega.Lra.
 
 Require Import Waterproof.test_auxiliary.
-Require Import Waterproof.selected_databases.
-Require Import Waterproof.set_intuition.Disabled.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.RealsAndIntegers.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Load we_conclude_that.
-Require Import Waterproof.load_database.DisableWildcard.
 
 Ltac2 store_verbosity := verbosity.
 
@@ -222,8 +221,8 @@ Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
 intro eps.
 intro eps_gt_0.
 assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
-auto with reals.
-auto with reals.
+auto with wp_core wp_reals.
+auto with wp_reals.
 Qed.
 
 Close Scope R_scope.

@@ -25,22 +25,27 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 (* Tests for (in)equality chains and the reals database *)
 
 
-Load databases.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
+(* Require Import Waterproof.populate_database.all_databases.*)
+Require Import Waterproof.definitions.inequality_chains.
 
+Require Import Reals.
+(** TODO: eventuall rely on the reals database above *)
 Open Scope R_scope.
 (* Test 0: check if notations work. *)
 
 Goal (& 3 < 4 <= 5).
-auto with reals.
+auto with wp_core wp_reals.
 Qed.
 
 Goal (& 3 = 3 = 3).
-auto with reals.
+auto with wp_core wp_reals.
 Qed.
 Open Scope R_scope.
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
 Goal forall x : R, (& x < 5 = 2 + 3) -> (x < 5).
 intro x.
 intro H.
-auto with reals.
+auto with wp_reals.
 Qed.

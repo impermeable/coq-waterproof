@@ -181,6 +181,41 @@ Ltac2 add_to_ident_name (h: ident) (s: string) :=
         end
     end.
 
+(** ** string_cmp_rec
+    Helper function for string_cmp.
+*)
+Local Ltac2 rec string_cmp_rec (idx) (s1:string) (s2:string) :=
+    let len1 := (String.length s1) in
+    let len2 := (String.length s2) in
+        if Bool.or (Int.equal idx len1) (Int.equal idx len2)
+        then
+            if (Int.equal len1 len2) then 0 else
+                if (Int.lt len1 len2) then -1 else 1
+        else
+            let ascii_int_1 := Char.to_int (String.get s1 idx) in
+            let ascii_int_2 := Char.to_int (String.get s2 idx) in
+            if Int.equal ascii_int_1 ascii_int_2 then
+                string_cmp_rec (Int.add idx 1) s1 s2
+            else 
+                if Int.lt ascii_int_1 ascii_int_2 then
+                    -1 else 1.
+
+(** * string_cmp
+    Compare two Ltac2 strings lexicographically.
+
+    Arguments:
+        - [s1, s2: string], strings to compare.
+
+    Returns:
+        - int
+            - 0 if [s1] and [s2] have 
+                the same length and the same characters.
+            - (-1) if [s2] would come later in the dictionary than [s1]
+            - (1) if [s1] would come later in the dictionary than [s2]
+*)
+Ltac2 string_cmp (s1 : string) (s2 : string) :=
+    string_cmp_rec 0 s1 s2.
+    
 (** * string_equal
     Compare two Ltac2 strings for equality.
 

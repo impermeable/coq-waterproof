@@ -38,7 +38,7 @@ From Ltac2 Require Option.
 Require Import Waterproof.message.
 
 Require Import Waterproof.auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.automation_subroutine.
 
 Require Import Classical_Prop.
@@ -249,7 +249,7 @@ Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
                   end
                   | (* Try context specific manipulation, e.g. negating order relations *)
                     let g := Control.goal () in
-                    let hint_databases := Some (load_databases global_negation_database_selection) in
+                    let hint_databases := Some (global_negation_database_selection ()) in
                     run_automation g [] 1 hint_databases false
                   ] ) ]
       in
@@ -264,9 +264,6 @@ Ltac2 solve_by_manipulating_negation () :=
   match! goal with
   | [ h : _ |- _ ] => solve_by_manipulating_negation_in h
   end.
-
-Global Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : classical_logic.
-
 
 (*For debugging: do a single step *)
 Local Ltac2 manipulate_negation_in (h_id : ident) :=
@@ -327,7 +324,7 @@ Local Ltac2 manipulate_negation_in (h_id : ident) :=
                 end
               | (* Try context specific manipulation, e.g. negating order relations *)
                 let g := Control.goal () in
-                let hint_databases := Some (load_databases global_negation_database_selection) in
+                let hint_databases := Some (global_negation_database_selection ()) in
                 run_automation g [] global_search_depth hint_databases false
               ]
       in

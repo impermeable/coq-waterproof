@@ -30,7 +30,7 @@ From Ltac2 Require Import Ltac2.
 Require Import Waterproof.message.
 (* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.auxiliary.
-Require Import Waterproof.selected_databases.
+Require Import Waterproof.init_automation_global_variables.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Export Waterproof.tactics.goal_wrappers.
 
@@ -75,7 +75,7 @@ Proof. intro H. induction H. right; exact a. left; exact b. Qed.
         - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) 
- := let hint_databases := Some (load_databases global_decidability_database_selection) in
+ := let hint_databases := Some (global_decidability_database_selection ()) in
     let h_id := Fresh.in_goal @h in
     let attempt () := assert ({$t1} + {$t2}) as $h_id;
                       Control.focus 1 1 (fun () => 
@@ -135,7 +135,7 @@ Local Lemma double_sumbool_sumtriad_cba (A B C : Prop) : {C} + {B} + {A} -> sumt
         - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr)
- := let hint_databases := Some (load_databases global_decidability_database_selection) in
+ := let hint_databases := Some (global_decidability_database_selection ()) in
     let h_id := Fresh.in_goal @h in
     let attempt () := assert (sumtriad $t1 $t2 $t3) as $h_id;
                       Control.focus 1 1 (fun () => 

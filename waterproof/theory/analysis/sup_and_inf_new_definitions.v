@@ -24,14 +24,12 @@ Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
 
-Require Import Waterproof.selected_databases.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.notations.notations.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import Waterproof.definitions.set_definitions.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard.
 
 Open Scope R_scope.
 
@@ -423,7 +421,8 @@ Proof.
     It holds that (¬(L ≤ m)).
     Contradiction.
 Qed.
-
+(** TODO remove *)
+Require Import Waterproof.waterprove.manipulate_negation.
 Lemma if_almost_maximizer_then_every_upp_bd_larger :
   ∀ (A : ℝ → Prop) (M : ℝ),
     (∀ (L : ℝ), L < M ⇒ ∃ a : ℝ, (A a) ∧ L < a)
@@ -732,17 +731,17 @@ Proof.
     We conclude that (m ≤ b).
 Qed.
 
-Global Hint Resolve bounded_by_upper_bound_propform : reals.
-Global Hint Resolve bounded_by_lower_bound_propform : reals.
-Global Hint Resolve alt_char_inf : reals.
-Global Hint Resolve alt_char_sup : reals.
-Global Hint Resolve <- alt_char_inf : reals.
-Global Hint Resolve <- alt_char_sup : reals.
+#[export] Hint Resolve bounded_by_upper_bound_propform : reals.
+#[export] Hint Resolve bounded_by_lower_bound_propform : reals.
+#[export] Hint Resolve alt_char_inf : reals.
+#[export] Hint Resolve alt_char_sup : reals.
+#[export] Hint Resolve <- alt_char_inf : reals.
+#[export] Hint Resolve <- alt_char_sup : reals.
 
 (** ### **Hints***)
-Global Hint Unfold is_lub : reals.
-Global Hint Unfold is_inf : reals.
-Global Hint Unfold is_upper_bound : reals.
-Global Hint Unfold is_lower_bound :reals.
+#[export] Hint Unfold is_lub : reals.
+#[export] Hint Unfold is_inf : reals.
+#[export] Hint Unfold is_upper_bound : reals.
+#[export] Hint Unfold is_lower_bound :reals.
 
 Close Scope R_scope.

@@ -27,11 +27,11 @@ along with Waterproof-lib.    If not, see <https://www.gnu.org/licenses/>.
 Require Import Reals.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.RealsAndIntegers.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
 Require Import Waterproof.theory.analysis.metric_spaces.
 Require Import Waterproof.theory.analysis.sequences_metric.
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 
 Open Scope R_scope.
 Open Scope metric_scope.
@@ -250,10 +250,10 @@ Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" cl(opt(seq(
   expand_def_framework unfold_is_accumulation_point unfold_is_accumulation_point_in cl.
 
 
-Global Hint Resolve index_sequence_property : subsequences.
-Global Hint Extern 1 => (unfold ge) : subsequences.
-Global Hint Resolve double_is_even : subsequences.
-Global Hint Resolve index_sequence_property2 : subsequences.
+#[export] Hint Resolve index_sequence_property : subsequences.
+#[export] Hint Extern 1 => (unfold ge) : subsequences.
+#[export] Hint Resolve double_is_even : subsequences.
+#[export] Hint Resolve index_sequence_property2 : subsequences.
 
 Close Scope metric_scope.
 Close Scope R_scope.

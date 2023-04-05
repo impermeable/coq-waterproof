@@ -34,9 +34,11 @@ Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
 Require Import Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.set_intuition.Enabled.
 Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.load_database.Sets.
 
-Global Hint Constructors Union Intersection Disjoint Full_set : sets.
+(*Require Import Waterproof.load_database.
+Import wp_sets.*)
+
+
 
 
 (** * destruct_sets
@@ -103,9 +105,7 @@ Ltac2 Notation "This" "set" "equality" "is" "trivial" :=
 
 
 
-(** Would like to add the following hint, but this undesirably interferes with workings of the other automation
-    tactics. Also, what weight to use? *)
-Global Hint Extern 5 (_ = _) => try (ltac2:(trivial_set_equality ())) : sets.
+
 
 
 

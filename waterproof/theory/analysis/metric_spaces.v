@@ -2,15 +2,14 @@ Require Import Reals.
 Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Reals.ROrderedType.
-Require Import Waterproof.databases. (* Req_true is in here *)
-Require Import Waterproof.load_database.RealNumbers.
+Require Import Waterproof.theory.analysis.reals. (* Req_true is in here *)
+Require Import Waterproof.load.
+Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import micromega.Lra.
-
 Open Scope R_scope.
 
 Section Definitions.
 Context (X : Metric_Space).
-
 
 (* Definition metric_to_base := Base. *)
 
@@ -82,7 +81,7 @@ Either (x = y) or (x ≠ y).
   By Req_false we conclude that (Reqb x y = false).
 Qed.
 
-Global Hint Resolve d'_eq_0 : reals.
-Global Hint Resolve d'_eq_3 : reals.
-Global Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : reals.
-Global Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : reals.
+#[export] Hint Resolve d'_eq_0 : reals.
+#[export] Hint Resolve d'_eq_3 : reals.
+#[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : reals.
+#[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : reals.
