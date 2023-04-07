@@ -8,3 +8,5 @@
 CoqMakefile
 CoqMakefile.conf
 .lia.cache
+
+_build
