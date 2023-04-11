@@ -63,16 +63,16 @@ Firstly you should install [`opam`](https://opam.ocaml.org/).
 Then, you can create a new switch and install the requirements by running :
 
 ```bash
-opam switch create waterproof --packages coq.8.16.1
-eval $(opam env --switch=waterproof)
+$ opam switch create waterproof --packages coq.8.16.1
+$ eval $(opam env --switch=waterproof)
 ```
 
 Then, you can clone this repository and install the library by running :
 
 ```bash
-git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
-make
-make install
+$ git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
+$ make
+$ make install
 ```
 
 Once this is done, you can use coq-waterproof in any file of your system by switching to the `waterproof` switch on opam.

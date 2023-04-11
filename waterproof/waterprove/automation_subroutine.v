@@ -39,14 +39,13 @@ Require Import Waterproof.init_automation_global_variables.
 Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
 Local Ltac2 fail_automation (t : constr option):= 
-        let fail_message :=
-            match t with
-            | Some s => concat (concat (of_string ("Could not find a proof of "))
-                               (of_constr s)) (of_string ".")
-            | None => of_string ("Could not find a proof.")
-            end
-        in
-        Control.zero (AutomationFailure fail_message).
+  let fail_message :=
+    match t with
+      | Some s => concat (concat (of_string ("Could not find a proof of ")) (of_constr s)) (of_string ".")
+      | None => of_string ("Could not find a proof.")
+    end
+  in
+  Control.zero (AutomationFailure fail_message).
 
 (** * global_enable_intuition
     Flag whether [run_automation] and [waterprove]
@@ -55,43 +54,28 @@ Local Ltac2 fail_automation (t : constr option):=
 *)
 Ltac2 mutable global_enable_intuition := false.
 
-(** * global_use_all_databases
-    Flag whether [run_automation] and [waterprove]
-    should use ALL databases that Coq can find via the [*] wildcard.
-    This may include more databases than can be imported individually!
-*)
-Ltac2 mutable global_use_all_databases := false.
-
-(** * global_use_all_databases
-    Flag whether [run_automation] and [waterprove]
-    should use ALL databases that Coq can find via the [*] wildcard.
-    This may include more databases than can be imported individually!
+(** * global_shield_automation
+    TODO
 *)
 Ltac2 mutable global_shield_automation := true.
 
 (* Subroutine of [run_automation] *)
-Local Ltac2 run_automation_with_intuition (search_depth: int option)
-                                          (databases: ident list option)
-                                          (first_lemma: constr)
-                                          (lemmas: (unit -> constr) list) :=
-    first [
-    solve [Std.auto Std.Off search_depth lemmas databases]
-    | solve [ltac1:(lemma |- intuition (auto using lemma with *)) 
-        (Ltac1.of_constr first_lemma)]
-    | solve [ltac1:(lemma|- intuition (eauto using lemma with *)) 
-        (Ltac1.of_constr first_lemma)] 
+Local Ltac2 run_automation_with_intuition (search_depth: int option) (databases: ident list option) (first_lemma: constr) (lemmas: (unit -> constr) list) :=
+  first [
+    solve [Std.auto Std.Info search_depth lemmas databases]
+    | solve [ltac1:(lemma |- intuition (info_auto using lemma with *)) (Ltac1.of_constr first_lemma)]
+    | solve [ltac1:(lemma|- intuition (info_eauto using lemma with *)) (Ltac1.of_constr first_lemma)] 
     | fail_automation (Some (Control.goal()))
-    ].
+  ].
 
 (* Subroutine of [run_automation] *)
-Local Ltac2 run_automation_without_intuition (search_depth: int option)
-                                          (databases: ident list option)
-                                          (lemmas: (unit -> constr) list) :=
-    first [ solve [Std.auto Std.Off (Some 2) lemmas databases]
-    | solve [Std.auto Std.Off search_depth lemmas databases]
-    | solve [Std.eauto Std.Off search_depth lemmas databases]
+Local Ltac2 run_automation_without_intuition (search_depth: int option) (databases: ident list option) (lemmas: (unit -> constr) list) :=
+  first[
+    solve [Std.auto global_debug_level (Some 2) lemmas databases]
+    | solve [Std.auto global_debug_level search_depth lemmas databases]
+    | solve [Std.eauto global_debug_level search_depth lemmas databases]
     | fail_automation (Some (Control.goal()))
-    ].
+  ].
 
 (** * run_automation
     Calls the automation tactics [auto] and [new auto],
@@ -150,28 +134,21 @@ Local Ltac2 run_automation_without_intuition (search_depth: int option)
     * Options for databases:
     
 *)
-Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list) 
-                 (search_depth: int) (hint_databases: ident list option) 
-                 (enable_intuition: bool) :=
-    
-    let result () :=
-
+Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list) (search_depth: int) (hint_databases: ident list option) (enable_intuition: bool) :=
+  let result () :=
     let search_depth := Some search_depth in
     let first_lemma :=
-        match lemmas with
+      match lemmas with
         | head::remainder => head ()
         | [] => constr:(I) (*dummy lemma I : True*)
-        end
-    in
+      end
+    in 
     match enable_intuition with
-    | true => run_automation_with_intuition search_depth hint_databases 
-                    first_lemma lemmas
-    | false => run_automation_without_intuition search_depth hint_databases 
-                                                lemmas
+      | true => run_automation_with_intuition search_depth hint_databases first_lemma lemmas
+      | false => run_automation_without_intuition search_depth hint_databases lemmas
     end
-    in
-    match Control.case result with
-    | Val _ => ()
-    | Err exn => 
-        fail_automation (Some (Control.goal()))
-    end.
+  in 
+  match Control.case result with
+      | Val _ => ()
+      | Err exn => fail_automation (Some (Control.goal()))
+  end.

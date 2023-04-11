@@ -45,4 +45,9 @@ Ltac2 mutable global_first_attempt_database_selection := fun () => ([]:ident lis
     Global variable that specifies the maximum search depth
     used by the automation tactics (via [run_automation] in [waterprove.automation_subroutines]).
 *)
-Ltac2 mutable global_search_depth := (2:int).
+Ltac2 mutable global_search_depth := (2: int).
+
+(** * global_debug_level
+    Global variable that specifies the level of debug infos given by the automation tactics (via [run_automation] in [waterprove.automation_subroutines]).
+*)
+Ltac2 mutable global_debug_level := Std.Off.

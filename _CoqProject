@@ -24,6 +24,9 @@ waterproof/waterprove/manipulate_negation.v
 waterproof/waterprove/waterprove.v
 
 # Files used to configure global state.
+waterproof/set_debug_level/Off.v
+waterproof/set_debug_level/Info.v
+waterproof/set_debug_level/Debug.v
 waterproof/set_search_depth/To_1.v
 waterproof/set_search_depth/To_2.v
 waterproof/set_search_depth/To_3.v

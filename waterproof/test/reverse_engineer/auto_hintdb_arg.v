@@ -54,17 +54,17 @@ Ltac2 @ external auto : debug -> int option ->
     unit := "ltac2" "tac_auto".
 *)
 
-Ltac2 fake_default_db dbs := match dbs with
-| None => "No database provided"
-| Some dbs =>
+Ltac2 fake_default_db dbs := 
   match dbs with
-  | None => "Empty list provided"
-  | Some l => "List provided"
-  end
-end.
+    | None => "No database provided"
+    | Some dbs =>
+      match dbs with
+        | None => "Empty list provided"
+        | Some l => "List provided"
+      end
+  end.
 
-Ltac2 Notation "fake_auto" dbs(opt(seq("with", hintdb))) 
-    := fake_default_db dbs.
+Ltac2 Notation "fake_auto" dbs(opt(seq("with", hintdb))) := fake_default_db dbs.
 
 Goal True.
 (* To use the default, i.e. [core], 

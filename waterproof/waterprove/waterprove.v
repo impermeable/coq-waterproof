@@ -40,19 +40,17 @@ Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.waterprove.manipulate_negation.
 
 Local Ltac2 fail_automation (t : constr option):= 
-        let first_part_message :=
-            match t with
-            | Some s => concat (of_string ("Waterproof could not find a proof of "))
-                               (of_constr s)
-            | None => of_string ("Waterproof could not find a proof")
-            end
-        in 
-        let fail_message :=
-            concat first_part_message
-                   (of_string ("  ... If you believe the statement should hold, 
+  let first_part_message :=
+  	match t with
+  	  | Some s => concat (of_string ("Waterproof could not find a proof of ")) (of_constr s)
+  	  | None => of_string ("Waterproof could not find a proof")
+  	end
+	in
+	let fail_message :=
+		concat first_part_message (of_string ("  ... If you believe the statement should hold, 
 try making a smaller step."))
-        in
-        Control.zero (AutomationFailure fail_message).
+	in
+	Control.zero (AutomationFailure fail_message).
 
 (** * waterprove
     Calls the automation subroutine [run_automation]
@@ -79,50 +77,40 @@ try making a smaller step."))
 *)
 
 Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
-    let first_attempt () := run_automation prop lemmas 3 (Some (global_first_attempt_database_selection ())) false
-    in
-    let second_attempt () := 
-        match shield with
-            | true => match global_shield_automation with
-                       | true => (* Match goal with basic logical operators *)
-                               lazy_match! goal with
-                               | [ |- forall _, _ ] => fail_automation None
-                               | [ |- exists _, _ ] => fail_automation None
-                               | [ |- _ /\ _] => fail_automation None
-                               | [ |- _ \/ _] => fail_automation None
-                               | [ |- _] => ()
-                               end
-                       | false => ()
-                       end
-            | false => ()
-            end;
-            let databases :=
-                match global_use_all_databases with
-                | true => None
-                | false => Some (global_database_selection ())
-                end
-            in
-            run_automation prop lemmas global_search_depth 
-                           databases global_enable_intuition
-    in 
-    match Control.case first_attempt with
-    | Val _ => ()
-    | Err exn => 
-        match Control.case second_attempt with
-        | Val _ => ()
-        | Err exn => fail_automation (Some (Control.goal()))
-        end
-    end.
+	let first_attempt () := run_automation prop lemmas 3 (Some (global_first_attempt_database_selection ())) false in
+		let second_attempt () := 
+			match shield with
+				| true => 
+					match global_shield_automation with
+						| true => (* Match goal with basic logical operators *)
+							lazy_match! goal with
+								| [ |- forall _, _ ] => fail_automation None
+								| [ |- exists _, _ ] => fail_automation None
+								| [ |- _ /\ _] => fail_automation None
+								| [ |- _ \/ _] => fail_automation None
+								| [ |- _] => ()
+							end
+						| false => ()
+					end
+				| false => ()
+			end;
+		let databases := Some(global_database_selection ())
+		in
+		run_automation prop lemmas global_search_depth databases global_enable_intuition
+	in 
+	match Control.case first_attempt with
+		| Val _ => ()
+		| Err exn => 
+			match Control.case second_attempt with
+				| Val _ => ()
+				| Err exn => fail_automation (Some (Control.goal()))
+			end
+	end.
 
-
+(* Splits chain of inequalities into its parts and calls the actual waterprove subroutine on those. *)
 Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
-  (* Splits chain of inequalities into its parts and calls the actual waterprove subroutine on those. *)
   lazy_match! goal with
-  | [ |- total_statement _ ] => repeat split;
-                                Control.enter (fun () => 
-                                  cbn;
-                                  actual_waterprove prop lemmas shield
-                                )
-  | [ |- _] => actual_waterprove prop lemmas shield
+  	| [ |- total_statement _ ] => repeat split; Control.enter (fun () => cbn; actual_waterprove prop lemmas shield)
+  	| [ |- _] => actual_waterprove prop lemmas shield
   end.
 

@@ -13,11 +13,13 @@ Open Scope subset_scope.
 Set Default Goal Selector "!".
 Set Default Timeout 5.
 
+Require Import Waterproof.set_debug_level.Info.
+
 Goal forall a b: R, a <= b -> a + 1 < b + 2.
 Proof.
   Take a, b: R.
   Assume that (a <= b).
-
+  
   (* This should be removed *)
   ltac1:(debug auto with real wp_reals). 
 Qed.
@@ -94,7 +96,7 @@ Proof.
   + We conclude that (a + b < 8).
 Qed.
 
-(* 
+(**
   Maybe this works too well ?
   I think it would be better to write :
   `Either (a < b), (b < a) or (a = b).`

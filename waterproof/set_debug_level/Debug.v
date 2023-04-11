@@ -1,9 +1,10 @@
-(** * [simplify_subsets.v]
+(** * Enables the debug [auto] printing
 Authors: 
-    - Jelle Wemmenhove
-Creation date: 29 April 2022
+    - Balthazar Patiachvili
+Creation date: 11 April 2023
 
-Tactic to simplify (in)equalitiy chains.
+Set [global_debug_level] to [Std.Debug].
+This prevents [auto] to print info and/or debug message.
 
 --------------------------------------------------------------------------------
 
@@ -24,18 +25,7 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.definitions.set_definitions.
-(**  ** simpl_member_subset
 
-Writes out membership of a subset [x : A] as satisfying [A]'s defining predicate [P x],
-where $A := {x : X | (P x) holds}$.
+Require Import Waterproof.init_automation_global_variables.
 
-*)
-
-Ltac2 simpl_member_subset () :=
-  repeat (
-    match! goal with
-      | [ h : (pred _ _) _ |- _ ] => simpl in $h
-      | [ |- _ ] => ()
-    end
-  ).
+Ltac2 Set global_debug_level := Std.Debug.
