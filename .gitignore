@@ -7,4 +7,6 @@
 .CoqMakefile.d
 CoqMakefile
 CoqMakefile.conf
-.lia.cache
+*.cache
+
+.vscode/

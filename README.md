@@ -53,6 +53,29 @@ Qed.
 * All tactics implemented in Ltac2.
 <!--* **Unit-tests for all tactics**. These are run at compile-time, to ensure a working version is compiled. Unit-tests raise an error if they fail. They are located in the directory `waterproof/test`.-->
 
+## Installation
+
+
+### Linux
+
+Firstly you should install [`opam`](https://opam.ocaml.org/).
+
+Then, you can create a new switch and install the requirements by running :
+
+```bash
+opam switch create waterproof --packages coq.8.16.1
+eval $(opam env --switch=waterproof)
+```
+
+Then, you can clone this repository and install the library by running :
+
+```bash
+git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
+make
+make install
+```
+
+Once this is done, you can use coq-waterproof in any file of your system by switching to the `waterproof` switch on opam.
 
 ## Usage
 To use the tactics in a `.v` file, use the import:
@@ -131,4 +154,3 @@ The coq-waterproof library is developed as part of the educational [Waterproof](
 The tactics are designed to be used by first-year mathematics students who are unfamiliar with Coq. This is also why the tactics require the user to be explicit: the students have to learn to write readable proofs.
 
 The library was originally written by Jim Portegies in Ltac1. It was extended and ported to Ltac2 by Cosmin Manea, Lulof Pirée, Adrian Vrămuleţ and Tudor Voicu as part of the 'Waterfowl' bachelor Software Engineering Project at the [Eindhoven University of Technology](https://www.tue.nl/en/) (in May-June 2021). Since then it has been under further development by Jelle Wemmenhove and Jim Portegies.
-
