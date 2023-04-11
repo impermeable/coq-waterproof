@@ -5,7 +5,7 @@
 * [x] Have we understood the 'cost' in the automation wrong?: does it relate to the search depth?
 * [ ] Clean up our automation tactics:
   * [ ] Seems we are not using `global_use_all_databases` option for instance.
-  * [ ] Add a debug possibility in our own tactics
+  * [x] Add a debug possibility in our own tactics
 * [x] Use debug in ltac2
 * [ ] Make info_auto information available to coq-waterproof
   * [ ] For instance to make sure that a lemma is actually used when writing "By ... it holds that ()."

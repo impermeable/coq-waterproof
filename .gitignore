@@ -3,10 +3,12 @@
 *.glob
 *.vok
 *.aux
+*.cache
+*.html
+*.css
 
 .CoqMakefile.d
 CoqMakefile
 CoqMakefile.conf
-*.cache
 
 .vscode/

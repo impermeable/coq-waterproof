@@ -61,7 +61,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
                                            apply (NaturalInduction.Step.unwrap))
     | false => induction $x_hyp
     end.
-Ltac2 Notation "We" "use" "induction" "on" x(ident) := 
+Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
     panic_if_goal_wrapped ();
     induction_without_hypothesis_naming x.
 

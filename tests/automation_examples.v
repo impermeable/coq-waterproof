@@ -2,6 +2,7 @@ Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.load.
 Module Import db_RealsAndIntegers := databases(RealsAndIntegers).
+Require Import Waterproof.set_debug_level.Info.
 
 Set Default Timeout 4.
 
@@ -51,16 +52,16 @@ Assume that (a < b).
 We conclude that (4 + g a < 4 + g b).
 Abort.
 
-Lemma strange_error (a b c : R):
+Lemma strange_error (a c : R):
     a = - c -> 0 <= c -> | a | = c.
 Proof.
-intros a_eq_min_c.
-intros zero_le_c.
-rewrite a_eq_min_c.
-(* unfold Rabs; destruct (Rcase_abs).*)
-ltac1:(info_auto with wp_reals).
-(** Strange error, possibly because nothing is done with b*)
-We conclude that ( | - c | = c ).
+  intros a_eq_min_c.
+  intros zero_le_c.
+  rewrite a_eq_min_c.
+  (* unfold Rabs; destruct (Rcase_abs).*)
+  ltac1:(info_auto with wp_reals).
+  (** Strange error, possibly because nothing is done with b*)
+  We conclude that ( | - c | = c ).
 Qed.
 
 

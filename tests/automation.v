@@ -11,9 +11,8 @@ Open Scope R_scope.
 Open Scope subset_scope.
 
 Set Default Goal Selector "!".
-Set Default Timeout 5.
-
-Require Import Waterproof.set_debug_level.Info.
+Set Default Timeout 3.
+Set Ltac2 Backtrace.
 
 Goal forall a b: R, a <= b -> a + 1 < b + 2.
 Proof.
@@ -27,6 +26,7 @@ Qed.
 Local Parameter g : R -> R.
 Local Parameter g_monotone : forall x y : R, x < y -> g x < g y.
 
+Require Import Waterproof.set_debug_level.Info.
 
 Goal forall a b : R, a < b -> 4 + g a < 5 + g b.
 Proof.
@@ -157,3 +157,19 @@ Proof.
     (* We conclude that (& Rmax(0, 1 - r/2) - 1 <= 1 - r/2 - 1 = -r/2 < 0 < r). *)
     admit.
 Admitted.
+
+Goal forall x: R, forall n: nat, (x > 0)%R -> pow x n >= 0.
+Proof.
+  Take x: R.
+  Take n: nat.
+  Assume that (x > 0).
+  
+  (* Why doesn't this work ? *)
+  (* We use induction on n. *)
+
+  induction n.
+  + It suffices to show that (1 >= 0).
+    We conclude that (1 >= 0).
+  + It suffices to show that (x * x^n >= 0).
+    We conclude that (x * x^n >= 0).
+Qed.
