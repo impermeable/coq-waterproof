@@ -26,6 +26,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
+
+Require Export Waterproof.debug.
 Require Export Waterproof.tactics.goal_wrappers.
 Require Export Waterproof.tactics.we_need_to_show. (* Enable the unwrapping of the StateGoal wrapper *)
 
@@ -33,7 +35,6 @@ Ltac2 Type exn ::= [ BothDirectionsError(string) ].
 
 Ltac2 raise_both_directions_error (s:string) := 
     Control.zero (BothDirectionsError s).
-
 
 (** * both_statements_iff
     Split the proof of an if and only if statement into both of its directions, 
@@ -58,8 +59,11 @@ try another tactic.")
 
 
 Ltac2 Notation "We" "show" "both" "directions" := 
-      panic_if_goal_wrapped ();
-      both_statements_iff ().
+  debug "both_directions" "start";
+  panic_if_goal_wrapped ();
+  both_statements_iff ().
+
 Ltac2 Notation "We" "prove" "both" "directions" := 
-      panic_if_goal_wrapped ();
-      both_statements_iff ().
+  debug "both_directions" "start";
+  panic_if_goal_wrapped ();
+  both_statements_iff ().

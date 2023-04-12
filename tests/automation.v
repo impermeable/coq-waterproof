@@ -10,9 +10,10 @@ Module Import db_RealsAndIntegers := databases(RealsAndIntegers).
 Open Scope R_scope.
 Open Scope subset_scope.
 
+Require Import Waterproof.set_debug_level.Info.
+
 Set Default Goal Selector "!".
 Set Default Timeout 3.
-Set Ltac2 Backtrace.
 
 Goal forall a b: R, a <= b -> a + 1 < b + 2.
 Proof.
@@ -25,8 +26,6 @@ Qed.
 
 Local Parameter g : R -> R.
 Local Parameter g_monotone : forall x y : R, x < y -> g x < g y.
-
-Require Import Waterproof.set_debug_level.Info.
 
 Goal forall a b : R, a < b -> 4 + g a < 5 + g b.
 Proof.

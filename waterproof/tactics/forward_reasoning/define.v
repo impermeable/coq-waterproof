@@ -25,6 +25,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
+
+Require Import Waterproof.debug.
 Require Import Waterproof.tactics.goal_wrappers.
 
 (** * defining
@@ -38,13 +40,15 @@ Require Import Waterproof.tactics.goal_wrappers.
         - defines [t] as [u].
 *)
 Local Ltac2 defining (u: ident) (t: constr) :=
-    set ($u := $t);
-    let u_constr := Control.hyp u in 
-    let w := Fresh.fresh (Fresh.Free.of_goal ()) @add_eq in
-    assert ($w : $u_constr = $t) by reflexivity.
+  set ($u := $t);
+  let u_constr := Control.hyp u in 
+  let w := Fresh.fresh (Fresh.Free.of_goal ()) @add_eq in
+  assert ($w : $u_constr = $t) by reflexivity.
     
 
 
 Ltac2 Notation "Define" u(ident) ":=" t(constr) :=
-    panic_if_goal_wrapped ();
-    defining u t.
+  debug_ident "define" "left_side" u;
+  debug_constr "define" "right_side" t;
+  panic_if_goal_wrapped ();
+  defining u t.

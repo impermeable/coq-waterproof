@@ -32,9 +32,9 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
 
-Require Import Waterproof.message.
-
+Require Import Waterproof.debug.
 Require Import Waterproof.init_automation_global_variables.
+Require Import Waterproof.message.
 
 Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
@@ -55,12 +55,13 @@ Local Ltac2 fail_automation (t : constr option):=
 Ltac2 mutable global_enable_intuition := false.
 
 (** * global_shield_automation
-    TODO
+    Currently does nothing
 *)
 Ltac2 mutable global_shield_automation := true.
 
 (* Subroutine of [run_automation] *)
 Local Ltac2 run_automation_with_intuition (search_depth: int option) (databases: ident list option) (first_lemma: constr) (lemmas: (unit -> constr) list) :=
+  debug_int_option "run_automation_without_intuition" "search_depth" search_depth;
   first [
     solve [Std.auto Std.Info search_depth lemmas databases]
     | solve [ltac1:(lemma |- intuition (info_auto using lemma with *)) (Ltac1.of_constr first_lemma)]
@@ -70,6 +71,7 @@ Local Ltac2 run_automation_with_intuition (search_depth: int option) (databases:
 
 (* Subroutine of [run_automation] *)
 Local Ltac2 run_automation_without_intuition (search_depth: int option) (databases: ident list option) (lemmas: (unit -> constr) list) :=
+  debug_int_option "run_automation_without_intuition" "search_depth" search_depth;
   first[
     solve [Std.auto global_debug_level (Some 2) lemmas databases]
     | solve [Std.auto global_debug_level search_depth lemmas databases]
@@ -135,6 +137,7 @@ Local Ltac2 run_automation_without_intuition (search_depth: int option) (databas
     
 *)
 Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list) (search_depth: int) (hint_databases: ident list option) (enable_intuition: bool) :=
+  debug_constr "run_automation" "prop" prop;
   let result () :=
     let search_depth := Some search_depth in
     let first_lemma :=

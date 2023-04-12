@@ -29,19 +29,16 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-
+Require Import Waterproof.auxiliary.
+Require Import Waterproof.debug.
 Require Import Waterproof.message.
-
-
-From Waterproof Require Import auxiliary.
 Require Export Waterproof.tactics.goal_wrappers.
 Require Export Waterproof.tactics.we_need_to_show. (* Enable the unwrapping of the StateGoal wrapper *)
 
 
 Ltac2 Type exn ::= [ BothStatementsError(string) | InputError(message) ].
 
-Ltac2 raise_both_statements_error (s:string) := 
-    Control.zero (BothStatementsError s).
+Ltac2 raise_both_statements_error (s:string) := Control.zero (BothStatementsError s).
 
 
 (** * both_directions_and
@@ -58,23 +55,26 @@ Ltac2 raise_both_statements_error (s:string) :=
         - [BothStatementsError], if the [goal] is not a conjunction of statments.
 *)
 Ltac2 both_directions_and () :=
-    lazy_match! goal with 
-        | [ |- _ /\ _] => split; Control.enter (fun () => apply StateGoal.unwrap)
-        | [ |- _ ] => raise_both_statements_error("This is not an 'and' statement, so try another tactic.")
-    end.
+  lazy_match! goal with 
+    | [ |- _ /\ _] => split; Control.enter (fun () => apply StateGoal.unwrap)
+    | [ |- _ ] => raise_both_statements_error("This is not an 'and' statement, so try another tactic.")
+  end.
 
 Ltac2 Notation "We" "show" "both" "statements" := 
-    panic_if_goal_wrapped ();
-    both_directions_and ().
+  debug "both_statements" "start";
+  panic_if_goal_wrapped ();
+  both_directions_and ().
+
 Ltac2 Notation "We" "prove" "both" "statements" := 
-    panic_if_goal_wrapped ();
-    both_directions_and ().
+  debug "both_statements" "start";
+  panic_if_goal_wrapped ();
+  both_directions_and ().
 
 
 
-Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr)
- := concat (concat (concat (of_string "You need to show  ") (of_constr correct))
-                   (concat (of_string " instead of ") (of_constr wrong))) (of_string ".").
+Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr) :=
+  concat (concat (concat (of_string "You need to show  ") (of_constr correct))
+    (concat (of_string " instead of ") (of_constr wrong))) (of_string ".").
 
 (** * both_directions_and_with_types
     Split the proof of a conjuction statement into two specified parts, but also verifies that the parts wrote
@@ -125,11 +125,15 @@ Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
 
 
 Ltac2 Notation "We" "show" "both" s(constr) "and" t(constr) :=
-    panic_if_goal_wrapped ();
-    both_directions_and_with_types s t.
+  debug_constr "both" "left" s;
+  debug_constr "both" "right" t;
+  panic_if_goal_wrapped ();
+  both_directions_and_with_types s t.
 
 Ltac2 Notation "We" "prove" "both" s(constr) "and" t(constr) :=
-    panic_if_goal_wrapped ();
-    both_directions_and_with_types s t.
+  debug_constr "both" "left" s;
+  debug_constr "both" "right" t;
+  panic_if_goal_wrapped ();
+  both_directions_and_with_types s t.
 
 

@@ -26,13 +26,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-
+Require Import Waterproof.debug.
 Require Import Waterproof.message.
-
-Require Import Waterproof.waterprove.waterprove.
 Require Import Waterproof.tactics.goal_to_hint.
-Require Import Waterproof.auxiliary.
-
+Require Import Waterproof.waterprove.waterprove.
 
 (** * waterprove_with_hint
     First print an hint for reaching the target goal,
@@ -45,9 +42,10 @@ Require Import Waterproof.auxiliary.
             proving the [target_goal].
 *)
 Ltac2 waterprove_with_hint (target_goal:constr) (lemma:constr) (shield:bool) :=
-    print_goal_hint (Some target_goal);
-    let lemmas := (fun () => lemma)::[] in
-    waterprove target_goal lemmas shield.
+  debug_constr "waterprove_with_hint" "target_goal" target_goal;
+  print_goal_hint (Some target_goal);
+  let lemmas := (fun () => lemma)::[] in
+  waterprove target_goal lemmas shield.
 
 (** * waterprove_without_hint
     Try to prove the goal directly using the function [waterprove].
@@ -59,13 +57,16 @@ Ltac2 waterprove_with_hint (target_goal:constr) (lemma:constr) (shield:bool) :=
             proving the [target_goal].
 *)
 Ltac2 waterprove_without_hint (target_goal:constr) (lemma:constr) (shield:bool) :=
-    let lemmas := (fun () => lemma)::[] in
-    waterprove target_goal lemmas shield.
+  debug_constr "waterprove_without_hint" "target_goal" target_goal;
+  let lemmas := (fun () => lemma)::[] in
+  waterprove target_goal lemmas shield.
 
 Ltac2 print_failure () :=
-    print (of_string "Waterproof could not find a proof. 
+  print (of_string
+"Waterproof could not find a proof. 
 If you believe the statement should hold, 
-try making a smaller step.").
+try making a smaller step."
+  ).
 
 (** * unwrap_optional_lemma
     Given an optional lemma, either returns the lemma itself,
@@ -81,7 +82,7 @@ try making a smaller step.").
             the input was [None]. [dummy_lemma] simply states that [0=0].
 *)
 Ltac2 unwrap_optional_lemma (lemma: constr option) :=
-    match lemma with
+  match lemma with
     | None => constr:(I)
     | Some y => y
-    end.
+  end.

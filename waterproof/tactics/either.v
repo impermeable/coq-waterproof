@@ -26,13 +26,14 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 
-
-Require Import Waterproof.message.
 (* Database for 'Either ... or ...' tactic. *)
 Require Import Waterproof.auxiliary.
+
+Require Import Waterproof.debug.
 Require Import Waterproof.init_automation_global_variables.
-Require Import Waterproof.waterprove.automation_subroutine.
+Require Import Waterproof.message.
 Require Export Waterproof.tactics.goal_wrappers.
+Require Import Waterproof.waterprove.automation_subroutine.
 
 Ltac2 Type exn ::= [ CaseError(string) | InputError(message) ].
 
@@ -93,8 +94,10 @@ Ltac2 either_or (t1:constr) (t2:constr)
     end.
 
 Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
-    panic_if_goal_wrapped ();
-    either_or t1 t2.
+  debug_constr "either2" "1" t1;
+  debug_constr "either2" "2" t2;
+  panic_if_goal_wrapped ();
+  either_or t1 t2.
 
 
 
@@ -164,5 +167,8 @@ Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr)
     end.
 
 Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) := 
-    panic_if_goal_wrapped ();
-    either_or_or t1 t2 t3.
+  debug_constr "either3" "1" t1;
+  debug_constr "either3" "2" t2;
+  debug_constr "either3" "3" t3;
+  panic_if_goal_wrapped ();
+  either_or_or t1 t2 t3.

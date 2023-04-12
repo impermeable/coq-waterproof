@@ -27,16 +27,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
+
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-
-Require Import Waterproof.message.
-
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
 Require Import Waterproof.tactics.goal_wrappers.
 Require Import Waterproof.tactics.unfold.
-
 
 Ltac2 Type exn ::= [ GoalCheckError(string) ].
 
@@ -157,8 +156,9 @@ Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
     even though the parser will not populate this name. 
     (That's why it reads "that(opt('that'))" instead of "opt('that')".*)
 Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) :=
-      unwrap_or_check_and_change_goal t.
+  debug_constr "we_need_to_show" "goal" t;
+  unwrap_or_check_and_change_goal t.
 
 Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) :=
-      unwrap_or_check_and_change_goal t.
-
+  debug_constr "to_show" "goal" t;
+  unwrap_or_check_and_change_goal t.

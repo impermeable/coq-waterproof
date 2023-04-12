@@ -29,14 +29,12 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-
-Require Import Waterproof.message.
-
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ AssumeError(message) ].
-
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
   Message.concat (Message.concat 
@@ -171,11 +169,12 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
     Version with type checking.
 *)
 Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := 
-    assume x.
+  debug "assume" "start";
+  assume x.
 
 (** * such that
     Simply alternative notation for [Assume].
 *)
 Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := 
-    assume x.
-
+  debug "such_that" "start";
+  assume x.

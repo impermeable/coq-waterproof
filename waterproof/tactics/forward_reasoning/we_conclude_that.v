@@ -25,38 +25,40 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-
-
-Require Import Waterproof.message.
-
-Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
-Require Import Waterproof.waterprove.waterprove.
-Require Import Waterproof.definitions.inequality_chains.
-Require Import Waterproof.tactics.goal_wrappers.
 Require Import Reals.
+
+Require Import Waterproof.debug.
+Require Import Waterproof.definitions.inequality_chains.
+Require Import Waterproof.message.
+Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
+Require Import Waterproof.tactics.goal_wrappers.
+Require Import Waterproof.waterprove.waterprove.
 
 
 Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
 Ltac2 warn_equivalent_goal_given () :=
-    print (of_string "Warning: 
+  print (of_string 
+"Warning: 
 The statement you provided does not exactly correspond to what you need to show. 
 This can make your proof less readable.
-Waterproof will try to rewrite the goal...").
+Waterproof will try to rewrite the goal..."
+  ).
 
 Ltac2 warn_wrong_goal_given (wrong_target: constr) :=
-    print (concat
-            (concat
-                (concat
-                    (of_string "The actual goal (")
-                    (of_constr (Control.goal ()))
-                )
-                (concat 
-                    (of_string ") is not equivalent to the goal you gave (")
-                    (of_constr wrong_target)
-                )
-            )
-            (of_string "). ")
+  print 
+    (concat
+      (concat
+        (concat
+          (of_string "The actual goal (")
+          (of_constr (Control.goal ()))
+        )
+        (concat 
+          (of_string ") is not equivalent to the goal you gave (")
+          (of_constr wrong_target)
+        )
+      )
+      (of_string "). ")
     ).
 
 (** * target_equals_goal_judgementally
@@ -73,10 +75,10 @@ Ltac2 warn_wrong_goal_given (wrong_target: constr) :=
             - [false], otherwise.
 *)
 Ltac2 target_equals_goal_judgementally (target:constr) :=
-    let target := eval cbv in $target in
-    let real_goal := Control.goal () in
-    let real_goal := eval cbv in $real_goal in
-    Constr.equal target real_goal.
+  let target := eval cbv in $target in
+  let real_goal := Control.goal () in
+  let real_goal := eval cbv in $real_goal in
+  Constr.equal target real_goal.
 
 (** * check_and_sovle
     Check if target_goal is what needs to be proven judgementally
@@ -100,40 +102,38 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
   (* First check if the given target equals the goal directly,
   without applying any rewrite. *)
   match Constr.equal target_goal (Control.goal ()) with
-  | false => 
+    | false => 
       (* Do somethign special for inequality chains *)
       lazy_match! target_goal with
-      | (total_statement ?u) =>
+        | (total_statement ?u) =>
           (* Convert inequality chain to global statement. *)
           let new_target := constr:(global_statement $u) in
           match target_equals_goal_judgementally new_target with
-          | false =>
+            | false =>
               (* If at first no match, try to use weak global statement *)
               let new_new_target := constr:(weak_global_statement $u) in
               match target_equals_goal_judgementally new_new_target with
-              | false =>
-              warn_wrong_goal_given (new_target); 
-              Control.zero (AutomationFailure (of_string
-                "Given goal not equivalent to actual goal."))
-              | true => ()
+                | false =>
+                  warn_wrong_goal_given (new_target); 
+                  Control.zero (AutomationFailure (of_string "Given goal not equivalent to actual goal."))
+                | true => ()
               end
-          | true => ()
+            | true => ()
           end;
           (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false))
-      | _ => 
+        | _ => 
           match target_equals_goal_judgementally target_goal with
-          | false => 
+            | false => 
               warn_wrong_goal_given (target_goal); 
-              Control.zero (AutomationFailure (of_string
-                "Given goal not equivalent to actual goal."))
-          | true => 
+              Control.zero (AutomationFailure (of_string "Given goal not equivalent to actual goal."))
+            | true => 
               (* User provided an equivalent goal, but written differently. 
                  Try to rewrite the real goal to match user input.*)
               warn_equivalent_goal_given ();
               change $target_goal
           end
       end
-  | true  => ()
+    | true  => ()
   end;
   waterprove_without_hint target_goal lemma true.
 
@@ -148,8 +148,8 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
 *)
 Local Ltac2 unwrap_state_goal_no_check () :=
   lazy_match! goal with
-  | [|- StateGoal.Wrapper _] => apply StateGoal.wrap
-  | [|- _] => ()
+    | [|- StateGoal.Wrapper _] => apply StateGoal.wrap
+    | [|- _] => ()
   end.
 
 
@@ -169,17 +169,19 @@ Local Ltac2 unwrap_state_goal_no_check () :=
             to the actual goal under focus, even after rewriting.
 *)
 Ltac2 Notation "We" "conclude" "that" target_goal(constr) := 
-    unwrap_state_goal_no_check ();
-    panic_if_goal_wrapped ();
-    check_and_solve target_goal None.
+  debug_constr "conclude" "target_goal" target_goal;
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  check_and_solve target_goal None.
 
 (** * It follows that ...
     Alternative notation for [We conclude that ...].
 *)
 Ltac2 Notation "It" "follows" "that" target_goal(constr) :=      
-    unwrap_state_goal_no_check ();
-    panic_if_goal_wrapped ();
-    check_and_solve target_goal None.
+  debug_constr "it_follows" "target_goal" target_goal;
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  check_and_solve target_goal None.
 
 (** * We conclude that ...
     Finish proving a goal using automation.
@@ -194,7 +196,9 @@ Ltac2 Notation "It" "follows" "that" target_goal(constr) :=
         - [AutomationFailure], if [target_goal] is not equivalent
             to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "By" lemma(constr) "we" "conclude" "that" target_goal(constr) :=  
-    unwrap_state_goal_no_check ();
-    panic_if_goal_wrapped ();
-    check_and_solve target_goal (Some lemma).
+Ltac2 Notation "By" lemma(constr) "we" "conclude" "that" target_goal(constr) :=
+  debug_constr "by_conclude" "lemma" lemma;
+  debug_constr "by_conclude" "target_goal" target_goal;
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  check_and_solve target_goal (Some lemma).

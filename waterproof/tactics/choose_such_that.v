@@ -27,14 +27,12 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-
-Require Import Waterproof.message.
-
-Ltac2 Type exn ::= [ ChooseSuchThatError(message) ].
-
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
 Require Import Waterproof.tactics.goal_wrappers.
 
+Ltac2 Type exn ::= [ ChooseSuchThatError(message) ].
 
 Local Ltac2 mismatch_pred_existential_message (s : ident) (v : ident) :=
   Message.concat (Message.concat
@@ -113,6 +111,7 @@ Ltac2 choose_such_that (s:ident) (v:ident) (pred_u:constr) (u:ident option)
 
 Notation "'for' x : A 'it' 'holds' 'that' p" := (fun x : A => p) (at level 1, x name, only parsing).
 
-Ltac2 Notation "Obtain" s(ident) "according" "to" "("v(ident)")" "," "so" pred_u(constr) u(opt(seq("(", ident, ")")))
- := panic_if_goal_wrapped ();
-    choose_such_that s v pred_u u.
+Ltac2 Notation "Obtain" s(ident) "according" "to" "("v(ident)")" "," "so" pred_u(constr) u(opt(seq("(", ident, ")"))) := 
+  debug "obtain" "start";
+  panic_if_goal_wrapped ();
+  choose_such_that s v pred_u u.

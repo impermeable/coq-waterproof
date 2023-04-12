@@ -1,4 +1,4 @@
-(** * [auxiliary.v]
+(** * [message.v]
 Authors:
     - Jim Portegies
 Creation date: 4 March 2023
@@ -23,7 +23,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
-
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Int.
 

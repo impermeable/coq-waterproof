@@ -31,11 +31,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 
-
-Require Import Waterproof.message.
-
+Require Import Waterproof.debug.
 Require Import Waterproof.definitions.inequality_chains.
 Require Import Waterproof.init_automation_global_variables.
+Require Import Waterproof.message.
 Require Import Waterproof.waterprove.automation_subroutine.
 Require Import Waterproof.waterprove.manipulate_negation.
 
@@ -77,23 +76,24 @@ try making a smaller step."))
 *)
 
 Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
+	debug_constr "actual_waterprove" "prop" prop;
 	let first_attempt () := run_automation prop lemmas 3 (Some (global_first_attempt_database_selection ())) false in
-		let second_attempt () := 
-			match shield with
-				| true => 
-					match global_shield_automation with
-						| true => (* Match goal with basic logical operators *)
-							lazy_match! goal with
-								| [ |- forall _, _ ] => fail_automation None
-								| [ |- exists _, _ ] => fail_automation None
-								| [ |- _ /\ _] => fail_automation None
-								| [ |- _ \/ _] => fail_automation None
-								| [ |- _] => ()
-							end
-						| false => ()
-					end
-				| false => ()
-			end;
+	let second_attempt () := 
+		match shield with
+			| true => 
+				match global_shield_automation with
+					| true => (* Match goal with basic logical operators *)
+						lazy_match! goal with
+							| [ |- forall _, _ ] => fail_automation None
+							| [ |- exists _, _ ] => fail_automation None
+							| [ |- _ /\ _] => fail_automation None
+							| [ |- _ \/ _] => fail_automation None
+							| [ |- _] => ()
+						end
+					| false => ()
+				end
+			| false => ()
+		end;
 		let databases := Some(global_database_selection ())
 		in
 		run_automation prop lemmas global_search_depth databases global_enable_intuition
@@ -109,7 +109,8 @@ Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (sh
 
 (* Splits chain of inequalities into its parts and calls the actual waterprove subroutine on those. *)
 Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
-  lazy_match! goal with
+	debug_constr "waterprove" "prop" prop;
+	lazy_match! goal with
   	| [ |- total_statement _ ] => repeat split; Control.enter (fun () => cbn; actual_waterprove prop lemmas shield)
   	| [ |- _] => actual_waterprove prop lemmas shield
   end.

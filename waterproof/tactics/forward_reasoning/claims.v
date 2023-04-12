@@ -24,10 +24,10 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 
 From Ltac2 Require Import Ltac2.
-Require Import Waterproof.tactics.goal_wrappers.
-
 
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.debug.
+Require Import Waterproof.tactics.goal_wrappers.
 
 Local Ltac2 my_assert (t:constr) (id:ident option) := 
     match id with
@@ -37,5 +37,6 @@ Local Ltac2 my_assert (t:constr) (id:ident option) :=
     end.
 
 Ltac2 Notation "We" "claim" "that" t(constr) id(opt(seq("(", ident, ")"))) :=
-    panic_if_goal_wrapped ();
-    my_assert t id.
+  debug_constr "claim" "t" t;
+  panic_if_goal_wrapped ();
+  my_assert t id.

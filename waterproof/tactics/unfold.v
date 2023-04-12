@@ -29,6 +29,8 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Option.
+
+Require Export Waterproof.debug.
 Require Export Waterproof.tactics.goal_wrappers.
 
 (* Deprecated rephrasing of 'unfold' tactic
@@ -64,7 +66,6 @@ Ltac2 Notation "Unfold" targets(list1(seq(reference, occurrences), ","))
 Ltac2 Type exn ::= [ ExpandDefError(string) ].
 Ltac2 raise_expanddef_error (s:string) := Control.zero (ExpandDefError s).
 
-
 Ltac2 ap_goal_unwrap () := apply ExpandDef.Goal.unwrap.
 Ltac2 ident_to_clause (h : ident) := {Std.on_hyps := Some [(h, Std.AllOccurrences, Std.InHyp)]; 
                                       Std.on_concl := Std.NoOccurrences}.
@@ -88,25 +89,30 @@ Ltac2 ap_hyp_unwrap (h : constr) := apply (fun G => ExpandDef.Hyp.unwrap G _ $h)
         - Panics if the identifier [h] in the suffix [... in h] is not an hypothesis.
  
 *)
-Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", "(", ident, ")")))
-      := panic_if_goal_wrapped ();
-         match cl with
-         | None => Std.unfold targets (Notations.default_on_concl None);
-                   ap_goal_unwrap ()
-         | Some cl => let h_constr := Control.hyp cl in
-                      Std.unfold targets (ident_to_clause cl);
-                      ap_hyp_unwrap h_constr
-         end.
+Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", "(", ident, ")"))) :=
+  debug "expand_definition" "start";
+  panic_if_goal_wrapped ();
+  match cl with
+    | None => 
+      Std.unfold targets (Notations.default_on_concl None);
+      ap_goal_unwrap ()
+    | Some cl => 
+      let h_constr := Control.hyp cl in
+      Std.unfold targets (ident_to_clause cl);
+      ap_hyp_unwrap h_constr
+  end.
 
 
 Ltac2 expand_def_framework (unfold_goal : unit -> unit) (unfold_hyp : ident -> unit) (cl : ident option):=
   panic_if_goal_wrapped ();
   match cl with
-  | None    => unfold_goal ();
-               ap_goal_unwrap ()
-  | Some cl => let h_constr := Control.hyp cl in (* throws error if ident not found in hypotheses *)
-               unfold_hyp cl;
-               ap_hyp_unwrap h_constr
+    | None =>
+      unfold_goal ();
+      ap_goal_unwrap ()
+    | Some cl =>
+      let h_constr := Control.hyp cl in (* throws error if ident not found in hypotheses *)
+      unfold_hyp cl;
+      ap_hyp_unwrap h_constr
   end.
 
 
@@ -121,17 +127,20 @@ Ltac2 expand_def_framework (unfold_goal : unit -> unit) (unfold_hyp : ident -> u
         - [ExpandDefError], if the current goal is not wrapped in the [ExpandDef.Goal.Wrapper].
  
 *)
-Ltac2 goal_as (t:constr) := lazy_match! goal with
-                              | [|- ExpandDef.Goal.Wrapper ?v] =>
-                                match Constr.equal v t with
-                                | true => apply (ExpandDef.Goal.wrap)
-                                | false => raise_expanddef_error("Wrong goal specified.")
-                                end
-                              | [|- ExpandDef.Hyp.Wrapper _ _ _] => 
-                                raise_expanddef_error("Specify the effect of expanding definition in *hypothesis*.")
-                              | [|- _] => raise_expanddef_error("No need to specify the effect of expanding definition.")
-                              end.
-Ltac2 Notation "That" "is," "write" "the" "goal" "as" t(constr) := goal_as t.
+Ltac2 goal_as (t:constr) := 
+  lazy_match! goal with
+    | [|- ExpandDef.Goal.Wrapper ?v] =>
+      match Constr.equal v t with
+        | true => apply (ExpandDef.Goal.wrap)
+        | false => raise_expanddef_error("Wrong goal specified.")
+      end
+    | [|- ExpandDef.Hyp.Wrapper _ _ _] => raise_expanddef_error("Specify the effect of expanding definition in *hypothesis*.")
+    | [|- _] => raise_expanddef_error("No need to specify the effect of expanding definition.")
+  end.
+
+Ltac2 Notation "That" "is," "write" "the" "goal" "as" t(constr) :=
+  debug_constr "rewrite_goal" "goal" t;
+  goal_as t.
 
 
 (** * hyp_as
@@ -161,4 +170,8 @@ Ltac2 hyp_as (h : ident) (t:constr)
    | [|- ExpandDef.Goal.Wrapper _] => raise_expanddef_error("Specify the effect of expanding definition in *goal*.")
    | [|- _] => raise_expanddef_error("No need to specify the effect of expanding definition.")
    end.
-Ltac2 Notation "That" "is," "write" "(" h(ident) ")" "as" t(constr) := hyp_as h t.
+
+Ltac2 Notation "That" "is," "write" "(" h(ident) ")" "as" t(constr) :=
+  debug_ident "rewrite_hypothesis" "hypothesis" h;
+  debug_constr "rewrite_hypothesis" "term" t;
+  hyp_as h t.

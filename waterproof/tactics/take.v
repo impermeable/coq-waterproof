@@ -31,9 +31,9 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
 
-Require Import Waterproof.message.
-
 Require Import Waterproof.auxiliary.
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ TakeError(message) ].
@@ -123,5 +123,6 @@ Local Ltac2 take (x : (ident list * constr) list) :=
   end.
 
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","), ":", constr), "and")) := 
-    panic_if_goal_wrapped ();
-    take x.
+  debug "take" "start";
+  panic_if_goal_wrapped ();
+  take x.

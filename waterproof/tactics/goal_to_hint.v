@@ -178,6 +178,3 @@ Ltac2 print_goal_hint (g: constr option) :=
     Tries to give a hint how to proceed proving the current goal.
 *)
 Ltac2 Notation "Help" := print_goal_hint None.
-
-
-

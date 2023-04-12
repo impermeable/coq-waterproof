@@ -3,7 +3,7 @@ Authors:
     - Balthazar Patiachvili
 Creation date: 11 April 2023
 
-Set [global_debug_level] to [Std.Debug].
+Set [global_debug_level] to [Std.Debug] and Ltac2 Backtrace flage on.
 This prevents [auto] to print info and/or debug message.
 
 --------------------------------------------------------------------------------
@@ -28,4 +28,5 @@ From Ltac2 Require Import Ltac2.
 
 Require Import Waterproof.init_automation_global_variables.
 
+Set Ltac2 Backtrace.
 Ltac2 Set global_debug_level := Std.Debug.

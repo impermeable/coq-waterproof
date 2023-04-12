@@ -25,16 +25,14 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
-
-
-Require Import Waterproof.message.
-
 Require Import micromega.Lra.
 
-Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.auxiliary.
-Require Import Waterproof.waterprove.waterprove.
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
+Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.tactics.goal_wrappers.
+Require Import Waterproof.waterprove.waterprove.
 
 Local Ltac2 idtac () := ().
 
@@ -92,10 +90,10 @@ Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr)
             This happens if the sublemma does not hold,
             but can also happen if it is simply too difficult for [waterprove].
 *)
-Ltac2 Notation "By" lemma(constr) 
-               "it" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")")))  := 
-    panic_if_goal_wrapped ();
-    assert_and_prove_sublemma id conclusion (Some lemma).
+Ltac2 Notation "By" lemma(constr) "it" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")"))) :=
+  debug_constr "by_it_holds" "lemma" lemma;
+  panic_if_goal_wrapped ();
+  assert_and_prove_sublemma id conclusion (Some lemma).
     
     
 (** * It holds that ... (...)
@@ -116,5 +114,6 @@ Ltac2 Notation "By" lemma(constr)
             but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 Notation "It" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")")))  :=
-    panic_if_goal_wrapped ();
-    assert_and_prove_sublemma id conclusion None.
+  debug_constr "it_holds" "conclusion" conclusion;
+  panic_if_goal_wrapped ();
+  assert_and_prove_sublemma id conclusion None.

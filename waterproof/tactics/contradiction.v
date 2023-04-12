@@ -24,13 +24,11 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 
+Require Import Classical.
 From Ltac2 Require Import Ltac2.
 
-
+Require Import Waterproof.debug.
 Require Import Waterproof.message.
-
-Require Import Classical.
-
 Require Import Waterproof.tactics.goal_wrappers.
 
 
@@ -66,9 +64,11 @@ Ltac2 contradiction () :=
 
 
 Ltac2 Notation "We" "argue" "by" "contradiction" :=
+  debug "argue_by_contradiction" "start";
   contra ().
 
 Ltac2 Notation "Contradiction" :=
-    contradiction ().
+  debug "contradiction" "start";
+  contradiction ().
 
 Ltac2 Notation "↯" := contradiction ().

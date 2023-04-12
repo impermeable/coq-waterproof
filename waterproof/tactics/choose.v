@@ -26,14 +26,14 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
+
+Require Import Waterproof.debug.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ ChooseError(string) ].
 
 Local Ltac2 raise_choose_error (s:string) := 
     Control.zero (ChooseError s).
-
-
 
 (** * choose_varible_in_exists_goal_with_renaming
     Instantiate a variable in an [exists] [goal], according to a given [constr], and also renames
@@ -82,9 +82,10 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
     end.
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(constr) :=
-    panic_if_goal_wrapped ();
-    match s with 
+  debug_constr "choose" "right_side" t;
+  panic_if_goal_wrapped ();
+  match s with 
     | None => choose_variable_in_exists_no_renaming t
     | Some s => choose_variable_in_exists_goal_with_renaming s t
-    end.
+  end.
 

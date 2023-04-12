@@ -27,17 +27,15 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-
+Require Import Waterproof.debug.
 Require Import Waterproof.message.
-
 Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
 Require Import Waterproof.tactics.goal_wrappers.
 
 Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
 Local Ltac2 fail_suffice_to_show () :=
-    Control.zero (AutomationFailure (of_string
-"Waterproof could not verify that this statement is enough to prove the goal.")).
+  Control.zero (AutomationFailure (of_string "Waterproof could not verify that this statement is enough to prove the goal.")).
 
 (** * try_enough_expression
     Execute a function [f] (assuming it contains
@@ -55,8 +53,7 @@ Local Ltac2 fail_suffice_to_show () :=
             This typically happens if the [enough ... by ...]-expression fails
             to prove the goal.
 *)
-Local Ltac2 try_enough_expression (f: unit -> unit) 
-                           (statement: constr):=
+Local Ltac2 try_enough_expression (f: unit -> unit) (statement: constr) :=
     match Control.case f with
     | Val _ => () (*
     print (
@@ -87,14 +84,11 @@ Local Ltac2 try_enough_expression (f: unit -> unit)
             even if [statement] is given.
 *)
 Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr option) :=
-    let help_lemma := unwrap_optional_lemma proving_lemma
-    in
-    let g := Control.goal () in
-    let hyp_name := Fresh.in_goal @h in
-    let f () := enough ($hyp_name : $statement) 
-                by (waterprove_without_hint g help_lemma true)
-    in
-    try_enough_expression f statement.
+  let help_lemma := unwrap_optional_lemma proving_lemma in
+  let g := Control.goal () in
+  let hyp_name := Fresh.in_goal @h in
+  let f () := enough ($hyp_name : $statement) by (waterprove_without_hint g help_lemma true) in
+  try_enough_expression f statement.
 
 (** * It suffices to show that ...
     Same as the function [apply_enough_with_waterprove].
@@ -114,7 +108,8 @@ Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr opt
             even if [statement] is given.
 *)
 Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr) := 
-    apply_enough_with_waterprove statement None.
+  debug_constr "it_suffices_to_show" "statement" statement;
+  apply_enough_with_waterprove statement None.
 
 (** * By ... it suffices to show that ...
     Same as "It suffices to show that" except it adds an additional lemma 
@@ -130,7 +125,9 @@ Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr) :=
             even if [statement] is given.
 *)
 Ltac2 Notation "By" lemma(constr) "it" "suffices" "to" "show" "that" statement(constr) :=
-    apply_enough_with_waterprove statement (Some lemma).
+  debug_constr "by_it_suffices_to_show" "lemma" lemma;
+  debug_constr "by_it_suffices_to_show" "statement" statement;
+  apply_enough_with_waterprove statement (Some lemma).
 
 (*
 

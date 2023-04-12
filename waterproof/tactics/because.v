@@ -30,18 +30,19 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 From Ltac2 Require Import Ltac2.
 
 
-Require Import Waterproof.message.
 Require Import Waterproof.auxiliary.
-Require Export Waterproof.tactics.goal_wrappers.
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
 Require Export Waterproof.tactics.either. (* Enable the unwrapping of the Case wrapper. *)
+Require Export Waterproof.tactics.goal_wrappers.
 
-
-Local Ltac2 warn_wrong_prop_specified (user_type:constr) (coq_type:constr)
- := match Constr.equal user_type coq_type with
+Local Ltac2 warn_wrong_prop_specified (user_type:constr) (coq_type:constr) := 
+ match Constr.equal user_type coq_type with
     | true  => ()
-    | false => Control.zero (InputError (concat (concat (concat (of_string "Property ") (of_constr user_type))
-                   (concat (of_string " should be ") (of_constr coq_type))) (of_string ".")))
-    end.
+    | false => 
+      Control.zero (InputError (concat (concat (concat (of_string "Property ") (of_constr user_type)) 
+        (concat (of_string " should be ") (of_constr coq_type))) (of_string ".")))
+  end.
 
 (** * and_hypothesis_destruct_with_types
     Destruct an AND hypothesis into its respective two parts if the
@@ -86,9 +87,10 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
     warn_wrong_prop_specified tv type_v.
 
 
-Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("hold"))
-:=  panic_if_goal_wrapped ();
-    and_hypothesis_destruct_with_types s u tu v tv.
+Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("hold")) := 
+  debug "because" "start";
+  panic_if_goal_wrapped ();
+  and_hypothesis_destruct_with_types s u tu v tv.
 
 
 (** * or_hypothesis_destruct_with_types
@@ -136,6 +138,7 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
                                  apply (Case.unwrap $type_v)).
 
 
-Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("holds"))
-:=  panic_if_goal_wrapped ();
-    or_hypothesis_destruct_with_types s u tu v tv.
+Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("holds")) :=
+  debug "because" "start";
+  panic_if_goal_wrapped ();
+  or_hypothesis_destruct_with_types s u tu v tv.

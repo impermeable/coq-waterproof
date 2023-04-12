@@ -24,22 +24,19 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
 From Ltac2 Require Import Ltac2.
-
-
-Require Import Waterproof.message.
 Require Import Reals.
 Require Import Sets.Ensembles.
 Require Import Sets.Classical_sets.
-Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
-Require Import Waterproof.tactics.goal_wrappers.
+
+Require Import Waterproof.debug.
+Require Import Waterproof.message.
 Require Import Waterproof.set_intuition.Enabled.
 Require Import Waterproof.set_search_depth.To_5.
+Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
+Require Import Waterproof.tactics.goal_wrappers.
 
 (*Require Import Waterproof.load_database.
 Import wp_sets.*)
-
-
-
 
 (** * destruct_sets
     Destructs a statement regarding an element being contained in a union/intersection of two sets into
@@ -95,13 +92,14 @@ Ltac2 trivial_set_inclusion () :=
           in order to prove a set equality.
 *)
 Ltac2 trivial_set_equality () :=
-    try (intros A); try (intros B); try (apply Extensionality_Ensembles); try (unfold Same_set); 
-    try (unfold Included); try (split); try (split); try (trivial); try (split);
-    try (trivial_set_inclusion ()); try (trivial_set_inclusion ()).
+  try (intros A); try (intros B); try (apply Extensionality_Ensembles); try (unfold Same_set); 
+  try (unfold Included); try (split); try (split); try (trivial); try (split);
+  try (trivial_set_inclusion ()); try (trivial_set_inclusion ()).
 
 Ltac2 Notation "This" "set" "equality" "is" "trivial" :=
-    panic_if_goal_wrapped ();
-    trivial_set_equality ().
+  debug "trivial_set_equality" "start";
+  panic_if_goal_wrapped ();
+  trivial_set_equality ().
 
 
 
@@ -122,5 +120,6 @@ Ltac2 we_prove_equality_by_proving_two_inclusions () :=
     try (ltac1:(apply Extensionality_Ensembles)); unfold Same_set; unfold Included; split.
 
 Ltac2 Notation "We" "prove" "equality" "by" "proving" "two" "inclusions" :=
-    panic_if_goal_wrapped ();
-    we_prove_equality_by_proving_two_inclusions ().
+  debug "set_equality_inclusions" "start";  
+  panic_if_goal_wrapped ();
+  we_prove_equality_by_proving_two_inclusions ().
