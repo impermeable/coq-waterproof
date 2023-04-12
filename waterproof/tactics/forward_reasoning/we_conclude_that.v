@@ -74,7 +74,7 @@ Ltac2 warn_wrong_goal_given (wrong_target: constr) :=
                 to the goal under focus.
             - [false], otherwise.
 *)
-Ltac2 target_equals_goal_judgementally (target:constr) :=
+Local Ltac2 target_equals_goal_judgementally (target:constr) :=
   let target := eval cbv in $target in
   let real_goal := Control.goal () in
   let real_goal := eval cbv in $real_goal in
@@ -103,10 +103,9 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
   without applying any rewrite. *)
   match Constr.equal target_goal (Control.goal ()) with
     | false => 
-      (* Do somethign special for inequality chains *)
       lazy_match! target_goal with
-        | (total_statement ?u) =>
-          (* Convert inequality chain to global statement. *)
+      (* Do somethign special for inequality chains *)
+        | (total_statement ?u) => (* Convert inequality chain to global statement. *)
           let new_target := constr:(global_statement $u) in
           match target_equals_goal_judgementally new_target with
             | false =>
@@ -121,10 +120,12 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
             | true => ()
           end;
           (enough $target_goal by (waterprove_without_hint (Control.goal ()) constr:(I) false))
-        | _ => 
+        | _ =>
           match target_equals_goal_judgementally target_goal with
-            | false => 
-              warn_wrong_goal_given (target_goal); 
+            | false =>
+              warn_wrong_goal_given (target_goal);
+              debug_constr "check_and_solve" "target_goal" target_goal;
+              debug_constr "check_and_solve" "goal" (Control.goal ());
               Control.zero (AutomationFailure (of_string "Given goal not equivalent to actual goal."))
             | true => 
               (* User provided an equivalent goal, but written differently. 

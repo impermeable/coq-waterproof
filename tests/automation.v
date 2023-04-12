@@ -27,12 +27,14 @@ Qed.
 Local Parameter g : R -> R.
 Local Parameter g_monotone : forall x y : R, x < y -> g x < g y.
 
+Set Ltac2 Backtrace.
+
 Goal forall a b : R, a < b -> 4 + g a < 5 + g b.
 Proof.
   Take a, b : R.
   Assume that (a < b).
+  Search (_ < _ -> _ < _ -> _ + _ < _ + _).
 
-  (* This tactic should be removed *)
   It suffices to show that (g a < g b).
   
   By g_monotone we conclude that (g a < g b).
@@ -74,7 +76,7 @@ Proof.
   
   (* This should be removed *)
   It suffices to show that (0 <= 1 /\ 1 - r/2 <= 1).
-  
+
   We show both statements.
   + We conclude that (0 <= 1).
   + We conclude that (1 - r / 2 <= 1).
@@ -95,7 +97,7 @@ Proof.
   + We conclude that (a + b < 8).
 Qed.
 
-(**
+(*
   Maybe this works too well ?
   I think it would be better to write :
   `Either (a < b), (b < a) or (a = b).`

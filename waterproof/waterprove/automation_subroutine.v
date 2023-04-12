@@ -55,7 +55,7 @@ Local Ltac2 fail_automation (t : constr option):=
 Ltac2 mutable global_enable_intuition := false.
 
 (** * global_shield_automation
-    Currently does nothing
+    TODO
 *)
 Ltac2 mutable global_shield_automation := true.
 
@@ -64,8 +64,8 @@ Local Ltac2 run_automation_with_intuition (search_depth: int option) (databases:
   debug_int_option "run_automation_without_intuition" "search_depth" search_depth;
   first [
     solve [Std.auto Std.Info search_depth lemmas databases]
-    | solve [ltac1:(lemma |- intuition (info_auto using lemma with *)) (Ltac1.of_constr first_lemma)]
-    | solve [ltac1:(lemma|- intuition (info_eauto using lemma with *)) (Ltac1.of_constr first_lemma)] 
+    | solve [ltac1:(lemma |- intuition (info_auto using lemma with * )) (Ltac1.of_constr first_lemma)]
+    | solve [ltac1:(lemma|- intuition (info_eauto using lemma with * )) (Ltac1.of_constr first_lemma)] 
     | fail_automation (Some (Control.goal()))
   ].
 
