@@ -138,6 +138,7 @@ Local Ltac2 run_automation_without_intuition (search_depth: int option) (databas
 *)
 Ltac2 run_automation (prop: constr) (lemmas: (unit -> constr) list) (search_depth: int) (hint_databases: ident list option) (enable_intuition: bool) :=
   debug_constr "run_automation" "prop" prop;
+	List.iter (fun lemma => debug_constr "run_automation" "lemma" (lemma ())) lemmas;
   let result () :=
     let search_depth := Some search_depth in
     let first_lemma :=

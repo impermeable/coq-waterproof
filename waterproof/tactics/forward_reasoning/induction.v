@@ -51,7 +51,10 @@ Proof. intro n. induction n. reflexivity. simpl. rewrite IHn. reflexivity. Qed.
           NaturalInduction.Step.Wrapper.
 *)
 Ltac2 induction_without_hypothesis_naming (x: ident) :=    
-  intro $x;
+  match Control.case (fun () => Control.hyp x) with
+    | Val x => ()
+    | Err _ => intros $x
+  end;
   let x_hyp := Control.hyp x in
   let type_x := (Aux.get_value_of_hyp x_hyp) in
   match (Constr.equal type_x constr:(nat)) with

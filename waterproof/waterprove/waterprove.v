@@ -77,6 +77,8 @@ try making a smaller step."))
 
 Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
 	debug_constr "actual_waterprove" "prop" prop;
+	(* let first_attempt_builder := run_automation prop lemmas 3 (Some (global_first_attempt_database_selection ())) false in
+	let first_attempt () := first_attempt_builder in *)
 	let first_attempt () := run_automation prop lemmas 3 (Some (global_first_attempt_database_selection ())) false in
 	let second_attempt () :=
 		match Bool.and shield global_shield_automation  with
@@ -94,17 +96,21 @@ Local Ltac2 actual_waterprove (prop: constr) (lemmas: (unit -> constr) list) (sh
 		run_automation prop lemmas global_search_depth databases global_enable_intuition
 	in
 	match Control.case first_attempt with
-		| Val _ => ()
-		| Err exn => 
+		| Val _ => debug "actual_waterprove" "First attempt succeeded"
+		| Err exn =>
+			debug "actual_waterprove" "First attempt failed";
 			match Control.case second_attempt with
-				| Val _ => ()
-				| Err exn => fail_automation (Some (Control.goal()))
+				| Val _ => debug "actual_waterprove" "Second attempt succeeded"
+				| Err exn => 
+					debug "actual_waterprove" "Second attempt failed";
+					fail_automation (Some (Control.goal()))
 			end
 	end.
 
 (* Splits chain of inequalities into its parts and calls the actual waterprove subroutine on those. *)
 Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
 	debug_constr "waterprove" "prop" prop;
+	List.iter (fun lemma => debug_constr "waterprove" "lemma" (lemma ())) lemmas;
 	lazy_match! goal with
   	| [ |- total_statement _ ] => 
 			repeat split; 

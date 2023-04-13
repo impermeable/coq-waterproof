@@ -5,23 +5,23 @@ Require Import Waterproof.AllTactics.
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.theory.analysis.sup_and_inf_new_definitions.
 Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := databases(RealsAndIntegers).
+Module Import db := databases(RealsAndIntegers).
 
 Open Scope R_scope.
 Open Scope subset_scope.
 
 Require Import Waterproof.set_debug_level.Info.
+Require Import Waterproof.set_search_depth.To_5.
 
 Set Default Goal Selector "!".
-Set Default Timeout 3.
+Set Default Timeout 5.
 
 Goal forall a b: R, a <= b -> a + 1 < b + 2.
 Proof.
   Take a, b: R.
   Assume that (a <= b).
   
-  (* This should be removed *)
-  ltac1:(debug auto with real wp_reals). 
+  We conclude that (a + 1 < b + 2). 
 Qed.
 
 Local Parameter g : R -> R.
@@ -33,11 +33,8 @@ Goal forall a b : R, a < b -> 4 + g a < 5 + g b.
 Proof.
   Take a, b : R.
   Assume that (a < b).
-  Search (_ < _ -> _ < _ -> _ + _ < _ + _).
 
-  It suffices to show that (g a < g b).
-  
-  By g_monotone we conclude that (g a < g b).
+  By g_monotone we conclude that (4 + g a < 5 + g b).
 Qed.
 
 (* This works as it should *)
@@ -74,7 +71,6 @@ Proof.
 
   It suffices to show that (Rmax(0, 1 - r/2) <= 1).
   
-  (* This should be removed *)
   It suffices to show that (0 <= 1 /\ 1 - r/2 <= 1).
 
   We show both statements.
@@ -166,11 +162,12 @@ Proof.
   Assume that (x > 0).
   
   (* Why doesn't this work ? *)
-  (* We use induction on n. *)
-
-  induction n.
-  + It suffices to show that (1 >= 0).
-    We conclude that (1 >= 0).
-  + It suffices to show that (x * x^n >= 0).
-    We conclude that (x * x^n >= 0).
+  We use induction on n.
+  + We first show the base case, namely (x ^ 0 >= 0).
+    We conclude that (& x ^ 0 = 1 >= 0).
+  + We now show the induction step.
+    Assume that (x ^ n >= 0).
+    
+    (* This should work *)
+    We conclude that (& x ^ (n+1) = x * x^n >= 0).
 Qed.

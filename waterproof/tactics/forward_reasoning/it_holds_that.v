@@ -37,58 +37,45 @@ Require Import Waterproof.waterprove.waterprove.
 Local Ltac2 idtac () := ().
 
 (** * assert_and_prove_sublemma
-    Introduce a new sublemma and try to prove it immediately,
-    optionally using a given lemma.
+  Introduce a new sublemma and try to prove it immediately,
+  optionally using a given lemma.
 
-    Arguments:
-        - [id: ident option], optional name for the new sublemma.
-            If the proof succeeds, 
-            it will become a hypothesis (bearing [id] as name).
-        - [conclusion: constr], the actual content 
-            of the new sublemma to prove.
-        - [proving_lemma: constr], optional reference to a lemma 
-            used to prove the new sublemma (via [waterprove)]).
+  Arguments:
+    - [id: ident option], optional name for the new sublemma. If the proof succeeds, it will become a hypothesis (bearing [id] as name).
+    - [conclusion: constr], the actual content of the new sublemma to prove.
+    - [proving_lemma: constr], optional reference to a lemma used to prove the new sublemma (via [waterprove)]).
 
-    Raises exception:
-        - [AutomationFailure], if [waterprove] fails the prove the sublemma.
-            This happens if the sublemma does not hold,
-            but can also happen if it is simply too difficult for [waterprove].
+  Raises exception:
+    - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
 *)
-Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) 
-                                (proving_lemma: constr option) :=
-    let help_lemma := unwrap_optional_lemma proving_lemma
-    in
-    let by_arg () := waterprove_without_hint conclusion help_lemma true
-    in
-    let proof_attempt () := (* Check whether identifier is given *)
-                            match id with
-                            | None    => let h := Fresh.in_goal @__wp__h in
-                                         Aux.ltac2_assert_with_by h conclusion by_arg
-                            | Some id => Aux.ltac2_assert_with_by id conclusion by_arg
-                            end
-    in
-    match Control.case proof_attempt with
-    | Val _ => idtac () (*print (of_string ("New sublemma successfully added."))*)
+Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) (proving_lemma: constr option) :=
+  debug_constr "assert_and_prove_sublemma" "conclusion" conclusion;
+  let help_lemma := unwrap_optional_lemma proving_lemma in
+  let by_arg () := waterprove_without_hint conclusion help_lemma true in
+  let proof_attempt () := (* Check whether identifier is given *)
+    match id with
+      | None =>
+        let h := Fresh.in_goal @__wp__h in
+        Aux.ltac2_assert_with_by h conclusion by_arg
+      | Some id => Aux.ltac2_assert_with_by id conclusion by_arg
+    end
+  in match Control.case proof_attempt with
+    | Val _ => 
+      debug "assert_and_prove_sublemma" "New sublemma successfully added.";
+      idtac () 
     | Err exn => Control.zero exn
-    end.
+  end.
 
 (** * By ... it holds that ... (...)
-    Introduce a new sublemma and try to prove it immediately
-    using a given lemma.
+  Introduce a new sublemma and try to prove it immediately using a given lemma.
 
-    Arguments:
-        - [lemma: constr], reference to a lemma 
-            used to prove the new sublemma (via [waterprove)]).
-        - [id: ident option], optional name for the new sublemma.
-            If the proof succeeds, 
-            it will become a hypothesis (bearing [id] as name).
-        - [conclusion: constr], the actual content 
-            of the new sublemma to prove.
+  Arguments:
+    - [lemma: constr], reference to a lemma used to prove the new sublemma (via [waterprove)]).
+    - [id: ident option], optional name for the new sublemma. If the proof succeeds, it will become a hypothesis (bearing [id] as name).
+    - [conclusion: constr], the actual content of the new sublemma to prove.
 
     Raises exception:
-        - [AutomationFailure], if [waterprove] fails the prove the sublemma.
-            This happens if the sublemma does not hold,
-            but can also happen if it is simply too difficult for [waterprove].
+    - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 Notation "By" lemma(constr) "it" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")"))) :=
   debug_constr "by_it_holds" "lemma" lemma;

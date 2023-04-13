@@ -423,6 +423,8 @@ Import Waterproof.theory.analysis.reals.
 #[export] Hint Resolve Rge_min_abs : wp_reals.
 #[export] Hint Resolve Rmax_abs : wp_reals.
 #[export] Hint Resolve Rinv_0_lt_compat : wp_reals.
+#[export] Hint Resolve Rplus_lt_compat : wp_reals.
+#[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
 #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
 
