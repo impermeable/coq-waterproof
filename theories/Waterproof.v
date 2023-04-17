@@ -1,0 +1,1 @@
+Declare ML Module "waterproof:coq-waterproof.plugin".

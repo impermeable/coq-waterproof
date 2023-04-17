@@ -1,0 +1,17 @@
+DECLARE PLUGIN "coq-waterproof.plugin"
+
+{
+
+open Pcoq.Constr
+open Pp
+open Vernacexpr
+open Pvernac.Vernac_
+
+}
+
+VERNAC COMMAND EXTEND Hello CLASSIFIED AS QUERY
+  | [ "hello" ] -> 
+    {
+      Feedback.msg_notice (strbrk "Hello world!")
+    }
+END

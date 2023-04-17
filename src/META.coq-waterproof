@@ -1,0 +1,11 @@
+package "waterproof" (
+    directory = "."
+    version = "dev"
+    description = "Waterproof plugin"
+    requires = "coq-core.vernac"
+    archive(byte) = "waterproof.cma"
+    archive(native) = "waterproof.cmxa"
+    plugin(byte) = "waterproof.cma"
+    plugin(native) = "waterproof.cmxs"
+)
+directory = "."

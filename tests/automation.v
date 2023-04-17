@@ -158,16 +158,16 @@ Admitted.
 Goal forall x: R, forall n: nat, (x > 0)%R -> pow x n >= 0.
 Proof.
   Take x: R.
-  Take n: nat.
-  Assume that (x > 0).
   
   (* Why doesn't this work ? *)
   We use induction on n.
-  + We first show the base case, namely (x ^ 0 >= 0).
+  + We first show the base case, namely (x > 0 -> x ^ 0 >= 0).
+    Assume that (x > 0).
     We conclude that (& x ^ 0 = 1 >= 0).
   + We now show the induction step.
-    Assume that (x ^ n >= 0).
-    
+    Assume that (x > 0 -> x ^ n >= 0) (i).
+    Assume that (x > 0).
+
     (* This should work *)
     We conclude that (& x ^ (n+1) = x * x^n >= 0).
 Qed.
