@@ -2,16 +2,24 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 
 {
 
-open Pcoq.Constr
+open Ltac_plugin
 open Pp
-open Vernacexpr
-open Pvernac.Vernac_
+open Stdarg
+
+open Automation
 
 }
 
 VERNAC COMMAND EXTEND Hello CLASSIFIED AS QUERY
-  | [ "hello" ] -> 
+  | [ "hello" ] ->
     {
       Feedback.msg_notice (strbrk "Hello world!")
+    }
+END
+
+TACTIC EXTEND tactid
+  | [ "tactid" ident(i) ] ->
+    {
+      test(i)
     }
 END

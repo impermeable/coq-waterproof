@@ -6,5 +6,5 @@ src
 
 theories/Waterproof.v
 
-src/hello.mlg
-src/test.mli
+src/g_waterproof.mlg
+src/automation.mli

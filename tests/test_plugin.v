@@ -1,5 +1,6 @@
 Require Import Waterproof.Waterproof.
 
-Goal True.
+Goal forall P: Prop, P -> P.
 Proof.
   hello.
+  tactid P.
