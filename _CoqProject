@@ -2,9 +2,10 @@ src/META.coq-waterproof
 -R theories/ Waterproof
 -arg "-w all"
 -I src
-src
 
 theories/Waterproof.v
 
-src/g_waterproof.mlg
+src/automation.ml
 src/automation.mli
+src/g_waterproof.mlg
+src/waterproof.mlpack

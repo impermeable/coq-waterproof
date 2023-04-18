@@ -1,0 +1,9 @@
+*
+
+!*.mlpack
+!*.mlg
+!*.mli
+
+!.gitignore
+!dune
+!automation.ml
