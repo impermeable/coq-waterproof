@@ -257,6 +257,8 @@ and tac_of_hint dbg db_list local_db concl =
   in
   fun h -> tclLOG dbg (pr_hint h) (FullHint.run h tactic)
 
+let counter = ref 0
+
 let search d n db_list lems =
   let make_local_db gl =
     let env = Proofview.Goal.env gl in
@@ -268,33 +270,36 @@ let search d n db_list lems =
       let info = Exninfo.reify () in
       Proofview.tclZERO ~info SearchBound
     else
-      (* Put mutable variable here to catch the value of the applied tactic *)
-      Tacticals.tclORELSE0 (dbg_assumption d) @@
-      Tacticals.tclORELSE0 (intro_register d (search d n) local_db) @@
-      Proofview.Goal.enter begin fun gl ->
-        let env = Proofview.Goal.env gl in
-        let sigma = Proofview.Goal.sigma gl in
-        let concl = Proofview.Goal.concl gl in
-        let hyps = Proofview.Goal.hyps gl in
-        let d' = incr_dbg d in
-        let secvars = compute_secvars gl in
-        let hdc = try Some (decompose_app_bound sigma concl) with Bound -> None in
-        let hintmap = hintmap_of env sigma secvars hdc concl in
-        let hinttac = tac_of_hint d db_list local_db concl in
-        (local_db::db_list)
-        |> List.map_append (fun db -> try hintmap db with Not_found -> [])
-        |> List.map begin fun h ->
-             Proofview.tclTHEN (hinttac h) @@
-               Proofview.Goal.enter begin fun gl ->
-                 let hyps' = Proofview.Goal.hyps gl in
-                 let local_db' =
-                   (* update local_db if local hypotheses have changed *)
-                   if hyps' == hyps then local_db else make_local_db gl
-                 in
-                 search d' (n-1) local_db'
-               end
-           end
-        |> Tacticals.tclFIRST
+      begin
+        counter := !counter + 1;
+        (* Put mutable variable here to catch the value of the applied tactic *)
+        Tacticals.tclORELSE0 (dbg_assumption d) @@
+        Tacticals.tclORELSE0 (intro_register d (search d n) local_db) @@
+        Proofview.Goal.enter begin fun gl ->
+          let env = Proofview.Goal.env gl in
+          let sigma = Proofview.Goal.sigma gl in
+          let concl = Proofview.Goal.concl gl in
+          let hyps = Proofview.Goal.hyps gl in
+          let d' = incr_dbg d in
+          let secvars = compute_secvars gl in
+          let hdc = try Some (decompose_app_bound sigma concl) with Bound -> None in
+          let hintmap = hintmap_of env sigma secvars hdc concl in
+          let hinttac = tac_of_hint d db_list local_db concl in
+          (local_db::db_list)
+          |> List.map_append (fun db -> try hintmap db with Not_found -> [])
+          |> List.map begin fun h ->
+               Proofview.tclTHEN (hinttac h) @@
+                 Proofview.Goal.enter begin fun gl ->
+                   let hyps' = Proofview.Goal.hyps gl in
+                   let local_db' =
+                     (* update local_db if local hypotheses have changed *)
+                     if hyps' == hyps then local_db else make_local_db gl
+                   in
+                   search d' (n-1) local_db'
+                 end
+             end
+          |> Tacticals.tclFIRST
+        end
       end
   in
   Proofview.Goal.enter begin fun gl ->
@@ -303,13 +308,13 @@ let search d n db_list lems =
 
 let default_search_depth = ref 5
 
-let gen_auto ?(debug=Off) (n: int option) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option): unit Proofview.tactic =
+let gen_auto ?(debug=Off) (n: int option) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) =
   Hints.wrap_hint_warning @@
     Proofview.Goal.enter begin fun gl ->
     let n = match n with None -> !default_search_depth | Some n -> n in
     let db_list =
       match dbnames with
-      | Some dbnames -> Feedback.msg_notice (unrepr (Ppcmd_comment dbnames)); make_db_list dbnames
+      | Some dbnames -> make_db_list dbnames
       | None -> current_pure_db ()
     in
     let d = mk_auto_dbg debug in
@@ -324,6 +329,12 @@ let gen_auto ?(debug=Off) (n: int option) (lems: Tactypes.delayed_open_constr li
 let wauto ?(debug=Off) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): unit Proofview.tactic = 
   gen_auto ~debug (Some n) lems (Some dbnames)
 
+let tclRealThen (first: unit Proofview.tactic) (second: unit Proofview.tactic lazy_t): unit Proofview.tactic =
+  Proofview.tclBIND first (fun () -> Proofview.tclTHEN first (Lazy.force second))
+
 let test (id: Names.Id.t) : unit Proofview.tactic =
   Feedback.msg_notice (Ppconstr.pr_id id);
-  wauto ~debug:Debug 5 [] ["core"]
+  let tactic = wauto ~debug:Info 5 [] ["core"] in
+  (* Proofview.tclBIND tactic (fun () -> (Proofview.tclTHEN tactic (Proofview.tclUNIT (Feedback.msg_notice (Pp.int !counter))))) *)
+  let print = lazy (Proofview.tclUNIT (Feedback.msg_notice (Pp.int !counter))) in
+  tclRealThen tactic print

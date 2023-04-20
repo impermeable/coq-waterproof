@@ -6,9 +6,12 @@ CoqMakefile
 CoqMakefile.conf
 .CoqMakefile.d
 Makefile
+Makefile.conf
 Makefile.coq
 Makefile.coq.conf
 .Makefile.d
+
+META
 
 *.o
 *.mlg.d

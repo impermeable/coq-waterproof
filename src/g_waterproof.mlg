@@ -6,7 +6,7 @@ open Ltac_plugin
 open Pp
 open Stdarg
 
-open Automation
+open Wauto
 
 }
 

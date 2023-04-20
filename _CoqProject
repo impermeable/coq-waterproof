@@ -5,7 +5,7 @@ src/META.coq-waterproof
 
 theories/Waterproof.v
 
-src/automation.ml
-src/automation.mli
+src/wauto.ml
+src/wauto.mli
 src/g_waterproof.mlg
 src/waterproof.mlpack
