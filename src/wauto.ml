@@ -1,16 +1,15 @@
-open Pp
-open Util
-
 open Hints
 open Names
 open Proofview.Notations
+open Pp
 open Tactics
 open Termops
 open Unification
+open Util
+
+(* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
 
 exception SearchBound
-
-(* All the functions below come from coq-core hidden library (i.e not visible in the API)  *)
 
 let compute_secvars (gl: Proofview.Goal.t): Id.Pred.t =
   let hyps = Proofview.Goal.hyps gl in
@@ -26,7 +25,7 @@ let auto_core_unif_flags_of st1 st2 = {
   use_pattern_unification = false;
   use_meta_bound_pattern_unification = true;
   allowed_evars = Evarsolve.AllowedEvars.all;
-  restrict_conv_on_strict_subterms = false; (* Compat *)
+  restrict_conv_on_strict_subterms = false;
   modulo_betaiota = false;
   modulo_eta = true;
 }
@@ -94,25 +93,44 @@ let conclPattern concl pat tac =
       Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
   end
 
-let global_debug_auto = ref false
-let global_info_auto = ref false
+let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluable_global_reference) = match evaluable_ref with
+  | Tacred.EvalConstRef _ -> true
+  | Tacred.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
 
-type debug_kind = ReportForAuto
+(* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but slightly modified for Waterproof *)
 
-let no_dbg (_,whatfor,_,_) = (Off,whatfor,0,ref [])
+type debug = Hints.debug * int * (int * (Environ.env -> Evd.evar_map -> t) option) list ref
 
-let mk_auto_dbg debug =
-  let d =
-    if debug == Debug || !global_debug_auto then Debug
-    else if debug == Info || !global_info_auto then Info
-    else Off
-  in (d,ReportForAuto,0,ref [])
+(**
+  Returns a `debug` value corresponding to `no debug`
+*)
+let no_debug (): debug = (Off, 0, ref [])
 
-let incr_dbg = function (dbg,whatfor,depth,trace) -> (dbg,whatfor,depth+1,trace)
+(**
+  Creates a `debug` value from a `Hints.debug` value
+*)
+let new_debug (debug: Hints.debug) = (debug, 0, ref [])
 
-let tclLOG (dbg,_,depth,trace) pp tac =
+(**
+  Increases the debug depth by 1
+*)
+let incr_debug_depth ((dbg, depth, trace): debug): debug = (dbg, depth + 1, trace)
+
+(**
+  Updates the given debug and print informations according to the field `Hints.debug`
+*)
+let tclLOG ((dbg, depth, trace): debug) (pp: Environ.env -> Evd.evar_map -> t) (tac: 'a Proofview.tactic): 'a Proofview.tactic =
   match dbg with
     | Off -> tac
+    | Info ->
+      Proofview.(tclIFCATCH (
+        tac >>= fun v ->
+          trace := (depth, Some pp) :: !trace;
+          tclUNIT v
+          ) Proofview.tclUNIT
+          (fun (exn, info) ->
+            trace := (depth, None) :: !trace;
+            tclZERO ~info exn))
     | Debug ->
       let s = String.make (depth+1) '*' in
       Proofview.(tclIFCATCH (
@@ -123,47 +141,60 @@ let tclLOG (dbg,_,depth,trace) pp tac =
           tclUNIT v
         ) tclUNIT
           (fun (exn, info) ->
-             tclENV >>= fun env ->
-             tclEVARMAP >>= fun sigma ->
-             Feedback.msg_notice (str s ++ spc () ++ pp env sigma ++ str ". (*fail*)");
-             tclZERO ~info exn))
-    | Info ->
-      Proofview.(tclIFCATCH (
-          tac >>= fun v ->
-          trace := (depth, Some pp) :: !trace;
-          tclUNIT v
-        ) Proofview.tclUNIT
-          (fun (exn, info) ->
-             trace := (depth, None) :: !trace;
-             tclZERO ~info exn))
+              tclENV >>= fun env ->
+              tclEVARMAP >>= fun sigma ->
+              Feedback.msg_notice (str s ++ spc () ++ pp env sigma ++ str ". (*fail*)");
+              tclZERO ~info exn))
 
-let rec cleanup_info_trace depth acc = function
+(**
+  Cleans up the trace with a higher depth than the given `depth`
+*)
+let rec cleanup_info_trace (depth: int) (acc: (int * (Environ.env -> Evd.evar_map -> t)) list): (int * (Environ.env -> Evd.evar_map -> t) option) list -> (int * (Environ.env -> Evd.evar_map -> t)) list = function
   | [] -> acc
-  | (d,Some pp) :: l -> cleanup_info_trace d ((d,pp)::acc) l
+  | (d, Some pp) :: l -> cleanup_info_trace d ((d,pp)::acc) l
   | l -> cleanup_info_trace depth acc (erase_subtree depth l)
-
-and erase_subtree depth = function
+  
+(**
+  Erases the trace with a higher depth that the given `depth`
+*)
+and erase_subtree (depth: int): (int * (Environ.env -> Evd.evar_map -> t) option) list -> (int * (Environ.env -> Evd.evar_map -> t) option) list = function
   | [] -> []
-  | (d,_) :: l -> if Int.equal d depth then l else erase_subtree depth l
+  | (d, _) :: l -> if Int.equal d depth then l else erase_subtree depth l
 
-let pr_info_atom env sigma (d,pp) =
+
+(**
+  Prints an info atom, i.e an element of the info trace
+*)
+let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((d, pp): int * (Environ.env -> Evd.evar_map -> t)): t =
   str (String.make d ' ') ++ pp env sigma ++ str "."
 
-let pr_info_trace env sigma = function
-  | (Info,_,_,{contents=(d,Some pp)::l}) ->
+(**
+  Prints the complete info trace
+*)
+let pr_info_trace (env: Environ.env) (sigma: Evd.evar_map) (d: debug) = match d with
+  | (Info, _, {contents=(d,Some pp)::l}) ->
     Feedback.msg_notice (prlist_with_sep fnl (pr_info_atom env sigma) (cleanup_info_trace d [(d,pp)] l))
   | _ -> ()
 
-let pr_info_nop = function
-  | (Info,_,_,_) -> Feedback.msg_notice (str "idtac.")
+(**
+  Prints "idtac" if the `Hints.debug` level is `Info`
+*)
+let pr_info_nop (d: debug) = match d with
+  | (Info, _, _) -> Feedback.msg_notice (str "idtac.")
   | _ -> ()
 
+(** 
+  Prints a debug header according to the `Hints.debug` level
+*)
 let pr_dbg_header = function
-  | (Off,_,_,_) -> ()
-  | (Debug,ReportForAuto,_,_) -> Feedback.msg_notice (str "(* debug auto: *)")
-  | (Info,ReportForAuto,_,_) -> Feedback.msg_notice (str "(* info auto: *)")
+  | (Off, _, _) -> ()
+  | (Info, _, _) -> Feedback.msg_notice (str "(* info auto: *)")
+  | (Debug, _, _) -> Feedback.msg_notice (str "(* debug auto: *)")
 
-let tclTRY_dbg d tac =
+(**
+  Tries the given tactic and print an "idtac" if case of fail
+*)
+let tclTRY_dbg (d: debug) (tac: unit Proofview.tactic): unit Proofview.tactic =
   let delay f = Proofview.tclUNIT () >>= fun () -> f () in
   let tac =
     delay (fun () -> pr_dbg_header d; tac) >>= fun () ->
@@ -174,7 +205,10 @@ let tclTRY_dbg d tac =
   let after = delay (fun () -> pr_info_nop d; Proofview.tclUNIT ()) in
   Tacticals.tclORELSE0 tac after
 
-let hintmap_of env sigma secvars hdc concl =
+(**
+  Creates a function that takes a hint database and returns a hint list
+*)
+let hintmap_of (env: Environ.env) (sigma: Evd.evar_map) (secvars: Id.Pred.t) (hdc: (GlobRef.t * Evd.econstr array) option) (concl: Evd.econstr): hint_db -> FullHint.t list =
   match hdc with
   | None -> Hint_db.map_none ~secvars
   | Some hdc ->
@@ -184,14 +218,13 @@ let hintmap_of env sigma secvars hdc concl =
                    | ModeMismatch -> [])
       else Hint_db.map_auto env sigma ~secvars hdc concl
 
-let exists_evaluable_reference env = function
-  | Tacred.EvalConstRef _ -> true
-  | Tacred.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
+(* Returns a logged `intro` tactic *)
+let dbg_intro (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> str "intro") intro
 
-let dbg_intro dbg = tclLOG dbg (fun _ _ -> str "intro") intro
-let dbg_assumption dbg = tclLOG dbg (fun _ _ -> str "assumption") assumption
+(* Returns a logged `assumption` tactic *)
+let dbg_assumption (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> str "assumption") assumption
 
-let intro_register dbg kont db =
+let intro_register (dbg: debug) (kont: hint_db -> unit Proofview.tactic) (db: hint_db): unit Proofview.tactic =
   Proofview.tclTHEN (dbg_intro dbg) @@
     Proofview.Goal.enter begin fun gl ->
       let extend_local_db decl db =
@@ -202,7 +235,7 @@ let intro_register dbg kont db =
       Tacticals.onLastDecl (fun decl -> kont (extend_local_db decl db))
     end
 
-let rec trivial_fail_db dbg db_list local_db =
+let rec trivial_fail_db (dbg: debug) (db_list: hint_db list) (local_db: hint_db): unit Proofview.tactic =
   Proofview.tclINDEPENDENT @@
     Tacticals.tclORELSE0 (dbg_assumption dbg) @@
     Tacticals.tclORELSE0 (intro_register dbg (trivial_fail_db dbg db_list) local_db) @@
@@ -224,7 +257,7 @@ let rec trivial_fail_db dbg db_list local_db =
       |> Tacticals.tclFIRST
     end
 
-and tac_of_hint dbg db_list local_db concl =
+and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl: Evd.econstr): FullHint.t -> unit Proofview.tactic =
   let tactic = function
     | Res_pf h -> unify_resolve_nodelta h
     | ERes_pf _ -> Proofview.Goal.enter (fun gl ->
@@ -236,7 +269,7 @@ and tac_of_hint dbg db_list local_db concl =
         (unify_resolve_nodelta h)
         (* With "(debug) trivial", we shouldn't end here, and
            with "debug auto" we don't display the details of inner trivial *)
-        (trivial_fail_db (no_dbg dbg) db_list local_db)
+        (trivial_fail_db (no_debug ()) db_list local_db)
     | Unfold_nth c ->
       Proofview.Goal.enter begin fun gl ->
        if exists_evaluable_reference (Proofview.Goal.env gl) c then
@@ -257,9 +290,8 @@ and tac_of_hint dbg db_list local_db concl =
   in
   fun h -> tclLOG dbg (pr_hint h) (FullHint.run h tactic)
 
-let counter = ref 0
-
-let search d n db_list lems =
+(* Searches a sequence of at most `n` tactics within `db_list` and `lems` that solves the goal *)
+let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
   let make_local_db gl =
     let env = Proofview.Goal.env gl in
     let sigma = Proofview.Goal.sigma gl in
@@ -271,7 +303,6 @@ let search d n db_list lems =
       Proofview.tclZERO ~info SearchBound
     else
       begin
-        counter := !counter + 1;
         (* Put mutable variable here to catch the value of the applied tactic *)
         Tacticals.tclORELSE0 (dbg_assumption d) @@
         Tacticals.tclORELSE0 (intro_register d (search d n) local_db) @@
@@ -280,7 +311,7 @@ let search d n db_list lems =
           let sigma = Proofview.Goal.sigma gl in
           let concl = Proofview.Goal.concl gl in
           let hyps = Proofview.Goal.hyps gl in
-          let d' = incr_dbg d in
+          let d' = incr_debug_depth d in
           let secvars = compute_secvars gl in
           let hdc = try Some (decompose_app_bound sigma concl) with Bound -> None in
           let hintmap = hintmap_of env sigma secvars hdc concl in
@@ -306,35 +337,40 @@ let search d n db_list lems =
     search d n (make_local_db gl)
   end
 
-let default_search_depth = ref 5
-
-let gen_auto ?(debug=Off) (n: int option) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) =
+(** 
+  Generates the `wauto` function
+*)
+let gen_wauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) =
   Hints.wrap_hint_warning @@
     Proofview.Goal.enter begin fun gl ->
-    let n = match n with None -> !default_search_depth | Some n -> n in
     let db_list =
       match dbnames with
       | Some dbnames -> make_db_list dbnames
       | None -> current_pure_db ()
     in
-    let d = mk_auto_dbg debug in
-    tclTRY_dbg d (search d n db_list lems)
+    tclTRY_dbg debug (search debug n db_list lems)
   end
 
-(** 
+(**
   Waterproof auto
 
   This function is a rewrite around coq-core.Auto.auto to be able to retrieve which tactics have been used in case of success
 *)
-let wauto ?(debug=Off) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): unit Proofview.tactic = 
-  gen_auto ~debug (Some n) lems (Some dbnames)
+let wauto (debug: debug) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): unit Proofview.tactic = 
+  gen_wauto debug ~n lems (Some dbnames)
 
+(**
+  Wrapper around `Proofview.tclTHEN` who actually execute the first tactic before the second 
+*)
 let tclRealThen (first: unit Proofview.tactic) (second: unit Proofview.tactic lazy_t): unit Proofview.tactic =
   Proofview.tclBIND first (fun () -> Proofview.tclTHEN first (Lazy.force second))
 
 let test (id: Names.Id.t) : unit Proofview.tactic =
   Feedback.msg_notice (Ppconstr.pr_id id);
-  let tactic = wauto ~debug:Info 5 [] ["core"] in
-  (* Proofview.tclBIND tactic (fun () -> (Proofview.tclTHEN tactic (Proofview.tclUNIT (Feedback.msg_notice (Pp.int !counter))))) *)
-  let print = lazy (Proofview.tclUNIT (Feedback.msg_notice (Pp.int !counter))) in
+  let debug = new_debug Info in
+  let tactic = wauto debug 5 [] ["core"] in
+  let print = lazy (
+    let (_, _, trace) = debug in
+    Proofview.tclUNIT @@ List.iter (fun (depth, _) -> Feedback.msg_notice (Pp.int depth)) !trace
+  ) in
   tclRealThen tactic print
