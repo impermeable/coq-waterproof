@@ -99,7 +99,7 @@ let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluab
 
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but slightly modified for Waterproof *)
 
-type debug = Hints.debug * int * (int * (Environ.env -> Evd.evar_map -> t) option) list ref
+type debug = Hints.debug * int * (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list ref
 
 (**
   Returns a `debug` value corresponding to `no debug`
@@ -109,7 +109,7 @@ let no_debug (): debug = (Off, 0, ref [])
 (**
   Creates a `debug` value from a `Hints.debug` value
 *)
-let new_debug (debug: Hints.debug) = (debug, 0, ref [])
+let new_debug (debug: Hints.debug): debug = (debug, 0, ref [])
 
 (**
   Increases the debug depth by 1
@@ -119,61 +119,67 @@ let incr_debug_depth ((dbg, depth, trace): debug): debug = (dbg, depth + 1, trac
 (**
   Updates the given debug and print informations according to the field `Hints.debug`
 *)
-let tclLOG ((dbg, depth, trace): debug) (pp: Environ.env -> Evd.evar_map -> t) (tac: 'a Proofview.tactic): 'a Proofview.tactic =
+let tclLOG ((dbg, depth, trace): debug) (pp: Environ.env -> Evd.evar_map -> t * t) (tac: 'a Proofview.tactic): 'a Proofview.tactic =
   match dbg with
     | Off -> tac
     | Info ->
       Proofview.(tclIFCATCH (
         tac >>= fun v ->
-          trace := (depth, Some pp) :: !trace;
-          tclUNIT v
-          ) Proofview.tclUNIT
-          (fun (exn, info) ->
-            trace := (depth, None) :: !trace;
-            tclZERO ~info exn))
+          tclENV >>= fun env ->
+            tclEVARMAP >>= fun sigma ->
+              let (hint, src) = pp env sigma in
+              trace := (depth, Some pp, hint, src) :: !trace;
+              tclUNIT v
+              ) Proofview.tclUNIT
+              (fun (exn, info) ->
+                trace := (depth, None, str "", str "") :: !trace;
+                tclZERO ~info exn))
     | Debug ->
       let s = String.make (depth+1) '*' in
       Proofview.(tclIFCATCH (
           tac >>= fun v ->
           tclENV >>= fun env ->
           tclEVARMAP >>= fun sigma ->
-          Feedback.msg_notice (str s ++ spc () ++ pp env sigma ++ str ". (*success*)");
+          let (hint, src) = pp env sigma in
+          Feedback.msg_notice (str s ++ spc () ++ hint ++ str " in(" ++ src ++ str "). (*success*)");
           tclUNIT v
         ) tclUNIT
           (fun (exn, info) ->
               tclENV >>= fun env ->
               tclEVARMAP >>= fun sigma ->
-              Feedback.msg_notice (str s ++ spc () ++ pp env sigma ++ str ". (*fail*)");
+              let (hint, src) = pp env sigma in
+              Feedback.msg_notice (str s ++ spc () ++ hint ++ str " in(" ++ src ++ str "). (*fail*)");
               tclZERO ~info exn))
 
 (**
   Cleans up the trace with a higher depth than the given `depth`
 *)
-let rec cleanup_info_trace (depth: int) (acc: (int * (Environ.env -> Evd.evar_map -> t)) list): (int * (Environ.env -> Evd.evar_map -> t) option) list -> (int * (Environ.env -> Evd.evar_map -> t)) list = function
+let rec cleanup_info_trace (depth: int) (acc: (int * (Environ.env -> Evd.evar_map -> t * t) * t * t) list): (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list -> (int * (Environ.env -> Evd.evar_map -> t * t) * t * t) list = function
   | [] -> acc
-  | (d, Some pp) :: l -> cleanup_info_trace d ((d,pp)::acc) l
+  | (d, Some pp, hint, src) :: l -> cleanup_info_trace d ((d, pp, hint, src)::acc) l
   | l -> cleanup_info_trace depth acc (erase_subtree depth l)
   
 (**
   Erases the trace with a higher depth that the given `depth`
 *)
-and erase_subtree (depth: int): (int * (Environ.env -> Evd.evar_map -> t) option) list -> (int * (Environ.env -> Evd.evar_map -> t) option) list = function
+and erase_subtree (depth: int): (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list -> (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list = function
   | [] -> []
-  | (d, _) :: l -> if Int.equal d depth then l else erase_subtree depth l
+  | (d, _, _, _) :: l -> if Int.equal d depth then l else erase_subtree depth l
 
 
 (**
   Prints an info atom, i.e an element of the info trace
 *)
-let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((d, pp): int * (Environ.env -> Evd.evar_map -> t)): t =
-  str (String.make d ' ') ++ pp env sigma ++ str "."
+let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((d, pp, _, _): int * (Environ.env -> Evd.evar_map -> t * t) * t * t): t =
+  let (hint, src) = pp env sigma in
+  str (String.make d ' ') ++ hint ++ str " in (" ++ src ++ str ")."
 
 (**
   Prints the complete info trace
 *)
 let pr_info_trace (env: Environ.env) (sigma: Evd.evar_map) (d: debug) = match d with
-  | (Info, _, {contents=(d,Some pp)::l}) ->
-    Feedback.msg_notice (prlist_with_sep fnl (pr_info_atom env sigma) (cleanup_info_trace d [(d,pp)] l))
+  | (Info, _, {contents=(d, Some pp, hint, src)::l}) ->
+    Feedback.msg_notice (prlist_with_sep fnl (pr_info_atom env sigma) (cleanup_info_trace d [(d, pp, hint, src)] l))
   | _ -> ()
 
 (**
@@ -219,10 +225,10 @@ let hintmap_of (env: Environ.env) (sigma: Evd.evar_map) (secvars: Id.Pred.t) (hd
       else Hint_db.map_auto env sigma ~secvars hdc concl
 
 (* Returns a logged `intro` tactic *)
-let dbg_intro (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> str "intro") intro
+let dbg_intro (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> (str "intro", str "")) intro
 
 (* Returns a logged `assumption` tactic *)
-let dbg_assumption (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> str "assumption") assumption
+let dbg_assumption (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> (str "assumption", str "")) assumption
 
 let intro_register (dbg: debug) (kont: hint_db -> unit Proofview.tactic) (db: hint_db): unit Proofview.tactic =
   Proofview.tclTHEN (dbg_intro dbg) @@
@@ -281,12 +287,12 @@ and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl:
     | Extern (p, tacast) ->
       conclPattern concl p tacast
   in
-  let pr_hint h env sigma =
+  let pr_hint (h: FullHint.t) (env: Environ.env) (sigma: Evd.evar_map): t * t =
     let origin = match FullHint.database h with
     | None -> mt ()
-    | Some n -> str " (in " ++ str n ++ str ")"
+    | Some n -> str n
     in
-    FullHint.print env sigma h ++ origin
+    (Hints.pp_hints_path_atom (fun name -> Printer.pr_global name) (FullHint.name h), origin)
   in
   fun h -> tclLOG dbg (pr_hint h) (FullHint.run h tactic)
 
@@ -303,7 +309,6 @@ let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_o
       Proofview.tclZERO ~info SearchBound
     else
       begin
-        (* Put mutable variable here to catch the value of the applied tactic *)
         Tacticals.tclORELSE0 (dbg_assumption d) @@
         Tacticals.tclORELSE0 (intro_register d (search d n) local_db) @@
         Proofview.Goal.enter begin fun gl ->
@@ -323,7 +328,6 @@ let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_o
                  Proofview.Goal.enter begin fun gl ->
                    let hyps' = Proofview.Goal.hyps gl in
                    let local_db' =
-                     (* update local_db if local hypotheses have changed *)
                      if hyps' == hyps then local_db else make_local_db gl
                    in
                    search d' (n-1) local_db'
@@ -371,6 +375,6 @@ let test (id: Names.Id.t) : unit Proofview.tactic =
   let tactic = wauto debug 5 [] ["core"] in
   let print = lazy (
     let (_, _, trace) = debug in
-    Proofview.tclUNIT @@ List.iter (fun (depth, _) -> Feedback.msg_notice (Pp.int depth)) !trace
+    Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)
   ) in
   tclRealThen tactic print
