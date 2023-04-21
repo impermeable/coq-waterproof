@@ -4,7 +4,14 @@ src/META.coq-waterproof
 -I src
 
 theories/Databases.v
+theories/Hints.v
 theories/Waterproof.v
+
+theories/ChainManipulation.v
+theories/InequalityChains.v
+theories/NegationManipulation.v
+theories/Notations.v
+theories/Reals.v
 
 src/proofutils.ml
 src/proofutils.mli

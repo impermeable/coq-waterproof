@@ -1,32 +1,5 @@
-(** * [notations.v]
-Authors:
-  - Jim Portegies
-  - Jelle Wemmenhove
-Creation date: 17 June 2021
-
---------------------------------------------------------------------------------
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-(** # **Definitions and Notations for Waterproof**
-
-This file contains a list of additional notation that can be used in writing mathematical proofs.*)
 Require Import Qreals.
-Require Import Reals.
+Require Import Coq.Reals.Reals.
 Require Import Rbase.
 Require Import Rfunctions.
 Require Import SeqSeries.
@@ -36,7 +9,7 @@ Require Import Integration.
 Require Import micromega.Lra.
 Require Import Max.
 
-Require Export Waterproof.definitions.set_definitions.
+Record subset (X : Type) := as_subset { pred :> X -> Prop }.
 
 (* Standard mathematical function notation. *)
 Notation " f ( x , .. , y )" := (.. (f x) .. y) 
