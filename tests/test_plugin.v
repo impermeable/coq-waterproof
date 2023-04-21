@@ -1,10 +1,17 @@
 Require Import Waterproof.Waterproof.
+Require Import Waterproof.Databases.
 
 Require Import Reals.
 
 Open Scope R_scope.
 
-hello.
+Database loaded.
+Database load core.
+Database loaded.
+
+Database load zarith.
+Database loaded.
+Database unload core.
 
 Goal forall x: R, 0 = 0.
 Proof.

@@ -329,13 +329,3 @@ let gen_wauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr l
 *)
 let wauto (debug: debug) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): unit Proofview.tactic = 
   gen_wauto debug ~n lems (Some dbnames)
-
-(* let test (hyp: Evd.econstr) : unit Proofview.tactic =
-  
-  let debug = new_debug Info in
-  let tactic = wauto debug 5 [] ["core"] in
-  let print = lazy (
-    let (_, _, trace) = debug in
-    Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)
-  ) in
-  tclRealThen tactic print *)

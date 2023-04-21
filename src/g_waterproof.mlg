@@ -9,13 +9,6 @@ open Wauto
 
 }
 
-VERNAC COMMAND EXTEND Hello CLASSIFIED AS QUERY
-  | [ "hello" ] ->
-    {
-      Feedback.msg_notice (strbrk "Hello world!")
-    }
-END
-
 TACTIC EXTEND tactid
   | [ "tactid" ] ->
     {

@@ -3,11 +3,15 @@ src/META.coq-waterproof
 -arg "-w all"
 -I src
 
+theories/Databases.v
 theories/Waterproof.v
 
 src/proofutils.ml
 src/proofutils.mli
+src/hint_database.ml
+src/hint_database.mli
 src/wauto.ml
 src/wauto.mli
+src/databases.mlg
 src/g_waterproof.mlg
 src/waterproof.mlpack

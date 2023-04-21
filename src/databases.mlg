@@ -1,0 +1,33 @@
+DECLARE PLUGIN "coq-waterproof.databases"
+
+{
+
+open Pp
+open Stdarg
+
+open Hint_database
+
+open Summary.Local
+
+}
+
+VERNAC COMMAND EXTEND DatabaseSideEff CLASSIFIED AS SIDEFF
+  | [ "Database" "load" ident(database) ] ->
+    {
+      let hint_database_name = Names.Id.to_string database in
+      load_database(hint_database_name)
+    }
+
+  | [ "Database" "unload" ident(database) ] ->
+    {
+      let hint_database_name = Names.Id.to_string database in
+      unload_database(hint_database_name)
+    }
+END
+
+VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
+  | [ "Database" "loaded" ] ->
+    {
+      List.iter (fun database_name -> Feedback.msg_notice (str database_name)) !loaded_hint_database_names
+    }
+END
