@@ -4,7 +4,6 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 
 open Ltac_plugin
 open Pp
-open Stdarg
 
 open Wauto
 
@@ -18,8 +17,13 @@ VERNAC COMMAND EXTEND Hello CLASSIFIED AS QUERY
 END
 
 TACTIC EXTEND tactid
-  | [ "tactid" ident(i) ] ->
+  | [ "tactid" ] ->
     {
-      test(i)
+      let debug = new_debug Info in
+      let tactic = wauto debug 5 [] ["core"] in
+      let print = lazy (
+      let (_, _, trace) = debug in
+      Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)) in
+      Proofutils.tclRealThen tactic print
     }
 END

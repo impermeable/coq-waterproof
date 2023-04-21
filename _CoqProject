@@ -5,6 +5,8 @@ src/META.coq-waterproof
 
 theories/Waterproof.v
 
+src/proofutils.ml
+src/proofutils.mli
 src/wauto.ml
 src/wauto.mli
 src/g_waterproof.mlg

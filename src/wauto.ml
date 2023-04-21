@@ -1,3 +1,4 @@
+open Auto
 open Hints
 open Names
 open Proofview.Notations
@@ -10,10 +11,6 @@ open Util
 (* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
 
 exception SearchBound
-
-let compute_secvars (gl: Proofview.Goal.t): Id.Pred.t =
-  let hyps = Proofview.Goal.hyps gl in
-  secvars_of_hyps hyps
 
 let auto_core_unif_flags_of st1 st2 = {
   modulo_conv_on_closed_terms = Some st1;
@@ -61,43 +58,11 @@ let exact h =
     else Proofview.Unsafe.tclEVARS sigma <*> exact_check c
   end
 
-let conclPattern concl pat tac =
-  let constr_bindings env sigma =
-    match pat with
-    | None -> Proofview.tclUNIT Id.Map.empty
-    | Some pat ->
-        try
-          Proofview.tclUNIT (Constr_matching.matches env sigma pat concl)
-        with Constr_matching.PatternMatchingFailure as exn ->
-          let _, info = Exninfo.capture exn in
-          Tacticals.tclZEROMSG ~info (str "pattern-matching failed")
-  in
-  Proofview.Goal.enter begin fun gl ->
-     let env = Proofview.Goal.env gl in
-     let sigma = Proofview.Goal.sigma gl in
-     constr_bindings env sigma >>= fun constr_bindings ->
-     Proofview.tclProofInfo [@ocaml.warning "-3"] >>= fun (_name, poly) ->
-     let open Genarg in
-     let open Geninterp in
-     let inj c = match val_tag (topwit Stdarg.wit_constr) with
-     | Val.Base tag -> Val.Dyn (tag, c)
-     | _ -> assert false
-     in
-     let fold id c accu = Id.Map.add id (inj c) accu in
-     let lfun = Id.Map.fold fold constr_bindings Id.Map.empty in
-     let ist = { lfun
-               ; poly
-               ; extra = TacStore.empty } in
-     match tac with
-     | GenArg (Glbwit wit, tac) ->
-      Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
-  end
-
 let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluable_global_reference) = match evaluable_ref with
   | Tacred.EvalConstRef _ -> true
   | Tacred.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
 
-(* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but slightly modified for Waterproof *)
+(* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 
 type debug = Hints.debug * int * (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list ref
 
@@ -358,23 +323,19 @@ let gen_wauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr l
 (**
   Waterproof auto
 
-  This function is a rewrite around coq-core.Auto.auto to be able to retrieve which tactics have been used in case of success
+  This function is a rewrite around coq-core.Auto.auto to be able to retrieve which tactics have been used in case of success.
+
+  The given `debug` will be updated with the trace at the end of the execution (consider using).
 *)
 let wauto (debug: debug) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): unit Proofview.tactic = 
   gen_wauto debug ~n lems (Some dbnames)
 
-(**
-  Wrapper around `Proofview.tclTHEN` who actually execute the first tactic before the second 
-*)
-let tclRealThen (first: unit Proofview.tactic) (second: unit Proofview.tactic lazy_t): unit Proofview.tactic =
-  Proofview.tclBIND first (fun () -> Proofview.tclTHEN first (Lazy.force second))
-
-let test (id: Names.Id.t) : unit Proofview.tactic =
-  Feedback.msg_notice (Ppconstr.pr_id id);
+(* let test (hyp: Evd.econstr) : unit Proofview.tactic =
+  
   let debug = new_debug Info in
   let tactic = wauto debug 5 [] ["core"] in
   let print = lazy (
     let (_, _, trace) = debug in
     Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)
   ) in
-  tclRealThen tactic print
+  tclRealThen tactic print *)
