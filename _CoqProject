@@ -15,8 +15,12 @@ theories/Reals.v
 
 src/proofutils.ml
 src/proofutils.mli
-src/hint_database.ml
-src/hint_database.mli
+src/exceptions.ml
+src/exceptions.mli
+src/hint_dataset.ml
+src/hint_dataset.mli
+src/hint_dataset_declarations.ml
+src/hint_dataset_declarations.mli
 src/wauto.ml
 src/wauto.mli
 src/databases.mlg

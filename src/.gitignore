@@ -3,7 +3,10 @@
 !*.mlpack
 !*.mlg
 !*.mli
+!*.ml
+
+g_waterproof.ml
+databases.ml
 
 !.gitignore
 !dune
-!automation.ml

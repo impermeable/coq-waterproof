@@ -5,29 +5,27 @@ DECLARE PLUGIN "coq-waterproof.databases"
 open Pp
 open Stdarg
 
-open Hint_database
+open Hint_dataset
 
 open Summary.Local
 
 }
 
-VERNAC COMMAND EXTEND DatabaseSideEff CLASSIFIED AS SIDEFF
-  | [ "Database" "load" ident(database) ] ->
+VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
+| [ "Dataset" "import" ident(dataset) ] ->
     {
-      let hint_database_name = Names.Id.to_string database in
-      load_database(hint_database_name)
-    }
-
-  | [ "Database" "unload" ident(database) ] ->
-    {
-      let hint_database_name = Names.Id.to_string database in
-      unload_database(hint_database_name)
-    }
+      let dataset_name = Names.Id.to_string dataset in
+      load_dataset dataset_name
+    } 
 END
 
 VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
-  | [ "Database" "loaded" ] ->
+  | [ "Dataset" "loaded" ] ->
     {
-      List.iter (fun database_name -> Feedback.msg_notice (str database_name)) !loaded_hint_database_names
+      Feedback.msg_notice ((str "Loaded dataset : ") ++ (str !loaded_hint_dataset));
+      Feedback.msg_notice ((str "Positive databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (positive_databases ()));
+      Feedback.msg_notice ((str "Negative databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (negative_databases ()));
+      Feedback.msg_notice ((str "Decidability databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (decidability_databases ()));
+      Feedback.msg_notice ((str "Shorten databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (shorten_databases ()))
     }
 END

@@ -14,20 +14,11 @@ Require Import Waterproof.ChainManipulation.
 Require Import Waterproof.NegationManipulation.
 Require Import Waterproof.Reals.
 
-(* Require Import Waterproof.definitions.inequality_chains.
-Require Import Waterproof.tactics.simplify_chains.
-Require Import Waterproof.waterprove.simplify_subsets.
-Require Import Waterproof.theory.logic_and_set_theory.classical_logic.
-Require Import Waterproof.theory.logic_and_set_theory.subsets.
-Require Import Waterproof.theory.analysis.reals.
-Require Import Waterproof.theory.logic_and_set_theory.subsets.
-Require Import Waterproof.tactics.sets_tactics.sets_automation_tactics. *)
-
 (* Waterproof core *)
 
 Create HintDb wp_core.
 
-  (* #[export] Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : wp_core. *)
+  #[export] Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : wp_core.
   #[export] Hint Resolve eq_sym : wp_core.
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
@@ -437,4 +428,4 @@ Create HintDb wp_sets.
 
   #[export] Hint Resolve left_in_closed_open left_in_closed_open : wp_sets.
   #[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
-  (* #[export] Hint Extern 5 (_ = _) => try (ltac2:(trivial_set_equality ())) : wp_sets. *)
+  (* #[export] Hint Extern 3 (_ = _) => try (ltac2:(trivial_set_equality ())) : wp_sets. *)
