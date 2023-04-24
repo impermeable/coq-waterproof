@@ -16,7 +16,7 @@ VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
     {
       let dataset_name = Names.Id.to_string dataset in
       load_dataset dataset_name
-    } 
+    }
 END
 
 VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY

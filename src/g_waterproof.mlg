@@ -3,6 +3,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 {
 
 open Ltac_plugin
+open Ltac_plugin.G_auto
 open Pp
 
 open Hint_dataset
@@ -11,13 +12,14 @@ open Wauto
 }
 
 TACTIC EXTEND wauto
-  | [ "wauto" ] ->
+  | [ "wauto" auto_using(lems) ] ->
     {
       let debug = new_debug Info in
-      let tactic = wauto debug 5 [] (positive_databases ()) in
+      let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
-      let (_, _, trace) = debug in
-      Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)) in
+        let (_, _, trace) = debug in
+        Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)
+      ) in
       Proofutils.tclRealThen tactic print
     }
 END

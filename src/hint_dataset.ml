@@ -14,7 +14,6 @@ let loaded_hint_dataset: string local_ref = ref ~name:"loaded_hint_dataset" core
 *)
 let existing_dataset_names: string list = ["Empty"; "Core"; "Algebra"; "Integers"; "RealsAndIntegers"; "Sets"]
 
-
 (**
   Replace all current loaded hints by the ones declared in the `hint_dataset`
 *)

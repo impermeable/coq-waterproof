@@ -183,16 +183,21 @@ let hintmap_of (env: Environ.env) (sigma: Evd.evar_map) (secvars: Id.Pred.t) (hd
   match hdc with
   | None -> Hint_db.map_none ~secvars
   | Some hdc ->
-      if occur_existential sigma concl then
-        (fun db -> match Hint_db.map_eauto env sigma ~secvars hdc concl db with
-                   | ModeMatch (_, l) -> l
-                   | ModeMismatch -> [])
+      if occur_existential sigma concl then (fun db -> 
+        match Hint_db.map_eauto env sigma ~secvars hdc concl db with
+          | ModeMatch (_, l) -> l
+          | ModeMismatch -> []
+      )
       else Hint_db.map_auto env sigma ~secvars hdc concl
 
-(* Returns a logged `intro` tactic *)
+(**
+  Returns a logged `intro` tactic
+*)
 let dbg_intro (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> (str "intro", str "")) intro
 
-(* Returns a logged `assumption` tactic *)
+(**
+  Returns a logged `assumption` tactic
+*)
 let dbg_assumption (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> (str "assumption", str "")) assumption
 
 let intro_register (dbg: debug) (kont: hint_db -> unit Proofview.tactic) (db: hint_db): unit Proofview.tactic =
@@ -261,9 +266,11 @@ and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl:
   in
   fun h -> tclLOG dbg (pr_hint h) (FullHint.run h tactic)
 
-(* Searches a sequence of at most `n` tactics within `db_list` and `lems` that solves the goal *)
+(**
+  Searches a sequence of at most `n` tactics within `db_list` and `lems` that solves the goal
+*)
 let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
-  let make_local_db gl =
+  let make_local_db (gl: Proofview.Goal.t): hint_db =
     let env = Proofview.Goal.env gl in
     let sigma = Proofview.Goal.sigma gl in
     make_local_hint_db env sigma false lems
@@ -323,7 +330,7 @@ let gen_wauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr l
 (**
   Waterproof auto
 
-  This function is a rewrite around coq-core.Auto.auto to be able to retrieve which tactics have been used in case of success.
+  This function is a rewrite around coq-core.Auto.auto with the same arguments to be able to retrieve which tactics have been used in case of success.
 
   The given `debug` will be updated with the trace at the end of the execution (consider using).
 *)
