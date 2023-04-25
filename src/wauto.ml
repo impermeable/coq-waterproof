@@ -65,6 +65,13 @@ let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluab
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 
 (**
+  Trace atome type
+
+  Can be read as `(is_success, depth, print_function_option, hint_name, hint_db_source)`
+*)
+type trace_atom = bool * int * (Environ.env -> Evd.evar_map -> t * t) * t * t
+
+(**
   Debug type
 
   A debug value of `(debug_type, depth, trace, lemma_names)` corresponds to :
@@ -73,7 +80,7 @@ let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluab
   - a full `trace` of tried hints
   - the names of the given lemmas
 *)
-type debug = Hints.debug * int * (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list ref * t list ref
+type debug = Hints.debug * int * trace_atom list ref * t list ref
 
 (**
   Returns a `debug` value corresponding to `no debug`
@@ -101,15 +108,17 @@ let tclLOG ((dbg, depth, trace, _): debug) (pp: Environ.env -> Evd.evar_map -> t
       tclENV >>= fun env ->
       tclEVARMAP >>= fun sigma ->
       let (hint, src) = pp env sigma in
-      trace := (depth, Some pp, hint, src) :: !trace;
+      trace := (true, depth, pp, hint, src) :: !trace;
       if dbg = Debug then Feedback.msg_notice (str s ++ spc () ++ hint ++ str " in(" ++ src ++ str "). (*success*)");
       tclUNIT v
     ) tclUNIT (fun (exn,info) ->
         tclENV >>= fun env ->
         tclEVARMAP >>= fun sigma ->
         match dbg with
-          | Off -> tclUNIT ()
-          | Info -> tclZERO ~info exn
+          | Off -> tac
+          | Info ->
+            trace := (false, depth, pp, str "", str "") :: !trace;
+            tclZERO ~info exn
           | Debug -> 
             let (hint, src) = pp env sigma in
             Feedback.msg_notice (str s ++ spc () ++ hint ++ str " in(" ++ src ++ str "). (*fail*)");
@@ -120,23 +129,15 @@ let tclLOG ((dbg, depth, trace, _): debug) (pp: Environ.env -> Evd.evar_map -> t
 (**
   Cleans up the trace with a higher depth than the given `depth`
 *)
-let rec cleanup_info_trace (depth: int) (acc: (int * (Environ.env -> Evd.evar_map -> t * t) * t * t) list): (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list -> (int * (Environ.env -> Evd.evar_map -> t * t) * t * t) list = function
-  | [] -> acc
-  | (d, Some pp, hint, src) :: l -> cleanup_info_trace d ((d, pp, hint, src)::acc) l
-  | l -> cleanup_info_trace depth acc (erase_subtree depth l)
-  
-(**
-  Erases the trace with a higher depth that the given `depth`
-*)
-and erase_subtree (depth: int): (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list -> (int * (Environ.env -> Evd.evar_map -> t * t) option * t * t) list = function
-  | [] -> []
-  | (d, _, _, _) :: l -> if Int.equal d depth then l else erase_subtree depth l
-
+let rec cleanup_info_trace (depth: int) (acc: trace_atom list) (trace: trace_atom list): trace_atom list =
+  match trace with
+    | [] -> acc
+    | (is_success, d, pp, hint, src) :: l -> cleanup_info_trace d ((is_success, d, pp, hint, src)::acc) l
 
 (**
   Prints an info atom, i.e an element of the info trace
 *)
-let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((d, pp, _, _): int * (Environ.env -> Evd.evar_map -> t * t) * t * t): t =
+let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((is_success, d, pp, _, _): trace_atom): t =
   let (hint, src) = pp env sigma in
   str (String.make d ' ') ++ hint ++ str " in (" ++ src ++ str ")."
 
@@ -144,8 +145,8 @@ let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((d, pp, _, _): int * 
   Prints the complete info trace
 *)
 let pr_info_trace (env: Environ.env) (sigma: Evd.evar_map) (d: debug) = match d with
-  | (Info, _, {contents=(d, Some pp, hint, src)::l}, _) ->
-    Feedback.msg_notice (prlist_with_sep fnl (pr_info_atom env sigma) (cleanup_info_trace d [(d, pp, hint, src)] l))
+  | (Info, _, {contents=(is_success, d, pp, hint, src)::l}, _) ->
+    Feedback.msg_notice (prlist_with_sep fnl (pr_info_atom env sigma) (cleanup_info_trace d [(is_success, d, pp, hint, src)] l))
   | _ -> ()
 
 (**

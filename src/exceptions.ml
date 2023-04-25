@@ -9,7 +9,12 @@ let fatal_flag: 'a Exninfo.t = Exninfo.make ()
   Type of exceptions used in Wateproof
 *)
 type wexn = 
-  
+
+  (*
+    Indicates that the backtracking has failed 
+  *)
+  | FailedBacktracing of string
+
   (*
     Indicates that the user tried to import a non-existing hint dataset
   *)
@@ -20,6 +25,7 @@ type wexn =
 *)
 let pr_wexn (exn: wexn): t =
   match exn with
+    | FailedBacktracing message -> str "Backtracking failed: " ++ str message
     | NonExistingDataset dataset -> str "Non existing dataset: the dataset " ++ str dataset ++ str " is not defined"
 
 (**

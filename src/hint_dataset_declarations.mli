@@ -1,3 +1,6 @@
+(**
+  Interface to load and unload usual hint databases such as reals, integers, classical logic, ...
+*)
 type hint_dataset = {
   name : string;
   positive_databases : string list;
