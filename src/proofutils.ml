@@ -1,5 +1,14 @@
 open Hints
-open Pp
+
+(**
+  Returns the index of the first element `x` of `l` such that `f x` is `true`
+*)
+let find_first (f: 'a -> bool) (l: 'a list): int option =
+  let rec aux (index: int) (p: 'a list): int option = match p with
+    | [] -> None
+    | x::q when f x -> Some index
+    | _::q -> aux (index + 1) q
+  in aux 0 l
 
 (**
   Returns the index of the last element `x` of `l` such that `f x` is `true`
@@ -36,5 +45,5 @@ let pr_hint (env: Environ.env) (sigma: Evd.evar_map) (h: FullHint.t) =
     | ERes_pf c -> pr_hint_elt env sigma c
     | Give_exact c -> pr_hint_elt env sigma c
     | Res_pf_THEN_trivial_fail c -> pr_hint_elt env sigma c
-    | Unfold_nth c -> str "unfold " ++ Printer.pr_evaluable_reference c
+    | Unfold_nth c -> Printer.pr_evaluable_reference c
     | Extern (_, tac) -> Pputils.pr_glb_generic env sigma tac

@@ -67,7 +67,7 @@ let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluab
 (**
   Trace atome type
 
-  Can be read as `(is_success, depth, print_function_option, hint_name, hint_db_source)`
+  Can be read as `(is_success, depth, current_proof_state`, print_function_option, hint_name, hint_db_source)`
 *)
 type trace_atom = bool * int * (Environ.env -> Evd.evar_map -> t * t) * t * t
 

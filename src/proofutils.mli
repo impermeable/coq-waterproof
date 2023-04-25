@@ -1,4 +1,9 @@
 (**
+  Returns the index of the first element `x` of `l` such that `f x` is `true`
+*)
+val find_first : ('a -> bool) -> 'a list -> int option
+
+(**
   Returns the index of the last element `x` of `l` such that `f x` is `true`
 *)
 val find_last : ('a -> bool) -> 'a list -> int option
