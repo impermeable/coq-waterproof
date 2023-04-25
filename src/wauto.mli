@@ -7,6 +7,7 @@ type debug =
     * Pp.t)
     list
     ref
+  * Pp.t list ref
 
 val new_debug : Hints.debug -> debug
 

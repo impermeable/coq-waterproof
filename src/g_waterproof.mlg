@@ -11,14 +11,43 @@ open Wauto
 
 }
 
+(**
+  Waterproof auto tactic
+
+  Partial rewrite of the [`auto`] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
+
+  Its use is the same as `auto [using ...]`
+*)
 TACTIC EXTEND wauto
   | [ "wauto" auto_using(lems) ] ->
     {
       let debug = new_debug Info in
       let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
-        let (_, _, trace) = debug in
+        let (_, _, trace, _) = debug in
         Proofview.tclUNIT @@ List.iter (fun (depth, _, hint, src) -> Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)) (List.rev !trace)
+      ) in
+      Proofutils.tclRealThen tactic print
+    }
+END
+
+(**
+  Restricted waterproof auto tactic
+
+  Its use is the same as the `wauto` tacitc but it will fail if one of the given lemmas is not used
+*)
+TACTIC EXTEND rwauto
+  | [ "rwauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Info in
+      let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
+      let print = lazy (
+        let (_, _, trace, lemma_names) = debug in
+        Proofview.tclUNIT (
+        List.iter (fun (depth, _, hint, src) -> 
+          Feedback.msg_notice (Pp.int depth ++ str " " ++ hint ++ str "/" ++ src)
+        ) (List.rev !trace);
+        List.iter Feedback.msg_notice !lemma_names)
       ) in
       Proofutils.tclRealThen tactic print
     }
