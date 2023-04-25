@@ -262,7 +262,7 @@ and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl:
     | None -> mt ()
     | Some n -> str n
     in
-    (Hints.pp_hints_path_atom (fun name -> Printer.pr_global name) (FullHint.name h), origin)
+    (Proofutils.pr_hint env sigma h, origin)
   in
   fun h -> tclLOG dbg (pr_hint h) (FullHint.run h tactic)
 
@@ -273,7 +273,7 @@ let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_o
   let make_local_db (gl: Proofview.Goal.t): hint_db =
     let env = Proofview.Goal.env gl in
     let sigma = Proofview.Goal.sigma gl in
-    make_local_hint_db env sigma false lems
+    make_local_hint_db ?ts:(Some TransparentState.full) env sigma false lems
   in
   let rec search d n local_db =
     if Int.equal n 0 then
