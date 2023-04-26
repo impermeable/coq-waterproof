@@ -39,9 +39,8 @@ TACTIC EXTEND info_wauto
       let debug = new_debug Info in
       let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
-        let (_, _, trace, _) = debug in
         Proofview.tclUNIT (
-          let applied = Backtracking.keep_applied !trace in
+          let applied = Backtracking.keep_applied !(debug.trace) in
           Feedback.msg_notice (str "Applied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
         )
       ) in
@@ -60,11 +59,10 @@ TACTIC EXTEND rwauto
       let debug = new_debug Off in
       let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
-        let (_, _, trace, lemma_names) = debug in
         let used_lemmas = ref StringMap.empty in
-        List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) !lemma_names;
+        List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) !(debug.lemma_names);
         Proofview.tclUNIT (
-          let applied_lemmas = Backtracking.keep_applied !trace in
+          let applied_lemmas = Backtracking.keep_applied !(debug.trace) in
           List.iter (fun (_, hint, _) ->
             used_lemmas := StringMap.update (string_of_ppcmds hint) (fun value ->
               match value with

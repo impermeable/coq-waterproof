@@ -15,17 +15,52 @@ type trace_atom =
 
   A debug value of `(debug_type, depth, trace, lemma_names)` corresponds to :
   - a debug level of `debug_type`
-  - a maximal depth of `depth`
+  - a current depth of `depth`
   - a full `trace` of tried hints
   - the names of the given lemmas
 *)
-type debug =
-  Hints.debug * int * trace_atom list ref * Pp.t list ref
+type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list ref; lemma_names: Pp.t list ref}
 
 (**
   Creates a `debug` value from a `Hints.debug` value
 *)
 val new_debug : Hints.debug -> debug
+
+val pr_trace_atom :
+  Environ.env -> Evd.evar_map -> trace_atom -> Pp.t
+
+(**
+  Prints the complete info trace
+*)
+val pr_trace :
+  Environ.env -> Evd.evar_map -> debug -> unit
+
+(**
+  Prints "idtac" if the `Hints.debug` level is `Info`
+*)
+val pr_info_nop : debug -> unit
+
+(** 
+  Prints a debug header according to the `Hints.debug` level
+*)
+val pr_dbg_header : debug -> unit
+
+(**
+  Cleans up the trace with a higher depth than the given `depth`
+*)
+val cleanup_info_trace :
+  int -> trace_atom list -> trace_atom list -> trace_atom list
+
+(**
+  Tries the given tactic and calls an info printer if it fails
+*)
+val tclTRY_dbg :
+  debug ->
+  (debug -> unit) ->
+  (Environ.env -> Evd.evar_map -> debug -> unit) ->
+  (debug -> unit) ->
+  unit Proofview.tactic ->
+  unit Proofview.tactic
 
 (**
   Waterproof auto

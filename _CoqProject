@@ -23,6 +23,8 @@ src/hint_dataset_declarations.ml
 src/hint_dataset_declarations.mli
 src/wauto.ml
 src/wauto.mli
+src/weauto.ml
+src/weauto.mli
 src/backtracking.ml
 src/backtracking.mli
 src/databases.mlg

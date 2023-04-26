@@ -76,48 +76,48 @@ type trace_atom = bool * int * (Environ.env -> Evd.evar_map -> t * t) * t * t
 
   A debug value of `(debug_type, depth, trace, lemma_names)` corresponds to :
   - a debug level of `debug_type`
-  - a maximal depth of `depth`
+  - a current depth of `depth`
   - a full `trace` of tried hints
   - the names of the given lemmas
 *)
-type debug = Hints.debug * int * trace_atom list ref * t list ref
+type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list ref; lemma_names: t list ref}
 
 (**
   Returns a `debug` value corresponding to `no debug`
 *)
-let no_debug (): debug = (Off, 0, ref [], ref [])
+let no_debug (): debug = {log_level = Off; current_depth = 0; trace = ref []; lemma_names = ref []}
 
 (**
   Creates a `debug` value from a `Hints.debug` value
 *)
-let new_debug (debug: Hints.debug): debug = (debug, 0, ref [], ref [])
+let new_debug (debug: Hints.debug): debug = {log_level = debug; current_depth = 0; trace = ref []; lemma_names = ref []}
 
 (**
   Increases the debug depth by 1
 *)
-let incr_debug_depth ((dbg, depth, trace, lemma_names): debug): debug = (dbg, depth + 1, trace, lemma_names)
+let incr_debug_depth (dbg: debug): debug = {log_level = dbg.log_level; current_depth = dbg.current_depth + 1; trace = dbg.trace; lemma_names = dbg.lemma_names}
 
 (**
   Updates the given debug and print informations according to the field `Hints.debug`
 *)
-let tclLOG ((dbg, depth, trace, _): debug) (pp: Environ.env -> Evd.evar_map -> t * t) (tac: 'a Proofview.tactic): 'a Proofview.tactic =
-  let s = String.make (depth+1) '*' in
+let tclLOG (dbg: debug) (pp: Environ.env -> Evd.evar_map -> t * t) (tac: 'a Proofview.tactic): 'a Proofview.tactic =
+  let s = String.make (dbg.current_depth + 1) '*' in
   Proofview.(
     tclIFCATCH (
       tac >>= fun v ->
       tclENV >>= fun env ->
       tclEVARMAP >>= fun sigma ->
       let (hint, src) = pp env sigma in
-      trace := (true, depth, pp, hint, src) :: !trace;
-      if dbg = Debug then Feedback.msg_notice (str s ++ spc () ++ hint ++ str " in(" ++ src ++ str "). (*success*)");
+      dbg.trace := (true, dbg.current_depth, pp, hint, src) :: !(dbg.trace);
+      if dbg.log_level = Debug then Feedback.msg_notice (str s ++ spc () ++ hint ++ str " in(" ++ src ++ str "). (*success*)");
       tclUNIT v
     ) tclUNIT (fun (exn,info) ->
         tclENV >>= fun env ->
         tclEVARMAP >>= fun sigma ->
-        match dbg with
+        match dbg.log_level with
           | Off -> tac
           | Info ->
-            trace := (false, depth, pp, str "", str "") :: !trace;
+            dbg.trace := (false, dbg.current_depth, pp, str "", str "") :: !(dbg.trace);
             tclZERO ~info exn
           | Debug -> 
             let (hint, src) = pp env sigma in
@@ -137,46 +137,46 @@ let rec cleanup_info_trace (depth: int) (acc: trace_atom list) (trace: trace_ato
 (**
   Prints an info atom, i.e an element of the info trace
 *)
-let pr_info_atom (env: Environ.env) (sigma: Evd.evar_map) ((is_success, d, pp, _, _): trace_atom): t =
+let pr_trace_atom (env: Environ.env) (sigma: Evd.evar_map) ((is_success, d, pp, _, _): trace_atom): t =
   let (hint, src) = pp env sigma in
   str (String.make d ' ') ++ hint ++ str " in (" ++ src ++ str ")."
 
 (**
   Prints the complete info trace
 *)
-let pr_info_trace (env: Environ.env) (sigma: Evd.evar_map) (d: debug) = match d with
-  | (Info, _, {contents=(is_success, d, pp, hint, src)::l}, _) ->
-    Feedback.msg_notice (prlist_with_sep fnl (pr_info_atom env sigma) (cleanup_info_trace d [(is_success, d, pp, hint, src)] l))
+let pr_trace (env: Environ.env) (sigma: Evd.evar_map) (dbg: debug) = match dbg with
+  | {log_level = Info; trace = {contents=(is_success, d, pp, hint, src)::l}; _} ->
+    Feedback.msg_notice (prlist_with_sep fnl (pr_trace_atom env sigma) (cleanup_info_trace d [(is_success, d, pp, hint, src)] l))
   | _ -> ()
 
 (**
   Prints "idtac" if the `Hints.debug` level is `Info`
 *)
-let pr_info_nop (d: debug) = match d with
-  | (Info, _, _, _) -> Feedback.msg_notice (str "idtac.")
+let pr_info_nop (dbg: debug) = match dbg.log_level with
+  | Info -> Feedback.msg_notice (str "idtac.")
   | _ -> ()
 
 (** 
   Prints a debug header according to the `Hints.debug` level
 *)
-let pr_dbg_header (d: debug) =
-  match d with
-    | (Off, _, _, _) -> ()
-    | (Info, _, _, _) -> Feedback.msg_notice (str "(* info auto: *)")
-    | (Debug, _, _, _) -> Feedback.msg_notice (str "(* debug auto: *)")
+let pr_dbg_header (dbg: debug) = match dbg.log_level with
+  | Off -> ()
+  | Info -> Feedback.msg_notice (str "(* info wauto: *)")
+  | Debug -> Feedback.msg_notice (str "(* debug wauto: *)")
 
 (**
-  Tries the given tactic and print an "idtac" if case of fail
+  Tries the given tactic and calls an info printer if it fails
 *)
-let tclTRY_dbg (d: debug) (tac: unit Proofview.tactic): unit Proofview.tactic =
+let tclTRY_dbg (d: debug) (debug_header_printer : debug -> unit) (info_trace_printer: Environ.env -> Evd.evar_map -> debug -> unit
+) (info_nop_printer: debug -> unit) (tac: unit Proofview.tactic): unit Proofview.tactic =
   let delay f = Proofview.tclUNIT () >>= fun () -> f () in
   let tac =
-    delay (fun () -> pr_dbg_header d; tac) >>= fun () ->
+    delay (fun () -> debug_header_printer d; tac) >>= fun () ->
       Proofview.tclENV >>= fun env ->
       Proofview.tclEVARMAP >>= fun sigma ->
-      pr_info_trace env sigma d;
+        info_trace_printer env sigma d;
       Proofview.tclUNIT () in
-  let after = delay (fun () -> pr_info_nop d; Proofview.tclUNIT ()) in
+  let after = delay (fun () -> info_nop_printer d; Proofview.tclUNIT ()) in
   Tacticals.tclORELSE0 tac after
 
 (**
@@ -322,8 +322,7 @@ let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_o
     let local_db = make_local_db gl in
 
     (* Retrieve name of lemmas *)
-    let (_, _, _, lemma_names) = d in
-    lemma_names := List.map (fun hint -> Proofutils.pr_hint env sigma hint) (hintmap local_db);
+    d.lemma_names := List.map (fun hint -> Proofutils.pr_hint env sigma hint) (hintmap local_db);
 
     search d n local_db
   end
@@ -339,7 +338,7 @@ let gen_wauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr l
       | Some dbnames -> make_db_list dbnames
       | None -> current_pure_db ()
     in
-    tclTRY_dbg debug (search debug n db_list lems)
+    wrap_hint_warning @@ tclTRY_dbg debug pr_dbg_header pr_trace pr_info_nop @@ search debug n db_list lems
   end
 
 (**
