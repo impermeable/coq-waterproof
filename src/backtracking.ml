@@ -14,31 +14,29 @@ let keep_applied (trace: trace_atom list): (int * t * t) list =
     | (false, _, _, _, _)::_ -> [(0, str "idtac", str "")]
     | (true, depth, _, hint, src)::remaining_trace ->
       
-      (* Returns the last element of the consecutive sequence of same-depth atoms beginning at the first atom with a different depth *)
+      (* 
+        Explaination of how it works : 
+          * If `wauto` is successful, the current goal and all of the subgoals generated are proved.
+          * The associated trace will look like (by considerating only the depth) [0, 0, ..., 1, ..., 2, ..., 1, ..., 2, ..., 3, ...] :
+            which is important here is that the depth is not decreasing : it only starts at 0.
+          * To retrieve which hints have been applied, it suffices to get the last trace atom of a same-depth sequence of atoms.
+          * Do not forget that the trace is given in the reverse order due to its creation.
+      *)
+
+      (* Returns the first element successful with a different depth than the first *)
       let rec find_previous_step (depth: int) (remaining_trace: trace_atom list): (int * t * t) list =
         if depth = 0
           then []
           else
+            
             let next_depth_index =
               match Proofutils.find_first (fun (is_success, dpt, _, _, _) -> is_success && dpt <> depth) remaining_trace with
                 | None -> throw (FailedBacktracing "Inconsistent trace")
                 | Some n -> n
-            in let tail = Proofutils.tail_end remaining_trace next_depth_index in
-
-            (* Returns the last atom of the **consecutive** sequence that have the same depth as the first element and the remaining sequence *)
-            let find_last_atom_with_same_depth (trace_part: trace_atom list): (trace_atom * trace_atom list) =
-              let rec aux (l: trace_atom list) (previous_atom: trace_atom): (trace_atom * trace_atom list) = 
-                match trace_part with
-                | [] -> (previous_atom, [])
-                | x::p ->
-                  let (_, previous_atom_depth, _, ph, _) = previous_atom in
-                  let (_, x_depth, _, px, _) = x in
-                  Feedback.msg_notice (ph ++ str "/" ++ px);
-                  if x_depth = previous_atom_depth then aux p x else (previous_atom, p)
-              in aux (List.tl trace_part) (List.hd trace_part)
-            in failwith "TODO";
+            in let ((_, dpt, _, hint, src), remaining_tail) = match Proofutils.tail_end remaining_trace next_depth_index with 
+              | [] -> failwith "unreachable"
+              | head::tail -> (head, tail)
             
-            let ((_, dpt, _, hint, src), remaining_tail) = find_last_atom_with_same_depth tail in
-            (dpt, hint, src)::find_previous_step dpt remaining_tail
+            in (dpt, hint, src)::find_previous_step dpt remaining_tail
       
       in List.rev @@ (depth, hint, src)::(find_previous_step depth remaining_trace)
