@@ -40,7 +40,7 @@ TACTIC EXTEND info_wauto
         let (_, _, trace, _) = debug in
         Proofview.tclUNIT (
           let applied = Backtracking.keep_applied !trace in
-          Feedback.msg_notice (str "Applied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied))
+          Feedback.msg_notice (str "Applied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
         )
       ) in
       Proofutils.tclRealThen tactic print
