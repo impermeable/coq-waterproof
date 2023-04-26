@@ -29,6 +29,12 @@ let rec tail_end (l: 'a list) (n: int): 'a list = match (l, n) with
   | ([], _) -> []
   | (_::p, _) -> tail_end p (n - 1)
 
+
+(**
+  Generic dictionnary taking strings as keys
+*)
+module StringMap = Map.Make(String)
+
 (**
   Wrapper around `Proofview.tclTHEN` who actually execute the first tactic before the second
 *)

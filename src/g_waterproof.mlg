@@ -6,7 +6,9 @@ open Ltac_plugin
 open Ltac_plugin.G_auto
 open Pp
 
+open Exceptions
 open Hint_dataset
+open Proofutils
 open Wauto
 
 }
@@ -43,7 +45,7 @@ TACTIC EXTEND info_wauto
           Feedback.msg_notice (str "Applied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
         )
       ) in
-      Proofutils.tclRealThen tactic print
+      tclRealThen tactic print
     }
 END
 
@@ -55,14 +57,25 @@ END
 TACTIC EXTEND rwauto
   | [ "rwauto" auto_using(lems) ] ->
     {
-      let debug = new_debug Info in
+      let debug = new_debug Off in
       let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
         let (_, _, trace, lemma_names) = debug in
+        let used_lemmas = ref StringMap.empty in
+        List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) !lemma_names;
         Proofview.tclUNIT (
-          List.iter Feedback.msg_notice !lemma_names
+          let applied_lemmas = Backtracking.keep_applied !trace in
+          List.iter (fun (_, hint, _) ->
+            used_lemmas := StringMap.update (string_of_ppcmds hint) (fun value ->
+              match value with
+                | None -> None
+                | Some _ -> Some true
+            ) !used_lemmas
+          ) applied_lemmas;
+          let unused_lemmas = ref [] in
+          if (StringMap.exists (fun name is_used -> if not is_used then (unused_lemmas := name::!unused_lemmas); not is_used) !used_lemmas) then throw (UnusedLemma !unused_lemmas);
         )
       ) in
-      Proofutils.tclRealThen tactic print
+      tclRealThen tactic print
     }
 END

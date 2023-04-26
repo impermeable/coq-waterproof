@@ -4,6 +4,7 @@
 type wexn =
   | FailedBacktracing of string
   | NonExistingDataset of string
+  | UnusedLemma of string list
 
 (**
   Throws an error with given info and message

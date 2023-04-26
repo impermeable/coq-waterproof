@@ -20,6 +20,11 @@ type wexn =
   *)
   | NonExistingDataset of string
 
+  (*
+    Indicates that a given lemma has not been used during automatic solving
+  *)
+  | UnusedLemma of string list
+
 (**
   Converts 
 *)
@@ -27,6 +32,7 @@ let pr_wexn (exn: wexn): t =
   match exn with
     | FailedBacktracing message -> str "Backtracking failed: " ++ str message
     | NonExistingDataset dataset -> str "Non existing dataset: the dataset " ++ str dataset ++ str " is not defined"
+    | UnusedLemma lemma_names -> str "Unused lemma(s): the given lemma(s)" ++ (List.fold_left (fun acc name -> acc ++ str " " ++ str name) (str "") lemma_names) ++ str " was/were not used during the automatic solving"
 
 (**
   Throws an error with given info and message
