@@ -79,7 +79,7 @@ Analysis all revolves around questions such as: what happens if a parameter gets
 For sequences, the interesting question is: what can we say about the elements $a_n$ when $n$ gets very large? Think for instance about the sequence $a_n := 1/n$. Then we might want to say: when $n$ gets very large, the element $a_n$ is very close to zero.
 
 The only thing is, that we need to make the previous sentence much more precise if we want to work with it in mathematics. For all $\epsilon : ℝ$, if $ε > 0$, then there is a certain threshold $N : ℕ$ such that for all $n: ℕ$, if $n \geq N$ then $a_n$ is within distance $\epsilon$ from $0$.`*)
-(** The definition of `cv_to` is completely equivalent to the definition of `Un_cv` in the standard library. *)
+(** The definition of [cv_to] is completely equivalent to the definition of [Un_cv] in the standard library. *)
 Lemma convergence_equivalence : converges_to = Un_cv.
 Proof.
     trivial.

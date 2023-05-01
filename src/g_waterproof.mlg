@@ -17,7 +17,7 @@ open Weauto
 (**
   Waterproof auto tactic
 
-  Partial rewrite of the [`auto`] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
+  Partial rewrite of the [[auto]] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
 
   Its use is the same as `auto [using ...]`
 *)
@@ -32,7 +32,7 @@ END
 (**
   Waterproof info_auto tactic
 
-  Equivalent of `info_auto` with `wauto`
+  Equivalent of [info_auto] with [wauto]
 *)
 TACTIC EXTEND info_wauto
   | [ "info_wauto" auto_using(lems) ] ->
@@ -52,7 +52,7 @@ END
 (**
   Waterproof debug auto tactic
 
-  Equivalent of `debug auto` with `wauto`
+  Equivalent of `debug auto` with [wauto]
 *)
 TACTIC EXTEND debug_wauto
   | [ "debug_wauto" auto_using(lems) ] ->
@@ -65,7 +65,7 @@ END
 (**
   Waterproof eauto tactic
 
-  Rewrite of the [`eauto`] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
+  Rewrite of the [[eauto]] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
 
   Its use is the same as `eauto [using ...]`
 *)
@@ -78,9 +78,35 @@ TACTIC EXTEND weauto
 END
 
 (**
+  Waterproof info_auto tactic
+
+  Equivalent of [info_auto] with [wauto]
+*)
+TACTIC EXTEND info_weauto
+  | [ "info_weauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Info in
+      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Waterproof debug auto tactic
+
+  Equivalent of `debug auto` with [wauto]
+*)
+TACTIC EXTEND debug_weauto
+  | [ "debug_weauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Debug in
+      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
   Restricted waterproof auto tactic
 
-  Its use is the same as the `wauto` tacitc but it will fail if one of the given lemmas is not used
+  Its use is the same as the [wauto] tacitc but it will fail if one of the given lemmas is not used
 *)
 TACTIC EXTEND rwauto
   | [ "rwauto" auto_using(lems) ] ->

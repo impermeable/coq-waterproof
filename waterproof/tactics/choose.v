@@ -4,7 +4,7 @@ Author:
 Creation date: 20 May 2021
 
 Two tactics for instantiating a variable according to a specific rule:
-choose a specific value or when the hypothesis reads ``∃ n : N``, one can define such an `n`.
+choose a specific value or when the hypothesis reads ``∃ n : N``, one can define such an [n].
 --------------------------------------------------------------------------------
 
 This file is part of Waterproof-lib.

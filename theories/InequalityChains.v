@@ -25,7 +25,7 @@ Inductive GreaterChain (T : Type) :=
 
 (*
   Type classes for linking new terms to chains.
-  Type classes are used for notation overloading of link function `chain_link`
+  Type classes are used for notation overloading of link function [chain_link]
 *)
 Class ChainLink (A B C : Type) := chain_link : A -> B -> C.
 

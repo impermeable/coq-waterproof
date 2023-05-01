@@ -4,7 +4,7 @@
 val loaded_hint_dataset : string Summary.Local.local_ref
 
 (**
-  Replace all current loaded hints by the ones declared in the `hint_dataset`
+  Replace all current loaded hints by the ones declared in the [hint_dataset]
 *)
 val load_dataset : string -> unit
 

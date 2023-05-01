@@ -1,7 +1,7 @@
 open Hints
 
 (**
-  Returns the index of the first element `x` of `l` such that `f x` is `true`
+  Returns the index of the first element [x] of [l] such that `f x` is [true]
 *)
 let find_first (f: 'a -> bool) (l: 'a list): int option =
   let rec aux (index: int) (p: 'a list): int option = match p with
@@ -11,7 +11,7 @@ let find_first (f: 'a -> bool) (l: 'a list): int option =
   in aux 0 l
 
 (**
-  Returns the index of the last element `x` of `l` such that `f x` is `true`
+  Returns the index of the last element [x] of [l] such that `f x` is [true]
 *)
 let find_last (f: 'a -> bool) (l: 'a list): int option =
   let rec aux (current_index: int) (last_index: int option) (p: 'a list): int option =
@@ -22,7 +22,7 @@ let find_last (f: 'a -> bool) (l: 'a list): int option =
   in aux 0 None l
 
 (**
-  Returns the queue of the given list after the `n`th element included
+  Returns the queue of the given list after the [n]th element included
 *)
 let rec tail_end (l: 'a list) (n: int): 'a list = match (l, n) with
   | (_, 0) -> l
@@ -36,7 +36,7 @@ let rec tail_end (l: 'a list) (n: int): 'a list = match (l, n) with
 module StringMap = Map.Make(String)
 
 (**
-  Wrapper around `Proofview.tclTHEN` who actually execute the first tactic before the second
+  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
 *)
 let tclRealThen (first: unit Proofview.tactic) (second: unit Proofview.tactic lazy_t): unit Proofview.tactic =
   Proofview.tclBIND first (fun () -> Proofview.tclTHEN (Proofview.tclUNIT ()) (Lazy.force second))

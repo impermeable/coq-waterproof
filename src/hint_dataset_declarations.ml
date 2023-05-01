@@ -26,7 +26,7 @@ type hint_dataset = {
   decidability_databases: hint_db_name list;
 
   (*
-    Databases that will be called to solve a goal faster than `positive_databases`
+    Databases that will be called to solve a goal faster than [positive_databases]
   *)
   shorten_databases: hint_db_name list;
 }
