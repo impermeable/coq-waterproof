@@ -1,0 +1,138 @@
+DECLARE PLUGIN "coq-waterproof.plugin"
+
+{
+
+open Ltac_plugin
+open Ltac_plugin.G_auto
+open Pp
+
+open Exceptions
+open Hint_dataset
+open Proofutils
+open Wauto
+open Weauto
+
+}
+
+(**
+  Waterproof auto tactic
+
+  Partial rewrite of the [[auto]] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
+
+  Its use is the same as `auto [using ...]`
+*)
+TACTIC EXTEND wauto
+  | [ "wauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Off in
+      wauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Waterproof info_auto tactic
+
+  Equivalent of [info_auto] with [wauto]
+*)
+TACTIC EXTEND info_wauto
+  | [ "info_wauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Info in
+      let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
+      let print = lazy (
+        Proofview.tclUNIT (
+          let applied = Backtracking.keep_applied !(debug.trace) in
+          Feedback.msg_notice (str "Applied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
+        )
+      ) in
+      tclRealThen tactic print
+    }
+END
+
+(**
+  Waterproof debug auto tactic
+
+  Equivalent of `debug auto` with [wauto]
+*)
+TACTIC EXTEND debug_wauto
+  | [ "debug_wauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Debug in
+      wauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Waterproof eauto tactic
+
+  Rewrite of the [[eauto]] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
+
+  Its use is the same as `eauto [using ...]`
+*)
+TACTIC EXTEND weauto
+  | [ "weauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Off in
+      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Waterproof info_auto tactic
+
+  Equivalent of [info_auto] with [wauto]
+*)
+TACTIC EXTEND info_weauto
+  | [ "info_weauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Info in
+      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Waterproof debug auto tactic
+
+  Equivalent of `debug auto` with [wauto]
+*)
+TACTIC EXTEND debug_weauto
+  | [ "debug_weauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Debug in
+      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Restricted waterproof auto tactic
+
+  Its use is the same as the [wauto] tacitc but it will fail if one of the given lemmas is not used
+*)
+TACTIC EXTEND rwauto
+  | [ "rwauto" auto_using(lems) ] ->
+    {
+      let lemma_names =
+        let env = Global.env () in
+        let sigma = Evd.from_env env in
+        List.map (Printer.pr_closed_glob_env env sigma) lems in
+      let debug = new_debug Off in
+      let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
+      let print = lazy (
+        let used_lemmas = ref StringMap.empty in
+        List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) lemma_names;
+        Proofview.tclUNIT (
+          let applied_lemmas = Backtracking.keep_applied !(debug.trace) in
+          List.iter (fun (_, hint, _) ->
+            used_lemmas := StringMap.update (string_of_ppcmds hint) (fun value ->
+              match value with
+                | None -> None
+                | Some _ -> Some true
+            ) !used_lemmas
+          ) applied_lemmas;
+          let unused_lemmas = ref [] in
+          if (StringMap.exists (fun name is_used -> if not is_used then (unused_lemmas := name::!unused_lemmas); not is_used) !used_lemmas) then throw (UnusedLemma !unused_lemmas);
+        )
+      ) in
+      tclRealThen tactic print
+    }
+END

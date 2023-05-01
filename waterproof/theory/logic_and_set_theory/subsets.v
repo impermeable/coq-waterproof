@@ -26,22 +26,5 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 Require Import Waterproof.notations.notations.
 Require Import Waterproof.definitions.set_definitions.
-Require Import Reals.
-Open Scope R_scope.
 
-Open Scope subset_scope.
-Lemma left_in_closed_open {a b : R} : (a < b) -> (a : [a,b)).
-Proof.
-  intro a_lt_b.
-  split.
-  - apply Rle_refl.
-  - exact a_lt_b.
-Qed.
-Lemma right_in_open_closed {a b : R} : (a < b) -> (b : (a,b]).
-Proof.
-  intro a_lt_b.
-  split.
-  - exact a_lt_b.
-  - apply Rle_refl.
-Qed.
-Close Scope subset_scope.
+

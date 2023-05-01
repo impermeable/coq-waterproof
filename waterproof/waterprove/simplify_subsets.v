@@ -25,17 +25,3 @@ along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 
 From Ltac2 Require Import Ltac2.
 Require Import Waterproof.definitions.set_definitions.
-(**  ** simpl_member_subset
-
-Writes out membership of a subset [x : A] as satisfying [A]'s defining predicate [P x],
-where $A := {x : X | (P x) holds}$.
-
-*)
-
-Ltac2 simpl_member_subset () :=
-  repeat (
-    match! goal with
-      | [ h : (pred _ _) _ |- _ ] => simpl in $h
-      | [ |- _ ] => ()
-    end
-  ).

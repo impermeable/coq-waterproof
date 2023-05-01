@@ -23,10 +23,6 @@ You should have received a copy of the GNU General Public License
 along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-From Ltac2 Require Import Ltac2.
-From Ltac2 Require Option.
-
-
 Require Import Waterproof.message.
 
 Require Import Waterproof.auxiliary.
@@ -42,7 +38,7 @@ Writes out an inequality chain as a big conjunction.
 Ltac2 simpl_ineq_chains () :=
     repeat (
         match! goal with
-(** TODO: do this in a more structured way *)
+(* TODO: do this in a more structured way *)
         | [ h : total_statement _ |- _ ] => 
             cbn in $h
         end

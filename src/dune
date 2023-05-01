@@ -1,0 +1,7 @@
+(library
+  (name waterproof)
+  (public_name coq-waterproof.plugin)
+  (libraries coq-core.plugins.ltac)
+  (flags :standard -rectypes -w -27))
+
+(coq.pp (modules g_waterproof databases))
