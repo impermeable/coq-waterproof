@@ -19,7 +19,7 @@ type trace_atom =
   - a full `trace` of tried hints
   - the names of the given lemmas
 *)
-type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list ref; lemma_names: Pp.t list ref}
+type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list ref}
 
 (**
   Creates a `debug` value from a `Hints.debug` value

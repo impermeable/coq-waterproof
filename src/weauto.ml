@@ -4,7 +4,7 @@ open Pp
 
 open Wauto
 
-let esearch (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
+let esearch (dbg: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
   tclUNIT ()
 
 (* let esearch (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
@@ -39,10 +39,6 @@ let pr_dbg_header (dbg: debug) = match dbg.log_level with
   | Info -> Feedback.msg_notice (str "(* info weauto: *)")
   | Debug -> Feedback.msg_notice (str "(* debug weauto: *)")
 
-
-(** 
-  Generates the `weauto` function
-*)
 let gen_weauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) =
   Hints.wrap_hint_warning @@
     Proofview.Goal.enter begin fun gl ->

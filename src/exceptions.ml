@@ -9,21 +9,9 @@ let fatal_flag: 'a Exninfo.t = Exninfo.make ()
   Type of exceptions used in Wateproof
 *)
 type wexn = 
-
-  (*
-    Indicates that the backtracking has failed 
-  *)
-  | FailedBacktracing of string
-
-  (*
-    Indicates that the user tried to import a non-existing hint dataset
-  *)
-  | NonExistingDataset of string
-
-  (*
-    Indicates that a given lemma has not been used during automatic solving
-  *)
-  | UnusedLemma of string list
+  | FailedBacktracing of string (** Indicates that the backtracking has failed *)
+  | NonExistingDataset of string (** Indicates that the user tried to import a non-existing hint dataset *)
+  | UnusedLemma of string list (** Indicates that a given lemma has not been used during automatic solving *)
 
 (**
   Converts 

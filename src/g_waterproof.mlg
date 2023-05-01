@@ -56,11 +56,15 @@ END
 TACTIC EXTEND rwauto
   | [ "rwauto" auto_using(lems) ] ->
     {
+      let lemma_names =
+        let env = Global.env () in
+        let sigma = Evd.from_env env in
+        List.map (Printer.pr_closed_glob_env env sigma) lems in
       let debug = new_debug Off in
       let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
         let used_lemmas = ref StringMap.empty in
-        List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) !(debug.lemma_names);
+        List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) lemma_names;
         Proofview.tclUNIT (
           let applied_lemmas = Backtracking.keep_applied !(debug.trace) in
           List.iter (fun (_, hint, _) ->

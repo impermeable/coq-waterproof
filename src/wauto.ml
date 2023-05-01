@@ -80,22 +80,22 @@ type trace_atom = bool * int * (Environ.env -> Evd.evar_map -> t * t) * t * t
   - a full `trace` of tried hints
   - the names of the given lemmas
 *)
-type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list ref; lemma_names: t list ref}
+type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list ref}
 
 (**
   Returns a `debug` value corresponding to `no debug`
 *)
-let no_debug (): debug = {log_level = Off; current_depth = 0; trace = ref []; lemma_names = ref []}
+let no_debug (): debug = {log_level = Off; current_depth = 0; trace = ref []}
 
 (**
   Creates a `debug` value from a `Hints.debug` value
 *)
-let new_debug (debug: Hints.debug): debug = {log_level = debug; current_depth = 0; trace = ref []; lemma_names = ref []}
+let new_debug (debug: Hints.debug): debug = {log_level = debug; current_depth = 0; trace = ref []}
 
 (**
   Increases the debug depth by 1
 *)
-let incr_debug_depth (dbg: debug): debug = {log_level = dbg.log_level; current_depth = dbg.current_depth + 1; trace = dbg.trace; lemma_names = dbg.lemma_names}
+let incr_debug_depth (dbg: debug): debug = {log_level = dbg.log_level; current_depth = dbg.current_depth + 1; trace = dbg.trace}
 
 (**
   Updates the given debug and print informations according to the field `Hints.debug`
@@ -272,59 +272,51 @@ and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl:
 (**
   Searches a sequence of at most `n` tactics within `db_list` and `lems` that solves the goal
 *)
-let search (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
+let search (dbg: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
   let make_local_db (gl: Proofview.Goal.t): hint_db =
     let env = Proofview.Goal.env gl in
     let sigma = Proofview.Goal.sigma gl in
     make_local_hint_db env sigma false lems
   in
-  let rec search d n local_db =
+  let rec search dbg n local_db =
     if Int.equal n 0 then
       let info = Exninfo.reify () in
       Proofview.tclZERO ~info SearchBound
     else
       begin
-        Tacticals.tclORELSE0 (dbg_assumption d) @@
-        Tacticals.tclORELSE0 (intro_register d (search d n) local_db) @@
+        Tacticals.tclORELSE0 (dbg_assumption dbg) @@
+        Tacticals.tclORELSE0 (intro_register dbg (search dbg n) local_db) @@
         Proofview.Goal.enter begin fun gl ->
           let env = Proofview.Goal.env gl in
           let sigma = Proofview.Goal.sigma gl in
           let concl = Proofview.Goal.concl gl in
           let hyps = Proofview.Goal.hyps gl in
-          let d' = incr_debug_depth d in
+          let d' = incr_debug_depth dbg in
           let secvars = compute_secvars gl in
           let hdc = try Some (decompose_app_bound sigma concl) with Bound -> None in
           let hintmap = hintmap_of env sigma secvars hdc concl in
-          let hinttac = tac_of_hint d db_list local_db concl in
+          let hinttac = tac_of_hint dbg db_list local_db concl in
           (local_db::db_list)
-          |> List.map_append (fun db -> try hintmap db with Not_found -> [])
-          |> List.map begin fun h ->
-               Proofview.tclTHEN (hinttac h) @@
-                 Proofview.Goal.enter begin fun gl ->
-                   let hyps' = Proofview.Goal.hyps gl in
-                   let local_db' =
-                     if hyps' == hyps then local_db else make_local_db gl
-                   in
-                   search d' (n-1) local_db'
-                 end
-             end
-          |> Tacticals.tclFIRST
+            |> List.map_append (fun db -> try hintmap db with Not_found -> [])
+            |> List.map 
+              begin fun h ->
+                Proofview.tclTHEN (hinttac h) @@
+                  Proofview.Goal.enter 
+                    begin fun gl ->
+                      let hyps' = Proofview.Goal.hyps gl in
+                      let local_db' =
+                        if hyps' == hyps then local_db else make_local_db gl
+                      in
+                      search d' (n-1) local_db'
+                    end
+              end
+            |> Tacticals.tclFIRST
         end
       end
   in
   Proofview.Goal.enter begin fun gl ->
-    let env = Proofview.Goal.env gl in
-    let sigma = Proofview.Goal.sigma gl in
-    let concl = Proofview.Goal.concl gl in
-    let secvars = compute_secvars gl in
-    let hdc = try Some (decompose_app_bound sigma concl) with Bound -> None in
-    let hintmap = hintmap_of env sigma secvars hdc concl in
     let local_db = make_local_db gl in
-
-    (* Retrieve name of lemmas *)
-    d.lemma_names := List.map (fun hint -> Proofutils.pr_hint env sigma hint) (hintmap local_db);
-
-    search d n local_db
+    search dbg n local_db
   end
 
 (** 
