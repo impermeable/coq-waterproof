@@ -1,4 +1,9 @@
 (**
+  Exception raised if no proof of the goal is found
+*)
+exception SearchBound
+
+(**
   Trace atome type
 
   Can be read as `(is_success, depth, print_function_option, hint_name, hint_db_source)`
@@ -26,6 +31,19 @@ type debug = {log_level: Hints.debug; current_depth: int; trace: trace_atom list
 *)
 val new_debug : Hints.debug -> debug
 
+(**
+  Increases the debug depth by 1
+*)
+val incr_debug_depth : debug -> debug
+
+(**
+  Updates the given debug and print informations according to the field `Hints.debug`
+*)
+val tclLOG : debug -> (Environ.env -> Evd.evar_map -> Pp.t * Pp.t) -> 'a Proofview.tactic -> 'a Proofview.tactic
+
+(**
+  Prints a trace atom
+*)
 val pr_trace_atom :
   Environ.env -> Evd.evar_map -> trace_atom -> Pp.t
 
@@ -52,6 +70,16 @@ val cleanup_info_trace :
   int -> trace_atom list -> trace_atom list -> trace_atom list
 
 (**
+  Creates a function that takes a hint database and returns a hint list
+*)
+val hintmap_of : Environ.env -> Evd.evar_map -> Names.Id.Pred.t -> (Names.GlobRef.t * Evd.econstr array) option -> Evd.econstr -> (Hints.hint_db -> Hints.FullHint.t list)
+
+(**
+  Returns a logged `assumption` tactic
+*)
+val dbg_assumption : debug -> unit Proofview.tactic
+
+(**
   Tries the given tactic and calls an info printer if it fails
 *)
 val tclTRY_dbg :
@@ -61,6 +89,14 @@ val tclTRY_dbg :
   (debug -> unit) ->
   unit Proofview.tactic ->
   unit Proofview.tactic
+
+
+(**
+  Searches a sequence of at most `n` tactics within `db_list` and `lems` that solves the goal
+
+  The boolean indicates if evars should be considered
+*)
+val search : debug -> int -> Hints.hint_db list -> Tactypes.delayed_open_constr list -> bool -> unit Proofview.tactic
 
 (**
   Waterproof auto

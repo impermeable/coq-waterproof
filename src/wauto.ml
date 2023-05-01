@@ -39,7 +39,7 @@ let auto_unif_flags_of st1 st2 =
 let auto_unif_flags =
   auto_unif_flags_of TransparentState.full TransparentState.empty
 
-let unify_resolve_nodelta h = Hints.hint_res_pf ~flags:auto_unif_flags h
+let unify_resolve_nodelta h = Hints.hint_res_pf ~with_evars:true ~flags:auto_unif_flags h
 
 let exact h =
   Proofview.Goal.enter begin fun gl ->
@@ -203,6 +203,9 @@ let dbg_intro (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> (str 
 *)
 let dbg_assumption (dbg: debug): unit Proofview.tactic = tclLOG dbg (fun _ _ -> (str "assumption", str "")) assumption
 
+(**
+  Returns a tactic that apply intro then try to solve the goal
+*)
 let intro_register (dbg: debug) (kont: hint_db -> unit Proofview.tactic) (db: hint_db): unit Proofview.tactic =
   Proofview.tclTHEN (dbg_intro dbg) @@
     Proofview.Goal.enter begin fun gl ->
@@ -236,6 +239,9 @@ let rec trivial_fail_db (dbg: debug) (db_list: hint_db list) (local_db: hint_db)
       |> Tacticals.tclFIRST
     end
 
+(**
+  Returns a function that converts hints into tactics
+*)
 and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl: Evd.econstr): FullHint.t -> unit Proofview.tactic =
   let tactic = function
     | Res_pf h -> unify_resolve_nodelta h
@@ -272,11 +278,11 @@ and tac_of_hint (dbg: debug) (db_list: hint_db list) (local_db: hint_db) (concl:
 (**
   Searches a sequence of at most `n` tactics within `db_list` and `lems` that solves the goal
 *)
-let search (dbg: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
+let search (dbg: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list) (evars_flag: bool): unit Proofview.tactic =
   let make_local_db (gl: Proofview.Goal.t): hint_db =
     let env = Proofview.Goal.env gl in
     let sigma = Proofview.Goal.sigma gl in
-    make_local_hint_db env sigma false lems
+    make_local_hint_db env sigma evars_flag lems
   in
   let rec search dbg n local_db =
     if Int.equal n 0 then
@@ -330,7 +336,7 @@ let gen_wauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr l
       | Some dbnames -> make_db_list dbnames
       | None -> current_pure_db ()
     in
-    wrap_hint_warning @@ tclTRY_dbg debug pr_dbg_header pr_trace pr_info_nop @@ search debug n db_list lems
+    wrap_hint_warning @@ tclTRY_dbg debug pr_dbg_header pr_trace pr_info_nop @@ search debug n db_list lems false
   end
 
 (**

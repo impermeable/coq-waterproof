@@ -1,35 +1,7 @@
 open Hints
-open Proofview
 open Pp
 
 open Wauto
-
-let esearch (dbg: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
-  tclUNIT ()
-
-(* let esearch (d: debug) (n: int) (db_list: hint_db list) (lems: Tactypes.delayed_open_constr list): unit Proofview.tactic =
-  Proofview.Goal.enter begin fun gl ->
-  let local_db env sigma = make_local_hint_db env sigma ~ts:TransparentState.full true lems in
-  let is_debug = match d with 
-    | Debug -> true
-    | _ -> false in
-  let tac s = Search.search ~debug db_list lems s in
-  let () = pr_dbg_header d in
-  Proofview.tclORELSE
-    begin
-      let evk = Proofview.goal_with_state (Proofview.Goal.goal gl) (Proofview.Goal.state gl) in
-      tac (make_initial_state evk d p local_db) >>= fun s ->
-      let () = pr_info d s in
-      let () = assert (List.is_empty s.tacres) in
-      Proofview.Unsafe.tclSETGOALS []
-    end
-    begin function
-    | (Search.SearchFailure, _) ->
-      let () = pr_info_nop d in
-      Proofview.tclUNIT ()
-    | (e, info) -> Proofview.tclZERO ~info e
-    end
-  end *)
 
 (** 
   Prints a debug header according to the `Hints.debug` level
@@ -47,7 +19,7 @@ let gen_weauto (debug: debug) ?(n: int = 5) (lems: Tactypes.delayed_open_constr 
       | Some dbnames -> make_db_list dbnames
       | None -> current_pure_db ()
     in
-    wrap_hint_warning @@ tclTRY_dbg debug pr_dbg_header pr_trace pr_info_nop (esearch debug n db_list lems)
+    wrap_hint_warning @@ tclTRY_dbg debug pr_dbg_header pr_trace pr_info_nop (search debug n db_list lems true)
   end
 
 (**

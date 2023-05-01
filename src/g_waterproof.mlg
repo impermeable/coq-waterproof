@@ -10,6 +10,7 @@ open Exceptions
 open Hint_dataset
 open Proofutils
 open Wauto
+open Weauto
 
 }
 
@@ -45,6 +46,34 @@ TACTIC EXTEND info_wauto
         )
       ) in
       tclRealThen tactic print
+    }
+END
+
+(**
+  Waterproof debug auto tactic
+
+  Equivalent of `debug auto` with `wauto`
+*)
+TACTIC EXTEND debug_wauto
+  | [ "debug_wauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Debug in
+      wauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+    }
+END
+
+(**
+  Waterproof eauto tactic
+
+  Rewrite of the [`eauto`] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
+
+  Its use is the same as `eauto [using ...]`
+*)
+TACTIC EXTEND weauto
+  | [ "weauto" auto_using(lems) ] ->
+    {
+      let debug = new_debug Off in
+      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
     }
 END
 
