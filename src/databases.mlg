@@ -7,8 +7,6 @@ open Stdarg
 
 open Hint_dataset
 
-open Summary.Local
-
 }
 
 VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF

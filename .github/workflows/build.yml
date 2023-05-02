@@ -1,0 +1,24 @@
+name: Build
+
+on:
+  
+  push:
+    branches: [ "*" ]
+  
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up git repository
+        uses: actions/checkout@v3
+      
+      - name: Build plugin
+        uses: coq-community/docker-coq-action@v1
+        with:
+          custom_image: 'coqorg/coq:dev-ocaml-4.14-flambda'
+          opam_file: 'coq-waterproof.opam'

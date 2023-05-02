@@ -1,0 +1,62 @@
+name: Documentation
+
+on:
+
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up git repository
+        uses: actions/checkout@v3
+      
+      - name: Build plugin
+        uses: coq-community/docker-coq-action@v1
+        with:
+          opam_file: 'coq-waterproof.opam'
+          custom_image: 'coqorg/coq:dev-ocaml-4.14-flambda'
+          script: |
+            startGroup "Building documentation"
+              sudo chmod 777 -R .
+              opam install -y -v odoc
+              opam exec -- dune build @doc
+            endGroup
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "_build/default/_doc/_html/coq-waterproof/"
+
+  deploy:
+    name: deploy
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.output.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy documentation to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

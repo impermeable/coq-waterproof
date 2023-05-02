@@ -1,0 +1,26 @@
+opam-version: "2.0"
+name: "coq-waterproof"
+version: "2.0.0"
+maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
+authors: [ "Jim Portegies <j.w.portegies@tue.nl>" ]
+
+synopsis: "Coq proofs in a style that resembles non-mechanized mathematical proofs"
+description: """
+The coq-waterproof library allows you to write Coq proofs in a style that resembles non-mechanized mathematical proofs. Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts.
+"""
+
+license: "LGPL-3.0-or-later"
+homepage: "https://github.com/impermeable/coq-waterproof"
+bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
+
+depends: [ 
+  "ocaml" {= "4.14.1"}
+  "coq" {>= "8.17"}
+]
+
+build: [
+  ["coq_makefile" "-f" "_CoqProject" "-o" "Makefile"]
+  [make]
+]
+
+install: [make "install"]

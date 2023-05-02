@@ -1,7 +1,7 @@
 (**
   Contains the hint dataset that is currently loaded
 *)
-val loaded_hint_dataset : string Summary.Local.local_ref
+val loaded_hint_dataset : string ref
 
 (**
   Replace all current loaded hints by the ones declared in the [hint_dataset]

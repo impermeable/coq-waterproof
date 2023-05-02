@@ -51,7 +51,7 @@ let exact h =
     if occur_existential sigma t || occur_existential sigma concl then
       let sigma = Evd.clear_metas sigma in
       try
-        let sigma = Unification.w_unify env sigma Reduction.CONV ~flags:auto_unif_flags concl t in
+        let sigma = Unification.w_unify env sigma CONV ~flags:auto_unif_flags concl t in
         Proofview.Unsafe.tclEVARSADVANCE sigma <*>
         exact_no_check c
       with e when CErrors.noncritical e -> Proofview.tclZERO e

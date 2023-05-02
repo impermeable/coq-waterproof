@@ -1,5 +1,5 @@
 open Hints
-open Summary.Local
+open Summary
 
 open Exceptions
 open Hint_dataset_declarations
@@ -7,7 +7,7 @@ open Hint_dataset_declarations
 (**
   Contains the hint dataset that is currently loaded
 *)
-let loaded_hint_dataset: string local_ref = ref ~name:"loaded_hint_dataset" core.name
+let loaded_hint_dataset: string ref = ref ~name:"loaded_hint_dataset" core.name
 
 (**
   Complete list of all existing dataset names
