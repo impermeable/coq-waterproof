@@ -41,7 +41,7 @@ jobs:
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "_build/default/_doc/_html/coq-waterproof/"
+          path: "_build/default/_doc/_html/"
 
   deploy:
     name: deploy
