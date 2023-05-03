@@ -1,8 +1,41 @@
 # coq-waterproof
 
-The coq-waterproof library allows you to write Coq proofs in **a style that resembles non-mechanized mathematical proofs**.
+The coq-waterproof plugin allows you to write Coq proofs in **a style that resembles non-mechanized mathematical proofs**.
 Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts.
 
+## Installation
+
+
+### Linux
+
+Firstly you should install [`opam`](https://opam.ocaml.org/).
+
+Then, you can create a new switch and install the requirements by running :
+
+```bash
+$ opam switch create waterproof --packages coq.8.17.0
+$ eval $(opam env --switch=waterproof)
+```
+
+Then, you can clone this repository and install the library by running :
+
+```bash
+$ git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
+$ opam install .
+```
+
+Once this is done, you can use coq-waterproof in any file of your system by switching to the `waterproof` switch on opam.
+
+## Usage
+To use the tactics in a `.v` file, use the import:
+```coq
+Require Import Waterproof.Waterproof.
+```
+
+To use the hint dataset system, also add:
+```coq
+Require Import Waterproof.Databases.
+```
 
 ## Example
 The following snippet from `sample_proof.v` gives a taste of a proof written using coq-waterproof.
@@ -43,6 +76,7 @@ Qed.
 ```
 
 ## Features
+
 * Less cryptic, **controlled natural language formulations for build-in Coq tactics**.
 * Commonplace **mathematical notation** such as `ℝ` or `A is closed`.
 * **Enforced signposting:** after a case distinction, for example, one **has** to state which case is to be shown.
@@ -50,51 +84,14 @@ Qed.
 * Automation to **hide details not used in written proofs**.
 * **Help messages** and more **elaborate error messages**.
 * **Runtime-configurable presets of hint databases** used by the automation.
-* All tactics implemented in Ltac2.
-<!--* **Unit-tests for all tactics**. These are run at compile-time, to ensure a working version is compiled. Unit-tests raise an error if they fail. They are located in the directory `waterproof/test`.-->
-
-## Installation
-
-
-### Linux
-
-Firstly you should install [`opam`](https://opam.ocaml.org/).
-
-Then, you can create a new switch and install the requirements by running :
-
-```bash
-$ opam switch create waterproof --packages coq.8.16.1
-$ eval $(opam env --switch=waterproof)
-```
-
-Then, you can clone this repository and install the library by running :
-
-```bash
-$ git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
-$ make
-$ make install
-```
-
-Once this is done, you can use coq-waterproof in any file of your system by switching to the `waterproof` switch on opam.
-
-## Usage
-To use the tactics in a `.v` file, use the import:
-```coq
-Require Import Waterproof.AllTactics.
-```
-For the custom notations, also add:
-```coq
-Require Import Waterproof.notations.notations.
-```
 
 ## Automation
-The more advanced tactics rely on automation.
-The automation function is called `waterprove`, 
-which employs `auto` and `eauto` (and optionally also `intuition`), 
-together with a customizable set of hint-databases.
+
+The more advanced tactics rely on automation. The automation function is called `waterprove`, which employs `auto` and `eauto` (and optionally also `intuition`), together with a customizable set of hint-databases.
 
 ### Configuration
-The behavior of the automatation tactics can be configured by importing specific files (and modules).
+
+The behavior of the automation tactics can be configured by importing specific files (and modules).
 
 * **Adding a Database**: Example:
     ```coq
@@ -109,7 +106,7 @@ One can also write custom database config files. For example,
 ```coq
 Require Import Waterproof.populate_database.
 Require Import Waterproof.load.
-    
+
 Module ExampleDBConfig <: db_config.
   Module preload_module := wp_all.
   Ltac2 append_databases := true.
@@ -121,23 +118,6 @@ End ExampleDBConfig.
     
 Module Import my_db := databases(ExampleDBConfig).
 ```
-<!--(deprecated)## Rewriting equalities
-One can use literal equalities to rewrite goals and hypotheses. This alleviates the need to know the names of build-in Coq lemmas and theorems. The automation features will verify the literal, use it as a temporal lemma to rewrite the target, and remove it again from the proof state.
-Example:
-```coq
-Lemma example: forall x y: nat, x + y + (x + y) = x + y + x + y.
-Proof.
-    intros x y.
-    Rewrite using (forall n m p : nat, n + (m + p) = n + m + p).
-    reflexivity.
-Qed.
-```
-Used by tactics:
-* `Rewrite using (constr).` (to rewrite to goal)
-* `Rewrite using (constr) in (ident).` (to rewrite a hypothesis)
-* `Write goal using (constr) as (constr).` (to rewrite a the goal and verify the result is expected)
-* `Write goal using (constr) as (constr).` (to rewrite a the goal and verify the result is expected)
-* `Write (ident) using (constr) as (constr).` (to rewrite a hypothesis and verify the result is expected)-->
 
 ## Chains of (in)equalities
 In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.
@@ -150,6 +130,7 @@ We conclude that (& -r < -r/2 = 1 - r/2 - 1 ≤ Rmax(1/2, 1 - r/2) - 1 = x - 1).
 The chain of inequalities is used to show that `-r < x - 1`.
 
 ## Background
+
 The coq-waterproof library is developed as part of the educational [Waterproof](https://github.com/impermeable/waterproof) editor for Coq.
 The tactics are designed to be used by first-year mathematics students who are unfamiliar with Coq. This is also why the tactics require the user to be explicit: the students have to learn to write readable proofs.
 
