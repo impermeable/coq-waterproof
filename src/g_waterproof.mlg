@@ -6,6 +6,7 @@ open Ltac_plugin
 open Ltac_plugin.G_auto
 open Pp
 
+open Backtracking
 open Exceptions
 open Hint_dataset
 open Proofutils
@@ -39,8 +40,8 @@ let eval_uconstrs ist cs =
 TACTIC EXTEND wauto
   | [ "wauto" auto_using(lems) ] ->
     {
-      let debug = new_debug Off in
-      wauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+      let trace = new_trace true in
+      wauto trace 5 (eval_uconstrs ist lems) (positive_databases ())
     }
 END
 
@@ -52,28 +53,15 @@ END
 TACTIC EXTEND info_wauto
   | [ "info_wauto" auto_using(lems) ] ->
     {
-      let debug = new_debug Info in
-      let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
+      let trace = new_trace true in
+      let tactic = wauto trace 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
         Proofview.tclUNIT (
-          let applied = Backtracking.keep_applied !(debug.trace) in
-          Feedback.msg_notice (str "Applied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
+          let applied = Backtracking.keep_applied !(trace.trace) in
+          Feedback.msg_notice (str "\nApplied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
         )
       ) in
       tclRealThen tactic print
-    }
-END
-
-(**
-  Waterproof debug auto tactic
-
-  Equivalent of `debug auto` with [wauto]
-*)
-TACTIC EXTEND debug_wauto
-  | [ "debug_wauto" auto_using(lems) ] ->
-    {
-      let debug = new_debug Debug in
-      wauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
     }
 END
 
@@ -87,8 +75,8 @@ END
 TACTIC EXTEND weauto
   | [ "weauto" auto_using(lems) ] ->
     {
-      let debug = new_debug Off in
-      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+      let trace = new_trace false in
+      weauto trace 5 (eval_uconstrs ist lems) (positive_databases ())
     }
 END
 
@@ -100,21 +88,15 @@ END
 TACTIC EXTEND info_weauto
   | [ "info_weauto" auto_using(lems) ] ->
     {
-      let debug = new_debug Info in
-      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
-    }
-END
-
-(**
-  Waterproof debug auto tactic
-
-  Equivalent of `debug auto` with [wauto]
-*)
-TACTIC EXTEND debug_weauto
-  | [ "debug_weauto" auto_using(lems) ] ->
-    {
-      let debug = new_debug Debug in
-      weauto debug 5 (eval_uconstrs ist lems) (positive_databases ())
+      let trace = new_trace true in
+      let tactic = weauto trace 5 (eval_uconstrs ist lems) (positive_databases ()) in
+      let print = lazy (
+        Proofview.tclUNIT (
+          let applied = Backtracking.keep_applied !(trace.trace) in
+          Feedback.msg_notice (str "\nApplied hints :" ++ (List.fold_left (fun acc (depth, hint, src) -> acc ++ str "\n" ++ Pp.int depth ++ str " " ++ hint ++ str "(" ++ src ++ str ")") (str "") applied));
+        )
+      ) in
+      tclRealThen tactic print
     }
 END
 
@@ -130,13 +112,13 @@ TACTIC EXTEND rwauto
         let env = Global.env () in
         let sigma = Evd.from_env env in
         List.map (Printer.pr_closed_glob_env env sigma) lems in
-      let debug = new_debug Off in
-      let tactic = wauto debug 5 (eval_uconstrs ist lems) (positive_databases ()) in
+      let trace = new_trace false in
+      let tactic = wauto trace 5 (eval_uconstrs ist lems) (positive_databases ()) in
       let print = lazy (
         let used_lemmas = ref StringMap.empty in
         List.iter (fun name -> used_lemmas := StringMap.add (string_of_ppcmds name) false !used_lemmas) lemma_names;
         Proofview.tclUNIT (
-          let applied_lemmas = Backtracking.keep_applied !(debug.trace) in
+          let applied_lemmas = Backtracking.keep_applied !(trace.trace) in
           List.iter (fun (_, hint, _) ->
             used_lemmas := StringMap.update (string_of_ppcmds hint) (fun value ->
               match value with

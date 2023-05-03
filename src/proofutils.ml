@@ -1,4 +1,7 @@
 open Hints
+open Proofview.Notations
+
+open Backtracking
 
 (**
   Returns the index of the first element [x] of [l] such that `f x` is [true]
@@ -34,6 +37,27 @@ let rec tail_end (l: 'a list) (n: int): 'a list = match (l, n) with
   Generic dictionnary taking strings as keys
 *)
 module StringMap = Map.Make(String)
+
+(**
+  Updates the given debug, then print informations if the [log] field is [true]
+*)
+let tclLOG (trace: trace) (pp: Environ.env -> Evd.evar_map -> Pp.t * Pp.t) (tac: 'a Proofview.tactic): 'a Proofview.tactic =
+  Proofview.(
+    tclIFCATCH (
+      tac >>= fun v ->
+      tclENV >>= fun env ->
+      tclEVARMAP >>= fun sigma ->
+      let (hint, src) = pp env sigma in
+      trace.trace := (true, trace.current_depth, hint, src) :: !(trace.trace);
+      tclUNIT v
+    ) tclUNIT (fun (exn,info) ->
+        tclENV >>= fun env ->
+        tclEVARMAP >>= fun sigma ->
+        let (hint, src) = pp env sigma in
+        trace.trace := (false, trace.current_depth, hint, src) :: !(trace.trace);
+        tclZERO ~info exn
+    )
+  )
 
 (**
   Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second

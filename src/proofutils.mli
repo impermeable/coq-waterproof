@@ -14,9 +14,18 @@ val find_last : ('a -> bool) -> 'a list -> int option
 val tail_end : 'a list -> int -> 'a list
 
 (**
-  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
+  Rewrite of [Auto.tclLOG]
 
-  Can be rewrite in a more clear form
+  Updates the given debug, then print informations if the [log] field is [true]
+*)
+  val tclLOG :
+  Backtracking.trace ->
+  (Environ.env -> Evd.evar_map -> Pp.t * Pp.t) ->
+  'a Proofview.tactic ->
+  'a Proofview.tactic
+
+(**
+  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
 *)
 val tclRealThen :
   unit Proofview.tactic ->

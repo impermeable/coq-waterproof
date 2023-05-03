@@ -21,12 +21,12 @@ src/hint_dataset.ml
 src/hint_dataset.mli
 src/hint_dataset_declarations.ml
 src/hint_dataset_declarations.mli
+src/backtracking.ml
+src/backtracking.mli
 src/wauto.ml
 src/wauto.mli
 src/weauto.ml
 src/weauto.mli
-src/backtracking.ml
-src/backtracking.mli
 src/databases.mlg
 src/g_waterproof.mlg
 src/waterproof.mlpack
