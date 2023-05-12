@@ -4,7 +4,7 @@
 val find_first : ('a -> bool) -> 'a list -> int option
 
 (**
-  Returns the index of the last element [x] of [l] such that [f x] is [true]
+  Returns the index of the last element [x] of [l] such that `f x` is [true]
 *)
 val find_last : ('a -> bool) -> 'a list -> int option
 
@@ -12,31 +12,6 @@ val find_last : ('a -> bool) -> 'a list -> int option
   Returns the queue of the given list after the [n]th element included
 *)
 val tail_end : 'a list -> int -> 'a list
-
-(**
-  Rewrite of [Auto.tclLOG]
-
-  Updates the given debug, then print informations if the [log] field is [true]
-*)
-  val tclLOG :
-  Backtracking.trace ->
-  (Environ.env -> Evd.evar_map -> Pp.t * Pp.t) ->
-  'a Proofview.tactic ->
-  'a Proofview.tactic
-
-(**
-  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
-*)
-val tclRealThen :
-  unit Proofview.tactic ->
-  unit Proofview.tactic lazy_t ->
-  unit Proofview.tactic
-
-(**
-  Rewrite of Coq's hint printer to keep only the necessary parts
-*)
-val pr_hint :
-  Environ.env -> Evd.evar_map -> Hints.FullHint.t -> Pp.t
 
 (**
   Generic dictionnary taking strings as keys
@@ -100,3 +75,85 @@ module StringMap : sig
   val add_seq : (key * 'a) Seq.t -> 'a t -> 'a t
   val of_seq : (key * 'a) Seq.t -> 'a t
 end
+
+(**
+  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
+*)
+val tclRealThen :
+  unit Proofview.tactic ->
+  'a Proofview.tactic lazy_t ->
+  'a Proofview.tactic
+
+(**
+  Rewrite of [Auto.tclLOG]
+
+  Updates the trace contained in the given tactic.
+
+  Fails if the hint's name is forbidden, or if the proof will be complete without using all must-use lemmas.
+*)
+val tclLOG :
+  (Environ.env -> Evd.evar_map -> Pp.t * Pp.t) ->
+  Backtracking.trace Proofview.tactic ->
+  Pp.t list ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Checks if every hint in [must_use] is contained in [tac] and returns an exception if not
+*)
+val trace_check_used :
+  Pp.t list ->
+  Backtracking.trace ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Wrapper around {! Proofview.tclTHEN} with a merge of tactics' traces
+*)
+val tclTraceThen :
+  Backtracking.trace Proofview.tactic ->
+  Backtracking.trace Proofview.tactic ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Merge a list of traces contained in a tactic into one trace
+
+  Useful to combine with {! Proofview.tclINDEPENDENTL}
+*)
+val tclAggregateTraces :
+  Backtracking.trace list Proofview.tactic ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Wrapper around {! Proofview.Goal.enter} to allow [Backtracking.trace tactic] and not just [unit tactic]
+*)
+val trace_goal_enter :
+  (Proofview.Goal.t -> Backtracking.trace Proofview.tactic) ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Rewrite of {! Tacticals.tclORELSE0} to give the trace of the failed tactic instead of the exception
+*)
+val tclOrElse0 :
+  Backtracking.trace Proofview.tactic ->
+  (Backtracking.trace -> Backtracking.trace Proofview.tactic) ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Wrapper around {! tclOrElse0} with merge of trace contained in the failed [trace tactic] into the second one
+*)
+val tclTraceOrElse :
+  Backtracking.trace Proofview.tactic ->
+  Backtracking.trace Proofview.tactic ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Rewrite of {! Tacticals.tclTraceFirst} with [trace tactic] with a merge of traces of failed tactics 
+*)
+val tclTraceFirst :
+  Backtracking.trace Proofview.tactic list ->
+  Backtracking.trace Proofview.tactic
+
+(**
+  Rewrite of Coq's hint printer to keep only the necessary parts
+*)
+val pr_hint :
+  Environ.env -> Evd.evar_map -> Hints.FullHint.t -> Pp.t

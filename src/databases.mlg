@@ -6,6 +6,7 @@ open Pp
 open Stdarg
 
 open Hint_dataset
+open Hint_dataset_declarations
 
 }
 
@@ -21,9 +22,9 @@ VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
   | [ "Dataset" "loaded" ] ->
     {
       Feedback.msg_notice ((str "Loaded dataset : ") ++ (str !loaded_hint_dataset));
-      Feedback.msg_notice ((str "Positive databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (positive_databases ()));
-      Feedback.msg_notice ((str "Negative databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (negative_databases ()));
-      Feedback.msg_notice ((str "Decidability databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (decidability_databases ()));
-      Feedback.msg_notice ((str "Shorten databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (shorten_databases ()))
+      Feedback.msg_notice ((str "Positive databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Positive));
+      Feedback.msg_notice ((str "Negative databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Negative));
+      Feedback.msg_notice ((str "Decidability databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Decidability));
+      Feedback.msg_notice ((str "Shorten databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Shorten))
     }
 END

@@ -117,4 +117,3 @@ Ltac2 waterprove (prop: constr) (lemmas: (unit -> constr) list) (shield:bool) :=
 			Control.enter (fun () => cbn; actual_waterprove prop lemmas shield)
   	| [ |- _] => actual_waterprove prop lemmas shield
   end.
-

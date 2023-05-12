@@ -14,7 +14,7 @@ Require Import Waterproof.ChainManipulation.
 Require Import Waterproof.NegationManipulation.
 Require Import Waterproof.Reals.
 
-(* Waterproof core *)
+(** * Waterproof core *)
 
 Create HintDb wp_core.
 
@@ -25,7 +25,7 @@ Create HintDb wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => congruence : wp_core.
 
 
-(* Classical logic *)
+(** * Classical logic *)
 
 Create HintDb wp_classical_logic.
 
@@ -38,7 +38,7 @@ Create HintDb wp_classical_logic.
   #[export] Hint Extern 5 => firstorder (auto 2 with core) : wp_classical_logic.
 
 
-(* Constructive logic *)
+(** * Constructive logic *)
 
 Create HintDb wp_constructive_logic.
 
@@ -47,25 +47,25 @@ Create HintDb wp_constructive_logic.
   #[export] Hint Resolve all_not_not_ex : wp_constructive_logic.
 
 
-(* Classical logic decidability *)
+(** * Classical logic decidability *)
 
 Create HintDb wp_decidability_classical.
 
   #[export] Hint Resolve excluded_middle_informative : wp_decidability_classical.
 
 
-(* Natural numbers decidability *)
+(** * Natural numbers decidability *)
 
 Create HintDb wp_decidability_classical.
 
   #[export] Hint Resolve Nat.eq_dec : wp_decidability_nat.
 
 
-(* Real numbers decidability *)
+(** * Real numbers decidability *)
 
 Create HintDb wp_decidability_reals.
 
-  (*
+  (**
     Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
     We cannot do the same for >= as it is not defined as <=.
   *)
@@ -75,229 +75,229 @@ Create HintDb wp_decidability_reals.
   #[export] Hint Resolve Rlt_le_dec : wp_decidability_reals.
   #[export] Hint Resolve Rgt_ge_dec : wp_decidability_reals.
 
-  (* Lemmas to write e.g. `{r1 ≤ r2} + {~r2 ≥ r1}`.*)
+  (** Lemmas to write e.g. <<{r1 ≤ r2} + {~r2 ≥ r1}>> *)
   #[export] Hint Resolve Rlt_dec Rle_dec Rge_dec : wp_decidability_reals.
   #[export] Hint Resolve Rle_lt_dec Rge_gt_dec : wp_decidability_reals.
   #[export] Hint Resolve Rle_lt_or_eq_dec : wp_decidability_reals.
 
-  (* x < y, x = y or y < x*)
+  (** <<x < y>>, <<x = y>> or <<y < x>> *)
   #[export] Hint Resolve total_order_T : wp_decidability_reals.
 
 
-(* Real numbers' addition and multiplication *)
+(** * Real numbers' addition and multiplication *)
 
 Create HintDb wp_eq_plus.
 Create HintDb wp_eq_mult.
 
-  (* x * y = y * x *)
+  (** x * y = y * x *)
   #[export] Hint Extern 1 => (rewrite Rmult_comm) : wp_eq_mult.
 
-  (*
+  (**
     Associativity
     We have the following associative properties
   *)
 
-  (* x * y * z = x * (y * z) *)
+  (** <<x * y * z = x * (y * z)>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_assoc) : wp_eq_mult.
 
-  (* x * (y+z) = x * y + x * z *)
+  (** <<x * (y+z) = x * y + x * z>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_l) : wp_eq_mult wp_eq_plus. 
 
-  (* (x+y) * z = x * z + y * z *)
+  (** <<(x+y) * z = x * z + y * z>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_r) : wp_eq_mult wp_eq_plus. 
 
-  (* x + y = y + x *)
+  (** <<x + y = y + x>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_comm) : wp_eq_plus.
 
-  (* x + y + z = x + (y + z) *)
+  (** <<x + y + z = x + (y + z)>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_assoc) : wp_eq_plus.
 
-  (* (x + y) / z = x / z + y / z *)
+  (* <<(x + y) / z = x / z + y / z>> *)
   #[export] Hint Extern 1 => (rewrite Rdiv_plus_distr) : wp_eq_plus.
 
   #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_l) : wp_eq_plus.
   #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_r) : wp_eq_plus.
 
 
-(* Opposite number *)
+(** * Opposite number *)
 
 Create HintDb wp_eq_opp.
 
-  (* - (x - y) = y - x *)
+  (** <<- (x - y) = y - x>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_minus_distr) : wp_eq_opp.
 
-  (* - (y - x) = x - y *)
+  (** <<- (y - x) = x - y>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_minus_distr') : wp_eq_opp.
 
-  (* - (x * y) = - x * y *)
+  (** <<- (x * y) = - x * y>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_mult_distr_l) : wp_eq_opp.
 
-  (* - (x * y) = x * - y *)
+  (** <<- (x * y) = x * - y>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_mult_distr_r) : wp_eq_opp.
 
-  (* - x * y = - (x * y) *)
+  (** <<- x * y = - (x * y)>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_mult_distr_l_reverse) : wp_eq_opp.
 
-  (* x * - y = - (x * y) *)
+  (** <<x * - y = - (x * y)>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_mult_distr_r_reverse) : wp_eq_opp.
 
-  (* - (x + y) = - x + - y. *)
+  (** <<- (x + y) = - x + - y>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_plus_distr) : wp_eq_opp.
 
-  (* --a = a *)
+  (** <<--a = a>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_involutive) : wp_eq_opp. 
 
-  (* -a * -b = a * b *)
+  (** <<-a * -b = a * b>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_opp_opp) : wp_eq_opp. 
 
-  (* - a / b = - (a / b) *)
+  (** <<- a / b = - (a / b)>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_div) : wp_eq_opp.
 
-  (* -a  + a = 0 *)
+  (** <<-a  + a = 0>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_opp_l) : wp_eq_opp.
 
-  (* a  + -a = 0 *)
+  (** <<a  + -a = 0>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_opp_r) : wp_eq_opp.
 
 
-(* Real numbers' minus *)
+(** * Real numbers' minus *)
 
 Create HintDb wp_eq_minus.
 
-  (* (x - y) / z = x / z - y / z *)
+  (** <<(x - y) / z = x / z - y / z>> *)
   #[export] Hint Extern 1 => (rewrite Rdiv_minus_distr) :  wp_eq_minus.
 
   #[export] Hint Extern 1 => (unfold Rminus) : wp_eq_minus.
 
 
-(* Simplification with 0 *)
+(** * Simplification with 0 *)
 
 Create HintDb wp_eq_zero.
 
-  (* 0 + x = x *)
+  (** <<0 + x = x>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_0_l) : wp_eq_zero.
 
-  (* x + 0 = x *)
+  (** <<x + 0 = x>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_0_r) : wp_eq_zero.
 
-  (* 0 - x = - x *)
+  (** <<0 - x = - x>> *)
   #[export] Hint Extern 1 => (rewrite Rminus_0_l) : wp_eq_zero.
 
-  (* x - 0 = x *)
+  (** <<x - 0 = x>> *)
   #[export] Hint Extern 1 => (rewrite Rminus_0_r) : wp_eq_zero.
 
-  (* 0 * x = 0 *)
+  (** <<0 * x = 0>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_0_l) : wp_eq_zero.
 
-  (* x * 0 = 0 *)
+  (** <<x * 0 = 0>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_0_r) : wp_eq_zero.
 
-  (* x ^ 0 = 1 *)
+  (** <<x ^ 0 = 1>> *)
   #[export] Hint Extern 1 => (rewrite pow_O) : wp_eq_zero.
 
 
-(* Simplification with 1 *)
+(** * Simplification with 1 *)
 
 Create HintDb wp_eq_one.
 
-  (* 1 * x = x *)
+  (** <<1 * x = x>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_1_l) : wp_eq_one.
 
-  (* x * 1 = x *)
+  (** <<x * 1 = x>> *)
   #[export] Hint Extern 1 => (rewrite Rmult_1_r) : wp_eq_one.
 
-  (* x / 1 = x *)
+  (** <<x / 1 = x>> *)
   #[export] Hint Extern 1 => (rewrite Rinv_1) : wp_eq_one.
 
-  (* x ^ 1 = x *)
+  (** <<x ^ 1 = x>> *)
   #[export] Hint Extern 1 => (rewrite pow_1) : wp_eq_one.
 
-  (* / / x = x *)
+  (** <</ / x = x>> *)
   #[export] Hint Extern 1 => (rewrite Rinv_inv) : wp_eq_one.
 
 
-(* Absolute value *)
+(** * Absolute value *)
 
 Create HintDb wp_eq_abs.
 
-  (* ||a - a|| = 0 *)
+  (** << ||a - a|| = 0 >> *)
   #[export] Hint Extern 1 => (rewrite R_dist_eq) : wp_eq_abs. 
 
-  (* ||a * b - a * c|| = ||a|| * ||b - c|| *)
+  (** << ||a * b - a * c|| = ||a|| * ||b - c|| >> *)
   #[export] Hint Extern 1 => (rewrite R_dist_mult_l) : wp_eq_abs. 
 
-  (*||a - b|| = ||b - a||*)
+  (** <<||a - b|| = ||b - a||>> *)
   #[export] Hint Extern 1 => (rewrite R_dist_sym) : wp_eq_abs. 
 
-  (* |a - b| = |b - a|, using Rabs *)
+  (** << |a - b| = |b - a|, using Rabs >> *)
   #[export] Hint Extern 1 => (rewrite Rabs_minus_sym) : wp_eq_abs. 
 
-  (* | |a| | = |a| *)
+  (** << | |a| | = |a| >> *)
   #[export] Hint Extern 1 => (rewrite Rabs_Rabsolu) : wp_eq_abs. 
 
-  (* |-a| = |a| *)
+  (** << |-a| = |a| >> *)
   #[export] Hint Extern 1 => (rewrite Rabs_Ropp) : wp_eq_abs. 
 
-  (* |a * b| = |a| * |b| *)
+  (** << |a * b| = |a| * |b| >> *)
   #[export] Hint Extern 1 => (rewrite Rabs_mult) : wp_eq_abs. 
 
-  (* a^2 = |a|^2 *)
+  (** << a^2 = |a|^2 >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_abs) : wp_eq_abs. 
 
-  (* sqrt(a^2) = |a| *)
+  (** << sqrt(a^2) = |a| >> *)
   #[export] Hint Extern 1 => (rewrite sqrt_Rsqr_abs) : wp_eq_abs. 
 
-  (* | a |^2 = a^2 *)
+  (** << | a |^2 = a^2 >> *)
   #[export] Hint Extern 1 => (rewrite pow2_abs) : wp_eq_abs. 
 
 
-(* Square root *)
+(** * Square root *)
 
 Create HintDb wp_eq_sqr.
 
-  (* a² = a ^ 2 *)
+  (** << a² = a ^ 2 >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_pow2) : wp_eq_sqr.
 
-  (* (a-b)² = a² + b² + 2*a*b *)
+  (** << (a-b)² = a² + b² + 2*a*b >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_plus) : wp_eq_sqr.
 
-  (* (a+b)*(a-b) = a² - b² *)
+  (** << (a+b)*(a-b) = a² - b² >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_plus_minus) : wp_eq_sqr.
 
-  (* (a-b)² = a² + b² - 2*a*b *)
+  (** << (a-b)² = a² + b² - 2*a*b >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_minus) : wp_eq_sqr.
 
-  (* (a-b)*(a+b) = a² - b² *)
+  (** << (a-b)*(a+b) = a² - b² >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_minus_plus) : wp_eq_sqr.
 
-  (* a² = (-a)² *)
+  (** << a² = (-a)² >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_neg) : wp_eq_sqr.
 
-  (* (a-b)² = (b-a)² *)
+  (** << (a-b)² = (b-a)² >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_neg_minus) : wp_eq_sqr.
 
-  (* (a*b)² = a² * b² *)
+  (** << (a*b)² = a² * b² >> *)
   #[export] Hint Extern 1 => (rewrite Rsqr_mult) : wp_eq_sqr.
 
 
-(* Exponential and logarithm *)
+(** * Exponential and logarithm *)
 
 Create HintDb wp_eq_exp.
 
-  (* ln (exp a)) = a *)
+  (** << ln (exp a)) = a >> *)
   #[export] Hint Extern 1 => (rewrite ln_exp) : wp_eq_exp. 
 
-  (* exp (-a) = / exp a*)
+  (** << exp (-a) = / exp a>> *)
   #[export] Hint Extern 1 => (rewrite exp_Ropp) : wp_eq_exp.
 
-  (* exp(a+b) = exp(a) * exp(b) *)
+  (** << exp(a+b) = exp(a) * exp(b) >> *)
   #[export] Hint Extern 1 => (rewrite exp_plus) : wp_eq_exp.
 
-  (* ln (exp a)) = a *)
+  (** << ln (exp a)) = a >> *)
   #[export] Hint Extern 1 => (rewrite ln_exp) : wp_eq_exp. 
 
 
-(* Integers *)
+(** * Integers *)
 
 Create HintDb wp_integers.
 
@@ -309,7 +309,7 @@ Create HintDb wp_integers.
   #[export] Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
 
 
-(* Integer negation *)
+(** * Integer negation *)
 
 Create HintDb wp_negation_int.
 
@@ -322,7 +322,7 @@ Create HintDb wp_negation_int.
   #[export] Hint Resolve  Znot_gt_le : wp_negation_int.
   #[export] Hint Resolve  Znot_le_gt : wp_negation_int.
 
-(* Natural number negation *)
+(** * Natural number negation *)
 
 Create HintDb wp_negation_nat.
 
@@ -331,7 +331,7 @@ Create HintDb wp_negation_nat.
   #[export] Hint Resolve not_le : wp_negation_nat.
 
 
-(* Real numbers *)
+(** * Real numbers *)
 
 Create HintDb wp_reals.
 
@@ -400,7 +400,7 @@ Create HintDb wp_reals.
 
   #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
 
-(* Real number negation *)
+(** * Real number negation *)
 
 Create HintDb wp_negation_reals.
 
@@ -422,7 +422,7 @@ Create HintDb wp_negation_reals.
   #[export] Hint Resolve Rge_not_gt : wp_negation_reals.
 
 
-(* Sets *)
+(** * Sets *)
 
 Create HintDb wp_sets.
 

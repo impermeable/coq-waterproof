@@ -35,13 +35,18 @@ jobs:
             startGroup "Building documentation"
               sudo chmod 777 -R .
               opam install -y -v odoc
+
               opam exec -- dune build @doc
+              mv _build/default/_doc/_html/ docs/ocaml
+
+              mkdir docs/coq
+              coqdoc theories/*.v --html --lib-name Waterproof --utf8 -d docs/coq/
             endGroup
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "_build/default/_doc/_html/"
+          path: "docs/"
 
   deploy:
     name: deploy

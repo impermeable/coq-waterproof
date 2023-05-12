@@ -1,3 +1,6 @@
+[![Build](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/build.yml/badge.svg)](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/build.yml)
+[![Documentation](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/doc.yml/badge.svg)](https://balthazarpatiachvili.github.io/coq-waterproof/coq-waterproof/)
+
 # coq-waterproof
 
 The coq-waterproof plugin allows you to write Coq proofs in **a style that resembles non-mechanized mathematical proofs**.

@@ -7,7 +7,7 @@ open Hint_dataset_declarations
 (**
   Contains the hint dataset that is currently loaded
 *)
-let loaded_hint_dataset: string ref = ref ~name:"loaded_hint_dataset" core.name
+let loaded_hint_dataset: string ref = ref ~name:"loaded_hint_dataset" (name core)
 
 (**
   Complete list of all existing dataset names
@@ -36,29 +36,7 @@ let dataset_of_name (name: string): hint_dataset =
     | _ -> throw (NonExistingDataset name)
 
 (**
-  Returns the current positive databases
+  Returns the list of databases of the current loaded dataset for the given {! Hint_dataset_declarations.database_type}
 *)
-let positive_databases (): hint_db_name list =
-  let dataset = dataset_of_name !loaded_hint_dataset in
-  dataset.positive_databases
-
-(**
-  Returns the current negative databases
-*)
-let negative_databases (): hint_db_name list =
-  let dataset = dataset_of_name !loaded_hint_dataset in
-  dataset.negative_databases
-
-(**
-  Returns the current decidability databases
-*)
-let decidability_databases (): hint_db_name list =
-  let dataset = dataset_of_name !loaded_hint_dataset in
-  dataset.decidability_databases
-
-(**
-  Returns the current shorten databases
-*)
-let shorten_databases (): hint_db_name list =
-  let dataset = dataset_of_name !loaded_hint_dataset in
-  dataset.shorten_databases
+let get_current_databases (database_type: database_type): hint_db_name list =
+  get_databases (dataset_of_name !loaded_hint_dataset) database_type

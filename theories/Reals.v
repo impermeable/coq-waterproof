@@ -6,6 +6,8 @@ Require Import Waterproof.Notations.
 
 Local Open Scope R_scope.
 
+(** * Lemmas linking reals and booleans *)
+
 Lemma Req_true : forall x y : R, x = y -> Reqb x y = true.
 Proof.
   intros x y H.
@@ -40,7 +42,8 @@ Proof.
   apply n.
 Qed.
 
-(** ## Lemmas regarding identities for absolute values and inverses*)
+(** * Lemmas regarding identities for absolute values and inverses *)
+
 Lemma div_sign_flip : forall r1 r2 : R, r1 > 0 -> r2 > 0 -> r1 > 1 / r2 -> 1 / r1 < r2.
 Proof.
   intros.
@@ -130,11 +133,9 @@ Proof.
       contradiction.
 Qed.
 
-(** ## Lemmas for decidability. *)
-(** * Reals *)
+(** * Lemmas for decidability *)
 
-
-(** Lemmas to write e.g. `{r1 ≤ r2} + {r2 < r1}`.*)
+(** ** Lemmas to write e.g. <<{r1 ≤ r2} + {r2 < r1}>> *)
 
 Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
 Proof.
@@ -167,7 +168,8 @@ Proof.
 Qed.
 
 
-(** Lemmas to split e.g. `{r1 <= r2} into {r1 < r2} + {r1 = r2}`.*)
+(** ** Lemmas to split e.g. <<{r1 <= r2}>> into <<{r1 < r2} + {r1 = r2}>> *)
+
 Lemma Rge_lt_or_eq_dec : forall r1 r2, (r1 >= r2) -> {r2 < r1} + {r1 = r2}.
 Proof.
   intros.

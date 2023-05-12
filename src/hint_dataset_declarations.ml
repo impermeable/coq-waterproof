@@ -4,32 +4,31 @@ open Hints
   Interface to load and unload usual hint databases such as reals, integers, classical logic, ...
 *)
 type hint_dataset = {
-  
-  (*
-    Dataset name
-  *)
-  name: string;
-
-  (*
-    Databases that will be called to solve a goal
-  *)
-  positive_databases: hint_db_name list;
-  
-  (*
-    Databases that will be called to solve a goal containing a negation
-  *)
-  negative_databases: hint_db_name list;
-
-  (*
-    Databases that can be called to solve a goal with decidability properties
-  *)
-  decidability_databases: hint_db_name list;
-
-  (*
-    Databases that will be called to solve a goal faster than [positive_databases]
-  *)
-  shorten_databases: hint_db_name list;
+  name: string; (** Dataset name *)
+  positive_databases: hint_db_name list; (** Databases that will be called to solve a goal *)
+  negative_databases: hint_db_name list; (** Databases that will be called to solve a goal containing a negation *)
+  decidability_databases: hint_db_name list; (** Databases that can be called to solve a goal with decidability properties *)
+  shorten_databases: hint_db_name list; (** Databases that will be called to solve a goal faster than [positive_databases] *)
 }
+
+(**
+  Type referencing all database lists that a {! hint_dataset} should contain
+*)
+type database_type = Positive | Negative | Decidability | Shorten
+
+(**
+  Returns the name of the given [dataset]
+*)
+let name (dataset: hint_dataset): string = dataset.name
+
+(**
+  Returns the list of databases for the given {! database_type}
+*)
+let get_databases (dataset: hint_dataset) (databases: database_type): hint_db_name list = match databases with
+  | Positive -> dataset.positive_databases
+  | Negative -> dataset.negative_databases
+  | Decidability -> dataset.decidability_databases
+  | Shorten -> dataset.shorten_databases
 
 let empty: hint_dataset = {
   name = "Empty";
@@ -49,7 +48,7 @@ let core: hint_dataset = {
 
 let algebra: hint_dataset = {
   name = "Algebra";
-  positive_databases: hint_db_name list = ["arith"; "wp_algebra"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "zarith"];
+  positive_databases: hint_db_name list = ["wp_core"; "arith"; "wp_algebra"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "zarith"];
   negative_databases: hint_db_name list = ["nocore"; "wp_negation_nat"; "wp_negation_int"];
   decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_classical"; "wp_decidability_nat"];
   shorten_databases: hint_db_name list = ["wp_classical_logic"; "wp_constructive_logic"; "wp_core"];

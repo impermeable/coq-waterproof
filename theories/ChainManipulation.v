@@ -15,7 +15,7 @@ Ltac2 simpl_ineq_chains () :=
     end
   ).
 
-(** 
+(**
   Iteratively splits all conjunctions in the hypothesis into individual statements.
 *)
 Ltac2 split_conjunctions () :=

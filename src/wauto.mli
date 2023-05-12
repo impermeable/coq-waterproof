@@ -1,23 +1,22 @@
 open Backtracking
 
 (**
-  Exception raised if no proof of the goal is found
+  Same function as {! Auto.exists_evaluable_reference}
 *)
-exception SearchBound
+val exists_evaluable_reference : Environ.env -> Tacred.evaluable_global_reference -> bool
 
 (**
   Prints "idtac" if the [log] field is [true]
 *)
-val pr_info_nop : trace -> unit
+val pr_info_nop : unit -> unit
 
 (**
   Tries the given tactic and calls an info printer if it fails
 *)
-val tcl_try_dbg :
-  trace ->
-  (trace -> unit) ->
-  unit Proofview.tactic ->
-  unit Proofview.tactic
+val tclTryDbg :
+  (unit -> unit) ->
+  trace Proofview.tactic ->
+  trace Proofview.tactic
 
 (**
   Creates a function that takes a hint database and returns a hint list
@@ -34,18 +33,37 @@ val hintmap_of :
 
   The goal cannot contain evars
 *)
-val search : trace -> int -> Hints.hint_db list -> Tactypes.delayed_open_constr list -> unit Proofview.tactic
+val search :
+  Backtracking.trace ->
+  int ->
+  Tactypes.delayed_open_constr list ->
+  Hints.hint_db list ->
+  Backtracking.trace Proofview.tactic
 
 (**
   Waterproof auto
 
   This function is a rewrite around coq-core.Auto.auto with the same arguments to be able to retrieve which tactics have been used in case of success.
 
-  The given [trace] will be updated with the trace at the end of the execution (consider using).
+  Returns a typed tactic containing the full trace
 *)
 val wauto :
-  trace ->
+  bool ->
   int ->
   Tactypes.delayed_open_constr list ->
   string list ->
-  unit Proofview.tactic
+  Backtracking.trace Proofview.tactic
+
+(**
+  Restricted Waterproof auto
+
+  This function acts the same as {! wauto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
+*)
+val rwauto :
+  bool ->
+  int ->
+  Tactypes.delayed_open_constr list ->
+  string list ->
+  Pp.t list ->
+  Pp.t list ->
+  Backtracking.trace Proofview.tactic
