@@ -1,5 +1,7 @@
 Require Import Reals.Rbase.
 
+Unset Auto Template Polymorphism.
+
 (** * Abstract representations for =, <, ≤, > and ≥ symbols.*)
 
 Inductive EqualRel := | chain_eq.

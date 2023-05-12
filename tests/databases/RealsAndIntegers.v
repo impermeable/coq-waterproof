@@ -2,8 +2,7 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Databases.
 Require Import Waterproof.Hints.
 
-Require Import Reals.
-Require Import Reals.Reals.
+Require Import Coq.Reals.Reals.
 
 Dataset import RealsAndIntegers.
 
