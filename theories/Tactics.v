@@ -1,3 +1,3 @@
 Require Export Ltac2.Ltac2.
 
-Require Export Waterproof.Tactics.Assume.
+Require Export Tactics.Assume.

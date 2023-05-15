@@ -1,13 +1,12 @@
 Require Import Sets.Ensembles. 
 
-Require Import Waterproof.Notations.Common.
+Require Import Notations.Common.
 
 Unset Auto Template Polymorphism.
 Record subset (X : Type) := as_subset { pred :> X -> Prop }.
 
 Declare Scope subset_scope.
 Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.
-
 
 Notation "'subset' U" := 
   (Ensemble U) (at level 50). 
@@ -33,7 +32,7 @@ Notation "A \ B" :=
   (Setminus _ A B) (at level 45). 
 
 Notation "x ∈ A" := 
-  (In _ A x) (at level 50) : ensemble_scope. 
+  (In _ A x) (at level 50) : subset_scope. 
 
 Notation "x ∉ A" :=  
   (~ In _ A x) (at level 50). 

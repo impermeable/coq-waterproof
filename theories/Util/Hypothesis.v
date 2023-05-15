@@ -1,6 +1,6 @@
 Require Import Ltac2.Ltac2.
 
-Require Import Waterproof.Util.Init.
+Require Import Util.Init.
 
 (** get_value_of_hyp_id
     

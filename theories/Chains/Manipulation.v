@@ -1,7 +1,7 @@
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
-Require Import Waterproof.InequalityChains.
+Require Import Inequalities.
 
 (**
   Writes out an inequality chain as a big conjunction.

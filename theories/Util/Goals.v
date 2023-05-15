@@ -1,5 +1,7 @@
 Require Import Ltac2.Ltac2.
 
+Require Import Util.Constr.
+
 Module Case.
 
   Private Inductive Wrapper (A G : Type) : Type :=
@@ -152,3 +154,28 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- _] => ()
   end.
 
+  Ltac2 Type exn ::= [ CaseError(string) | InputError(message) ].
+
+(** *
+  Removes the Case.Wrapper.
+
+  Arguments:
+    - [t : constr], case in which the goal is wrapped
+
+  Does:
+    - removes the Case.Wrapper from the goal
+
+  Raises Exceptions:
+    - [CaseError], if the [goal] is not wrapped in the case [t], i.e. the goal is not of the form [Case.Wrapper t G] for some type [G].
+*)
+Ltac2 case (t:constr) :=
+  lazy_match! goal with
+    | [|- Case.Wrapper ?v _] =>
+      match check_constr_equal v t with
+        | true => apply (Case.wrap $v)
+        | false => Control.zero (CaseError "Wrong case specified.")
+      end
+    | [|- _] => Control.zero (CaseError "No need to specify case.")
+  end.
+
+Ltac2 Notation "Case" t(constr) := case t.

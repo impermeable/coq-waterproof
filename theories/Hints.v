@@ -10,8 +10,8 @@ Require Import Reals.Rdefinitions.
 Require Import Sets.Classical_sets.
 Require Import Sets.Ensembles.
 
-Require Import Waterproof.Chains.Manipulation.
-Require Import Waterproof.Libs.Reals.
+Require Import Chains.Manipulation.
+Require Import Libs.Reals.
 
 (** * Waterproof core *)
 
