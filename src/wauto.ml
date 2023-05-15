@@ -299,7 +299,6 @@ let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list
 *)
 let wauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): trace tactic = 
   gen_wauto log ~n lems (Some dbnames)
-  
 
 (**
   Restricted Waterproof auto

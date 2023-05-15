@@ -5,6 +5,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Ltac_plugin
 open Ltac_plugin.G_auto
 open Proofview
+open Proofview.Notations
 
 open Hint_dataset
 open Hint_dataset_declarations
@@ -172,3 +173,23 @@ TACTIC EXTEND waterprove
       waterprove 5 ?shield:(Some true) (eval_uconstrs ist lems) Positive
     }
 END
+
+{
+
+module Tac2ffi = Ltac2_plugin.Tac2ffi
+module Tac2env = Ltac2_plugin.Tac2env
+module Tac2expr = Ltac2_plugin.Tac2expr
+open Tac2ffi
+
+let pname s = { Tac2expr.mltac_plugin = "coq-core.plugins.coq-waterproof"; mltac_tactic = s }
+
+let () =
+  Tac2env.define_primitive 
+    (pname "wauto") @@
+    mk_closure arity_one @@ fun n ->
+      begin
+        wauto true (Tac2ffi.repr_to int n) [] ["core"] >>= fun trace ->
+        tclUNIT n
+      end
+
+}
