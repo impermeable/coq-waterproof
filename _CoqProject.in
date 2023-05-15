@@ -2,7 +2,7 @@ src/META.coq-waterproof
 -R theories/ Waterproof
 -arg "-w all"
 -I src
--I @LTAC2_DIR@core/plugins/ltac2
+-I @COQ_DIR@-core/plugins/ltac2
 
 src/backtracking.ml
 src/backtracking.mli

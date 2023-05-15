@@ -2,6 +2,7 @@ _build/
 _opam/
 .vscode/
 
+_CoqProject
 CoqMakefile
 CoqMakefile.conf
 .CoqMakefile.d
