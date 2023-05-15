@@ -1,6 +1,12 @@
 _build/
 _opam/
 .vscode/
+autom4te.cache/
+
+configure
+configure~
+config.status
+config.log
 
 _CoqProject
 CoqMakefile
@@ -9,6 +15,7 @@ CoqMakefile.conf
 Makefile
 Makefile.conf
 Makefile.coq
+.Makefile.coq.d
 Makefile.coq.conf
 .Makefile.d
 

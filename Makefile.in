@@ -1,0 +1,30 @@
+COQ_PROJ := _CoqProject
+COQ_MAKEFILE := Makefile.coq
+COQ_MAKE := +${MAKE} -f $(COQ_MAKEFILE)
+
+all install doc: $(COQ_MAKEFILE) Makefile
+	$(COQ_MAKE) $@
+
+clean:
+	-$(COQ_MAKE) clean
+	find . -type f -name ".*.aux" -delete
+
+configure: configure.ac
+
+Makefile: Makefile.in configure
+	./configure
+
+%.vo: %.v
+	$(COQ_MAKE) $@
+
+$(COQ_MAKEFILE): $(COQ_PROJ)
+	$(COQBIN)coq_makefile -I @LTAC2_CAML_FILES@ -f $< -o $@
+
+help:
+	@echo	"You can run:"
+	@echo 	"	* 'make' to build coq-waterproof"
+	@echo 	"	* 'make install' to install coq-waterproof"
+	@echo 	"	* 'make doc' to generate documentation of the library"
+	@echo 	"	* 'make clean' to remove generated files"
+
+.PHONY: all install uninstall doc clean

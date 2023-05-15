@@ -21,3 +21,7 @@ jobs:
         with:
           custom_image: 'coqorg/coq:dev-ocaml-4.14-flambda'
           opam_file: 'coq-waterproof.opam'
+          before_script: |
+            startGroup "Install dependencies"
+              sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
+            endGroup

@@ -1,2 +1,0 @@
-clean::
-	find . -type f -name ".*.aux" -delete

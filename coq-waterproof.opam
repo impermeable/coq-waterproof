@@ -20,10 +20,9 @@ depends: [
 ]
 
 build: [
-  ["cp" "_CoqProject.in" "_CoqProject"]
-  ["sed" "-i" "s#@COQ_DIR@#$(coqtop -where)#" "_CoqProject"]
-  ["coq_makefile" "-f" "_CoqProject" "-o" "Makefile"]
-  [make]
+  ["autoreconf" "-i" "-s"]
+  ["./configure"]
+  [make "-j%{jobs}%"]
 ]
 
 install: [make "install"]
