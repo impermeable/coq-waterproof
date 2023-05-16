@@ -39,7 +39,7 @@ theories/Notations/Sets.v
 theories/Tactics.v
 theories/Tactics/Assume.v
 theories/Tactics/Because.v
-# theories/Tactics/Either.v
+theories/Tactics/Either.v
 theories/Util/Init.v
 theories/Util/Constr.v
 theories/Util/Goals.v

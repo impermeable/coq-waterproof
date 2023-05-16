@@ -24,7 +24,7 @@ let pname (s: string): ml_tactic_name = { mltac_plugin = "coq-core.plugins.coq-w
 
 (** Wrapper around {! Tac2env.define_primitive} to make easier the primitive definition *)
 let define_primitive (name: string) (arity: 'a arity) (f: 'a): unit =
-  Tac2env.define_primitive (pname name) (mk_closure_val arity f)
+  Tac2env.define_primitive (pname name) (mk_closure arity f)
 
 (** 
   Defines a function of arity 0 (that only take a [unit] as an argument)
