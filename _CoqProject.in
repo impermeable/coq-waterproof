@@ -7,6 +7,8 @@ src/backtracking.ml
 src/backtracking.mli
 src/exceptions.ml
 src/exceptions.mli
+src/ffi.ml
+src/ffi.mli
 src/hint_dataset.ml
 src/hint_dataset.mli
 src/hint_dataset_declarations.ml
@@ -44,6 +46,7 @@ theories/Util/Constr.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Waterproof.v
+theories/Waterprove.v
 
 # Coq-Waterproof tests
 tests/tactics/Wauto.v
