@@ -8,8 +8,6 @@ src/backtracking.ml
 src/backtracking.mli
 src/exceptions.ml
 src/exceptions.mli
-src/ffi.ml
-src/ffi.mli
 src/hint_dataset.ml
 src/hint_dataset.mli
 src/hint_dataset_declarations.ml

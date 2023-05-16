@@ -11,7 +11,7 @@ open Hint_dataset_declarations
 }
 
 VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
-| [ "Import" ident(dataset) ] ->
+| [ "Waterproof" "Enable" "Automation" ident(dataset) ] ->
     {
       let dataset_name = Names.Id.to_string dataset in
       load_dataset dataset_name
@@ -19,7 +19,7 @@ VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
 END
 
 VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
-  | [ "Dataset" "loaded" ] ->
+  | [ "Waterproof" "List" "Automation" "Databases" ] ->
     {
       Feedback.msg_notice ((str "Loaded dataset : ") ++ (str !loaded_hint_dataset));
       Feedback.msg_notice ((str "Positive databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Positive));

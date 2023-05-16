@@ -1,5 +1,3 @@
-module Tac2types = Ltac2_plugin.Tac2types
-
 (**
   Returns a [bool] from a [EConstr.constr] indicating if this term is forbidden in automation.
 
@@ -24,12 +22,12 @@ val shield_test : unit -> unit Proofview.tactic
   Arguments:
     - [depth] ([int]): max depth of the proof search
     - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
-    - [lems] ([Evd.econstr Tac2types.thunk list]): additional lemmas that are given to solve the proof
+    - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 val waterprove :
-  int ->
+  int -> 
   ?shield:bool ->
-  Evd.econstr Tac2types.thunk list ->
+  Tactypes.delayed_open_constr list ->
   Hint_dataset_declarations.database_type ->
   unit Proofview.tactic

@@ -11,6 +11,7 @@ open Proofview.Notations
 open Tac2expr
 open Tac2ffi
 
+open Exceptions
 open Hint_dataset_declarations
 open Waterprove
 
@@ -23,7 +24,7 @@ let pname (s: string): ml_tactic_name = { mltac_plugin = "coq-core.plugins.coq-w
 
 (** Wrapper around {! Tac2env.define_primitive} to make easier the primitive definition *)
 let define_primitive (name: string) (arity: 'a arity) (f: 'a): unit =
-  Tac2env.define_primitive (pname name) (mk_closure arity f)
+  Tac2env.define_primitive (pname name) (mk_closure_val arity f)
 
 (** 
   Defines a function of arity 0 (that only take a [unit] as an argument)
@@ -89,16 +90,43 @@ let delayed_of_thunk (r: 'a repr) (tac: (unit, 'a) fun1) (env: Environ.env) (sig
 (** Converts a ['a repr] into a [(unit -> 'a) repr] *)
 let thunk (r: 'a repr): (unit, 'a) fun1 repr = fun1 unit r
 
-let _ = delayed_of_thunk
 let _ = define0
 let _ = define1
 let _ = define2
 let _ = define3
-let _ = define4
 let _ = define5
 
+(* Converts a {! Hint_dataset_declarations.database_type} into a [valexpr] *)
+let database_type_to_valexp (database_type: database_type): valexpr = match database_type with
+  | Positive -> ValInt 0
+  | Negative -> ValInt 1
+  | Decidability -> ValInt 2
+  | Shorten -> ValInt 3
+  
+(* Converts a [valexpr] into a {! Hint_dataset_declarations.database_type} *)
+let database_type_from_valexp (value: valexpr): database_type = match value with
+  | ValInt n ->
+    let database_type = match n with
+      | 0 -> Positive
+      | 1 -> Negative
+      | 2 -> Decidability
+      | 3 -> Shorten
+      | _ -> throw (CastError "cannot cast something an [int] greater than 3 into a [database_type]")
+    in database_type
+  | _ -> throw (CastError "cannot cast something different than an [int] into a [database_type]")
+
+(* Export {! Hint_dataset_declarations.database_type} to Ltac2 *)
 let () =
-  define4 "waterprove" int bool (list (thunk constr)) string @@ fun depth shield lems database_type ->
-    waterprove depth ~shield (List.map (fun lem -> delayed_of_thunk constr lem) lems) Positive >>= fun () -> tclUNIT @@ of_unit ()
+  define0 "database_type_positive" @@ tclUNIT @@ database_type_to_valexp Positive;
+  define0 "database_type_negative" @@ tclUNIT @@ database_type_to_valexp Negative;
+  define0 "database_type_decidability" @@ tclUNIT @@ database_type_to_valexp Decidability;
+  define0 "database_type_shorten" @@ tclUNIT @@ database_type_to_valexp Shorten
+
+(* Export {! Waterprove.waterprove} to Ltac2 *)
+let () =
+  define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
+  fun depth shield lems database_type ->
+    waterprove depth ~shield (List.map (fun lem -> delayed_of_thunk constr lem) lems) database_type >>=
+    fun () -> tclUNIT @@ of_unit ()
 
 }

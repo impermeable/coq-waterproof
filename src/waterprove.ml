@@ -1,6 +1,3 @@
-module Tac2ffi = Ltac2_plugin.Tac2ffi
-module Tac2types = Ltac2_plugin.Tac2types
-
 open Constr
 open EConstr
 open Exninfo
@@ -8,11 +5,8 @@ open Hints
 open Pp
 open Proofview
 open Proofview.Notations
-open Tac2ffi
-open Tac2types
 
 open Exceptions
-open Ffi
 open Hint_dataset
 open Hint_dataset_declarations
 open Wauto
@@ -101,7 +95,3 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
       if is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
       automation_routine depth lems (get_current_databases database_type)
     end
-
-(* let () =
-  define4 "waterprove" int bool (list constr) string @@ fun depth shield lems database_type ->
-    waterprove depth ~shield (List.map (fun c -> delayed_of_thunk constr c) lems) *)
