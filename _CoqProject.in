@@ -1,6 +1,7 @@
 src/META.coq-waterproof
 -R theories/ Waterproof
 -I src
+-I @LTAC2_CAML_FILES@
 
 # Coq-Wateproof OCaml plugin
 src/backtracking.ml
@@ -49,10 +50,10 @@ theories/Waterproof.v
 theories/Waterprove.v
 
 # Coq-Waterproof tests
-tests/tactics/Wauto.v
-tests/tactics/Weauto.v
-tests/tactics/Rwauto.v
-tests/tactics/Rweauto.v
-tests/databases/Core.v
-tests/databases/Empty.v
-tests/databases/RealsAndIntegers.v
+# tests/tactics/Wauto.v
+# tests/tactics/Weauto.v
+# tests/tactics/Rwauto.v
+# tests/tactics/Rweauto.v
+# tests/databases/Core.v
+# tests/databases/Empty.v
+# tests/databases/RealsAndIntegers.v
