@@ -1,43 +1,21 @@
-(** * [induction.v]
-Author: 
-    - Cosmin Manea (1298542)
-    - Jelle Wemmenhove
+Require Import Ltac2.Ltac2.
 
-Creation date: 06 June 2021
-Latest edit:   07 Oct 2021
-
-Tactic for proving by mathematical induction.
---------------------------------------------------------------------------------
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-
-From Ltac2 Require Import Ltac2.
-
-Require Import Waterproof.auxiliary.
-Require Import Waterproof.debug.
-Require Export Waterproof.tactics.goal_wrappers.
+Require Import Util.Goals.
+Require Import Util.Hypothesis.
 
 Ltac2 Type exn ::= [ NaturalInductionError(string) ].
 Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
 
 (* Lemma to write Sn in goal induction step as n+1. *)
 Lemma Sn_eq_nplus1 : forall n, S n = n + 1.
-Proof. intro n. induction n. reflexivity. simpl. rewrite IHn. reflexivity. Qed.
+Proof.
+  intro n.
+  induction n.
+  reflexivity.
+  simpl.
+  rewrite IHn.
+  reflexivity.
+Qed.
 
 (** * induction_with_hypothesis_naming
     Performs mathematical induction.
@@ -56,7 +34,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
     | Err _ => intros $x
   end;
   let x_hyp := Control.hyp x in
-  let type_x := (Aux.get_value_of_hyp x_hyp) in
+  let type_x := (get_value_of_hyp x_hyp) in
   match (Constr.equal type_x constr:(nat)) with
     | true => let ih_x := Fresh.in_goal @IH in
       induction $x_hyp as [ | $x $ih_x]; 
@@ -66,7 +44,6 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
   end.
 
 Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
-  debug_ident "induction" "x" x;
   panic_if_goal_wrapped ();
   induction_without_hypothesis_naming x.
 
@@ -93,9 +70,7 @@ Ltac2 base_case (t:constr) :=
     | [|- _] => raise_natind_error("No need to indicate showing a base case.")
   end.
 
-Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" that(opt("that")) t(constr) :=
-  debug "induction_base_base" "start";
-  base_case t.
+Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" that(opt("that")) t(constr) := base_case t.
 
 (** *
     Removes the NaturalInduction.Step.Wrapper.
@@ -115,6 +90,4 @@ Ltac2 induction_step () :=
     | [|- _] => raise_natind_error("No need to indicate showing an induction step.")
   end.
 
-Ltac2 Notation "We" "now" "show" "the" "induction" "step" := 
-  debug "induction_step" "start";
-  induction_step ().
+Ltac2 Notation "We" "now" "show" "the" "induction" "step" := induction_step ().

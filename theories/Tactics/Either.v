@@ -12,15 +12,15 @@ Proof.
   left; exact b.
 Qed.
 
-(** * either_case_1_or_case_2
-    Split the proof by case distinction.
+(**
+  Split the proof by case distinction.
 
-    Arguments:
-        - [t1 : constr], the first case.
-        - [t2 : constr], the second case.
+  Arguments:
+    - [t1 : constr], the first case.
+    - [t2 : constr], the second case.
 
-    Does:
-        - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+  Does:
+    - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) :=
   let h_id := Fresh.in_goal @h in
@@ -112,16 +112,16 @@ Proof.
 Qed.
 
 
-(** * either_case_1_or_case_2_or_case3
-    Split the proof by case distinction.
+(**
+  Split the proof by case distinction.
 
-    Arguments:
-        - [t1 : constr], the first case.
-        - [t2 : constr], the second case.
-        - [t3 : constr], the third case.
+  Arguments:
+    - [t1 : constr], the first case.
+    - [t2 : constr], the second case.
+    - [t3 : constr], the third case.
 
-    Does:
-        - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+  Does:
+    - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
   let h_id := Fresh.in_goal @h in

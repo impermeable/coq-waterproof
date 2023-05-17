@@ -26,26 +26,67 @@ src/g_waterproof.mli
 src/waterproof.mlpack
 
 # Coq-Wateproof Coq theories
+
+theories/Automation.v
+theories/Automation/Framework.v
+theories/Automation/Hints.v
+
+theories/Chains.v
 theories/Chains/Manipulation.v
 theories/Chains/Inequalities.v
-theories/Databases.v
-theories/Hints.v
+
 theories/Libs/Negation.v
 theories/Libs/Reals.v
+
 theories/Notations.v
 theories/Notations/Common.v
 theories/Notations/Reals.v
 theories/Notations/Sets.v
+
 theories/Tactics.v
 theories/Tactics/Assume.v
 theories/Tactics/Because.v
+theories/Tactics/BothDirections.v
+theories/Tactics/BothStatements.v
+theories/Tactics/Claims.v
+theories/Tactics/Choose.v
+theories/Tactics/Conclusion.v
+theories/Tactics/Contradiction.v
+theories/Tactics/Define.v
 theories/Tactics/Either.v
+theories/Tactics/Induction.v
+theories/Tactics/ItHolds.v
+theories/Tactics/ItSuffices.v
+theories/Tactics/Sets.v
+theories/Tactics/Take.v
+theories/Tactics/ToShow.v
+theories/Tactics/Unfold.v
+
 theories/Util/Init.v
 theories/Util/Constr.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
+
 theories/Waterproof.v
 theories/Waterprove.v
+
+# Coq-Waterproof libraries
+
+## Analysis
+# theories/Libs/Analysis/ContinuityDomainNat.v
+# theories/Libs/Analysis/ContinuityDomainR.v
+# theories/Libs/Analysis/LimsupLiminfBolzano.v
+# theories/Libs/Analysis/MetricSpaces.v
+# theories/Libs/Analysis/OpenAndClosed.v
+# theories/Libs/Analysis/Reals.v
+# theories/Libs/Analysis/SequencesMetric.v
+# theories/Libs/Analysis/Sequences.v
+# theories/Libs/Analysis/SequentialAccumulationPoints.v
+# theories/Libs/Analysis/Series.v
+# theories/Libs/Analysis/SubsequencesInduction.v
+# theories/Libs/Analysis/SubsequencesMetric.v
+# theories/Libs/Analysis/Subsequences.v
+# theories/Libs/Analysis/SupAndInf.v
 
 # Coq-Waterproof tests
 # tests/tactics/Wauto.v

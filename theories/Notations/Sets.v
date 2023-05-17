@@ -32,7 +32,7 @@ Notation "A \ B" :=
   (Setminus _ A B) (at level 45). 
 
 Notation "x ∈ A" := 
-  (In _ A x) (at level 50) : subset_scope. 
+  (In _ A x) (at level 50). 
 
 Notation "x ∉ A" :=  
   (~ In _ A x) (at level 50). 

@@ -10,7 +10,8 @@ Require Import Reals.Rdefinitions.
 Require Import Sets.Classical_sets.
 Require Import Sets.Ensembles.
 
-Require Import Chains.Manipulation.
+Require Import Chains.
+Require Import Libs.Negation.
 Require Import Libs.Reals.
 
 (** * Waterproof core *)
@@ -22,7 +23,7 @@ Create HintDb wp_core.
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => congruence : wp_core.
-
+  #[export] Hint Extern 0 (total_statement _) => repeat split; cbn : wp_core. 
 
 (** * Classical logic *)
 
@@ -33,9 +34,7 @@ Create HintDb wp_classical_logic.
   #[export] Hint Resolve all_not_not_ex : wp_classical_logic.
   #[export] Hint Resolve not_all_not_ex : wp_classical_logic.
   #[export] Hint Resolve not_all_ex_not : wp_classical_logic.
-  (* #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic. *)
-  #[export] Hint Extern 5 => firstorder (auto 2 with core) : wp_classical_logic.
-
+  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
 
 (** * Constructive logic *)
 

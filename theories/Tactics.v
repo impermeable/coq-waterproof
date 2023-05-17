@@ -1,7 +1,19 @@
 Require Export Ltac2.Ltac2.
 
-Require Export Waterprove.
-
 Require Export Tactics.Assume.
 Require Export Tactics.Because.
+Require Export Tactics.BothDirections.
+Require Export Tactics.BothStatements.
+Require Export Tactics.Claims.
+Require Export Tactics.Choose.
+Require Export Tactics.Conclusion.
+Require Export Tactics.Contradiction.
+Require Export Tactics.Define.
 Require Export Tactics.Either.
+Require Export Tactics.Induction.
+Require Export Tactics.ItHolds.
+Require Export Tactics.ItSuffices.
+Require Export Tactics.Sets.
+Require Export Tactics.Take.
+Require Export Tactics.ToShow.
+Require Export Tactics.Unfold.

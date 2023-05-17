@@ -1,42 +1,14 @@
-(** * [it_holds_that.v]
-Authors: 
-    - Lulof Pirée (1363638)
-Creation date: 6 June 2021
+Require Import Ltac2.Ltac2.
 
-Tactic [It holds that ...].
-Used to prove intermediate statements.
-
---------------------------------------------------------------------------------
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-From Ltac2 Require Import Ltac2.
-From Ltac2 Require Option.
-Require Import micromega.Lra.
-
-Require Import Waterproof.auxiliary.
-Require Import Waterproof.debug.
-Require Import Waterproof.message.
-Require Import Waterproof.tactics.forward_reasoning.forward_reasoning_aux.
-Require Import Waterproof.tactics.goal_wrappers.
-Require Import Waterproof.waterprove.waterprove.
+Require Import Util.Constr.
+Require Import Util.Goals.
+Require Import Util.Hypothesis.
+Require Import Util.Init.
+Require Import Waterprove.
 
 Local Ltac2 idtac () := ().
 
-(** * assert_and_prove_sublemma
+(**
   Introduce a new sublemma and try to prove it immediately,
   optionally using a given lemma.
 
@@ -49,24 +21,22 @@ Local Ltac2 idtac () := ().
     - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) (proving_lemma: constr option) :=
-  debug_constr "assert_and_prove_sublemma" "conclusion" conclusion;
   let help_lemma := unwrap_optional_lemma proving_lemma in
-  let by_arg () := waterprove_without_hint conclusion help_lemma true in
+  let by_arg () := waterprove 5 false [fun () => help_lemma] Positive in
   let proof_attempt () := (* Check whether identifier is given *)
     match id with
       | None =>
         let h := Fresh.in_goal @__wp__h in
-        Aux.ltac2_assert_with_by h conclusion by_arg
-      | Some id => Aux.ltac2_assert_with_by id conclusion by_arg
+        ltac2_assert_with_by h conclusion by_arg
+      | Some id => 
+        ltac2_assert_with_by id conclusion by_arg
     end
   in match Control.case proof_attempt with
-    | Val _ => 
-      debug "assert_and_prove_sublemma" "New sublemma successfully added.";
-      idtac () 
+    | Val _ => idtac () 
     | Err exn => Control.zero exn
   end.
 
-(** * By ... it holds that ... (...)
+(**
   Introduce a new sublemma and try to prove it immediately using a given lemma.
 
   Arguments:
@@ -78,7 +48,6 @@ Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) (proving
     - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 Notation "By" lemma(constr) "it" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")"))) :=
-  debug_constr "by_it_holds" "lemma" lemma;
   panic_if_goal_wrapped ();
   assert_and_prove_sublemma id conclusion (Some lemma).
     
@@ -101,6 +70,5 @@ Ltac2 Notation "By" lemma(constr) "it" "holds" "that" conclusion(constr) id(opt(
             but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 Notation "It" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")")))  :=
-  debug_constr "it_holds" "conclusion" conclusion;
   panic_if_goal_wrapped ();
   assert_and_prove_sublemma id conclusion None.

@@ -13,7 +13,7 @@ Local Ltac2 warn_wrong_prop_specified (user_type:constr) (coq_type:constr) :=
         (concat (of_string " should be ") (of_constr coq_type))) (of_string ".")))
   end.
 
-(** *
+(**
   Destruct an AND hypothesis into its respective two parts if the types of the respective parts are correctly specified.
 
   Arguments:
@@ -63,7 +63,7 @@ Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident
   and_hypothesis_destruct_with_types s u tu v tv.
 
 
-(** *
+(**
   Destruct an OR hypothesis into its respective two parts if the types of the respective parts are correctly specified. Wraps the goal for both parts.
 
   Arguments:

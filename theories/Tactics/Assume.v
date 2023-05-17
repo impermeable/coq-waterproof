@@ -49,8 +49,7 @@ Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
   end
 end.
 
-(** * process_ident_type_pairs
-  
+(**  
   Attempts to recursively assume a list of hypotheses.
 
   Arguments:
@@ -101,9 +100,8 @@ Local Ltac2 remove_contra_wrapper (wrapped_assumption : constr) (assumption : co
   end.
 
 
-(** * assume
-    Checks whether the 'Assume' tactic can be applied to the current goal, 
-    attempts to introduce a list of hypotheses.
+(**
+  Checks whether the 'Assume' tactic can be applied to the current goal, attempts to introduce a list of hypotheses.
 *)
 Local Ltac2 assume (x : (constr * (ident option)) list) := 
   (* Handle goal wrappers *)
@@ -126,12 +124,12 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   end.
 
 
-(** * Assume
-    Version with type checking.
+(**
+  Version with type checking.
 *)
 Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
 
-(** * such that
-    Simply alternative notation for [Assume].
+(**
+  Simply alternative notation for [Assume].
 *)
 Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.

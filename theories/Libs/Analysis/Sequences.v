@@ -43,7 +43,7 @@ Open Scope extra.
 
 A sequence of real numbers is a function from the natural numbers to the real numbers. So a function $a_seq : \mathbb{N} → \mathbb{R}$ is a sequence.*)
 
-(** ### Examples of sequences
+(** *** Examples of sequences
 
 Let us give a few examples of sequences of real numbers. The first example is the sequence $a_seq : ℕ → ℝ$ defined by 
 
@@ -62,7 +62,7 @@ Definition y_seq : ℕ → ℝ := 3.
 However, let us also give an alternative way, which looks a  bit closer to the definition $y_seq_n := 3$.*)
 
 Definition y_seq (n : ℕ) := 3.
-(** ## Terminology about sequences
+(** ** Terminology about sequences
 
 We call the function values $a(0)$, $a(1)$, $a(2)$, $\dots$ the **elements** of the sequence. Instead of $a(n)$, in mathematics we often write $a_n$. Moreover, instead of writing *let $a : \mathbb{N} \to \mathbb{R}$ be a sequence*, one often writes *let $(a_n)_{n \in \mathbb{N}}$ be a sequence*, or even shorter *let $(a_n)$ be a sequence*. 
 
@@ -72,7 +72,7 @@ a_0, a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, \dots
 $$
 
 However convenient and intuitive this notation is, it can also become confusing if you forget that a sequence of real numbers is *really* a function from the natural numbers to the real numbers.*)
-(** ## Asymptotic behavior of sequences
+(** ** Asymptotic behavior of sequences
 
 Analysis all revolves around questions such as: what happens if a parameter gets very small? What happens if a parameter gets very large?
 
@@ -162,7 +162,7 @@ Qed.
 
 
 
-(** ## A simple limit
+(** ** A simple limit
 
 The simplest sequence we can think of is the constant sequence, e.g. $1, 1, 1, 1, 1, ...$.
 We can generalise this to any real number $c$, and define the constant sequence $s_n = c, ∀ n : \mathbb{N}$.
@@ -181,7 +181,7 @@ Proof.
     We conclude that (& |s n - c| = | c - c | = |0| = 0 < ε).
 Qed.
 
-(** #### **Another simple limit**
+(** *** **Another simple limit**
 
 Next, we consider another rather simple sequence, namely $1, \frac{1}{2}, \frac{1}{3}, \frac{1}{4}, ...$.
 We can denote the sequence as follows:
@@ -235,7 +235,7 @@ Qed.
 
 
 
-(** ## The squeeze theorem*)
+(** ** The squeeze theorem*)
 Theorem squeeze_theorem :
   ∀ (a : ℕ → ℝ) (b : ℕ → ℝ) (c : ℕ → ℝ) (l : ℝ),
     (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) ⇒
@@ -339,7 +339,7 @@ Proof.
 Qed.
 
 
-(** ## Order and limits*)
+(** ** Order and limits*)
 Lemma seq_ordered_lim_ordered :
   ∀ (a b: ℕ → ℝ) (m l : ℝ),
     Un_cv a m ⇒ Un_cv b l ⇒

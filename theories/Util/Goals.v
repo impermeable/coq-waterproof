@@ -137,10 +137,10 @@ Ltac2 raise_goal_wrapped_error () :=
   ).
 
 
-(** * panic_if_goal_wrapped
-    Throws an error if the goal is wrapped in one of the wrappers above.
+(**
+  Throws an error if the goal is wrapped in one of the wrappers above.
 
-    Arguments:  None
+  Arguments:  None
 *)
 Ltac2 panic_if_goal_wrapped () :=
   lazy_match! goal with
@@ -156,7 +156,7 @@ Ltac2 panic_if_goal_wrapped () :=
 
   Ltac2 Type exn ::= [ CaseError(string) | InputError(message) ].
 
-(** *
+(**
   Removes the Case.Wrapper.
 
   Arguments:

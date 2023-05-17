@@ -1,10 +1,9 @@
 open Constr
 open EConstr
-open Exninfo
+(* open Exninfo *)
 open Hints
 open Pp
 open Proofview
-open Proofview.Notations
 
 open Exceptions
 open Hint_dataset
@@ -60,16 +59,18 @@ let shield_test (): unit tactic =
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   tclORELSE
     begin
-      tclIGNORE @@ wauto false depth lems databases <*>
-      tclIGNORE @@ weauto false depth lems databases
+      tclORELSE
+        (tclPROGRESS @@ tclIGNORE @@ wauto false depth lems databases)
+        (fun _ -> tclPROGRESS @@ tclIGNORE @@ weauto false depth lems databases)
     end
     begin
       fun (exn, info) ->
-        throw (FailedAutomation (
+        tclZERO ~info exn
+        (* throw (FailedAutomation (
           match get_backtrace info with
             | None -> "could not find a proof for the current goal"
             | Some backtrace -> backtrace_to_string backtrace
-        ))
+        )) *)
     end
 
 (**
@@ -92,6 +93,6 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     begin
       let sigma = Proofview.Goal.sigma goal in
       let conclusion = Proofview.Goal.concl goal in
-      if is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+      if shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
       automation_routine depth lems (get_current_databases database_type)
     end

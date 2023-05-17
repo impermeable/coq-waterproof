@@ -1,37 +1,15 @@
-(** * Suprema and infima
-
-Authors:
-    - Jim Portegies
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-Require Import Reals.
-Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
+Require Import Coq.Reals.Reals.
 
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.notations.notations.
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
-Require Import Waterproof.definitions.set_definitions.
-Require Import Waterproof.set_search_depth.To_5.
+Require Import Automation.
+Require Import Libs.Negation.
+Require Import Notations.
+Require Import Tactics.
 
 Open Scope R_scope.
+
+Waterproof Enable Automation RealsAndIntegers.
 
 Notation is_bounded_above := bound.
 Notation is_sup := is_lub.
@@ -42,21 +20,21 @@ Notation "M 'is' 'the' 'supremum' 'of' A" := (is_lub A M) (at level 69, only par
 Local Ltac2 unfold_is_lub    ()          := unfold is_lub.
 Local Ltac2 unfold_is_lub_in (h : ident) := unfold is_lub in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "supremum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
+  Unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
 
 Notation "A 'is' '_bounded' 'from' 'above_'" := (bound A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69, only parsing).
 Local Ltac2 unfold_bound    ()          := unfold bound.
 Local Ltac2 unfold_bound_in (h : ident) := unfold bound in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_bound unfold_bound_in cl.
+  Unfold.expand_def_framework unfold_bound unfold_bound_in cl.
 
 Notation "M 'is' 'an' '_upper' 'bound_' 'of' A" := (is_upper_bound A M) (at level 69).
 Notation "M 'is' 'an' 'upper' 'bound' 'of' A" := (is_upper_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_upper_bound    ()          := unfold is_upper_bound.
 Local Ltac2 unfold_is_upper_bound_in (h : ident) := unfold is_upper_bound in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
+  Unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
 
 (** Maximum *)
 Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound of A).
@@ -66,7 +44,7 @@ Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only pars
 Local Ltac2 unfold_is_max    ()          := unfold is_max.
 Local Ltac2 unfold_is_max_in (h : ident) := unfold is_max in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "maximum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_is_max unfold_is_max_in cl.
+  Unfold.expand_def_framework unfold_is_max unfold_is_max_in cl.
 
 
 
@@ -115,22 +93,21 @@ Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only pars
 Local Ltac2 unfold_is_inf    ()          := unfold is_inf.
 Local Ltac2 unfold_is_inf_in (h : ident) := unfold is_inf in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "infimum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
+  Unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
 
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
 Local Ltac2 unfold_is_bounded_below_in (h : ident) := unfold is_bounded_below in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
+  Unfold.expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'of' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'of' A" := (is_lower_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_lower_bound    ()          := unfold is_lower_bound.
 Local Ltac2 unfold_is_lower_bound_in (h : ident) := unfold is_lower_bound in $h.
 Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
-  Waterproof.tactics.unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
-
+  Unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
 
 
 (** ## Reflection of a subset of ℝ in the origin
@@ -141,8 +118,7 @@ in the origin.
 Given a subset $A : ℝ → \mathsf{Prop}$, 
 we consider the set $-A$ 
 (which we write as $\mathsf{set\_opp} A$), defined by*)
-Definition set_opp (A : ℝ → Prop) := (x ↦ (A (-x))).
-
+Definition set_opp (A : ℝ -> Prop) := (fun x ↦ (A (-x))).
 
 (** TODO: add this to additional lemmas.. *)
 (** Hint Resolve neg_opp_is_original_elem : additional.*)
@@ -162,7 +138,6 @@ Proof.
     By (i) it holds that (a ≤ M).
     We conclude that (-M ≤ b).
 Qed.
-
 
 Lemma low_bd_set_to_upp_bd_set_opp :
   ∀ (A : ℝ → Prop) (m : ℝ),
@@ -295,7 +270,7 @@ Lemma exists_inf :
 Proof.
     Take A : (ℝ → Prop).
     Take z : ℝ. Assume that (A z).
-    Assume that (is_bounded_below A).
+    Assume that (is_bounded_below A) (vi).
     Define B := (set_opp A).
     We claim that (is_bounded_above B) (i).
     { By bdd_below_to_bdd_above_set_opp it suffices to show that (is_bounded_below A).
@@ -308,6 +283,7 @@ Proof.
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-z)) (iv).
+    It holds that (B (-z)).    
     By R_complete it holds that (there exists M : ℝ, is_sup B M) (v).
     Obtain M according to (v), so for M : R it holds that (is_sup B M).
     Choose m := (- M).
@@ -392,9 +368,9 @@ Proof.
     Take L : ℝ.
     Assume that (L < M).
     We argue by contradiction.
-    Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)).
-    It holds that (∀ x : ℝ, (A x) ⇒ x <= L) (i).
-    By (i) it holds that (is_upper_bound A L).
+    Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) (i). 
+    By (i) it holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
+    By (ii) it holds that (is_upper_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_upp_bd_ge_sup it holds that (M <= L).
     It holds that (¬(M ≤ L)).
@@ -421,8 +397,7 @@ Proof.
     It holds that (¬(L ≤ m)).
     Contradiction.
 Qed.
-(** TODO remove *)
-Require Import Waterproof.waterprove.manipulate_negation.
+
 Lemma if_almost_maximizer_then_every_upp_bd_larger :
   ∀ (A : ℝ → Prop) (M : ℝ),
     (∀ (L : ℝ), L < M ⇒ ∃ a : ℝ, (A a) ∧ L < a)
@@ -641,7 +616,9 @@ We show both directions.
     It follows that (is_lower_bound A m).
 
   + We need to show that (for all ε : ℝ, ε > 0 
-      ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).
+      ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).(** TODO remove *)
+      Require Import Waterproof.waterprove.manipulate_negation.
+      
     By exists_almost_minimizer_ε we conclude that
     (for all ε : ℝ,
        ε > 0 ⇨ there exists a : ℝ, (A a) ∧
