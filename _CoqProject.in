@@ -73,20 +73,19 @@ theories/Waterprove.v
 # Coq-Waterproof libraries
 
 ## Analysis
-# theories/Libs/Analysis/ContinuityDomainNat.v
-# theories/Libs/Analysis/ContinuityDomainR.v
-# theories/Libs/Analysis/LimsupLiminfBolzano.v
-# theories/Libs/Analysis/MetricSpaces.v
-# theories/Libs/Analysis/OpenAndClosed.v
-# theories/Libs/Analysis/Reals.v
-# theories/Libs/Analysis/SequencesMetric.v
-# theories/Libs/Analysis/Sequences.v
-# theories/Libs/Analysis/SequentialAccumulationPoints.v
-# theories/Libs/Analysis/Series.v
-# theories/Libs/Analysis/SubsequencesInduction.v
-# theories/Libs/Analysis/SubsequencesMetric.v
-# theories/Libs/Analysis/Subsequences.v
-# theories/Libs/Analysis/SupAndInf.v
+theories/Libs/Analysis/ContinuityDomainNat.v
+theories/Libs/Analysis/ContinuityDomainR.v
+theories/Libs/Analysis/LimsupLiminfBolzano.v
+theories/Libs/Analysis/MetricSpaces.v
+theories/Libs/Analysis/OpenAndClosed.v
+theories/Libs/Analysis/SequencesMetric.v
+theories/Libs/Analysis/Sequences.v
+theories/Libs/Analysis/SequentialAccumulationPoints.v
+theories/Libs/Analysis/Series.v
+theories/Libs/Analysis/SubsequencesInduction.v
+theories/Libs/Analysis/SubsequencesMetric.v
+theories/Libs/Analysis/Subsequences.v
+theories/Libs/Analysis/SupAndInf.v
 
 # Coq-Waterproof tests
 # tests/tactics/Wauto.v

@@ -59,8 +59,8 @@ Local Ltac2 target_equals_goal_judgementally (target:constr) :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [AutomationFailure], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
-  let lemma := unwrap_optional_lemma lemma in
+Ltac2 check_and_solve (target_goal:constr) (lemma_opt: constr option) :=
+  let lemma := unwrap_optional_lemma lemma_opt in
   (* First check if the given target equals the goal directly,
   without applying any rewrite. *)
   match Constr.equal target_goal (Control.goal ()) with
@@ -96,7 +96,12 @@ Ltac2 check_and_solve (target_goal:constr) (lemma:constr option) :=
       end
     | true  => ()
   end;
-  waterprove 5 true [fun () => lemma] Positive.
+  waterprove 5 (
+    match lemma_opt with
+      | None => true
+      | Some _ => false
+    end
+  ) [fun () => lemma] Positive.
 
 
 (**

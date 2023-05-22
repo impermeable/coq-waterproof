@@ -1,43 +1,17 @@
-(** * Lim sup, lim inf and Bolzano-Weierstrass
-
-Authors:
-    - Jim Portegies
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-Require Import Reals.
+Require Import Coq.Reals.Reals.
 Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
 
-Require Import Waterproof.init_automation_global_variables.
+Require Import Automation.
+Require Import Libs.Analysis.Sequences.
+Require Import Libs.Analysis.Subsequences.
+Require Import Libs.Analysis.SupAndInf.
+Require Import Libs.Analysis.SequentialAccumulationPoints.
+Require Import Notations.
+Require Import Tactics.
 
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.notations.notations.
-
-Require Import Waterproof.set_search_depth.To_5.
-
-Require Import Waterproof.theory.analysis.sequences.
-Require Import Waterproof.theory.analysis.subsequences.
-Require Import Waterproof.theory.analysis.sup_and_inf.
-Require Import Waterproof.theory.analysis.sequential_accumulation_points.
-
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
+Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 
@@ -125,20 +99,20 @@ Proof.
     Assume that (has_ub a) (i).
     Take Nn, n : ℕ; such that (n ≥ Nn)%nat.
     Expand the definition of sequence_ub.
-    That is, write the goal as (a n ≤ lub (k ↦ (a (Nn + k)%nat), maj_ss a Nn (i))).
+    That is, write the goal as (a n ≤ lub (fun k ↦ (a (Nn + k)%nat), maj_ss a Nn (i))).
     Expand the definition of lub.
     That is, write the goal as
-      (a n ≤ (let (a0, _) := ub_to_lub (k ↦ (a (Nn + k)%nat), maj_ss a Nn (i)) in a0)).
+      (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (Nn + k)%nat), maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat) (maj_ss a Nn (i))).
     Obtain M according to (ii), so for M : R it holds that 
       (is_sup (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M) (iii).
     Expand the definition of is_lub in (iii).
-    That is, write (iii) as (is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), M)
-      ∧ (for all b : ℝ, is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b)).
-    Because (iii) both (is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), M)) (iv)
-      and (for all b : ℝ, is_upper_bound (EUn (k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b) hold.
+    That is, write (iii) as (is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)
+      ∧ (for all b : ℝ, is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b)).
+    Because (iii) both (is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)) (iv)
+      and (for all b : ℝ, is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b) hold.
     Expand the definition of is_upper_bound in (iv).
-    That is, write (iv) as (for all x : ℝ, EUn (k ↦ (a (Nn + k)%nat), x) ⇨ x ≤ M).
+    That is, write (iv) as (for all x : ℝ, EUn (fun k ↦ (a (Nn + k)%nat), x) ⇨ x ≤ M).
     It holds that (Nn + (n-Nn) = n)%nat.
     It suffices to show that (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
     Expand the definition of EUn.
@@ -170,13 +144,13 @@ Proof.
        (is_index_seq m_seq ∧
         (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a i ii) - 1 / (k + 1))) (v).
       Because (v) both (is_index_seq m_seq) and 
-        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) hold.
+        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) (vi) hold.
       Choose m := m_seq.
       We show both statements.
       - We need to show that (is_index_seq m).
         We conclude that (is_index_seq m).
       - We need to show that (for all k : ℕ, a (m k) > L - 1 / (k + 1)).
-        We conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
+        By (vi) we conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
     }
     Obtain m according to (iii), so for m : ℕ ⇨ ℕ it holds that
       (is_index_seq m ∧ (for all k : ℕ, a (m k) > L - 1 / (k + 1))) (iv).
@@ -204,7 +178,7 @@ Proof.
           By index_seq_grows_0 it holds that (m k ≥ k)%nat.
           By sequence_ub_bds we conclude that (a (n k) ≤ sequence_ub a (i) k).
       + (*TODO: fix not being able to use notation convergence with ''By ... we conclude that ...*)
-        We need to show that (Un_cv (k ↦ (L - 1 / (k + 1))) L).
+        We need to show that (Un_cv (fun k ↦ (L - 1 / (k + 1))) L).
         By lim_const_min_1_over_n_plus_1 we conclude that (Un_cv (fun k ↦ L - 1 / (k + 1), L)).
       + By sequence_ub_cv_to_L we conclude that (sequence_ub a (i) ⟶ L).
 Qed.
@@ -320,12 +294,12 @@ Proof.
     By classic it holds that (P \/ ~P) (i).
     Because (i) either P or (¬P) holds.
     - Case P.
-      It suffices to show that (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
-      We conclude that (∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
+      left.
+      assumption.
     - Case (¬P).
-      It suffices to show that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
-      It holds that (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L).
-      We conclude that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
+      right.
+      It holds that (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L) (ii).
+      By (ii) we conclude that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
 Qed.
 
 Close Scope R_scope.

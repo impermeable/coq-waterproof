@@ -1,38 +1,15 @@
-(** * Series
-
-Authors:
-    - Jim Portegies
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-Require Import Reals.
+Require Import Coq.Reals.Reals.
 Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.theory.analysis.sequences.
+Require Import Automation.
+Require Import Libs.Analysis.Sequences.
+Require Import Notations.
+Require Import Tactics.
 
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
-Require Import Waterproof.notations.notations.
-Require Import Waterproof.set_search_depth.To_5.
-
+Waterproof Enable Automation RealsAndIntegers.
 
 #[export] Hint Resolve Rabs_Rabsolu : reals.
 #[export] Hint Resolve Rabs_minus_sym : reals.
@@ -95,9 +72,9 @@ Proof.
     Take a : (ℕ → ℝ) and k, l : ℕ and L : ℝ.
     Assume that (k < l)%nat.
     We show both directions.
-    - We need to show that (Un_cv(Nn ↦ (sigma a l Nn), L)
-        ⇨ Un_cv (Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
-      Assume that (Un_cv (Nn ↦ (sigma a l Nn), L)).
+    - We need to show that (Un_cv(fun Nn ↦ (sigma a l Nn), L)
+        ⇨ Un_cv (fun Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
+      Assume that (Un_cv (fun Nn ↦ (sigma a l Nn), L)).
       (* TODO: fix
          By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
       We claim that (Un_cv (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))).
@@ -105,7 +82,7 @@ Proof.
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
       }
       By CV_plus it holds that (Un_cv (fun Nn ↦ sigma a k (l-1)%nat + sigma a l Nn) (sigma a k (l-1)%nat + L)).
-      We claim that (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (Nn ↦ (sigma a k Nn))).
+      We claim that (evt_eq_sequences (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (fun Nn ↦ (sigma a k Nn))).
       { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k (l - 1)%nat + sigma a l n = sigma a k n).
         Choose M := l%nat.
         Take n : ℕ; such that (n ≥ M)%nat.
@@ -114,18 +91,18 @@ Proof.
       }
       (* TODO: find way of dealing with the case when coq cannot find parameters for apply ...*)
       apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn).
-      + We conclude that (evt_eq_sequences (Nn ↦ (sigma a k (l - 1) + sigma a l Nn), Nn ↦ (sigma a k Nn))).
+      + We conclude that (evt_eq_sequences (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), fun Nn ↦ (sigma a k Nn))).
       + (*TODO: fix  We conclude that ((Nn) ↦ (sigma a k (l - 1) + sigma a l Nn)). *)   
-        We need to show that (Un_cv (Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
-        We conclude that (Un_cv (Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
-    - We need to show that (Un_cv (Nn ↦ (sigma a k Nn), (sigma a k (l - 1) + L)) ⇨ Un_cv (Nn ↦ (sigma a l Nn), L)).
-      Assume that (Un_cv (Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
-      We claim that (Un_cv (N ↦ (sigma a k (l-1)), (sigma a k (l-1)))).
+        We need to show that (Un_cv (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
+        We conclude that (Un_cv (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
+    - We need to show that (Un_cv (fun Nn ↦ (sigma a k Nn), (sigma a k (l - 1) + L)) ⇨ Un_cv (fun Nn ↦ (sigma a l Nn), L)).
+      Assume that (Un_cv (fun Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
+      We claim that (Un_cv (fun N ↦ (sigma a k (l-1)), (sigma a k (l-1)))).
       { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
       }
       By CV_minus it holds that (Un_cv (fun N ↦ sigma a k N - (sigma a k (l-1))) (sigma a k (l-1) + L - (sigma a k (l-1)))).
-      We claim that (evt_eq_sequences (Nn ↦ (sigma a k Nn - sigma a k (l-1))) (Nn ↦ (sigma a l Nn))).
+      We claim that (evt_eq_sequences (fun Nn ↦ (sigma a k Nn - sigma a k (l-1))) (fun Nn ↦ (sigma a l Nn))).
       { We need to show that (∃ M : ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n - sigma a k (l-1) = sigma a l n).
         Choose M := l%nat.
         Take n : ℕ; such that (n ≥ M)%nat.
@@ -134,12 +111,11 @@ Proof.
         We conclude that (k < l <= n)%nat.
       }
       apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
-      + We conclude that (evt_eq_sequences (n ↦ (sigma a k n - sigma a k (l - 1)), n ↦ (sigma a l n))).
-      + We need to show that (Un_cv (N ↦ (sigma a k N - sigma a k (l - 1)), L)).
+      + We conclude that (evt_eq_sequences (fun n ↦ (sigma a k n - sigma a k (l - 1)), fun n ↦ (sigma a l n))).
+      + We need to show that (Un_cv (fun N ↦ (sigma a k N - sigma a k (l - 1)), L)).
         It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (i).
-        (* It suffices to show that (Un_cv (N) ↦ (sigma a k N - sigma a k (l - 1)) (sigma a k (l - 1) + L - sigma a k (l - 1))).*)
         rewrite <- (i). (* TODO come up with some notation for this (meaning transport)*)
-        We conclude that (Un_cv (N ↦ (sigma a k N - sigma a k (l - 1)), sigma a k (l - 1) + L - sigma a k (l - 1))).
+        We conclude that (Un_cv (fun N ↦ (sigma a k N - sigma a k (l - 1)), sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.
 
 Close Scope R_scope.

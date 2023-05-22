@@ -1,6 +1,11 @@
-Require Import Reals.
+Require Import Coq.Reals.Reals.
 
-Require Import Waterproof.Notations.
+Require Import Automation.
+Require Import Libs.Negation.
+Require Import Notations.
+Require Import Tactics.
+
+Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 
@@ -31,10 +36,12 @@ End metricspace.
 (** Hints *)
 Lemma aux1 : for all n m : ℕ, (n = m) ⇒ |m - n| = |n - n|.
 Proof.
-  Take n, m : ℕ. Assume that (n = m).
+  Take n, m : ℕ.
+  Assume that (n = m).
   We conclude that (& |m - n| = |m - m| = m - m = 0 = n - n = |n - n|).
 Qed.
 #[export] Hint Resolve aux1 : wp_reals.
+
 (** Useful lemma *)
 Lemma useful_lemma : for all n m : ℕ, (n ≠ m) ⇒ (1 ≤ | m - n |).
 Proof.
@@ -60,33 +67,48 @@ Qed.
 
 (** Notations *)
 Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).
+
 Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 68, only parsing).
+
 Local Ltac2 unfold_is_accumulation_point    ()          := unfold is_accumulation_point.
+
 Local Ltac2 unfold_is_accumulation_point_in (h : ident) := unfold is_accumulation_point in $h.
+
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation" "point" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_is_accumulation_point unfold_is_accumulation_point_in cl.
 
 
 Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 68).
+
 Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 68, only parsing).
+
 Local Ltac2 unfold_is_isolated_point    ()          := unfold is_isolated_point.
+
 Local Ltac2 unfold_is_isolated_point_in (h : ident) := unfold is_isolated_point in $h.
+
 Ltac2 Notation "Expand" "the" "definition" "of" "isolated" "point" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_is_isolated_point unfold_is_isolated_point_in cl.
 
-
 Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68).
+
 Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68, only parsing).
+
 Local Ltac2 unfold_limit_in_point    ()          := unfold limit_in_point.
+
 Local Ltac2 unfold_limit_in_point_in (h : ident) := unfold limit_in_point in $h.
+
 Ltac2 Notation "Expand" "the" "definition" "of" "limit" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_limit_in_point unfold_limit_in_point_in cl.
 
 
 Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in _ f a) (at level 68).
+
 Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in _ f a)  (at level 68, only parsing).
+
 Local Ltac2 unfold_is_continuous_in    ()          := unfold is_continuous_in.
+
 Local Ltac2 unfold_is_continuous_in_in (h : ident) := unfold is_continuous_in in $h.
+
 Ltac2 Notation "Expand" "the" "definition" "of" "continuous" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_is_continuous_in unfold_is_continuous_in_in cl.
 

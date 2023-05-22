@@ -66,7 +66,6 @@ let tclLOG (pp: Environ.env -> Evd.evar_map -> Pp.t * Pp.t) (tac: trace tactic) 
       tclENV >>= fun env ->
       tclEVARMAP >>= fun sigma ->
       let (hint, src) = pp env sigma in
-      Feedback.msg_notice hint;
       if List.mem hint forbidden
         then tclZERO ~info:(Exninfo.reify ()) (SearchBound trace)
         else tclUNIT { trace with trace = (true, trace.current_depth, hint, src)::trace.trace }
@@ -74,7 +73,6 @@ let tclLOG (pp: Environ.env -> Evd.evar_map -> Pp.t * Pp.t) (tac: trace tactic) 
         tclENV >>= fun env ->
         tclEVARMAP >>= fun sigma ->
         let (hint, src) = pp env sigma in
-        Feedback.msg_notice hint;
         let trace = begin match exn with
           | SearchBound trace ->  trace 
           | _ -> no_trace

@@ -1,40 +1,20 @@
-(** * Sequences
-
-Authors:
-    - Jim Portegies
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-Require Import Reals.
+Require Import Coq.Reals.Reals.
 Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
-Require Import Waterproof.notations.notations.
-Require Import Waterproof.set_search_depth.To_5.
+Require Import Automation.
+Require Import Libs.Reals.
+Require Import Notations.
+Require Import Tactics.
 
 #[export] Hint Resolve Rabs_Rabsolu : wp_reals.
 #[export] Hint Resolve Rabs_minus_sym : wp_reals.
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
 #[export] Hint Resolve Rinv_lt_contravar : wp_reals.
+
+Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 Open Scope extra.
@@ -195,7 +175,7 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 Lemma lim_d_0 : Un_cv d 0.
 Proof.
     Expand the definition of d.
-    That is, write the goal as (Un_cv(n ↦ (1 / (n + 1)), 0)).
+    That is, write the goal as (Un_cv(fun n ↦ (1 / (n + 1)), 0)).
     Expand the definition of Un_cv.
     That is, write the goal as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
@@ -205,8 +185,8 @@ Proof.
     Obtain n1 according to (i), so for n : nat it holds that (n > /ε).
     Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
-    Expand the definition of R_dist.
-    That is, write the goal as ( | 1 / (n + 1) - 0 | < ε ).
+    Expand the definition of Rabs.
+    That is, write the goal as (｜1 / (n + 1) - 0｜ < ε).
     By Rabs_def1 it suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
     We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
     - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
@@ -223,14 +203,14 @@ Proof.
     By lim_d_0 it holds that (Un_cv d 0).
     By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
     Expand the definition of opp_seq in (i).
-    That is, write (i) as ( Un_cv (n ↦ -d(n), -0)).
+    That is, write (i) as ( Un_cv (fun n ↦ -d(n), -0)).
     Expand the definition of d in (i).
-    That is, write (i) as ( Un_cv (n ↦ -(1 / (n + 1)), -0)).
+    That is, write (i) as ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     It holds that (0 = -0).
     (* TODO: make transport automatic *)
-    By (eq_ind_r(_, _, fun x => Un_cv (n ↦ -(1 / (n + 1)), x), (i))) 
-      it suffices to show that (Un_cv (n ↦ -(1 / (n + 1)), -0)).
-    We conclude that (Un_cv (n ↦ -(1 / (n + 1)), -0)).
+    By (eq_ind_r(_, _, fun x => Un_cv (fun n ↦ -(1 / (n + 1)), x), (i))) 
+      it suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    We conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
 
@@ -257,21 +237,21 @@ Proof.
     We claim that (-ε < a n - l).
     { It holds that (n ≥ Na)%nat.
       It holds that (R_dist (a n) l < ε) (iii).
-      Expand the definition of R_dist in (iii).
-      That is, write (iii) as ( | a n - l | < ε ).
+      Expand the definition of Rabs in (iii).
+      That is, write (iii) as (｜a(n) - l｜ < ε).
       By Rabs_def2 it holds that (a n - l < ε /\ -ε < a n - l).
       We conclude that (-ε < a n - l).
     }
     We claim that (c n - l < ε).
     { It holds that (n ≥ Nc)%nat.
       It holds that (R_dist (c n) l < ε) (iii).
-      Expand the definition of R_dist in (iii).
-      That is, write (iii) as ( | c n - l | < ε ).
+      Expand the definition of Rabs in (iii).
+      That is, write (iii) as (｜c(n) - l｜ < ε).
       By Rabs_def2 it holds that (c n - l < ε /\ -ε < c n - l).
       We conclude that (c n - l < ε).
     }
-    Expand the definition of R_dist.
-    That is, write the goal as ( | b n - l | < ε ).
+    Expand the definition of Rabs.
+    That is, write the goal as ((if Rcase_abs(b(n) - l) then - (b(n) - l) else b(n) - l) < ε).
     By Rabs_def1 it suffices to show that (-ε < b n - l < ε).
     It holds that (a n ≤ b n ∧ b n ≤ c n).
     We show both (- ε < b n - l) and ( b n - l < ε).
@@ -305,8 +285,8 @@ Proof.
       Obtain Nn according to (iii), so for Nn : nat it holds that
         (∀n : ℕ, (n ≥ Nn)%nat ⇒ R_dist (a n) L < ε).
       It holds that (R_dist (a Nn) L < ε) (iv).
-      Expand the definition of R_dist in (iv).
-      That is, write (iv) as ( | a Nn - L | < ε ).
+      Expand the definition of Rabs in (iv).
+      That is, write (iv) as (｜a(Nn) - L｜ < ε).
       By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
       It holds that (- ε < a Nn - L).
       It holds that (a Nn ≤ M).
@@ -374,10 +354,10 @@ Proof.
     We claim that (b N3 < a N3).
     { It holds that (R_dist (b N3) l < ε)  (v).
       It holds that (R_dist (a N3) m < ε) (vi).
-      Expand the definition of R_dist in (v).
-      That is, write (v) as ( | b N3 - l | < ε ).
-      Expand the definition of R_dist in (vi).
-      That is, write (vi) as ( | a N3 - m | < ε ).
+      Expand the definition of Rabs in (v).
+      That is, write (v) as (｜b(N3) - l｜ < ε).
+      Expand the definition of Rabs in (vi).
+      That is, write (vi) as ( ｜ a N3 - m ｜ < ε ).
       By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
       By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).
       We conclude that (& b N3 < l + ε = l + (m - l)/2 

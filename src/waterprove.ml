@@ -16,10 +16,10 @@ open Weauto
 *)
 let forbidden_inductive_types: string list = [
   "Coq.Init.Logic.all"; (* forall (should not be necessary) *)
-  "Coq.Init.Logic.and"; (* /\ *)
+  (* "Coq.Init.Logic.and"; *) (* /\ *)
   "Coq.Init.Logic.ex"; (* exists *)
   "Coq.Init.Logic.ex2"; (* exists2 *) 
-  "Coq.Init.Logic.or"; (* \/ *)
+  (* "Coq.Init.Logic.or"; *) (* \/ *)
 ]
 
 (**

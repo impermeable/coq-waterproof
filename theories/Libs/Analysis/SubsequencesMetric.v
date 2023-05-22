@@ -1,47 +1,26 @@
-(** * [subsequences_definitions.v.v]
-Authors:
-    - Jim Portegies
-    - Lulof Pirée (minor edits)
-    - Cosmin Manea (minor edits)
-Creation date: 17 June 2021
+Require Import Coq.Reals.Reals.
 
---------------------------------------------------------------------------------
+Require Import Automation.
+Require Import Libs.Analysis.MetricSpaces.
+Require Import Libs.Analysis.SequencesMetric.
+Require Import Notations.
+Require Import Tactics.
 
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.    If not, see <https://www.gnu.org/licenses/>.
-*)
-
-(** ## Subsequences definitions*)
-Require Import Reals.
-Require Import Waterproof.notations.notations.
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.theory.analysis.metric_spaces.
-Require Import Waterproof.theory.analysis.sequences_metric.
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
+Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 Open Scope metric_scope.
 Definition is_index_sequence (n : ℕ → ℕ) := 
-    ∀ k : ℕ,
-        (n k < n (k + 1))%nat.
+  ∀ k : ℕ, (n k < n (k + 1))%nat.
+
 Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 68) : metric_scope.
+
 Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 68, only parsing) : metric_scope.
+
 Local Ltac2 unfold_is_index_sequence    ()          := unfold is_index_sequence.
+
 Local Ltac2 unfold_is_index_sequence_in (h : ident) := unfold is_index_sequence in $h.
+
 Ltac2 Notation "Expand" "the" "definition" "of" "index" "sequence" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_is_index_sequence unfold_is_index_sequence_in cl.
 
@@ -52,6 +31,7 @@ Definition is_index_seq (n : ℕ → ℕ) :=
 
 
 Notation "a ◦ n" := (fun (k : nat) => a (n k)) (right associativity, at level 11).
+
 Notation "a ◦ n ◦ m" := (fun (k : nat) => a (n (m k))) (right associativity, at level 12).
 
 Section my_section.
@@ -73,38 +53,38 @@ Lemma index_sequence_property (n : ℕ → ℕ) :
         ∀ k : ℕ,
             (n k ≥ k)%nat.
 Proof.
-    intros. 
-    unfold is_index_sequence in H.
-    induction k.
-    specialize (H 0%nat). 
-    unfold ge.
-    apply Nat.le_0_l.
-    specialize (H k). 
-    unfold ge. 
-    apply Nat.le_succ_l. 
-    rewrite Nat.add_1_r in H.
-    apply (Nat.le_lt_trans k (n k)). 
-    apply IHk. 
-    apply H.
+  intros. 
+  unfold is_index_sequence in H.
+  induction k.
+  specialize (H 0%nat). 
+  unfold ge.
+  apply Nat.le_0_l.
+  specialize (H k). 
+  unfold ge. 
+  apply Nat.le_succ_l. 
+  rewrite Nat.add_1_r in H.
+  apply (Nat.le_lt_trans k (n k)). 
+  apply IHk. 
+  apply H.
 Qed.
 
 
 
 Lemma index_seq_equiv (n : ℕ → ℕ) : is_index_seq n ⇔ is_index_sequence n.
 Proof. 
-    We show both directions.
-    - We need to show that (is_index_seq n ⇨ is_index_sequence n).
-      intro.
-      unfold is_index_sequence. 
-      Take k : ℕ. 
-      unfold is_index_seq in H.
-      We conclude that ((n k < n (k + 1))%nat).
-    - We need to show that (is_index_sequence n ⇨ is_index_seq n).
-      intro.
-      unfold is_index_seq. 
-      Take k : ℕ. 
-      unfold is_index_sequence in H.
-      We conclude that ((n k < n (k + 1))%nat).
+  We show both directions.
+  - We need to show that (is_index_seq n ⇨ is_index_sequence n).
+    intro.
+    unfold is_index_sequence. 
+    Take k : ℕ. 
+    unfold is_index_seq in H.
+    We conclude that ((n k < n (k + 1))%nat).
+  - We need to show that (is_index_sequence n ⇨ is_index_seq n).
+    intro.
+    unfold is_index_seq. 
+    Take k : ℕ. 
+    unfold is_index_sequence in H.
+    We conclude that ((n k < n (k + 1))%nat).
 Qed.
 
 

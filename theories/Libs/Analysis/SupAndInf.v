@@ -3,7 +3,6 @@ Require Import Classical_Pred_Type.
 Require Import Coq.Reals.Reals.
 
 Require Import Automation.
-Require Import Libs.Negation.
 Require Import Notations.
 Require Import Tactics.
 
@@ -175,7 +174,6 @@ Proof.
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-a)).
-    (** By m_low_bd it holds that (m ≤ -a) (m_le_min_a).*)
     Define b := (-a).
     It holds that (m ≤ b).
     It holds that (m ≤ -a).
@@ -453,21 +451,20 @@ Lemma if_almost_maximizer_ε_then_every_upp_bd_larger :
     (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : ℝ, (A a) ∧ M - ε < a)
        ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
 Proof.
-Take A : (ℝ → Prop) and M : ℝ.
-Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (i).
-By if_almost_maximizer_then_every_upp_bd_larger it suffices to show that 
-  (for all L : ℝ, L < M ⇨ there exists a : ℝ, (A a) ∧ L < a).
-Take L : ℝ; such that (L < M).
-It holds that (M - L > 0).
-Define ε1 := (M - L).
-It holds that (ε1 > 0).
-By (i) it holds that (there exists a : ℝ, (A a) ∧ M - ε1 < a) (ii).
-Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (M - ε1 < a)) (iii).
-Because (iii) both (A a) and (M - ε1 < a) hold.
-Choose (a).
-We show both (A a) and (L < a).
-- We conclude that (A a).
-- We conclude that (& L = M - (M - L) = M - ε1 < a).
+  Take A : (ℝ → Prop) and M : ℝ.
+  Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (i).
+  apply if_almost_maximizer_then_every_upp_bd_larger.
+  Take L : ℝ; such that (L < M).
+  It holds that (M - L > 0).
+  Define ε1 := (M - L).
+  It holds that (ε1 > 0).
+  By (i) it holds that (there exists a : ℝ, (A a) ∧ M - ε1 < a) (ii).
+  Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (M - ε1 < a)) (iii).
+  Because (iii) both (A a) and (M - ε1 < a) hold.
+  Choose (a).
+  We show both (A a) and (L < a).
+  - We conclude that (A a).
+  - We conclude that (& L = M - (M - L) = M - ε1 < a).
 Qed.
 
 Lemma if_almost_minimizer_ε_then_every_low_bd_smaller :
@@ -475,21 +472,20 @@ Lemma if_almost_minimizer_ε_then_every_low_bd_smaller :
     (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : ℝ, (A a) ∧ m + ε > a)
        ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
 Proof.
-Take A : (ℝ → Prop) and m : ℝ.
-Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) (i).
-By if_almost_minimizer_then_every_low_bd_smaller it suffices to show that
-  (for all L : ℝ, L > m ⇨ there exists a : ℝ, (A a) ∧ L > a).
-Take L : ℝ; such that (L > m).
-It holds that (L - m > 0).
-Define ε1 := (L - m).
-It holds that (ε1 > 0).
-By (i) it holds that (there exists a : ℝ, (A a) ∧ m + ε1 > a) (ii).
-Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (m + ε1 > a)) (iii).
-Choose (a).
-Because (iii) both (A a) and (m + ε1 > a) hold.
-We show both (A a) and (L > a).
-- We conclude that (A a).
-- We conclude that (& a < m + ε1 = m + L - m = L).
+  Take A : (ℝ → Prop) and m : ℝ.
+  Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) (i).
+  apply if_almost_minimizer_then_every_low_bd_smaller.
+  Take L : ℝ; such that (L > m).
+  It holds that (L - m > 0).
+  Define ε1 := (L - m).
+  It holds that (ε1 > 0).
+  By (i) it holds that (there exists a : ℝ, (A a) ∧ m + ε1 > a) (ii).
+  Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (m + ε1 > a)) (iii).
+  Choose (a).
+  Because (iii) both (A a) and (m + ε1 > a) hold.
+  We show both (A a) and (L > a).
+  - We conclude that (A a).
+  - We conclude that (& a < m + ε1 = m + L - m = L).
 Qed.
 
 Lemma exists_almost_maximizer_ε :
@@ -538,115 +534,112 @@ Theorem alt_char_sup :
   ∀ (A : ℝ → Prop) (M : ℝ),
     is_sup A M ⇔ is_sup_alt_char A M.
 Proof.
-Take A : (ℝ → Prop) and M : ℝ.
-We show both directions.
-- We need to show that (is_sup A M ⇨ is_sup_alt_char A M).
-  Assume that (is_sup A M) (i).
-  Expand the definition of is_sup_alt_char.
-  That is, write the goal as (
-  is_upper_bound A M
-  ∧ (for all ε : ℝ,
-     ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-               M - ε < a) ).
-  We show both statements.
-  + We need to show that (is_upper_bound A M).
-    Expand the definition of is_lub in (i).
+  Take A : (ℝ → Prop) and M : ℝ.
+  We show both directions.
+  - We need to show that (is_sup A M ⇨ is_sup_alt_char A M).
+    Assume that (is_sup A M) (i).
+    Expand the definition of is_sup_alt_char.
+    That is, write the goal as (
+    is_upper_bound A M
+    ∧ (for all ε : ℝ,
+      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
+                M - ε < a) ).
+    We show both statements.
+    + We need to show that (is_upper_bound A M).
+      Expand the definition of is_lub in (i).
+      That is, write (i) as (
+      is_upper_bound A M
+      ∧ (for all M0 : ℝ,
+        is_upper_bound A M0 ⇨ M ≤ M0) ).
+      Because (i) both (is_upper_bound A M) and
+        (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
+      It follows that (is_upper_bound A M).
+
+    + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a ).
+      apply exists_almost_maximizer_ε.
+      We conclude that (M is the supremum of A).
+
+  - We need to show that (is_sup_alt_char A M ⇨ is_sup A M).
+    Assume that (is_sup_alt_char A M) (i).
+    Expand the definition of is_sup_alt_char in (i).
     That is, write (i) as (
     is_upper_bound A M
-     ∧ (for all M0 : ℝ,
-      is_upper_bound A M0 ⇨ M ≤ M0) ).
-    Because (i) both (is_upper_bound A M) and
-      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
-    It follows that (is_upper_bound A M).
-
-  + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a ).
-    By exists_almost_maximizer_ε we conclude that
-   (  for all ε : ℝ,
+    ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-            M - ε < a).
+                M - ε < a) ).
+    Because (i) both (is_upper_bound A M) (ii) and
+      (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (iii) hold.
 
-- We need to show that (is_sup_alt_char A M ⇨ is_sup A M).
-  Assume that (is_sup_alt_char A M) (i).
-  Expand the definition of is_sup_alt_char in (i).
-  That is, write (i) as (
-  is_upper_bound A M
-   ∧ (for all ε : ℝ,
-     ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-               M - ε < a) ).
-  Because (i) both (is_upper_bound A M) (ii) and
-    (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) hold.
-
-  Expand the definition of is_lub.
-  That is, write the goal as (
-  is_upper_bound A M
-  ∧ (for all M0 : ℝ,
-     is_upper_bound A M0 ⇨ M ≤ M0) ).
-  We show both statements.
-  + We need to show that (is_upper_bound A M).
-    By (ii) we conclude that (is_upper_bound A M).
-  + We need to show that (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
-    By if_almost_maximizer_ε_then_every_upp_bd_larger
-    we conclude that (for all M0 : ℝ,
-    is_upper_bound A M0 ⇨ M ≤ M0).
+    Expand the definition of is_lub.
+    That is, write the goal as (
+    is_upper_bound A M
+    ∧ (for all M0 : ℝ,
+      is_upper_bound A M0 ⇨ M ≤ M0) ).
+    We show both statements.
+    + We need to show that (is_upper_bound A M).
+      By (ii) we conclude that (is_upper_bound A M).
+    + We need to show that (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
+      apply if_almost_maximizer_ε_then_every_upp_bd_larger.
+      By (iii) we conclude that (for all ε : ℝ,
+      ε > 0 ⇨ there exists a : ℝ,
+                A(a) ∧ M - ε < a).
 Qed.
 
 Theorem alt_char_inf :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_inf A m ⇔ is_inf_alt_char A m.
 Proof.
-Take A : (ℝ → Prop) and m : ℝ.
-We show both directions.
-- We need to show that (is_inf A m ⇨ is_inf_alt_char A m).
-  Assume that (is_inf A m) (i).
-  Expand the definition of is_inf_alt_char.
-  That is, write the goal as (
-  is_lower_bound A m
-  ∧ (for all ε : ℝ,
-     ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-               m + ε > a) ).
-  We show both statements.
-  + We need to show that (is_lower_bound A m).
-    Expand the definition of is_inf in (i).
-    That is, write (i) as (
-    is_lower_bound A m ∧ (for all l : ℝ,
-                        is_lower_bound A l ⇨ l ≤ m) 
-    ).
-    Because (i) both (is_lower_bound A m) and
-      (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
-    It follows that (is_lower_bound A m).
-
-  + We need to show that (for all ε : ℝ, ε > 0 
-      ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).(** TODO remove *)
-      Require Import Waterproof.waterprove.manipulate_negation.
-      
-    By exists_almost_minimizer_ε we conclude that
-    (for all ε : ℝ,
-       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-            m + ε > a).
-
-- We need to show that (is_inf_alt_char A m ⇨ is_inf A m).
-  Assume that (is_inf_alt_char A m) (i).
-  Expand the definition of is_inf_alt_char in (i).
-  That is, write (i) as (
+  Take A : (ℝ → Prop) and m : ℝ.
+  We show both directions.
+  - We need to show that (is_inf A m ⇨ is_inf_alt_char A m).
+    Assume that (is_inf A m) (i).
+    Expand the definition of is_inf_alt_char.
+    That is, write the goal as (
     is_lower_bound A m
-     ∧ (for all ε : ℝ,
-     ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-               m + ε > a) ).
-  Because (i) both (is_lower_bound A m) (ii) and
-    (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
+    ∧ (for all ε : ℝ,
+      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
+                m + ε > a) ).
+    We show both statements.
+    + We need to show that (is_lower_bound A m).
+      Expand the definition of is_inf in (i).
+      That is, write (i) as (
+      is_lower_bound A m ∧ (for all l : ℝ,
+                          is_lower_bound A l ⇨ l ≤ m) 
+      ).
+      Because (i) both (is_lower_bound A m) and
+        (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
+      It follows that (is_lower_bound A m).
 
-  Expand the definition of is_inf.
-  That is, write the goal as (
-    is_lower_bound A m ∧ (for all l : ℝ,
-                        is_lower_bound A l ⇨ l ≤ m)
-   ).
-  We show both statements.
-  + We need to show that (is_lower_bound A m).
-    By (ii) we conclude that (is_lower_bound A m).
-  + We need to show that (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m).
-    By if_almost_minimizer_ε_then_every_low_bd_smaller
-    we conclude that (for all l : ℝ,
-    is_lower_bound A l ⇨ l ≤ m).
+    + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).
+        
+      By exists_almost_minimizer_ε we conclude that
+      (for all ε : ℝ,
+        ε > 0 ⇨ there exists a : ℝ, (A a) ∧
+              m + ε > a).
+
+  - We need to show that (is_inf_alt_char A m ⇨ is_inf A m).
+    Assume that (is_inf_alt_char A m) (i).
+    Expand the definition of is_inf_alt_char in (i).
+    That is, write (i) as (
+      is_lower_bound A m
+      ∧ (for all ε : ℝ,
+      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
+                m + ε > a) ).
+    Because (i) both (is_lower_bound A m) (ii) and
+      (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
+
+    Expand the definition of is_inf.
+    That is, write the goal as (
+      is_lower_bound A m ∧ (for all l : ℝ,
+                          is_lower_bound A l ⇨ l ≤ m)
+    ).
+    We show both statements.
+    + We need to show that (is_lower_bound A m).
+      By (ii) we conclude that (is_lower_bound A m).
+    + We need to show that (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m).
+      By if_almost_minimizer_ε_then_every_low_bd_smaller
+      we conclude that (for all l : ℝ,
+      is_lower_bound A l ⇨ l ≤ m).
 Qed.
 
 
@@ -706,6 +699,62 @@ Proof.
     Assume that (is_lower_bound A m) (i).
     Assume that (A b) (ii).
     We conclude that (m ≤ b).
+Qed.
+
+Lemma seq_ex_almost_maximizer_ε :
+  ∀ (a : ℕ → ℝ) (pr : has_ub a) (ε : ℝ), 
+    ε > 0 ⇒ ∃ k : ℕ, a k > lub a pr - ε.
+Proof.
+    Take a : (ℕ → ℝ).
+    Assume that (has_ub a) (i).
+    Expand the definition of lub.
+    That is, write the goal as (for all ε : ℝ,  ε > 0 
+      ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
+    Define lub_a_prf := (ub_to_lub a (i)).
+    Obtain l according to (lub_a_prf), so for l : R it holds that (is_sup (EUn a) l).
+    Take ε : ℝ; such that (ε > 0).
+    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
+    Obtain y according to (iv), so for y : R it holds that 
+      ((EUn a) y ∧ y > l - ε) (v).
+    Because (v) both (EUn a y) (vi) and (y > l - ε) hold.
+    Expand the definition of EUn in (vi).
+    That is, write (vi) as (there exists n : ℕ , y = a n).
+    Obtain n according to (vi), so for n : nat it holds that (y = a n).
+    Choose k := n.
+    We need to show that (l - ε < a n).
+    We conclude that (& l - ε < y = a n).
+Qed.
+
+Lemma seq_ex_almost_maximizer_m :
+  ∀ (a : ℕ → ℝ) (pr : has_ub a) (m : ℕ), 
+    ∃ k : ℕ, a k > lub a pr - 1 / (INR(m) + 1).
+Proof.
+    Take a : (ℕ → ℝ).
+    Assume that (has_ub a).
+    Take m : ℕ.
+    apply seq_ex_almost_maximizer_ε.
+    (** We need to show that $1/(m+1) > 0$.*)
+    It holds that (0 < m + 1)%R.
+    We conclude that (1 / (m+1) > 0).
+Qed.
+
+Lemma exists_almost_lim_sup_aux :
+  ∀ (a : ℕ → ℝ) (pr : has_ub a) (m : ℕ) (N : ℕ),
+    ∃ k : ℕ, (k ≥ N)%nat ∧ a k > sequence_ub a pr N - 1 / (INR(m) + 1).
+Proof.
+    Take a : (ℕ → ℝ).
+    Assume that (has_ub a) (i).
+    Take m, Nn : ℕ.
+    By seq_ex_almost_maximizer_m it holds that
+      (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)) (ii).
+    Obtain k according to (ii), so for k : nat it holds that
+      (a (Nn + k)%nat > sequence_ub a i Nn - 1 / (m + 1)).
+    Choose l := (Nn+k)%nat.
+    We show both statements.
+    - We need to show that (l ≥ Nn)%nat.
+      We conclude that (l ≥ Nn)%nat.
+    - We need to show that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
+      We conclude that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
 Qed.
 
 #[export] Hint Resolve bounded_by_upper_bound_propform : reals.

@@ -1,62 +1,13 @@
-(** * Strong induction principles
-
-Authors:
-    - Jim Portegies
-
-This file is part of Waterproof-lib.
-
-Waterproof-lib is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Waterproof-lib is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Waterproof-lib.  If not, see <https://www.gnu.org/licenses/>.
-*)
-
-(* Require Import Reals.
-Require Import ZArith. *)
-Require Import Lia.
-(*Require Import Classical.
-Require Import Classical_Pred_Type.
+Require Import Coq.Reals.Reals.
 Require Import ClassicalChoice.
+Require Import Lia.
 
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.load_database.RealsAndIntegers.
-Require Import Waterproof.notations.notations.
-Require Import Waterproof.set_search_depth.To_5.
-Require Import Waterproof.set_intuition.Disabled.
-Require Import Waterproof.load_database.DisableWildcard*).
+Require Import Automation.
+Require Import Libs.Negation.
+Require Import Notations.
+Require Import Tactics.
 
-(* #[export] Hint Resolve Rabs_Rabsolu.*)
-(** ## Creating a subsequence of elements satisfying a certain property
-
-The purpose of this section is to provide a somewhat general strategy to construct subsequences of elements satisfying a certain property. *)
-(** ### From existence of a next element to a function producing this element
-
-The next lemma is quite technical, and is usually not so visible in classical analysis. We rely here on a version of the axiom of choice.*)
-(*Lemma existence_next_el_to_fun :
-    ∀ (a : ℕ → ℝ) (P : ℕ → ℝ → Prop),
-    (∀ (m : ℕ) (N : ℕ), ∃ k : ℕ, (N ≤ k)%nat ∧ (P m (a k))) ⇒
-      ∃ f : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ f m N)%nat ∧ P m (a (f m N)).
-Proof.
-    Take a : (ℕ → ℝ). 
-    Take P : (ℕ → ℝ → Prop).
-    Assume that (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)).
-    We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))).
-    {
-        Take m : ℕ.
-        apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).
-        We conclude that (for all x : ℕ, there exists y : ℕ, (x ≤ y)%nat ∧ P m (a y)).
-    }
-    apply choice with (R := fun (m : ℕ) (h : ℕ → ℕ) ↦ ( ∀ N : ℕ, (N ≤ h N)%nat ∧ P m (a (h N)) ) ).
-    We conclude that (for all x : ℕ, there exists y : ℕ ⇨ ℕ , for all N : ℕ, (N ≤ y N)%nat ∧ P x (a (y N))).
-Qed.*)
+Waterproof Enable Automation RealsAndIntegers.
 
 Definition create_seq_from_vec_0 (A : Type) (a : A) :=
     fun (n : nat) => a.
@@ -70,14 +21,6 @@ Definition create_seq_from_vec (A : Type)
 Local Parameter Q : nat -> Prop.
 Definition Z := fun (n : nat) => True.
 
-Definition test00 := fun (n0 : nat) => Q.
-Locate "{".
-
-(* Definition test000 : forall A : Type,  { n  | (n >= 5)%nat}%type.*)
-(*Definition test0000 : forall A : Type,  @sig nat (fun (n : nat) => True).*)
-(**
-  
-*)
 Definition complete_induction_help (A : Type) (a : A) 
   (Su : (ℕ → A) → ℕ → A): ℕ → (ℕ → A).
 Proof.
@@ -93,16 +36,6 @@ Proof.
   intro k.
   auto with zarith.
 Defined.
-
-(* Definition complete_induction_type_family_help (A : Type) (a : A) 
-  (Su : (ℕ → A) → ℕ → A): ℕ → (ℕ → A).
-Proof.
-  intro m.
-  induction m as [|m prev_func].
-  * exact (fun n : ℕ => a). 
-  * exact (fun n : ℕ => if le_lt_dec n m then (prev_func n) else 
-      Su prev_func n).
-Defined.*)
 
 Definition complete_induction (A : Type) (a : A) 
 (Su : (ℕ → A) → ℕ → A): (ℕ → A).
@@ -159,44 +92,6 @@ Proof.
   unfold create_seq_from_vec.
   reflexivity.
 Qed.
-
-(*Lemma complete_induction_help_compare_6 (A : Type) (a : A) 
-(Su : (ℕ → A) → ℕ → A): forall l : nat,
-  complete_induction_help A a Su l = 
-    create_seq_from_vec A l 
-      (complete_induction_help A a Su l)
-      (Su (complete_induction_help A a Su l) k).
-Proof.
-  intro k.
-  unfold create_seq_from_vec.
-  reflexivity.
-Qed.*)
-
-(*Lemma complete_induction_help_compare_3 (A : Type) (a : A) 
-(Su : (ℕ → A) → ℕ → A): forall k : nat, 
-  complete_induction_help A a Su (S k) (S k)= 
-  create_seq_from_vec A k (complete_induction_help A a Su k) 
-  (Su (complete_induction_help A a Su k) k) (S k).
-Proof.
-  intro k.
-  unfold create_seq_from_vec.
-  destruct (le_lt_dec (S k ) k) as [Z1 | Z2].
-  assert (H: False) by auto with zarith.
-  destruct H.
-  Print complete_induction_help.
-  simpl.
-  destruct k.
-  reflexivity.
-  simpl.
-  destruct k.
-  simpl.
-  auto.
-  destruct (le_lt_dec k (S k)).
-  cbn.
-  unfold complete_induction_help.
-  destruct (le_lt_dec k (S k)) as [Z3 | Z4].
-
-  simpl. cbn.v*)
 
 Definition complete_induction_prop_help (P : nat -> Prop) : 
   P O -> (forall k : nat, (forall l : nat, (l <= k)%nat -> P(l)) -> forall l : nat, 
@@ -331,153 +226,6 @@ Proof.
   apply IHk.
 Qed.
 
-(*Goal forall A : Type,
-  forall P : (nat -> A) -> nat -> Prop,
-  forall Su : (nat -> A) -> nat -> A,
-  forall a : A, forall w : P (fun n : nat => a) 0%nat,
-  (forall k : nat,
-    (forall l : nat, (l <= k)%nat -> P ((complete_induction_help A a Su) l) l)
-    -> P ((complete_induction_help A a Su) (S k)) (S k))
-  -> forall k : nat, P (complete_induction A a Su) k.
-Proof.
-  intros A P Su a w H_ind.
-  intro k.
-  unfold complete_induction.
-  apply (H_ext (complete_induction_help A a Su (k)) 
-    (complete_induction A a Su)).
-  unfold complete_induction.
-  apply complete_induction_help_compare.
-  induction k as [|k IHk] using complete_induction_prop.
-  simpl.
-  exact w.
-  apply H_ind.
-  apply IHk.
-Qed.*)
-
-(*Definition test : ∀ A : Type, ∀ (P : (ℕ → A) → ℕ → Prop), 
-  (∀ f g : (ℕ → A), ∀ l : ℕ, (∀ k : ℕ, (k ≤ l)%nat ⇒ f k = g k )⇒ P f l ⇒ P g l) ⇒
-  {n_0 | P (create_seq_from_vec_0 A n_0) 0%nat} ⇒ 
-  (∀ n : ℕ → A, ∀ k : ℕ, 
-  { n_k_plus_1 | (∀ l : ℕ, (l ≤ k)%nat ⇒ P n l) ⇒ P (create_seq_from_vec A k n n_k_plus_1) (S k) }%type)
-  ⇒ { h | ∀ k : ℕ, P h k}.*)
-
-  (*Definition test : ∀ A : Type, ∀ (P : (ℕ → A) → ℕ → Prop), 
-  (∀ f g : (ℕ → A), ∀ l : ℕ, (∀ k : ℕ, (k ≤ l)%nat ⇒ f k = g k )⇒ P f l ⇒ P g l) ⇒
-  {n_0 | P (create_seq_from_vec_0 A n_0) 0%nat} ⇒ 
-  (∀ n : ℕ → A, ∀ k : ℕ, 
-  { n_k_plus_1 | (∀ l : ℕ, (l ≤ k)%nat ⇒ P n l) ⇒ P (create_seq_from_vec A k n n_k_plus_1) (S k) }%type)
-  ⇒ { h | ∀ k : ℕ, P h k}.*)
-
-(*
-We need that for all k, all l <=S k
-complete_induction_help A n_0 Su (l) =
-  (create_seq_from_vec A k (complete_induction_help A n_0 Su k) n_k_plus_1) (l)
-*)
-
-
-
-
-
-
-
-Definition test : ∀ A : Type, ∀ (P : (ℕ → A) → ℕ → Prop), 
-  (∀ f g : (ℕ → A), ∀ l : ℕ, (∀ k : ℕ, (k ≤ l)%nat ⇒ f k = g k )⇒ P f l ⇒ P g l) ⇒
-  {n_0 | P (create_seq_from_vec_0 A n_0) 0%nat} ⇒ 
-  (∀ n : ℕ → A, ∀ k : ℕ, 
-  { n_k_plus_1 | (∀ l : ℕ, (l ≤ k)%nat ⇒ P n l) ⇒ P (create_seq_from_vec A (S k) n n_k_plus_1) (S k) }%type)
-  ⇒ { h | ∀ k : ℕ, P h k}.
-Proof.
-intros A P H_ext n_0_w_proof Su_full.
-set (Su := (fun (n : ℕ → A) (k : ℕ) => @proj1_sig _ _ (Su_full n k))).
-set (h_help := (complete_induction_help A (proj1_sig n_0_w_proof) 
-Su)).
-set (h := (complete_induction A (proj1_sig n_0_w_proof) 
-  Su)).
-exists h.
-apply new_induction_principle.
-assumption.
-destruct n_0_w_proof as [n_0 w_n_0].
-simpl.
-exact w_n_0.
-destruct n_0_w_proof as [n_0 w_n_0].
-simpl. 
-intro k.
-intro H1.
-set (n_k_plus_1 := @proj1_sig _ _ (Su_full (complete_induction_help A n_0 Su k) k)).
-assert (H0 : n_k_plus_1 = Su (complete_induction_help A n_0 Su k) k) by trivial.
-destruct (Su_full (complete_induction_help A n_0 Su k) k) as
-  [p_n_k_plus_1 w_Su_full].
-assert (H3 : n_k_plus_1 = p_n_k_plus_1).
-trivial.
-rewrite <- H0.
-
-unfold create_seq_from_vec in w_Su_full.
-rewrite H3.
-apply w_Su_full.
-intro l.
-intro l_le_k.
-apply (H_ext (complete_induction_help A n_0 Su l)).
-intro q.
-intro q_le_l.
-assert (q_le_k : (q <= k)%nat) by auto with zarith.
-rewrite (complete_induction_help_compare A n_0 Su l q).
-rewrite (complete_induction_help_compare A n_0 Su k q).
-reflexivity.
-assumption.
-assumption.
-apply H1.
-assumption.
-Defined.
-    
-Definition test2 : ∀ A : Type, ∀ (P : (ℕ → A) → ℕ → Prop), 
-  (∀ f g : (ℕ → A), ∀ l : ℕ, (∀ k : ℕ, (k ≤ l)%nat ⇒ f k = g k )⇒ P f l ⇒ P g l) ⇒
-  forall n_0 : A, P (create_seq_from_vec_0 A n_0) 0%nat ⇒ 
-  (∀ n : ℕ → A, ∀ k : ℕ, 
-  { n_k_plus_1 | (∀ l : ℕ, (l ≤ k)%nat ⇒ P n l) ⇒ P (create_seq_from_vec A (S k) n n_k_plus_1) (S k) }%type)
-  ⇒ { h | ∀ k : ℕ, P h k}.
-Proof.
-intros A P H_ext n_0 w_n_0 Su_full.
-set (Su := (fun (n : ℕ → A) (k : ℕ) => @proj1_sig _ _ (Su_full n k))).
-set (h_help := (complete_induction_help A n_0 
-Su)).
-set (h := (complete_induction A n_0 
-  Su)).
-exists h.
-apply new_induction_principle.
-assumption.
-(*destruct n_0_w_proof as [n_0 w_n_0].*)
-simpl.
-exact w_n_0.
-(*destruct n_0_w_proof as [n_0 w_n_0].*)
-simpl. 
-intro k.
-intro H1.
-set (n_k_plus_1 := @proj1_sig _ _ (Su_full (complete_induction_help A n_0 Su k) k)).
-assert (H0 : n_k_plus_1 = Su (complete_induction_help A n_0 Su k) k) by trivial.
-destruct (Su_full (complete_induction_help A n_0 Su k) k) as
-  [p_n_k_plus_1 w_Su_full].
-assert (H3 : n_k_plus_1 = p_n_k_plus_1).
-trivial.
-rewrite <- H0.
-
-unfold create_seq_from_vec in w_Su_full.
-rewrite H3.
-apply w_Su_full.
-intro l.
-intro l_le_k.
-apply (H_ext (complete_induction_help A n_0 Su l)).
-intro q.
-intro q_le_l.
-assert (q_le_k : (q <= k)%nat) by auto with zarith.
-rewrite (complete_induction_help_compare A n_0 Su l q).
-rewrite (complete_induction_help_compare A n_0 Su k q).
-reflexivity.
-assumption.
-assumption.
-apply H1.
-assumption.
-Defined.
-
 (* Construct a subsequence with a certain property ... *)
 
 Definition myP (myQ: nat->nat->Prop) (n : nat -> nat) k : Prop :=
@@ -505,41 +253,6 @@ Proof.
   auto with zarith.
   auto with zarith.
 Qed.
-
-Definition test3 : ∀ (myQ : nat->nat->Prop), 
-  { n_0 | myQ n_0 O } ⇒ 
-  (∀ n : ℕ → nat, ∀ k : ℕ, 
-  { n_k_plus_1 | (∀ l : ℕ, (l ≤ k)%nat ⇒ myP myQ n l) ⇒ myP myQ (create_seq_from_vec nat (S k) n n_k_plus_1) (S k) }%type)
-  ⇒ { h | ∀ k : ℕ, myP myQ h k}.
-Proof.
-  intros myQ n_0_w_proof H_ind.
-  apply test.
-  apply help_test_1.
-  destruct n_0_w_proof as [n_0 w_n_0].
-  exists n_0.
-  unfold create_seq_from_vec_0.
-  exact w_n_0.
-  exact H_ind.
-Defined.
-
-
-Lemma test1:
-  { h | ∀ k : ℕ, myP h k }.
-Proof.
-  apply test.
-  admit.
-  admit.
-  destruct.
-  exists.
-
-intro m.
-induction m as [|m IHm].
-destruct X as [x prop_x].
-exact x.
-
-exact match n with
-| O => n_0
-| S k => n_k_plus_1
 
 (** The next definition captures what it means to be an index sequence.*)
 Definition is_index_seq (n : ℕ → ℕ) :=
@@ -588,7 +301,23 @@ Proof.
       By (i) we conclude that (P (S k) (a (g (S k) (S (create_seq g k))))).
 Qed.
 
-
+Lemma existence_next_el_to_fun :
+    ∀ (a : ℕ → ℝ) (P : ℕ → ℝ → Prop),
+    (∀ (m : ℕ) (N : ℕ), ∃ k : ℕ, (N ≤ k)%nat ∧ (P m (a k))) ⇒
+      ∃ f : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ f m N)%nat ∧ P m (a (f m N)).
+Proof.
+    Take a : (ℕ → ℝ). 
+    Take P : (ℕ → ℝ → Prop).
+    Assume that (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)) (i).
+    We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))) (ii).
+    {
+        Take m : ℕ.
+        apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).
+        By (i) we conclude that (for all x : ℕ, there exists y : ℕ, (x ≤ y)%nat ∧ P m (a y)).
+    }
+    apply choice with (R := fun (m : ℕ) (h : ℕ → ℕ) ↦ ( ∀ N : ℕ, (N ≤ h N)%nat ∧ P m (a (h N)) ) ).
+    By (ii) we conclude that (for all x : ℕ, there exists y : ℕ ⇨ ℕ , for all N : ℕ, (N ≤ y N)%nat ∧ P x (a (y N))).
+Qed.
 
 Lemma exists_good_subseq :
   ∀ (a : ℕ → ℝ) (P : ℕ → ℝ → Prop),
@@ -673,8 +402,6 @@ Proof.
     We conclude that (n k - k ≤ n (S k) - S k)%nat.
 Qed.
 
-
-
 Lemma index_seq_grows_0 :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ ∀ k : ℕ, (n k ≥ k)%nat.
 Proof.
@@ -686,7 +413,6 @@ Proof.
       It holds that (n k < n (S k))%nat.
       We conclude that (n (S k) ≥ S k)%nat.
 Qed.
-
 
 Lemma index_seq_grows :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ (∀ k l : ℕ, (k ≤ l)%nat ⇒ (n k - k ≤ n l - l)%nat).
@@ -783,19 +509,18 @@ Proof.
          end) g n))%nat.
 Qed.
 
-
 Lemma elements_le_seq_of_max :
   ∀ (g : ℕ → ℕ) (n : ℕ) (k : ℕ),
     (k ≤ n)%nat ⇒ (g k ≤ seq_of_max g n)%nat.
 Proof.
-    Take g : (ℕ → ℕ).
-    Take n : ℕ and k : ℕ; such that (k ≤ n)%nat.
-    By elements_le_seq_of_max_pre it holds that (g k ≤ seq_of_max g k)%nat.
-    We claim that (seq_of_max g k ≤ seq_of_max g n)%nat.
-    { By incr_loc_to_glob it suffices to show that (is_increasing (seq_of_max g)).
-      By seq_of_max_is_increasing we conclude that (is_increasing (seq_of_max g)).
-    }
-    We conclude that (& g k <= seq_of_max g k <= seq_of_max g n)%nat.
+  Take g : (ℕ → ℕ).
+  Take n : ℕ and k : ℕ; such that (k ≤ n)%nat.
+  By elements_le_seq_of_max_pre it holds that (g k ≤ seq_of_max g k)%nat.
+  We claim that (seq_of_max g k ≤ seq_of_max g n)%nat.
+  { By incr_loc_to_glob it suffices to show that (is_increasing (seq_of_max g)).
+    By seq_of_max_is_increasing we conclude that (is_increasing (seq_of_max g)).
+  }
+  We conclude that (& g k <= seq_of_max g k <= seq_of_max g n)%nat.
 Qed.
 
 
@@ -812,18 +537,18 @@ Lemma built_seq_is_index_seq :
     (∀ k : ℕ, (g k ≥ k)%nat) ⇒
       is_index_seq (build_seq g).
 Proof.
-    Take g : (ℕ → ℕ).
-    Assume that (for all k : ℕ, (g k ≥ k)%nat).
-    Expand the definition of is_index_seq.
-    That is, write the goal as (for all k : ℕ, (build_seq g k < build_seq g (S k))%nat).
-    Take k : ℕ.
-    We need to show that (build_seq g k < g (S (seq_of_max g (build_seq g k))))%nat.
-    It holds that (g( S(seq_of_max g (build_seq g k)))≥ S(seq_of_max g (build_seq g k)))%nat.
-    It holds that (g( S(seq_of_max g (build_seq g k)))> seq_of_max g (build_seq g k))%nat.
-    By elements_le_seq_of_max_pre it holds that (seq_of_max g (build_seq g k) ≥ g(build_seq g k))%nat.
-    It holds that (g(build_seq g k) ≥ build_seq g k)%nat.
-    We conclude that (& build_seq g k <= g(build_seq g k)
-                                      <= seq_of_max g (build_seq g k)
-                                      <  g( S(seq_of_max g (build_seq g k))))%nat.
+  Take g : (ℕ → ℕ).
+  Assume that (for all k : ℕ, (g k ≥ k)%nat).
+  Expand the definition of is_index_seq.
+  That is, write the goal as (for all k : ℕ, (build_seq g k < build_seq g (S k))%nat).
+  Take k : ℕ.
+  We need to show that (build_seq g k < g (S (seq_of_max g (build_seq g k))))%nat.
+  It holds that (g( S(seq_of_max g (build_seq g k)))≥ S(seq_of_max g (build_seq g k)))%nat.
+  It holds that (g( S(seq_of_max g (build_seq g k)))> seq_of_max g (build_seq g k))%nat.
+  By elements_le_seq_of_max_pre it holds that (seq_of_max g (build_seq g k) ≥ g(build_seq g k))%nat.
+  It holds that (g(build_seq g k) ≥ build_seq g k)%nat.
+  We conclude that (& build_seq g k <= g(build_seq g k)
+                                    <= seq_of_max g (build_seq g k)
+                                    <  g( S(seq_of_max g (build_seq g k))))%nat.
 Qed.
 (** ### Subsequence satisfies relation*)

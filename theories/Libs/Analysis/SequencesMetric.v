@@ -1,13 +1,12 @@
-From Ltac2 Require Import Ltac2.
-Require Import Waterproof.tactics.unfold.
-Require Import Waterproof.tactics.forward_reasoning.we_conclude_that.
+Require Import Coq.Reals.Reals.
 
-Require Import Waterproof.notations.notations.
-Require Import Reals.
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
-(*Require Import Waterproof.populate_database.waterproof_integers.
-Require Import Waterproof.populate_database.waterproof_reals.*)
+Require Import Automation.
+Require Import Libs.Negation.
+Require Import Notations.
+Require Import Tactics.
+
+Waterproof Enable Automation RealsAndIntegers.
+
 Open Scope R_scope.
 
 (** * Sequences in metric spaces *)

@@ -1,11 +1,14 @@
-Require Import Reals.
-Require Import Waterproof.AllTactics.
-Require Import Waterproof.notations.notations.
+Require Import Coq.Reals.Reals.
 Require Import Reals.ROrderedType.
-Require Import Waterproof.theory.analysis.reals. (* Req_true is in here *)
-Require Import Waterproof.load.
-Module Import db_RealsAndIntegers := Waterproof.load.databases(RealsAndIntegers).
 Require Import micromega.Lra.
+
+Require Import Automation.
+Require Import Libs.Reals.
+Require Import Notations.
+Require Import Tactics.
+
+Waterproof Enable Automation RealsAndIntegers.
+
 Open Scope R_scope.
 
 Section Definitions.
@@ -37,12 +40,10 @@ Qed.
 
 Definition dist_reflexive : ∀ x : X, dist X x x = 0.
   Take x : X.
-  By (proj2(_,_,(dist_refl X x x))) we conclude that (dist X x x = 0).
+  By (proj2(_, _, (dist_refl X x x))) we conclude that (dist X x x = 0).
 Defined.
 
 End Definitions.
-
-
 
 (** ** Expample : a discrete metric on the real line *)
 
