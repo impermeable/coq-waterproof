@@ -6,6 +6,11 @@
 val is_forbidden : Evd.evar_map -> EConstr.constr -> bool
 
 (**
+  Is automation shield enabled ? 
+*)
+val automation_shield : bool ref
+
+(**
   Tests that the current goal is not forbidden with the shield on.
 *)
 val shield_test : unit -> unit Proofview.tactic

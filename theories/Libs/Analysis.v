@@ -3,7 +3,6 @@ Require Export Libs.Analysis.ContinuityDomainR.
 Require Export Libs.Analysis.LimsupLiminfBolzano.
 Require Export Libs.Analysis.MetricSpaces.
 Require Export Libs.Analysis.OpenAndClosed.
-Require Export Libs.Analysis.Reals.
 Require Export Libs.Analysis.SequencesMetric.
 Require Export Libs.Analysis.Sequences.
 Require Export Libs.Analysis.SequentialAccumulationPoints.

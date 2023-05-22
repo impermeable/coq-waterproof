@@ -17,7 +17,6 @@ Require Import Tactics.
 Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
-Open Scope extra.
 
 (** ** What is a sequence of real numbers?
 
@@ -496,6 +495,4 @@ Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" cl(opt(seq("in", "(
 Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" cl(opt(seq("in", "(", ident, ")"))) := 
   expand_def_framework unfold_diverge_minus_infty unfold_diverge_minus_infty_in cl.
 
-
-Close Scope extra.
 Close Scope R_scope.

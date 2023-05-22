@@ -62,10 +62,11 @@ theories/Tactics/Take.v
 theories/Tactics/ToShow.v
 theories/Tactics/Unfold.v
 
-theories/Util/Init.v
+theories/Util/Assertions.v
 theories/Util/Constr.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
+theories/Util/Init.v
 
 theories/Waterproof.v
 theories/Waterprove.v
@@ -88,10 +89,39 @@ theories/Libs/Analysis/Subsequences.v
 theories/Libs/Analysis/SupAndInf.v
 
 # Coq-Waterproof tests
-# tests/tactics/Wauto.v
-# tests/tactics/Weauto.v
-# tests/tactics/Rwauto.v
-# tests/tactics/Rweauto.v
-# tests/databases/Core.v
-# tests/databases/Empty.v
-# tests/databases/RealsAndIntegers.v
+
+## Chains
+tests/chains/Inequalities.v
+tests/chains/Manipulation.v
+
+## Automation
+
+### General  
+tests/automation/Shield.v
+
+### Databases
+tests/automation/databases/Core.v
+tests/automation/databases/Empty.v
+tests/automation/databases/RealsAndIntegers.v
+
+## Tactics
+tests/tactics/Assume.v
+tests/tactics/Because.v
+tests/tactics/BothDirections.v
+tests/tactics/BothStatements.v
+tests/tactics/Claims.v
+tests/tactics/Choose.v
+tests/tactics/Conclusion.v
+tests/tactics/Contradiction.v
+tests/tactics/Define.v
+tests/tactics/Either.v
+tests/tactics/Induction.v
+tests/tactics/ItHolds.v
+tests/tactics/ItSuffices.v
+tests/tactics/Sets.v
+tests/tactics/Take.v
+tests/tactics/ToShow.v
+tests/tactics/Unfold.v
+
+## Libs
+tests/libs/Negation.v

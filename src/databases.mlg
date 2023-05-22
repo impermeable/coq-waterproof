@@ -11,7 +11,7 @@ open Hint_dataset_declarations
 }
 
 VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
-| [ "Waterproof" "Enable" "Automation" ident(dataset) ] ->
+  | [ "Waterproof" "Enable" "Automation" ident(dataset) ] ->
     {
       let dataset_name = Names.Id.to_string dataset in
       load_dataset dataset_name

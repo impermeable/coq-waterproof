@@ -165,7 +165,7 @@ Require Import Waterprove.
 Ltac2 Type exn ::= [ NegationError(string) ].
 
 (** Hint *)
-Local Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
+Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
   let h := Control.hyp h_id in
   (* Check whether h is a proposition. *)
   let type_h := get_value_of_hyp h in

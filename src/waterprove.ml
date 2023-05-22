@@ -1,6 +1,6 @@
 open Constr
 open EConstr
-(* open Exninfo *)
+open Exninfo
 open Hints
 open Pp
 open Proofview
@@ -21,6 +21,11 @@ let forbidden_inductive_types: string list = [
   "Coq.Init.Logic.ex2"; (* exists2 *) 
   (* "Coq.Init.Logic.or"; *) (* \/ *)
 ]
+
+(**
+  Is automation shield enabled ? 
+*)
+let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
 
 (**
   Returns a [bool] from a [EConstr.constr] indicating if this term is forbidden in automation.
@@ -65,12 +70,11 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
     end
     begin
       fun (exn, info) ->
-        tclZERO ~info exn
-        (* throw (FailedAutomation (
+        throw (FailedAutomation (
           match get_backtrace info with
             | None -> "could not find a proof for the current goal"
             | Some backtrace -> backtrace_to_string backtrace
-        )) *)
+        ))
     end
 
 (**
@@ -93,6 +97,6 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     begin
       let sigma = Proofview.Goal.sigma goal in
       let conclusion = Proofview.Goal.concl goal in
-      if shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+      if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
       automation_routine depth lems (get_current_databases database_type)
     end

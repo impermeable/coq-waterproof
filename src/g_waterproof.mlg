@@ -17,6 +17,20 @@ open Waterprove
 
 }
 
+VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
+    {
+      automation_shield := true
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
+    {
+      automation_shield := false
+    }
+END
+
 {
 
 (** Creates a name used to define the function interface *)
@@ -96,14 +110,14 @@ let _ = define2
 let _ = define3
 let _ = define5
 
-(* Converts a {! Hint_dataset_declarations.database_type} into a [valexpr] *)
+(** Converts a {! Hint_dataset_declarations.database_type} into a [valexpr] *)
 let database_type_to_valexp (database_type: database_type): valexpr = match database_type with
   | Positive -> ValInt 0
   | Negative -> ValInt 1
   | Decidability -> ValInt 2
   | Shorten -> ValInt 3
   
-(* Converts a [valexpr] into a {! Hint_dataset_declarations.database_type} *)
+(** Converts a [valexpr] into a {! Hint_dataset_declarations.database_type} *)
 let database_type_from_valexp (value: valexpr): database_type = match value with
   | ValInt n ->
     let database_type = match n with
@@ -115,14 +129,14 @@ let database_type_from_valexp (value: valexpr): database_type = match value with
     in database_type
   | _ -> throw (CastError "cannot cast something different than an [int] into a [database_type]")
 
-(* Export {! Hint_dataset_declarations.database_type} to Ltac2 *)
+(* Exports {! Hint_dataset_declarations.database_type} to Ltac2 *)
 let () =
   define0 "database_type_positive" @@ tclUNIT @@ database_type_to_valexp Positive;
   define0 "database_type_negative" @@ tclUNIT @@ database_type_to_valexp Negative;
   define0 "database_type_decidability" @@ tclUNIT @@ database_type_to_valexp Decidability;
   define0 "database_type_shorten" @@ tclUNIT @@ database_type_to_valexp Shorten
 
-(* Export {! Waterprove.waterprove} to Ltac2 *)
+(* Exports {! Waterprove.waterprove} to Ltac2 *)
 let () =
   define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
   fun depth shield lems database_type ->

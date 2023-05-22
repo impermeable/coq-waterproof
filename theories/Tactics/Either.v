@@ -35,12 +35,12 @@ Ltac2 either_or (t1:constr) (t2:constr) :=
         ]
     ) in
     match Control.case attempt with
-    | Val _ =>
-      let h_val := Control.hyp h_id in
-      destruct $h_val;
-      Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
-      Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-    | Err exn => Control.zero (CaseError "Could not find a proof that the first or the second statement holds.")
+      | Val _ =>
+        let h_val := Control.hyp h_id in
+        destruct $h_val;
+        Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+        Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
+      | Err exn => Control.zero (CaseError "Could not find a proof that the first or the second statement holds.")
     end.
 
 Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 

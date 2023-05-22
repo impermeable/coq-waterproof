@@ -43,11 +43,8 @@ Definition cv_implies_cv_abs_to_l_abs := cv_cvabs.
   When using this in rewrites, $<$, $>$, etc. should bind stronger.
 *)
 
-Declare Scope extra.
-
 Notation "| x |" := (Rabs x) (at level 65, x at next level, format "| x |").
-Notation "｜ x - y ｜" := (R_dist x y) (at level 65, x at level 48, y at level 48, format "｜ x  -  y ｜") : extra.
-
+Notation "｜ x - y ｜" := (R_dist x y) (at level 65, x at level 48, y at level 48, format "｜ x  -  y ｜") : R_scope.
 
 (** ** Sums and series *)
 Notation "'Σ' Cn 'equals' x" := (infinite_sum Cn x) (at level 50).
@@ -55,10 +52,11 @@ Notation "'Σ' Cn 'equals' x" := (infinite_sum Cn x) (at level 50).
 Definition finite_triangle_inequalty := sum_f_R0_triangle.
 
 (** ** Subsets and intervals*)
-Notation "[ a , b ]" := (as_subset R (fun x => (a <= x <= b))).
-Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))).
-Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))).
-Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))).
+Notation "[ a , b ]" := (as_subset R (fun x => (a <= x <= b))): R_scope.
+Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))): R_scope.
+Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))): R_scope.
+Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))): R_scope.
 
 Close Scope nat_scope.
 Close Scope R_scope.
+
