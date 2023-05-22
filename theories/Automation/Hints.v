@@ -77,6 +77,7 @@ Create HintDb wp_decidability_reals.
   #[export] Hint Resolve Rlt_dec Rle_dec Rge_dec : wp_decidability_reals.
   #[export] Hint Resolve Rle_lt_dec Rge_gt_dec : wp_decidability_reals.
   #[export] Hint Resolve Rle_lt_or_eq_dec : wp_decidability_reals.
+  #[export] Hint Resolve Rge_lt_or_eq_dec : wp_decidability_reals.
 
   (** <<x < y>>, <<x = y>> or <<y < x>> *)
   #[export] Hint Resolve total_order_T : wp_decidability_reals.

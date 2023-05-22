@@ -96,12 +96,7 @@ Ltac2 check_and_solve (target_goal:constr) (lemma_opt: constr option) :=
       end
     | true  => ()
   end;
-  waterprove 5 (
-    match lemma_opt with
-      | None => true
-      | Some _ => false
-    end
-  ) [fun () => lemma] Positive.
+  waterprove 5 true [fun () => lemma] Positive.
 
 
 (**

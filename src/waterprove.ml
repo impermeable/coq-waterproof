@@ -1,6 +1,5 @@
 open Constr
 open EConstr
-open Exninfo
 open Hints
 open Pp
 open Proofview
@@ -16,10 +15,10 @@ open Weauto
 *)
 let forbidden_inductive_types: string list = [
   "Coq.Init.Logic.all"; (* forall (should not be necessary) *)
-  (* "Coq.Init.Logic.and"; *) (* /\ *)
+  "Coq.Init.Logic.and"; (* /\ *)
   "Coq.Init.Logic.ex"; (* exists *)
   "Coq.Init.Logic.ex2"; (* exists2 *) 
-  (* "Coq.Init.Logic.or"; *) (* \/ *)
+  "Coq.Init.Logic.or"; (* \/ *)
 ]
 
 (**
@@ -37,7 +36,7 @@ let rec is_forbidden (sigma: Evd.evar_map) (term: constr): bool =
   match kind sigma term with
     | Prod (binder, _, _) -> Names.Name.print binder.binder_name <> str "_"
     | Cast (sub_term, _, _) -> is_forbidden sigma sub_term
-    | Lambda (_, _, right_side) -> is_forbidden sigma right_side
+    | Lambda (_, _, right_side) -> true
     | LetIn (_, value, _, right_side) -> is_forbidden sigma value || is_forbidden sigma right_side
     | App (f, args) -> is_forbidden sigma f || exists_in_array args
     | Case (_, _, params, _, _, c, branches) ->
@@ -70,11 +69,7 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
     end
     begin
       fun (exn, info) ->
-        throw (FailedAutomation (
-          match get_backtrace info with
-            | None -> "could not find a proof for the current goal"
-            | Some backtrace -> backtrace_to_string backtrace
-        ))
+        tclZERO ~info exn
     end
 
 (**
@@ -97,6 +92,10 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     begin
       let sigma = Proofview.Goal.sigma goal in
       let conclusion = Proofview.Goal.concl goal in
-      if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
-      automation_routine depth lems (get_current_databases database_type)
+      tclORELSE
+        (automation_routine 2 lems (get_current_databases database_type))
+        begin fun _ ->
+          if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+          automation_routine depth lems (get_current_databases database_type)
+        end
     end

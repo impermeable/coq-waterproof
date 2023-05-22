@@ -101,7 +101,9 @@ tests/automation/Shield.v
 
 ### Databases
 tests/automation/databases/Core.v
+tests/automation/databases/Decidability.v
 tests/automation/databases/Empty.v
+tests/automation/databases/Integers.v
 tests/automation/databases/RealsAndIntegers.v
 
 ## Tactics

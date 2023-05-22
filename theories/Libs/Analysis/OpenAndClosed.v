@@ -98,7 +98,7 @@ Qed.
 Lemma one_in_complement_interval_closed_zero_open_one : (1 : ℝ \ [0,1)).
 Proof.
   We need to show that (~ ((0 <= 1) /\ (1 < 1))).
-  We conclude that (~ 0 <= 1 < 1).
+  We conclude that (~ (& 0 <= 1 < 1)).
 Qed.
 
 #[export] Hint Resolve one_in_complement_interval_closed_zero_open_one : wp_reals.
@@ -114,8 +114,8 @@ Qed.
 
 Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x ∈ A) -> (¬ x : ℝ\A).
 Proof.
-  Assume that (x ∈ A).
-  We conclude that (¬ x : ℝ\A).
+  Assume that (x ∈ A) (i).
+  By (i) we conclude that (¬ x : ℝ\A).
 Qed.
 
 #[export] Hint Resolve not_in_compl_implies_in : wp_negation_reals.

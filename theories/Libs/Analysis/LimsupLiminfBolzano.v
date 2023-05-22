@@ -69,9 +69,9 @@ Proof.
       }
       Because (iv) both (n ≥ Nn)%nat and 
         (a n > sequence_ub a i Nn - 1 / (m + 1)) hold.
-      It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n).
+      It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n) (v).
       We need to show that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
-      We conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a n = a k).
+      By (v) we conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a n = a k).
 Qed.
 
 
@@ -197,11 +197,11 @@ Proof.
       (∃ (n : ℕ → ℕ), is_index_seq n
         ∧ Un_cv (fun (k : ℕ) ↦ a (n k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) (iv).
     Obtain n0 according to (iv), so for n0 : ℕ → ℕ it holds that
-      (is_index_seq n0 ∧ Un_cv (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
+      (is_index_seq n0 ∧ Un_cv (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) (v).
     Choose n := n0.
     Choose l := (proj1_sig (_,_,lim_sup_bdd a (i) (iii))).
-    It suffices to show that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
-    We conclude that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
+    By (v) it suffices to show that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
+    By (v) we conclude that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
 Qed.
 
 Lemma acc_pt_bds_seq_ub :
@@ -274,7 +274,7 @@ Proof.
       Expand the definition of is_seq_acc_pt in (iii).
       That is, write (iii) as (for all x : ℝ, 
         (there exists n : ℕ ⇨ ℕ, is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) ⇨ x ≤ b).
-      It suffices to show that (there exists n : ℕ ⇨ ℕ, is_index_seq n
+      By (iii) it suffices to show that (there exists n : ℕ ⇨ ℕ, is_index_seq n
         ∧ Un_cv (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
       By Bolzano_Weierstrass_gen we conclude that (there exists n : ℕ ⇨ ℕ, is_index_seq n
         ∧ Un_cv (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).

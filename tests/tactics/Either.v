@@ -57,22 +57,20 @@ Abort.
             Also tests whether the hypothesis name from the tactic can be chosen flexibly. *)
 Goal forall x : R, x >= 0 -> exists n : nat, INR(n) > x.
   intros x h.
-Abort.
-(*     Either (x = 0) or (0 < x).
+  Either (x = 0) or (x > 0).
     - Case (x = 0).
       admit.
     - Case (x > 0).
-Abort. *)
+Abort.
 
 (** Test 6: This tests whether given x >= 0, either x = 0 or x > 0 (commutativity). *)
 Goal forall x : R, x >= 0 -> exists n : nat, INR(n) > x.
   intros x H.
-Abort.
-(*     Either (x = 0) or (x > 0).
+  Either (x = 0) or (x > 0).
     - Case (x = 0).
       admit.
     - Case (x > 0).
-Abort. *)
+Abort.
 
 (** Test 7: This tests to see if 0 < x, x = 0 or 0 < x. *)
 Goal forall x : R, exists n : nat, INR(n) > x.

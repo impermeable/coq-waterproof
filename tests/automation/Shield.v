@@ -45,6 +45,10 @@ Goal forall x : R, (x^2 > 0) \/ (x + 3 = 3 + x).
   Fail We conclude that (x ^ 2 > 0 ∨ x + 3 = 3 + x).
 Abort.
 
+Waterproof Disable Automation Shield.
+
+Waterproof Enable Automation RealsAndIntegers.
+
 (** * Test 5: show that we can now conclude the implication. 
 *)
 Goal (0 = 0) -> (0 < 1).
@@ -82,15 +86,11 @@ Goal forall x : R, (x^2 > 0) \/ (x + 3 = 3 + x).
   We conclude that (x ^ 2 > 0 ∨ x + 3 = 3 + x).
 Abort.
 
-
-
-
-(* Enable automation shielding. *)
-Ltac2 Set Waterproof.waterprove.automation_subroutine.global_shield_automation := true.
+Waterproof Enable Automation Shield.
 
 (** * Test 13: show that we again cannot conclude the implication. 
 *)
-Goal (0 = 0) -> (0 < 1).
+Goal forall x : R, (x^2 >= 0).
   Fail We conclude that ((0 = 0) -> (0 < 1)).
 Abort.
 
@@ -107,10 +107,7 @@ Abort.
 
 (** Testing de Morgan laws. *)
 
-(* Require Import Waterproof.theory.logic_and_set_theory.classical_logic.
-Require Import Waterproof.theory.logic_and_set_theory.constructive_logic.
-Require Import Waterproof.load_database.ClassicalLogic.*)
-Require Import Waterproof.waterprove.manipulate_negation.
+Require Import Waterproof.Libs.Negation.
 #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
 
 (** Level 1 *)

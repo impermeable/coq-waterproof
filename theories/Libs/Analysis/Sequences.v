@@ -209,7 +209,7 @@ Proof.
     (* TODO: make transport automatic *)
     By (eq_ind_r(_, _, fun x => Un_cv (fun n ↦ -(1 / (n + 1)), x), (i))) 
       it suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
-    We conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    By (i) we conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
 
