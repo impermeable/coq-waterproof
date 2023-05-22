@@ -79,5 +79,5 @@ let pr_trace (trace: trace): unit =
 
   It is supposed here that the given [trace] has not been modified after getting it from the [trace tactic].
 *)
-let keep_applied (trace: trace): trace = 
+let keep_applied (trace: trace): trace =
   { trace with trace = List.filter (fun (is_applied, _, _, _) -> is_applied) trace.trace }

@@ -6,6 +6,11 @@
 val is_forbidden : Evd.evar_map -> EConstr.constr -> bool
 
 (**
+  Is automation shield enabled ? 
+*)
+val automation_shield : bool ref
+
+(**
   Tests that the current goal is not forbidden with the shield on.
 *)
 val shield_test : unit -> unit Proofview.tactic
@@ -26,7 +31,7 @@ val shield_test : unit -> unit Proofview.tactic
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 val waterprove :
-  int ->
+  int -> 
   ?shield:bool ->
   Tactypes.delayed_open_constr list ->
   Hint_dataset_declarations.database_type ->

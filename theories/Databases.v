@@ -1,1 +1,0 @@
-Declare ML Module "waterproof:coq-waterproof.databases".

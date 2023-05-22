@@ -19,5 +19,9 @@ jobs:
       - name: Build plugin
         uses: coq-community/docker-coq-action@v1
         with:
-          custom_image: 'coqorg/coq:dev-ocaml-4.14-flambda'
+          custom_image: 'coqorg/coq:8.17-ocaml-4.14-flambda'
           opam_file: 'coq-waterproof.opam'
+          before_script: |
+            startGroup "Install dependencies"
+              sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
+            endGroup

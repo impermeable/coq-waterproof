@@ -2,7 +2,7 @@ package "waterproof" (
     directory = "."
     version = "dev"
     description = "Waterproof plugin"
-    requires = "coq-core.vernac"
+    requires = "coq-core.plugins.ltac coq-core.plugins.ltac2"
     archive(byte) = "waterproof.cma"
     archive(native) = "waterproof.cmxa"
     plugin(byte) = "waterproof.cma"

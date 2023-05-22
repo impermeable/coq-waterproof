@@ -1,0 +1,85 @@
+Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
+
+Require Import Waterproof.Waterproof.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.Assertions.
+
+(** Test 0: This should work *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) both (n = n) and (n + 1 = n + 1) hold.
+Abort.
+
+(** Test 1: This should work, test first prop labeled. *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) both (n = n) (ii) and (n + 1 = n + 1).
+Abort.
+
+(** Test 2: This should work, test second prop labeled. *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) both (n = n) and (n + 1 = n + 1) (ii) hold.
+Abort.
+
+(** Test 3: This should work, test both props labeled. *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) both (n = n) (ii) and (n + 1 = n + 1) (iii) hold.
+Abort.
+
+
+(** Test 4: This should ~not~ work *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) both nat and nat hold.
+Abort.
+
+(** Test 5: Tests the 'Because ... either ... or ...' tactic without specifying labels of the 
+              alternative hypotheses. *)
+Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Because (i) either (n = n) or (n + 1 = n + 1) holds.
+    - Case (n = n).
+      admit.
+    - Case (n+1 = n+1).
+Abort.
+
+(** Test 6: Tests the 'Because ... either ... or ...' tactic with labels for the 
+              alternative hypotheses. *)
+Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) either (n = 0) (ii) or (n+1 = n+1) (iii) holds.
+    Fail Because (i) either (n = n) (ii) or (n+1 = 0) (iii) holds.
+    Because (i) either (n = n) (ii) or (n+1 = n+1) (iii).
+    - Case (n = n).
+      admit.
+    - Case (n+1 = n+1).
+Abort.
+
+(** Test 7 : Tests if the 'Because ... both ... and ...' tactic does not 
+             delete the origininal hypothesis *)
+Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) both (n = n) (i) and (n + 1 = n + 1) hold.
+    Because (i) both (n = n) and (n + 1 = n + 1) hold.
+Abort.
+
+(** Test 8 : Tests if the 'Because ... either ... or ...' tactic does not 
+             delete the origininal hypothesis *)
+Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
+    intro n.
+    intro i.
+    Fail Because (i) either (n = n) (i) or (n + 1 = n + 1) holds.
+    Because (i) either (n = n) or (n + 1 = n + 1) holds.
+Abort.

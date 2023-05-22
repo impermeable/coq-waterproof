@@ -307,17 +307,17 @@ let resolve_esearch (dblist: hint_db list) (local_lemmas: Tactypes.delayed_open_
                   else tclUNIT s
 
   and explore_many (tactic_list: search_state tactic list): search_state tactic = match tactic_list with
-  | [] -> tclZERO (SearchBound no_trace)
-  | tac :: l ->
-    tclORELSE
-      (tac >>= fun state -> explore state)
+    | [] -> tclZERO (SearchBound no_trace)
+    | tac :: l ->
+      tclORELSE
+        (tac >>= fun state -> explore state)
 
-      (* discriminate between search failures and [tac] raising an error *)
-      (
-        fun (e, _) -> match e with
-          | SearchBound trace -> explore_many l 
-          | _ -> explore_many l
-      )
+        (* discriminate between search failures and [tac] raising an error *)
+        (
+          fun (e, _) -> match e with
+            | SearchBound trace -> explore_many l 
+            | _ -> explore_many l
+        )
   
   in explore state
 

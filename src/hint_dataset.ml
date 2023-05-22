@@ -30,6 +30,7 @@ let dataset_of_name (name: string): hint_dataset =
   match name with
     | "Empty" -> empty
     | "Core" -> core
+    | "Algebra" -> algebra
     | "Integers" -> integers
     | "RealsAndIntegers" -> reals_and_integers
     | "Sets" -> sets

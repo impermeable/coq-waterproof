@@ -25,12 +25,17 @@ jobs:
     steps:
       - name: Set up git repository
         uses: actions/checkout@v3
-      
+
       - name: Build plugin
         uses: coq-community/docker-coq-action@v1
         with:
           opam_file: 'coq-waterproof.opam'
-          custom_image: 'coqorg/coq:dev-ocaml-4.14-flambda'
+          custom_image: 'coqorg/coq:8.17-ocaml-4.14-flambda'
+          before_script: |
+            startGroup "Install dependencies"
+              sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
+            endGroup
+
           script: |
             startGroup "Building documentation"
               sudo chmod 777 -R .

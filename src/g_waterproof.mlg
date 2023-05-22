@@ -2,173 +2,145 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 
 {
 
-open Ltac_plugin
-open Ltac_plugin.G_auto
-open Proofview
+module Tac2ffi = Ltac2_plugin.Tac2ffi
+module Tac2env = Ltac2_plugin.Tac2env
+module Tac2expr = Ltac2_plugin.Tac2expr
 
-open Hint_dataset
+open Proofview
+open Proofview.Notations
+open Tac2expr
+open Tac2ffi
+
+open Exceptions
 open Hint_dataset_declarations
-open Wauto
 open Waterprove
-open Weauto
 
 }
+
+VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
+    {
+      automation_shield := true
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
+    {
+      automation_shield := false
+    }
+END
 
 {
-let eval_uconstrs ist cs =
-  let flags = Pretyping.{
-    use_coercions = true;
-    use_typeclasses = NoUseTC;
-    solve_unification_constraints = true;
-    fail_evar = false;
-    expand_evars = true;
-    program_mode = false;
-    polymorphic = false;
-  } in
-  let map c env sigma = c env sigma in
-  List.map (fun c -> map (Tacinterp.type_uconstr ~flags ist c)) cs
+
+(** Creates a name used to define the function interface *)
+let pname (s: string): ml_tactic_name = { mltac_plugin = "coq-core.plugins.coq-waterproof"; mltac_tactic = s }
+
+(** Wrapper around {! Tac2env.define_primitive} to make easier the primitive definition *)
+let define_primitive (name: string) (arity: 'a arity) (f: 'a): unit =
+  Tac2env.define_primitive (pname name) (mk_closure arity f)
+
+(** 
+  Defines a function of arity 0 (that only take a [unit] as an argument)
+
+  This function will be callable in Ltac2 with [Ltac2 @ external <ltac2_name>: unit := "coq-waterproof" "<name>".]
+*)
+let define0 (name: string) (f: valexpr tactic): unit = define_primitive name arity_one (fun _ -> f)
+
+(** 
+  Defines a function of arity 1 (that only take one argument)
+
+  This function will be callable in Ltac2 with [Ltac2 @ external <ltac2_name>: <type> -> unit := "coq-waterproof" "<name>".]
+*)
+let define1 (name: string) (r0: 'a repr) (f: 'a -> valexpr tactic): unit =
+  define_primitive name arity_one @@ fun x -> f (repr_to r0 x)
+
+(** 
+  Defines a function of arity 2 of the same way than {! define1}
+*)
+let define2 (name: string) (r0: 'a repr) (r1: 'b repr) (f: 'a -> 'b -> valexpr tactic): unit =
+  define_primitive name (arity_suc arity_one) @@ fun x y -> f (repr_to r0 x) (repr_to r1 y)
+
+(** 
+  Defines a function of arity 3 of the same way than {! define1}
+*)
+let define3 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (f: 'a -> 'b -> 'c -> valexpr tactic): unit =
+  define_primitive name (arity_suc (arity_suc arity_one)) @@ fun x y z -> f (repr_to r0 x) (repr_to r1 y) (repr_to r2 z)
+
+(** 
+  Defines a function of arity 4 of the same way than {! define1}
+*)
+let define4 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (f: 'a -> 'b -> 'c -> 'd -> valexpr tactic): unit =
+  define_primitive name (arity_suc (arity_suc (arity_suc arity_one))) @@
+  fun x0 x1 x2 x3 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3)
+
+(** 
+  Defines a function of arity 5 of the same way than {! define1}
+*)
+let define5 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> valexpr tactic): unit =
+  define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc arity_one)))) @@
+  fun x0 x1 x2 x3 x4 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4)
+
+(** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
+let thaw (r: 'a repr) (f: (unit, 'a) fun1): 'a tactic = app_fun1 f unit r ()
+
+(** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
+let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
+  let _, pv = Proofview.init sigma [] in
+  let name, poly = Names.Id.of_string "ltac2_delayed", false in
+  let c, pv, _, _ = Proofview.apply ~name ~poly env tac pv in
+  let _, sigma = Proofview.proofview pv in
+  (sigma, c)
+
+
+(**
+  Utilitary function to cast OCaml types into Ltac2-compatibles types  
+  
+  Comes from [coq/plugins/ltac2/tac2tactics.ml]
+*)
+let delayed_of_thunk (r: 'a repr) (tac: (unit, 'a) fun1) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
+  delayed_of_tactic (thaw r tac) env sigma
+
+(** Converts a ['a repr] into a [(unit -> 'a) repr] *)
+let thunk (r: 'a repr): (unit, 'a) fun1 repr = fun1 unit r
+
+let _ = define0
+let _ = define1
+let _ = define2
+let _ = define3
+let _ = define5
+
+(** Converts a {! Hint_dataset_declarations.database_type} into a [valexpr] *)
+let database_type_to_valexp (database_type: database_type): valexpr = match database_type with
+  | Positive -> ValInt 0
+  | Negative -> ValInt 1
+  | Decidability -> ValInt 2
+  | Shorten -> ValInt 3
+  
+(** Converts a [valexpr] into a {! Hint_dataset_declarations.database_type} *)
+let database_type_from_valexp (value: valexpr): database_type = match value with
+  | ValInt n ->
+    let database_type = match n with
+      | 0 -> Positive
+      | 1 -> Negative
+      | 2 -> Decidability
+      | 3 -> Shorten
+      | _ -> throw (CastError "cannot cast something an [int] greater than 3 into a [database_type]")
+    in database_type
+  | _ -> throw (CastError "cannot cast something different than an [int] into a [database_type]")
+
+(* Exports {! Hint_dataset_declarations.database_type} to Ltac2 *)
+let () =
+  define0 "database_type_positive" @@ tclUNIT @@ database_type_to_valexp Positive;
+  define0 "database_type_negative" @@ tclUNIT @@ database_type_to_valexp Negative;
+  define0 "database_type_decidability" @@ tclUNIT @@ database_type_to_valexp Decidability;
+  define0 "database_type_shorten" @@ tclUNIT @@ database_type_to_valexp Shorten
+
+(* Exports {! Waterprove.waterprove} to Ltac2 *)
+let () =
+  define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
+  fun depth shield lems database_type ->
+    waterprove depth ~shield (List.map (fun lem -> delayed_of_thunk constr lem) lems) database_type >>=
+    fun () -> tclUNIT @@ of_unit ()
+
 }
-
-(**
-  Waterproof [auto] tactic
-
-  Partial rewrite of the [[auto]] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
-
-  Its use is the same as `auto [using ...]`
-*)
-TACTIC EXTEND wauto
-  | [ "wauto" auto_using(lems) ] ->
-    {
-      tclIGNORE @@ wauto false 5 (eval_uconstrs ist lems) (get_current_databases Positive)
-    }
-END
-
-(**
-  Waterproof [info_auto] tactic
-
-  Equivalent of [info_auto] with {! wauto}
-*)
-TACTIC EXTEND info_wauto
-  | [ "info_wauto" auto_using(lems) ] ->
-    {
-      tclIGNORE @@ wauto true 5 (eval_uconstrs ist lems) (get_current_databases Positive)
-    }
-END
-
-(**
-  Waterproof [eauto] tactic
-
-  Rewrite of the [eauto] tactic in [`coq-plugin.Ltac_plugin.G_auto`]
-
-  Its use is the same as [eauto <using ...> <with ...>]
-*)
-TACTIC EXTEND weauto
-  | [ "weauto" auto_using(lems) hintbases(db) ] ->
-    {
-      tclIGNORE (weauto false 5 (eval_uconstrs ist lems) (match db with 
-        | None -> (get_current_databases Positive)
-        | Some db -> db
-      ))
-    }
-END
-
-(**
-  Waterproof [info_eauto] tactic
-
-  Equivalent of [info_auto] with {! weauto}
-*)
-TACTIC EXTEND info_weauto
-  | [ "info_weauto" auto_using(lems) hintbases(db) ] ->
-    {
-      tclIGNORE (weauto true 5 (eval_uconstrs ist lems) (match db with 
-        | None -> (get_current_databases Positive)
-        | Some db -> db
-      ))
-    }
-END
-
-(**
-  Restricted waterproof auto tactic
-
-  Its use is the same as the {! wauto} tacitc but it will fail if one of the given lemmas is not used
-*)
-TACTIC EXTEND rwauto
-  | [ "rwauto" auto_using(lems) ] ->
-    {
-      let lemma_names =
-        let env = Global.env () in
-        let sigma = Evd.from_env env in
-        List.map (Printer.pr_closed_glob_env env sigma) lems in
-      tclIGNORE @@ rwauto false 5 (eval_uconstrs ist lems) (get_current_databases Positive) lemma_names []
-    }
-END
-
-(**
-  Restricted Waterproof [info_auto] tactic
-
-  Equivalent of [info_auto] with {! rwauto}
-*)
-  TACTIC EXTEND info_rwauto
-  | [ "info_rwauto" auto_using(lems) ] ->
-    {
-      let lemma_names =
-        let env = Global.env () in
-        let sigma = Evd.from_env env in
-        List.map (Printer.pr_closed_glob_env env sigma) lems in
-      tclIGNORE @@ rwauto true 5 (eval_uconstrs ist lems) (get_current_databases Positive) lemma_names []
-    }
-END
-
-(**
-  Restricted waterproof auto tactic
-
-  Its use is the same as the {! waeuto} tacitc but it will fail if one of the given lemmas is not used
-*)
-  TACTIC EXTEND rweauto
-  | [ "rweauto" auto_using(lems) ] ->
-    {
-      let lemma_names =
-        let env = Global.env () in
-        let sigma = Evd.from_env env in
-        List.map (Printer.pr_closed_glob_env env sigma) lems in
-      tclIGNORE @@ rweauto false 5 (eval_uconstrs ist lems) (get_current_databases Positive) lemma_names []
-    }
-END
-
-(**
-  Restricted Waterproof [info_eauto] tactic
-
-  Equivalent of [info_eauto] with {! rweauto}
-*)
-  TACTIC EXTEND info_rweauto
-  | [ "info_rweauto" auto_using(lems) ] ->
-    {
-      let lemma_names =
-        let env = Global.env () in
-        let sigma = Evd.from_env env in
-        List.map (Printer.pr_closed_glob_env env sigma) lems in
-      tclIGNORE @@ rweauto true 5 (eval_uconstrs ist lems) (get_current_databases Positive) lemma_names []
-    }
-END
-
-(**
-  Test tactic used to check if the solve of the current goal by [waterprove] is shielded
-*)
-TACTIC EXTEND shield
-  | [ "shield" ] ->
-    {
-      shield_test ()
-    }
-END
-
-(**
-  Waterprove tactic
-
-  Main automation tactic of the coq-waterproof library
-*)
-TACTIC EXTEND waterprove
-  | [ "waterprove" auto_using(lems) ] ->
-    {
-      waterprove 5 ?shield:(Some true) (eval_uconstrs ist lems) Positive
-    }
-END

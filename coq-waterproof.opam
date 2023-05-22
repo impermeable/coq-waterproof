@@ -20,8 +20,9 @@ depends: [
 ]
 
 build: [
-  ["coq_makefile" "-f" "_CoqProject" "-o" "Makefile"]
-  [make]
+  ["autoreconf" "-i" "-s"]
+  ["./configure"]
+  [make "-j%{jobs}%"]
 ]
 
 install: [make "install"]
