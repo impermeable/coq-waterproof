@@ -1,5 +1,5 @@
-[![Build](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/build.yml/badge.svg)](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/build.yml)
-[![Documentation](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/doc.yml/badge.svg)](https://balthazarpatiachvili.github.io/coq-waterproof/coq-waterproof/)
+[![Build](https://github.com/impermeable/coq-waterproof/actions/workflows/build.yml/badge.svg)](https://github.com/BalthazarPatiachvili/coq-waterproof/actions/workflows/build.yml)
+[![Documentation](https://github.com/impermeable/coq-waterproof/actions/workflows/doc.yml/badge.svg)](https://balthazarpatiachvili.github.io/coq-waterproof/coq-waterproof/)
 
 # coq-waterproof
 
@@ -10,6 +10,8 @@ Mathematicians unfamiliar with the Coq syntax are able to read the resulting pro
 
 
 ### Linux
+
+#### With Opam
 
 Firstly you should install [`opam`](https://opam.ocaml.org/).
 
@@ -29,15 +31,36 @@ $ opam install .
 
 Once this is done, you can use coq-waterproof in any file of your system by switching to the `waterproof` switch on opam.
 
+#### Manually
+
+You can also install coq-waterproof without using opam (though it is greatly recommended for Coq) by compiling it by hand with :
+
+```bash
+$ git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
+$ autoreconf -i -s
+$ ./configure
+$ make && make install
+```
+
 ## Usage
 To use the tactics in a `.v` file, use the import:
 ```coq
 Require Import Waterproof.Waterproof.
 ```
 
-To use the hint dataset system, also add:
+To use the automation system, add:
 ```coq
-Require Import Waterproof.Databases.
+Require Import Waterproof.Automation.
+```
+
+To use the tactics system, add:
+```coq
+Require Import Waterproof.Tactics.
+```
+
+To use the notations defined, add:
+```coq
+Require Import Waterproof.Notations.
 ```
 
 ## Example
@@ -90,37 +113,22 @@ Qed.
 
 ## Automation
 
-The more advanced tactics rely on automation. The automation function is called `waterprove`, which employs `auto` and `eauto` (and optionally also `intuition`), together with a customizable set of hint-databases.
+The more advanced tactics rely on automation. The automation function is called `waterprove`, which employs `wauto` and `weauto`, together with a customizable set of hint-databases.
+
+`wauto` and `weauto` are rewrite of `auto` and `eauto` with better backtracking support, which can be use to retrieve the full backtrace during the execution of those functions, which allows to have a better control on the execution flow of the hints. For example, it can be used to reject a complete proof if certain lemmas are not used and continue to search for a new one.  
 
 ### Configuration
 
-The behavior of the automation tactics can be configured by importing specific files (and modules).
+The behavior of the automation tactics can be configured by importing specific files.
 
 * **Adding a Database**: Example:
     ```coq
-    Require Import Waterproof.load.
-    Module Import db_RealsAndIntegers := databases(RealsAndIntegers).
-    ```
-* **Search depth**: import any of the files in `waterproof/set_seach_depth`. Example:
-    ```coq
-    Require Import Waterproof.set_search_depth.To_5.
-    ```
-One can also write custom database config files. For example,
-```coq
-Require Import Waterproof.populate_database.
-Require Import Waterproof.load.
+    Require Import Waterproof.Automation.
 
-Module ExampleDBConfig <: db_config.
-  Module preload_module := wp_all.
-  Ltac2 append_databases := true.
-  Ltac2 global_databases () := [ @real; @wp_reals].
-  Ltac2 decidability_databases () := [ @nocore; @wp_decidability_classical].
-  Ltac2 negation_databases () := [ @nocore; @wp_negation_reals].
-  Ltac2 first_attempt_databases () := [].
-End ExampleDBConfig.
-    
-Module Import my_db := databases(ExampleDBConfig).
-```
+    Waterproof Enable Automation RealsAndIntegers.
+    ```
+
+
 
 ## Chains of (in)equalities
 In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.

@@ -2,7 +2,7 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Waterprove.
 
-Waterproof Enable Automation Empty.
+Waterproof Clear Automation.
 
 Goal 0 = 0.
 Proof.

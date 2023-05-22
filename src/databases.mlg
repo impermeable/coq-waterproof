@@ -10,7 +10,7 @@ open Hint_dataset_declarations
 
 }
 
-VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
+VERNAC COMMAND EXTEND DatasetAddSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" ident(dataset) ] ->
     {
       let dataset_name = Names.Id.to_string dataset in
@@ -18,10 +18,25 @@ VERNAC COMMAND EXTEND DatasetSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND DatasetRemoveSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Automation" ident(dataset) ] ->
+    {
+      let dataset_name = Names.Id.to_string dataset in
+      remove_dataset dataset_name
+    }
+END
+
+VERNAC COMMAND EXTEND DatasetClearSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Clear" "Automation" ] ->
+    {
+      clear_dataset ()
+    }
+END
+
 VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
   | [ "Waterproof" "List" "Automation" "Databases" ] ->
     {
-      Feedback.msg_notice ((str "Loaded dataset : ") ++ (str !loaded_hint_dataset));
+      Feedback.msg_notice ((str "Loaded datasets : ") ++ (List.fold_left (fun acc dataset_name -> acc ++ str " " ++ str dataset_name) (str "") !loaded_hint_dataset));
       Feedback.msg_notice ((str "Positive databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Positive));
       Feedback.msg_notice ((str "Negative databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Negative));
       Feedback.msg_notice ((str "Decidability databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Decidability));

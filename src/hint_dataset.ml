@@ -7,7 +7,7 @@ open Hint_dataset_declarations
 (**
   Contains the hint dataset that is currently loaded
 *)
-let loaded_hint_dataset: string ref = ref ~name:"loaded_hint_dataset" (name core)
+let loaded_hint_dataset: string list ref = ref ~name:"loaded_hint_dataset" []
 
 (**
   Complete list of all existing dataset names
@@ -15,13 +15,28 @@ let loaded_hint_dataset: string ref = ref ~name:"loaded_hint_dataset" (name core
 let existing_dataset_names: string list = ["Empty"; "Core"; "Algebra"; "Integers"; "RealsAndIntegers"; "Sets"]
 
 (**
-  Replace all current loaded hints by the ones declared in the [hint_dataset]
+  Adds a dataset to the currently loaded hint datasets
 *)
 let load_dataset (hint_dataset_name: string): unit =
   if List.mem hint_dataset_name existing_dataset_names then
-    loaded_hint_dataset := hint_dataset_name
+    begin 
+      if not @@ List.mem hint_dataset_name !loaded_hint_dataset
+        then loaded_hint_dataset := hint_dataset_name::!loaded_hint_dataset
+    end
   else
     throw (NonExistingDataset hint_dataset_name)
+
+(**
+  Removes a dataset to the currently loaded hint datasets
+*)
+let remove_dataset (hint_dataset_name: string): unit =
+  loaded_hint_dataset := List.filter (fun dataset -> dataset <> hint_dataset_name) !loaded_hint_dataset
+
+(**
+  Clears all the currently loaded datasets
+*)
+let clear_dataset (): unit =
+  loaded_hint_dataset := ["Empty"]
 
 (**
   Converts a name into the corresponding hint dataset
@@ -37,7 +52,17 @@ let dataset_of_name (name: string): hint_dataset =
     | _ -> throw (NonExistingDataset name)
 
 (**
+  Merges two lists without duplicates
+*)
+let rec merge (list1: 'a list) (list2: 'a list): 'a list = match list1 with
+  | [] -> list2
+  | x::p when List.mem x list2 -> merge p list2
+  | x::p -> merge p (x::list2)
+
+(**
   Returns the list of databases of the current loaded dataset for the given {! Hint_dataset_declarations.database_type}
 *)
 let get_current_databases (database_type: database_type): hint_db_name list =
-  get_databases (dataset_of_name !loaded_hint_dataset) database_type
+
+  let datasets = List.map dataset_of_name !loaded_hint_dataset in
+  List.fold_left (fun acc dataset -> merge acc (get_databases dataset database_type)) [] datasets
