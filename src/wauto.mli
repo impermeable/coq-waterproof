@@ -44,7 +44,8 @@ val hintmap_of :
   Evd.evar_map ->
   Names.Id.Pred.t ->
   Evd.econstr ->
-  (Hints.hint_db -> Hints.FullHint.t list)
+  Hints.hint_db ->
+  Hints.FullHint.t list
 
 (**
   Searches a sequence of at most [n] tactics within [db_list] and [lems] that solves the goal
@@ -56,6 +57,8 @@ val search :
   int ->
   Tactypes.delayed_open_constr list ->
   Hints.hint_db list ->
+  Pp.t list ->
+  Pp.t list ->
   Backtracking.trace Proofview.tactic
 
 (**

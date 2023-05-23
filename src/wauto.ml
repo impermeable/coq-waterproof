@@ -28,7 +28,6 @@ open Unification
 open Util
 
 open Backtracking
-open Exceptions
 open Proofutils
 
 (* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
@@ -88,9 +87,6 @@ let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluab
 
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 
-let must_use_tactics: Pp.t list ref = ref []
-
-let forbidden_tactics: Pp.t list ref = ref []
 
 (**
   Prints "idtac" if the [log] field is [true]
@@ -145,23 +141,23 @@ let hintmap_of (env: Environ.env) (sigma: Evd.evar_map) (secvars: Id.Pred.t) (co
 (**
   Returns a logged [intro] tactic
 *)
-let dbg_intro (): trace tactic = tclLOG (fun _ _ -> (str "intro", str "")) (intro <*> tclUNIT no_trace) !forbidden_tactics
+let dbg_intro (forbidden_tactics: Pp.t list): trace tactic = tclLOG (fun _ _ -> (str "intro", str "")) (intro <*> tclUNIT no_trace) forbidden_tactics
 
 (**
   Returns a logged [assumption] tactic
 *)
-let dbg_assumption (): trace tactic = tclLOG (fun _ _ -> (str "assumption", str "")) (assumption <*> tclUNIT no_trace) !forbidden_tactics
+let dbg_assumption (forbidden_tactics: Pp.t list): trace tactic = tclLOG (fun _ _ -> (str "assumption", str "")) (assumption <*> tclUNIT no_trace) forbidden_tactics
 
 (**
   Returns a tactic that apply intro then try to solve the goal
 *)
-let intro_register (kont: hint_db -> trace tactic) (db: hint_db): trace tactic =
+let intro_register (kont: hint_db -> trace tactic) (db: hint_db) (forbidden_tactics: Pp.t list): trace tactic =
   let nthDecl m gl =
     let hyps = Proofview.Goal.hyps gl in
     try
       List.nth hyps (m-1)
     with Failure _ -> CErrors.user_err Pp.(str "No such assumption.")
-  in dbg_intro () >>= fun new_trace ->
+  in dbg_intro forbidden_tactics >>= fun new_trace ->
     trace_goal_enter begin fun gl ->
       let extend_local_db decl db =
         let env = Goal.env gl in
@@ -174,17 +170,17 @@ let intro_register (kont: hint_db -> trace tactic) (db: hint_db): trace tactic =
       )
     end
 
-let rec trivial_fail_db (trace: trace) (db_list: hint_db list) (local_db: hint_db): trace tactic =
+let rec trivial_fail_db (trace: trace) (db_list: hint_db list) (forbidden_tactics: Pp.t list) (local_db: hint_db): trace tactic =
   tclAggregateTraces @@ tclINDEPENDENTL @@
-    tclTraceOrElse (dbg_assumption ()) @@
-    tclTraceOrElse (intro_register (trivial_fail_db trace db_list) local_db) @@
+    tclTraceOrElse (dbg_assumption forbidden_tactics) @@
+    tclTraceOrElse (intro_register (trivial_fail_db trace db_list forbidden_tactics) local_db forbidden_tactics) @@
     trace_goal_enter begin fun gl ->
       let env = Goal.env gl in
       let sigma = Goal.sigma gl in
       let concl = Goal.concl gl in
       let secvars = compute_secvars gl in
       let hintmap = hintmap_of env sigma secvars concl in
-      let hinttac = tac_of_hint trace db_list local_db concl in
+      let hinttac = tac_of_hint trace db_list local_db concl forbidden_tactics in
       (local_db::db_list)
         |> List.map_append (fun db -> try hintmap db with Not_found -> [])
         |> List.filter_map begin fun h ->
@@ -198,7 +194,7 @@ let rec trivial_fail_db (trace: trace) (db_list: hint_db list) (local_db: hint_d
 (**
   Returns a function that converts hints into tactics
 *)
-and tac_of_hint (trace: trace) (db_list: hint_db list) (local_db: hint_db) (concl: Evd.econstr): FullHint.t -> trace tactic =
+and tac_of_hint (trace: trace) (db_list: hint_db list) (local_db: hint_db) (concl: Evd.econstr) (forbidden_tactics: Pp.t list): FullHint.t -> trace tactic =
   let tactic = function
     | Res_pf h -> unify_resolve_nodelta h <*> tclUNIT @@ no_trace
     | ERes_pf _ -> trace_goal_enter (fun gl ->
@@ -208,7 +204,7 @@ and tac_of_hint (trace: trace) (db_list: hint_db list) (local_db: hint_db) (conc
     | Res_pf_THEN_trivial_fail h ->
       tclTHEN
         (unify_resolve_nodelta h)
-        (trivial_fail_db no_trace db_list local_db)
+        (trivial_fail_db no_trace db_list forbidden_tactics local_db)
     | Unfold_nth c ->
       trace_goal_enter begin fun gl ->
        if exists_evaluable_reference (Goal.env gl) c then
@@ -228,14 +224,14 @@ and tac_of_hint (trace: trace) (db_list: hint_db list) (local_db: hint_db) (conc
     in
     (Proofutils.pr_hint env sigma h, origin)
   in
-  fun h -> tclLOG (pr_hint h) (FullHint.run h tactic) !forbidden_tactics
+  fun h -> tclLOG (pr_hint h) (FullHint.run h tactic) forbidden_tactics
 
 (**
   Searches a sequence of at most [n] tactics within [db_list] and [lems] that solves the goal
 
   The goal cannot contain evars
 *)
-let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr list) (db_list: hint_db list): trace tactic =
+let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr list) (db_list: hint_db list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
   let make_local_db (gl: Goal.t): hint_db =
     let env = Goal.env gl in
     let sigma = Goal.sigma gl in
@@ -248,8 +244,8 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
         tclZERO ~info (SearchBound no_trace)
       else
         begin
-          tclTraceOrElse (dbg_assumption ()) @@
-          tclTraceOrElse (intro_register (inner_search trace n) local_db) @@
+          tclTraceOrElse (dbg_assumption forbidden_tactics) @@
+          tclTraceOrElse (intro_register (inner_search trace n) local_db forbidden_tactics) @@
           trace_goal_enter begin fun gl ->
             let env = Goal.env gl in
             let sigma = Goal.sigma gl in
@@ -258,7 +254,7 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
             let new_trace = incr_trace_depth trace in
             let secvars = compute_secvars gl in
             let hintmap = hintmap_of env sigma secvars  concl in
-            let hinttac = tac_of_hint trace db_list local_db concl in
+            let hinttac = tac_of_hint trace db_list local_db concl forbidden_tactics in
             (local_db::db_list)
               |> List.map_append (fun db -> try hintmap db with Not_found -> [])
               |> List.map 
@@ -275,7 +271,7 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
                           inner_search new_trace (n-1) local_db'
                         end
                     end >>= fun trace ->
-                    if n <> max_depth then tclUNIT trace else trace_check_used !must_use_tactics trace
+                    if n <> max_depth then tclUNIT trace else trace_check_used must_use_tactics trace
                 end
               |> tclTraceFirst
           end
@@ -294,7 +290,7 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
 (** 
   Generates the {! wauto} function
 *)
-let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option): trace tactic =
+let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
   wrap_hint_warning @@
     trace_goal_enter begin fun gl ->
     let db_list =
@@ -302,10 +298,7 @@ let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list
       | Some dbnames -> make_db_list dbnames
       | None -> current_pure_db ()
     in
-    tclTryDbg pr_dbg_header @@ tclTraceThen (tclUNIT @@ new_trace log) @@ search no_trace n lems db_list >>= fun trace ->
-    must_use_tactics := [];
-    forbidden_tactics := [];
-    tclUNIT trace
+    tclTryDbg pr_dbg_header @@ tclTraceThen (tclUNIT @@ new_trace log) @@ search no_trace n lems db_list must_use_tactics forbidden_tactics
   end
 
 (**
@@ -315,17 +308,13 @@ let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list
 
   Returns a typed tactic containing the full trace
 *)
-let wauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): trace tactic = 
-  gen_wauto log ~n lems (Some dbnames)
+let wauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): trace tactic =
+  gen_wauto log ~n lems (Some dbnames) [] []
 
 (**
   Restricted Waterproof auto
 
   This function acts the same as {! wauto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
 *)
-let rwauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): trace tactic =
-  must_use_tactics := must_use;
-  forbidden_tactics := forbidden;
-  tclORELSE
-    (tclPROGRESS @@ gen_wauto log ~n lems (Some dbnames)) @@
-    (fun _ -> throw UnusedLemmas)
+let rwauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
+  tclPROGRESS @@ gen_wauto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics

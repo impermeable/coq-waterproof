@@ -170,16 +170,15 @@ let () =
 
 (* Exports {! Waterprove.rwaterprove} to Ltac2 *)
 let () =
-  define6 "rwaterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) (list (thunk constr)) (list (thunk constr)) @@
+  define6 "rwaterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) (list constr) (list constr) @@
     fun depth shield lems database_type must_use forbidden ->
       tclENV >>= fun env ->
-      let sigma = Evd.from_env env in
       rwaterprove
         depth
         ~shield
         (List.map (fun lem -> delayed_of_thunk constr lem) lems)
         database_type
-        (List.map (fun lem -> snd @@ delayed_of_thunk constr lem env sigma) must_use)
-        (List.map (fun lem -> snd @@ delayed_of_thunk constr lem env sigma) forbidden)
+        must_use
+        forbidden
         >>= fun () -> tclUNIT @@ of_unit ()
 }

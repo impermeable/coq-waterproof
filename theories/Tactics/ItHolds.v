@@ -39,8 +39,11 @@ Local Ltac2 idtac () := ().
     - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
 *)
 Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) (proving_lemma: constr option) :=
-  let help_lemma := unwrap_optional_lemma proving_lemma in
-  let by_arg () := waterprove 5 false [fun () => help_lemma] Positive in
+  let by_arg () :=
+    match proving_lemma with
+      | None => waterprove 5 false [] Positive
+      | Some lemma => rwaterprove 5 false [fun () => lemma] Positive [lemma] []
+    end in
   let proof_attempt () := (* Check whether identifier is given *)
     match id with
       | None =>

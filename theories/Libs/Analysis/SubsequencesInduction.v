@@ -519,7 +519,7 @@ Proof.
          | S k => Nat.max (f l) (seq_of_max f k)
          end) g n))%nat).
     (** By the definition of $\mathsf{seqofmax}(f,S(n))$ as the maximum of $f(S(n))$ and another number, this*)
-    By IH_n we conclude that (g (S n) ≤ Nat.max (g (S n))
+    We conclude that (g (S n) ≤ Nat.max (g (S n))
      ((fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
          match l with
          | 0 => f 0

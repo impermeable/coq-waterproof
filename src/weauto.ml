@@ -29,7 +29,6 @@ open Termops
 open Util
 
 open Backtracking
-open Exceptions
 open Proofutils
 open Wauto
 
@@ -399,6 +398,4 @@ let weauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (db_na
 let rweauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): trace tactic =
   must_use_tactics := must_use;
   forbidden_tactics := forbidden;
-  tclORELSE
-    (tclPROGRESS @@ gen_weauto log ~n lems (Some dbnames)) @@
-    (fun _ -> throw UnusedLemmas)
+  tclPROGRESS @@ gen_weauto log ~n lems (Some dbnames)

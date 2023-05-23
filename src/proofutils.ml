@@ -60,6 +60,8 @@ module StringMap = Map.Make(String)
 
 (**
   Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
+
+  This is **really** useful to manipulate references
 *)
 let tclRealThen (first: unit tactic) (second: 'a tactic lazy_t): 'a tactic =
   tclBIND first (fun () -> tclTHEN (tclUNIT ()) (Lazy.force second))

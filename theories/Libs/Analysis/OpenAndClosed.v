@@ -132,8 +132,8 @@ Qed.
 
 Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x ∈ A) -> (¬ x : ℝ\A).
 Proof.
-  Assume that (x ∈ A) (i).
-  By (i) we conclude that (¬ x : ℝ\A).
+  Assume that (x ∈ A).
+  We conclude that (¬ x : ℝ\A).
 Qed.
 
 #[export] Hint Resolve not_in_compl_implies_in : wp_negation_reals.

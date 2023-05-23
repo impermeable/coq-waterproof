@@ -150,14 +150,13 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     - [forbidden] ([string list]): list of hints that must not be used during the automatic solving
 *)
 let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type) (must_use: constr list) (forbidden: constr list): unit tactic =
-  let env = Global.env () in
-  let sigma = Evd.from_env env in
-  let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
-  let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
   Proofview.Goal.enter @@ fun goal ->
     begin
+      let env = Proofview.Goal.env goal in
       let sigma = Proofview.Goal.sigma goal in
       let conclusion = Proofview.Goal.concl goal in
+      let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
+      let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
       tclORELSE
         (restricted_automation_routine 2 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
         begin fun _ ->

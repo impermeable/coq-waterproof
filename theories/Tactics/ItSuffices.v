@@ -58,9 +58,13 @@ Local Ltac2 try_enough_expression (f: unit -> unit) (statement: constr) :=
     - [AutomationFailure], in case [waterprove] fails to prove the goal, even if [statement] is given.
 *)
 Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr option) :=
-  let help_lemma := unwrap_optional_lemma proving_lemma in
   let hyp_name := Fresh.in_goal @h in
-  let f () := enough ($hyp_name : $statement) by (waterprove 5 true [fun () => help_lemma] Positive) in
+  let f () := enough ($hyp_name : $statement) by (
+    match proving_lemma with
+      | None => waterprove 5 true [] Positive
+      | Some lemma => rwaterprove 5 true [fun () => lemma] Positive [lemma] []
+    end
+  ) in
   try_enough_expression f statement.
 
 (**

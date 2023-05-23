@@ -100,7 +100,7 @@ Ltac2 check_and_solve (target_goal:constr) (lemma_opt: constr option) :=
           end;
           match lemma_opt with
             | None => (enough $target_goal by (waterprove 5 false [] Positive))
-            | Some lem => (enough $target_goal by (rwaterprove 5 false [] Positive [fun () => lem] []))
+            | Some lem => (enough $target_goal by (rwaterprove 5 false [fun () => lem] Positive [lem] []))
           end
         | _ =>
           match target_equals_goal_judgementally target_goal with
@@ -118,7 +118,7 @@ Ltac2 check_and_solve (target_goal:constr) (lemma_opt: constr option) :=
   end;
   match lemma_opt with
     | None => waterprove 5 true [] Positive
-    | Some lem => rwaterprove 5 true [fun () => lem] Positive [fun () => lem] []
+    | Some lem => rwaterprove 5 true [fun () => lem] Positive [lem] []
   end.
 
 

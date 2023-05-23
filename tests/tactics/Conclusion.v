@@ -136,8 +136,8 @@ Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
     assert (useless: 1 = 1).
     reflexivity.
-    By useless we conclude that (1 < 2).
-Qed.
+    Fail By test_by_we_conclude_1 we conclude that (1 < 2).
+Abort.
 
 (** * Example for the SUM.
     Somewhat more realistic context.
