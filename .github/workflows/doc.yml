@@ -45,7 +45,7 @@ jobs:
               mv _build/default/_doc/_html/ docs/ocaml
 
               mkdir docs/coq
-              coqdoc theories/*.v --html --lib-name Waterproof --utf8 -d docs/coq/
+              coqdoc -R theories/ --html --lib-name Waterproof --utf8 -d docs/coq/
             endGroup
 
       - name: Upload pages artifact
