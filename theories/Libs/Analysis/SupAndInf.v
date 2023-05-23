@@ -20,9 +20,9 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import Coq.Reals.Reals.
 
-Require Import Waterproof.Automation.
-Require Import Waterproof.Notations.
-Require Import Waterproof.Tactics.
+Require Import Automation.
+Require Import Notations.
+Require Import Tactics.
 
 Open Scope R_scope.
 
@@ -223,8 +223,6 @@ Proof.
     We conclude that (- M ≤ a).
 Qed.
 
-Require Import Waterproof.Waterprove.
-
 Lemma bdd_below_to_bdd_above_set_opp :
   ∀ (A : ℝ → Prop),
     is_bounded_below A ⇒ is_bounded_above (set_opp A).
@@ -386,7 +384,7 @@ Proof.
     Assume that (L < M).
     We argue by contradiction.
     Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) (i). 
-    By (i) it holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
+    It holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
     By (ii) it holds that (is_upper_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_upp_bd_ge_sup it holds that (M <= L).

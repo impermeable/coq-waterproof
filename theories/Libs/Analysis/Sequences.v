@@ -22,10 +22,10 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
-Require Import Waterproof.Automation.
-Require Import Waterproof.Libs.Reals.
-Require Import Waterproof.Notations.
-Require Import Waterproof.Tactics.
+Require Import Automation.
+Require Import Libs.Reals.
+Require Import Notations.
+Require Import Tactics.
 
 #[export] Hint Resolve Rabs_Rabsolu : wp_reals.
 #[export] Hint Resolve Rabs_minus_sym : wp_reals.

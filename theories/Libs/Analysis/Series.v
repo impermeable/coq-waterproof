@@ -105,7 +105,7 @@ Proof.
         Choose M := l%nat.
         Take n : ℕ; such that (n ≥ M)%nat.
         By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
-        By (i) we conclude that (k < l <= n)%nat.
+        We conclude that (k < l <= n)%nat.
       }
       (* TODO: find way of dealing with the case when coq cannot find parameters for apply ...*)
       apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn).
@@ -126,12 +126,12 @@ Proof.
         Take n : ℕ; such that (n ≥ M)%nat.
         It suffices to show that (sigma a k n = sigma a k (l - 1) + sigma a l n).
         By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
-        By (i) we conclude that (k < l <= n)%nat.
+        We conclude that (k < l <= n)%nat.
       }
       apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
       + By (iii) we conclude that (evt_eq_sequences (fun n ↦ (sigma a k n - sigma a k (l - 1)), fun n ↦ (sigma a l n))).
       + We need to show that (Un_cv (fun N ↦ (sigma a k N - sigma a k (l - 1)), L)).
-        By (iii) it holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (iv).
+        It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (iv).
         rewrite <- (iv). (* TODO come up with some notation for this (meaning transport)*)
         By (ii) we conclude that (Un_cv (fun N ↦ (sigma a k N - sigma a k (l - 1)), sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.

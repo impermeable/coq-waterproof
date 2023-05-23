@@ -26,6 +26,8 @@ val esearch :
   int ->
   Tactypes.delayed_open_constr list ->
   Hints.hint_db list ->
+  Pp.t list ->
+  Pp.t list ->
   Backtracking.trace Proofview.tactic
 
 (**

@@ -89,7 +89,7 @@ Proof.
         (a n > sequence_ub a i Nn - 1 / (m + 1)) hold.
       It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n) (v).
       We need to show that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
-      By (v) we conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a n = a k).
+      We conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a n = a k).
 Qed.
 
 
@@ -317,7 +317,7 @@ Proof.
     - Case (¬P).
       right.
       It holds that (~ ∃ N : ℕ, ∀ k : ℕ, (k >= N)%nat ⇒ a k < L) (ii).
-      By (ii) we conclude that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
+      We conclude that (∀ m : ℕ, ∃ n : ℕ, (n ≥ m)%nat ∧ a n ≥ L).
 Qed.
 
 Close Scope R_scope.
