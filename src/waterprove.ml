@@ -78,12 +78,30 @@ let shield_test (): unit tactic =
       tclUNIT ()
     end
 
+(**
+  Function that will actually call automation functions
+*)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   tclORELSE
     begin
       tclORELSE
         (tclPROGRESS @@ tclIGNORE @@ wauto false depth lems databases)
         (fun _ -> tclPROGRESS @@ tclIGNORE @@ weauto false depth lems databases)
+    end
+    begin
+      fun (exn, info) ->
+        tclZERO ~info exn
+    end
+
+(**
+  Same function as {! automation_routine} but with restricted version of automation functions
+*)
+let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): unit tactic =
+  tclORELSE
+    begin
+      tclORELSE
+        (tclPROGRESS @@ tclIGNORE @@ rwauto false depth lems databases must_use forbidden)
+        (fun _ -> tclPROGRESS @@ tclIGNORE @@ rweauto false depth lems databases must_use forbidden)
     end
     begin
       fun (exn, info) ->
@@ -115,5 +133,35 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
         begin fun _ ->
           if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
           automation_routine depth lems (get_current_databases database_type)
+        end
+    end
+
+(**
+  Restricted Waterprove
+
+  This function is similar to {! waterprove} but use {! Wauto.rwauto} and {! Weauto.rweauto} instead of {! Wauto.wauto} and {! Weauto.weauto}.
+
+  Arguments:
+    - [depth] ([int]): max depth of the proof search
+    - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
+    - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
+    - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
+    - [must_use] ([string list]): list of hints that have to be used during the automatic solving
+    - [forbidden] ([string list]): list of hints that must not be used during the automatic solving
+*)
+let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type) (must_use: constr list) (forbidden: constr list): unit tactic =
+  let env = Global.env () in
+  let sigma = Evd.from_env env in
+  let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
+  let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
+  Proofview.Goal.enter @@ fun goal ->
+    begin
+      let sigma = Proofview.Goal.sigma goal in
+      let conclusion = Proofview.Goal.concl goal in
+      tclORELSE
+        (restricted_automation_routine 2 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
+        begin fun _ ->
+          if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+          restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
         end
     end

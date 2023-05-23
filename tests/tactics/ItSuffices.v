@@ -69,6 +69,5 @@ Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
     intros A B.
     (* Clearly this statement isn't helpful in proving the goal! *)
-    let result () := By (f_increasing) it suffices to show that (1 + 1 = 2) in
-    assert_raises_error result.
+    Fail By (f_increasing) it suffices to show that (1 + 1 = 2).
 Abort.

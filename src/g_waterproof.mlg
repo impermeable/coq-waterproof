@@ -99,6 +99,13 @@ let define5 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd rep
   define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc arity_one)))) @@
   fun x0 x1 x2 x3 x4 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4)
 
+(** 
+  Defines a function of arity 6 of the same way than {! define1}
+*)
+let define6 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (r5: 'f repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> 'f -> valexpr tactic): unit =
+  define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc arity_one))))) @@
+  fun x0 x1 x2 x3 x4 x5 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4) (repr_to r5 x5)
+
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
 let thaw (r: 'a repr) (f: (unit, 'a) fun1): 'a tactic = app_fun1 f unit r ()
 
@@ -157,8 +164,22 @@ let () =
 (* Exports {! Waterprove.waterprove} to Ltac2 *)
 let () =
   define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
-  fun depth shield lems database_type ->
-    waterprove depth ~shield (List.map (fun lem -> delayed_of_thunk constr lem) lems) database_type >>=
-    fun () -> tclUNIT @@ of_unit ()
+    fun depth shield lems database_type ->
+      waterprove depth ~shield (List.map (fun lem -> delayed_of_thunk constr lem) lems) database_type >>=
+      fun () -> tclUNIT @@ of_unit ()
 
+(* Exports {! Waterprove.rwaterprove} to Ltac2 *)
+let () =
+  define6 "rwaterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) (list (thunk constr)) (list (thunk constr)) @@
+    fun depth shield lems database_type must_use forbidden ->
+      tclENV >>= fun env ->
+      let sigma = Evd.from_env env in
+      rwaterprove
+        depth
+        ~shield
+        (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+        database_type
+        (List.map (fun lem -> snd @@ delayed_of_thunk constr lem env sigma) must_use)
+        (List.map (fun lem -> snd @@ delayed_of_thunk constr lem env sigma) forbidden)
+        >>= fun () -> tclUNIT @@ of_unit ()
 }

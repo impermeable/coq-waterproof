@@ -223,7 +223,6 @@ Proof.
     We conclude that (- M ≤ a).
 Qed.
 
-
 Lemma bdd_below_to_bdd_above_set_opp :
   ∀ (A : ℝ → Prop),
     is_bounded_below A ⇒ is_bounded_above (set_opp A).
@@ -233,9 +232,12 @@ Proof.
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
     Expand the definition of is_bounded_below in (i).
     That is, write (i) as (there exists m : ℝ, is_lower_bound A m).
-    Obtain m according to (i), so for m : R it holds that (is_lower_bound A m).
+    Obtain m according to (i), so for m : R it holds that (is_lower_bound A m) (ii).
     
     Choose M := (-m).
+
+
+
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) (M)).
 Qed.
 

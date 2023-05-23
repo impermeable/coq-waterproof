@@ -30,6 +30,7 @@ Ltac2 @ external database_type_decidability: unit -> database_type_ffi := "coq-w
 Ltac2 @ external database_type_shorten: unit -> database_type_ffi := "coq-waterproof" "database_type_shorten".
 
 Ltac2 @ external waterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> unit := "coq-waterproof" "waterprove".
+Ltac2 @ external rwaterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> (unit -> constr) list -> (unit -> constr) list -> unit := "coq-waterproof" "rwaterprove".
 
 Ltac2 Type database_type := [ Positive | Negative | Decidability | Shorten ].
 
@@ -43,3 +44,6 @@ Ltac2 database_type_to_ffi (db_type: database_type): database_type_ffi :=
 
 Ltac2 waterprove (depth: int) (log: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
   waterprove_ffi depth log lems (database_type_to_ffi db_type).
+
+Ltac2 rwaterprove (depth: int) (log: bool) (lems: (unit -> constr) list) (db_type: database_type) (must_use: (unit -> constr) list) (forbidden: (unit -> constr) list): unit  :=
+  rwaterprove_ffi depth log lems (database_type_to_ffi db_type) must_use forbidden.

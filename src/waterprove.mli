@@ -54,3 +54,25 @@ val waterprove :
   Tactypes.delayed_open_constr list ->
   Hint_dataset_declarations.database_type ->
   unit Proofview.tactic
+
+(**
+  Restricted Waterprove
+
+  This function is similar to {! waterprove} but use {! Wauto.rwauto} and {! Weauto.rweauto} instead of {! Wauto.wauto} and {! Weauto.weauto}.
+
+  Arguments:
+    - [depth] ([int]): max depth of the proof search
+    - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
+    - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
+    - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
+    - [must_use] ([string list]): list of hints that have to be used during the automatic solving
+    - [forbidden] ([string list]): list of hints that must not be used during the automatic solving
+*)
+val rwaterprove :
+  int -> 
+  ?shield:bool ->
+  Tactypes.delayed_open_constr list ->
+  Hint_dataset_declarations.database_type ->
+  EConstr.t list ->
+  EConstr.t list ->
+  unit Proofview.tactic

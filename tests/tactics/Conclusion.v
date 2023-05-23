@@ -123,7 +123,7 @@ Qed.
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
     print (of_string "Should raise warning:").
-    By zero_lt_one we conclude that (2 = 2).
+    We conclude that (2 = 2).
 Qed.
 
 (** * Test 5
