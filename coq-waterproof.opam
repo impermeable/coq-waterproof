@@ -22,7 +22,11 @@ depends: [
 build: [
   ["autoreconf" "-i" "-s"]
   ["./configure"]
+  ["dune" "build"]
   [make "-j%{jobs}%"]
 ]
 
-install: [make "install"]
+install: [
+  [make "install"]
+  ["dune" "install"]
+]

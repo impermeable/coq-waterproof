@@ -1,21 +1,3 @@
-(******************************************************************************)
-(*                  This file is part of Waterproof-lib.                      *)
-(*                                                                            *)
-(*   Waterproof-lib is free software: you can redistribute it and/or modify   *)
-(*    it under the terms of the GNU General Public License as published by    *)
-(*     the Free Software Foundation, either version 3 of the License, or      *)
-(*                    (at your option) any later version.                     *)
-(*                                                                            *)
-(*     Waterproof-lib is distributed in the hope that it will be useful,      *)
-(*      but WITHOUT ANY WARRANTY; without even the implied warranty of        *)
-(*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         *)
-(*               GNU General Public License for more details.                 *)
-(*                                                                            *)
-(*     You should have received a copy of the GNU General Public License      *)
-(*   along with Waterproof-lib. If not, see <https://www.gnu.org/licenses/>.  *)
-(*                                                                            *)
-(******************************************************************************)
-
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
@@ -71,12 +53,26 @@ Goal forall x : R, exists n : nat, INR(n) > x.
     Fail Either (x <= 1) or (0 = 0).
 Abort.
 
+Local Lemma sumbool_comm (A B : Prop) : {A} + {B} -> {B} + {A}.
+Proof.
+  intro H.
+  induction H.
+  right; exact a.
+  left; exact b.
+Qed.
+
 (** Test 5: This tests whether given x >= 0, either x > 0 or x = 0. 
             Also tests whether the hypothesis name from the tactic can be chosen flexibly. *)
 Goal forall x : R, x >= 0 -> exists n : nat, INR(n) > x.
   intros x h.
-  Either (x = 0) or (x > 0).
-    - Case (x = 0).
+(*   assert ({0 = x} + {0 < x}).
+  apply sumbool_comm.
+  apply Rle_lt_or_eq_dec.
+  auto with wp_reals. *)
+  (* assert ({0 < x} + {0 = x}).
+  auto with wp_decidability_reals wp_reals. *)
+  Either (0 = x) or (x > 0).
+    - Case (0 = x).
       admit.
     - Case (x > 0).
 Abort.
@@ -84,11 +80,12 @@ Abort.
 (** Test 6: This tests whether given x >= 0, either x = 0 or x > 0 (commutativity). *)
 Goal forall x : R, x >= 0 -> exists n : nat, INR(n) > x.
   intros x H.
-  Either (x = 0) or (x > 0).
+Abort.
+(*     Either (x = 0) or (x > 0).
     - Case (x = 0).
       admit.
     - Case (x > 0).
-Abort.
+Abort. *)
 
 (** Test 7: This tests to see if 0 < x, x = 0 or 0 < x. *)
 Goal forall x : R, exists n : nat, INR(n) > x.

@@ -39,7 +39,9 @@ You can also install coq-waterproof without using opam (though it is greatly rec
 $ git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
 $ autoreconf -i -s
 $ ./configure
-$ make && make install
+$ dune build
+$ make && make install # It is needed to compile and install with both `dune` and `make`
+$ dune install
 ```
 
 ## Usage
