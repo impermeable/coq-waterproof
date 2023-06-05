@@ -16,5 +16,5 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Waterproof.Automation.Framework.
-Require Export Waterproof.Automation.Hints.
+Require Export Automation.Framework.
+Require Export Automation.Hints.

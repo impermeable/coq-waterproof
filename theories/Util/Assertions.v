@@ -20,7 +20,7 @@ Require Import Ltac2.Ltac2.
 Require Import Ltac2.Int.
 Require Import Ltac2.Message.
 
-Require Import Waterproof.Util.Init.
+Require Import Util.Init.
 
 (**   Introduce global test verbosity. *)
 Ltac2 mutable test_verbosity () := 0.

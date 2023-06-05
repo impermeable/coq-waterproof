@@ -19,8 +19,8 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Waterproof.Util.Goals.
-Require Import Waterproof.Util.Hypothesis.
+Require Import Util.Goals.
+Require Import Util.Hypothesis.
 
 Local Ltac2 warn_wrong_prop_specified (user_type:constr) (coq_type:constr) := 
  match Constr.equal user_type coq_type with

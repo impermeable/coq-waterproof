@@ -20,7 +20,7 @@ Require Import Ltac2.Constr.
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Waterproof.Util.Init.
+Require Import Util.Init.
 
 (** 
   Ltac2 function: [constr -> constr -> bool]

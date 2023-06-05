@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Waterproof.Chains.
-Require Export Waterproof.Notations.Common.
-Require Export Waterproof.Notations.Reals.
-Require Export Waterproof.Notations.Sets.
+Require Export Chains.
+Require Export Notations.Common.
+Require Export Notations.Reals.
+Require Export Notations.Sets.

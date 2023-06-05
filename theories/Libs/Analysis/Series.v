@@ -22,10 +22,10 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
-Require Import Waterproof.Automation.
-Require Import Waterproof.Libs.Analysis.Sequences.
-Require Import Waterproof.Notations.
-Require Import Waterproof.Tactics.
+Require Import Automation.
+Require Import Libs.Analysis.Sequences.
+Require Import Notations.
+Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 

@@ -21,8 +21,8 @@ Require Import Ltac2.Message.
 Require Import Sets.Ensembles.
 Require Import Sets.Classical_sets.
 
-Require Import Waterproof.Tactics.Conclusion.
-Require Import Waterproof.Util.Goals.
+Require Import Tactics.Conclusion.
+Require Import Util.Goals.
 
 (**
   Destructs a statement regarding an element being contained in a union/intersection of two sets into its respective cases.

@@ -2,12 +2,22 @@ COQ_PROJ := _CoqProject
 COQ_MAKEFILE := Makefile.coq
 COQ_MAKE := +${MAKE} -f $(COQ_MAKEFILE)
 
-all install doc: $(COQ_MAKEFILE) Makefile
+all install: $(COQ_MAKEFILE) Makefile
 	$(COQ_MAKE) $@
 
 clean:
 	-$(COQ_MAKE) clean
 	find . -type f -name ".*.aux" -delete
+	rm -rf docs/ocaml docs/coq
+
+doc:
+	dune build @doc
+	mv _build/default/_doc/_html/ docs/ocaml
+	test -d docs/coq || mkdir docs/coq
+	coqdoc -R theories/ --html --lib-name Waterproof --utf8 -d docs/coq/ @COQ_THEORY_FILES@
+
+uninstall:
+	$(COQ_MAKE) uninstall
 
 configure: configure.ac
 
@@ -24,6 +34,7 @@ help:
 	@echo	"You can run:"
 	@echo 	"	* 'make' to build coq-waterproof"
 	@echo 	"	* 'make install' to install coq-waterproof"
+	@echo 	"	* 'make uninstall' to uninstall coq-waterproof"
 	@echo 	"	* 'make doc' to generate documentation of the library"
 	@echo 	"	* 'make clean' to remove generated files"
 

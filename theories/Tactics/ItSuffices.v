@@ -18,8 +18,8 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Waterproof.Util.Init.
-Require Import Waterproof.Waterprove.
+Require Import Util.Init.
+Require Import Waterprove.
 
 Ltac2 Type exn ::= [ AutomationFailure(string) ].
 

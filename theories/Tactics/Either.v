@@ -18,8 +18,8 @@
 
 From Ltac2 Require Import Ltac2.
 
-Require Import Waterproof.Util.Goals.
-Require Import Waterproof.Waterprove.
+Require Import Util.Goals.
+Require Import Waterprove.
 
 (* Switch order of decidable goal. *)
 Local Lemma sumbool_comm (A B : Prop) : {A} + {B} -> {B} + {A}.

@@ -18,11 +18,11 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Waterproof.Util.Constr.
-Require Import Waterproof.Util.Goals.
-Require Import Waterproof.Util.Hypothesis.
-Require Import Waterproof.Util.Init.
-Require Import Waterproof.Waterprove.
+Require Import Util.Constr.
+Require Import Util.Goals.
+Require Import Util.Hypothesis.
+Require Import Util.Init.
+Require Import Waterprove.
 
 Local Ltac2 idtac () := ().
 

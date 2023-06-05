@@ -18,7 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Waterproof.Util.Constr.
+Require Import Util.Constr.
 
 Module Case.
 

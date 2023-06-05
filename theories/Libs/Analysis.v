@@ -16,16 +16,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Waterproof.Libs.Analysis.ContinuityDomainNat.
-Require Export Waterproof.Libs.Analysis.ContinuityDomainR.
-Require Export Waterproof.Libs.Analysis.LimsupLiminfBolzano.
-Require Export Waterproof.Libs.Analysis.MetricSpaces.
-Require Export Waterproof.Libs.Analysis.OpenAndClosed.
-Require Export Waterproof.Libs.Analysis.SequencesMetric.
-Require Export Waterproof.Libs.Analysis.Sequences.
-Require Export Waterproof.Libs.Analysis.SequentialAccumulationPoints.
-Require Export Waterproof.Libs.Analysis.Series.
-Require Export Waterproof.Libs.Analysis.SubsequencesInduction.
-Require Export Waterproof.Libs.Analysis.SubsequencesMetric.
-Require Export Waterproof.Libs.Analysis.Subsequences.
-Require Export Waterproof.Libs.Analysis.SupAndInf.
+Require Export Libs.Analysis.ContinuityDomainNat.
+Require Export Libs.Analysis.ContinuityDomainR.
+Require Export Libs.Analysis.LimsupLiminfBolzano.
+Require Export Libs.Analysis.MetricSpaces.
+Require Export Libs.Analysis.OpenAndClosed.
+Require Export Libs.Analysis.SequencesMetric.
+Require Export Libs.Analysis.Sequences.
+Require Export Libs.Analysis.SequentialAccumulationPoints.
+Require Export Libs.Analysis.Series.
+Require Export Libs.Analysis.SubsequencesInduction.
+Require Export Libs.Analysis.SubsequencesMetric.
+Require Export Libs.Analysis.Subsequences.
+Require Export Libs.Analysis.SupAndInf.

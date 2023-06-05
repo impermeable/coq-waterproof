@@ -19,8 +19,8 @@
 Require Import Coq.Reals.Reals.
 Require Import Qreals.
 
-Require Import Waterproof.Notations.Common.
-Require Import Waterproof.Notations.Sets.
+Require Import Notations.Common.
+Require Import Notations.Sets.
 
 (** ** (In)equalities
   Allowing unicode characters for uniqualities.

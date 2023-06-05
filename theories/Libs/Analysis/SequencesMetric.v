@@ -18,10 +18,10 @@
 
 Require Import Coq.Reals.Reals.
 
-Require Import Waterproof.Automation.
-Require Import Waterproof.Libs.Negation.
-Require Import Waterproof.Notations.
-Require Import Waterproof.Tactics.
+Require Import Automation.
+Require Import Libs.Negation.
+Require Import Notations.
+Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 

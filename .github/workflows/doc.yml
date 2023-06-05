@@ -41,11 +41,9 @@ jobs:
               sudo chmod 777 -R .
               opam install -y -v odoc
 
-              opam exec -- dune build @doc
-              mv _build/default/_doc/_html/ docs/ocaml
-
-              mkdir docs/coq
-              coqdoc -R theories/ --html --lib-name Waterproof --utf8 -d docs/coq/
+              autoreconf -i -s
+              ./configure
+              make doc
             endGroup
 
       - name: Upload pages artifact

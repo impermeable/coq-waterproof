@@ -18,7 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Waterproof.Util.Goals.
+Require Import Util.Goals.
 
 (**
   Defines a variable in an arbitrary goal.
