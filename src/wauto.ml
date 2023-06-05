@@ -237,55 +237,52 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
     let sigma = Goal.sigma gl in
     make_local_hint_db env sigma false lems
   in
-  trace_goal_enter begin fun global_goal ->
-    let rec inner_search (trace: trace) (n: int) (local_db: hint_db): trace tactic =
-      if Int.equal n 0 then
-        let info = Exninfo.reify () in
-        tclZERO ~info (SearchBound no_trace)
-      else
-        begin
-          tclTraceOrElse (dbg_assumption forbidden_tactics) @@
-          tclTraceOrElse (intro_register (inner_search trace n) local_db forbidden_tactics) @@
-          trace_goal_enter begin fun gl ->
-            let env = Goal.env gl in
-            let sigma = Goal.sigma gl in
-            let concl = Goal.concl gl in
-            let hyps = Goal.hyps gl in
-            let new_trace = incr_trace_depth trace in
-            let secvars = compute_secvars gl in
-            let hintmap = hintmap_of env sigma secvars  concl in
-            let hinttac = tac_of_hint trace db_list local_db concl forbidden_tactics in
-            (local_db::db_list)
-              |> List.map_append (fun db -> try hintmap db with Not_found -> [])
-              |> List.map 
-                begin fun h ->
-                  tclTraceThen
-                    (hinttac h) @@
-                    begin
-                      trace_goal_enter
-                        begin fun gl ->
-                          let hyps' = Goal.hyps gl in
-                          let local_db' =
-                            if hyps' == hyps then local_db else make_local_db gl
-                          in
-                          inner_search new_trace (n-1) local_db'
-                        end
-                    end >>= fun trace ->
-                    if n <> max_depth then tclUNIT trace else trace_check_used must_use_tactics trace
-                end
-              |> tclTraceFirst
-          end
-        end
-    in
-    let local_db = make_local_db global_goal in
-    tclORELSE
+  let rec inner_search (trace: trace) (n: int) (previous_envs: (EConstr.named_context * EConstr.constr) list) (local_db: hint_db): trace tactic =
+    if Int.equal n 0 then
+      let info = Exninfo.reify () in
+      tclZERO ~info (SearchBound no_trace)
+    else
       begin
-        inner_search trace max_depth local_db
+        tclTraceOrElse (dbg_assumption forbidden_tactics) @@
+        tclTraceOrElse (intro_register (inner_search trace n previous_envs) local_db forbidden_tactics) @@
+        trace_goal_enter begin fun gl ->
+          let env = Goal.env gl in
+          let sigma = Goal.sigma gl in
+          let concl = Goal.concl gl in
+          let new_trace = incr_trace_depth trace in
+          let secvars = compute_secvars gl in
+          let hintmap = hintmap_of env sigma secvars  concl in
+          let hinttac = tac_of_hint trace db_list local_db concl forbidden_tactics in
+          (local_db::db_list)
+            |> List.map_append (fun db -> try hintmap db with Not_found -> [])
+            |> List.map 
+              begin fun h ->
+                tclTraceThen
+                  (hinttac h) @@
+                  begin
+                    trace_goal_enter
+                      begin fun goal ->
+                        let local_db' = make_local_db goal in
+                        if List.mem (Goal.hyps goal, Goal.concl goal) previous_envs
+                          then tclZERO (SearchBound no_trace)
+                          else inner_search new_trace (n-1) ((Goal.hyps goal, Goal.concl goal)::previous_envs) local_db'
+                      end
+                  end >>= fun trace ->
+                  if n <> max_depth then tclUNIT trace else trace_check_used must_use_tactics trace
+              end
+            |> tclTraceFirst
+        end
       end
-      begin fun _ ->
-        tclUNIT no_trace
-      end
-  end
+  in
+  trace_goal_enter @@ fun goal ->
+  let local_db = make_local_db goal in
+  tclORELSE
+    begin
+      inner_search trace max_depth [] local_db
+    end
+    begin fun _ ->
+      tclUNIT no_trace
+    end
 
 (** 
   Generates the {! wauto} function

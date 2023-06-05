@@ -30,8 +30,6 @@ Require Import Waterproof.Util.Assertions.
 
 Waterproof Enable Automation RealsAndIntegers.
 
-Set Default Timeout 5.
-
 (* lra only works in the [R_scope] *)
 Local Open Scope R_scope.
 Lemma zero_lt_one: 0 < 1.
@@ -70,6 +68,7 @@ Abort.
     The sublemma cannot be proven without the given lemma!
 
 *)
+
 Lemma test_by_it_holds_2: True.
 Proof.
     (* This is just to test if the extra lemma is really needed: *)

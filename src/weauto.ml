@@ -281,10 +281,26 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
     end
 
 (**
+  Wrapper around {! Proofview.Goal.enter} to allow [search_state tactic] and not just [unit tactic]
+*)
+let search_state_goal_enter (first_state: search_state) (f: Goal.t -> search_state tactic): search_state tactic =
+  let value = ref [] in
+  tclRealThen
+    begin
+      Goal.enter @@ fun goal ->
+        begin
+          f goal >>= fun s ->
+          value := s::!value;
+          tclUNIT ()
+        end
+    end @@
+    lazy (tclUNIT @@ List.fold_left (fun acc s -> {acc with trace = merge_traces acc.trace s.trace}) {first_state with tactics_resolution = []} (List.rev !value))
+
+(**
   Actual search function
 *)
 let resolve_esearch (max_depth: int) (dblist: hint_db list) (local_lemmas: Tactypes.delayed_open_constr list) (state: search_state) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): search_state tactic =
-  let rec explore (state: search_state) =
+  let rec explore (state: search_state) (previous_envs: (EConstr.named_context * EConstr.constr) list) =
     if state.depth = 0
       then tclZERO (SearchBound no_trace)
       else match state.tactics_resolution with
@@ -292,7 +308,7 @@ let resolve_esearch (max_depth: int) (dblist: hint_db list) (local_lemmas: Tacty
         | (gl, db) :: rest ->
           tclEVARMAP >>= fun sigma ->
           match Unsafe.undefined sigma [gl] with
-            | [] -> explore { state with tactics_resolution = rest; trace = incr_trace_depth state.trace }
+            | [] -> explore { state with tactics_resolution = rest; trace = incr_trace_depth state.trace } previous_envs
             | gl :: _ ->
               Unsafe.tclSETGOALS [gl] <*>
               branching state.depth db dblist local_lemmas forbidden_tactics >>= fun tacs ->
@@ -309,26 +325,30 @@ let resolve_esearch (max_depth: int) (dblist: hint_db list) (local_lemmas: Tacty
               in
               tacs
                 |> List.map cast
-                |> explore_many
+                |> explore_many previous_envs
                 >>= fun s ->
                 if state.depth = max_depth
                   then trace_check_used must_use_tactics s.trace >>= fun trace -> tclUNIT s
                   else tclUNIT s
 
-  and explore_many (tactic_list: search_state tactic list): search_state tactic = match tactic_list with
+  and explore_many (previous_envs: (EConstr.named_context * EConstr.constr) list) (tactic_list: search_state tactic list): search_state tactic = match tactic_list with
     | [] -> tclZERO (SearchBound no_trace)
     | tac :: l ->
       tclORELSE
-        (tac >>= fun state -> explore state)
+        (tac >>= fun state ->
+          search_state_goal_enter state @@ fun goal ->
+          if List.mem (Goal.hyps goal, Goal.concl goal) previous_envs
+            then tclZERO (SearchBound no_trace)
+            else explore state @@ (Goal.hyps goal, Goal.concl goal)::previous_envs
+        )
 
-        (* discriminate between search failures and [tac] raising an error *)
         (
           fun (e, _) -> match e with
-            | SearchBound trace -> explore_many l 
-            | _ -> explore_many l
+            | SearchBound trace -> explore_many previous_envs l
+            | _ -> explore_many previous_envs l
         )
   
-  in explore state
+  in explore state []
 
 (**
   Searches a sequence of at most [n] tactics within [db_list] and [lems] that solves the goal
