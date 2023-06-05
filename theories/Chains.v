@@ -16,5 +16,5 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Chains.Inequalities.
-Require Export Chains.Manipulation.
+Require Export Waterproof.Chains.Inequalities.
+Require Export Waterproof.Chains.Manipulation.

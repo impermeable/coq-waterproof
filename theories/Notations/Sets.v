@@ -18,7 +18,7 @@
 
 Require Import Sets.Ensembles. 
 
-Require Import Notations.Common.
+Require Import Waterproof.Notations.Common.
 
 Unset Auto Template Polymorphism.
 Record subset (X : Type) := as_subset { pred :> X -> Prop }.

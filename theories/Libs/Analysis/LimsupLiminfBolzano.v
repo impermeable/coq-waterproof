@@ -21,13 +21,13 @@ Require Import Lra.
 Require Import Classical.
 Require Import Classical_Pred_Type.
 
-Require Import Automation.
-Require Import Libs.Analysis.Sequences.
-Require Import Libs.Analysis.Subsequences.
-Require Import Libs.Analysis.SupAndInf.
-Require Import Libs.Analysis.SequentialAccumulationPoints.
-Require Import Notations.
-Require Import Tactics.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Libs.Analysis.Sequences.
+Require Import Waterproof.Libs.Analysis.Subsequences.
+Require Import Waterproof.Libs.Analysis.SupAndInf.
+Require Import Waterproof.Libs.Analysis.SequentialAccumulationPoints.
+Require Import Waterproof.Notations.
+Require Import Waterproof.Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 

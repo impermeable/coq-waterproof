@@ -19,9 +19,9 @@
 Require Import Coq.Reals.Reals.
 Require Import Classical_Prop.
 
-Require Import Automation.
-Require Import Notations.
-Require Import Tactics.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Notations.
+Require Import Waterproof.Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 

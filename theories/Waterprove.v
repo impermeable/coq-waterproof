@@ -18,7 +18,7 @@
 
 Require Export Ltac2.Ltac2.
 
-Require Import Waterproof.
+Require Import Waterproof.Waterproof.
 
 Require Import Ltac2.Init.
 

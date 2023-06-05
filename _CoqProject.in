@@ -54,6 +54,7 @@ theories/Tactics/Conclusion.v
 theories/Tactics/Contradiction.v
 theories/Tactics/Define.v
 theories/Tactics/Either.v
+theories/Tactics/Help.v
 theories/Tactics/Induction.v
 theories/Tactics/ItHolds.v
 theories/Tactics/ItSuffices.v

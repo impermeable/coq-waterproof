@@ -19,7 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Util.Goals.
+Require Import Waterproof.Util.Goals.
 
 Ltac2 Type exn ::= [ ChooseError(string) | ChooseSuchThatError(message) ].
 

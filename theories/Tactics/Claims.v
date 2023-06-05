@@ -18,8 +18,8 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Util.Constr.
-Require Import Util.Goals.
+Require Import Waterproof.Util.Constr.
+Require Import Waterproof.Util.Goals.
 
 Local Ltac2 my_assert (t:constr) (id:ident option) := 
   match id with

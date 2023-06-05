@@ -18,9 +18,9 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Util.Constr.
-Require Import Util.Goals.
-Require Import Tactics.Unfold.
+Require Import Waterproof.Util.Constr.
+Require Import Waterproof.Util.Goals.
+Require Import Waterproof.Tactics.Unfold.
 
 Ltac2 Type exn ::= [ GoalCheckError(string) ].
 

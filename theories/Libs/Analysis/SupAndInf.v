@@ -20,9 +20,9 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import Coq.Reals.Reals.
 
-Require Import Automation.
-Require Import Notations.
-Require Import Tactics.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Notations.
+Require Import Waterproof.Tactics.
 
 Open Scope R_scope.
 

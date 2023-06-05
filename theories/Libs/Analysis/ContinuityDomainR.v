@@ -18,8 +18,8 @@
 
 Require Import Coq.Reals.Reals.
 
-Require Import Notations.
-Require Import Tactics.
+Require Import Waterproof.Notations.
+Require Import Waterproof.Tactics.
 
 Open Scope R_scope.
 

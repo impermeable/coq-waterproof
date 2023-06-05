@@ -18,7 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Util.Goals.
+Require Import Waterproof.Util.Goals.
 
 (** * Tactics that wrap the goal such that the user needs to specify the effect of unfolding in the proof script. *)
 

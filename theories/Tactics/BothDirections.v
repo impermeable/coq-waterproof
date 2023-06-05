@@ -18,7 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Export Util.Goals.
+Require Export Waterproof.Util.Goals.
 
 Ltac2 Type exn ::= [ BothDirectionsError(string) ].
 

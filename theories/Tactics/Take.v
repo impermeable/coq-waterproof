@@ -19,9 +19,9 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Util.Constr.
-Require Import Util.Goals.
-Require Import Util.Hypothesis.
+Require Import Waterproof.Util.Constr.
+Require Import Waterproof.Util.Goals.
+Require Import Waterproof.Util.Hypothesis.
 
 Ltac2 Type exn ::= [ TakeError(message) ].
 

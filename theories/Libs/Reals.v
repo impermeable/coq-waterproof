@@ -20,7 +20,7 @@ Require Import Lra.
 Require Import Coq.Reals.Reals.
 Require Import Reals.ROrderedType.
 
-Require Import Notations.
+Require Import Waterproof.Notations.
 
 Local Open Scope R_scope.
 

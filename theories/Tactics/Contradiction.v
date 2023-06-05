@@ -20,7 +20,7 @@ Require Import Classical.
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Util.Goals.
+Require Import Waterproof.Util.Goals.
 
 (**
   Starts a proof by contradiction.

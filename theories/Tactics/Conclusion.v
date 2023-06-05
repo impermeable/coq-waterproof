@@ -20,10 +20,10 @@ Require Import Ltac2.Ltac2.
 
 Require Import Ltac2.Message.
 
-Require Import Chains.Inequalities.
-Require Import Util.Goals.
-Require Import Util.Init.
-Require Import Waterprove.
+Require Import Waterproof.Chains.Inequalities.
+Require Import Waterproof.Util.Goals.
+Require Import Waterproof.Util.Init.
+Require Import Waterproof.Waterprove.
 
 Ltac2 Type exn ::= [ AutomationFailure(message) ].
 

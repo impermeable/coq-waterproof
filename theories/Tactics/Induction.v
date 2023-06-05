@@ -18,8 +18,8 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Util.Goals.
-Require Import Util.Hypothesis.
+Require Import Waterproof.Util.Goals.
+Require Import Waterproof.Util.Hypothesis.
 
 Ltac2 Type exn ::= [ NaturalInductionError(string) ].
 Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).

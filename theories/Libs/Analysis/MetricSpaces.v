@@ -20,10 +20,10 @@ Require Import Coq.Reals.Reals.
 Require Import Reals.ROrderedType.
 Require Import micromega.Lra.
 
-Require Import Automation.
-Require Import Libs.Reals.
-Require Import Notations.
-Require Import Tactics.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Libs.Reals.
+Require Import Waterproof.Notations.
+Require Import Waterproof.Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 
