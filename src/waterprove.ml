@@ -21,12 +21,14 @@ open EConstr
 open Hints
 open Pp
 open Proofview
+open Proofview.Notations
 
 open Exceptions
 open Hint_dataset
 open Hint_dataset_declarations
-open Wauto
-open Weauto
+open Wp_auto
+open Wp_eauto
+open Wp_rewrite
 
 (**
   List of forbidden inductive types
@@ -84,9 +86,10 @@ let shield_test (): unit tactic =
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   tclORELSE
     begin
+      wp_rewrite () <*>
       tclORELSE
-        (tclPROGRESS @@ tclIGNORE @@ wauto false depth lems databases)
-        (fun _ -> tclPROGRESS @@ tclIGNORE @@ weauto false depth lems databases)
+        (tclPROGRESS @@ tclIGNORE @@ wp_auto false depth lems databases)
+        (fun _ -> tclPROGRESS @@ tclIGNORE @@ wp_eauto false depth lems databases)
     end
     begin
       fun (exn, info) ->
@@ -100,8 +103,8 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
   tclORELSE
     begin
       tclORELSE
-        (tclPROGRESS @@ tclIGNORE @@ rwauto false depth lems databases must_use forbidden)
-        (fun _ -> tclPROGRESS @@ tclIGNORE @@ rweauto false depth lems databases must_use forbidden)
+        (tclPROGRESS @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden)
+        (fun _ -> tclPROGRESS @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden)
     end
     begin
       fun (exn, info) ->
@@ -139,7 +142,7 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
 (**
   Restricted Waterprove
 
-  This function is similar to {! waterprove} but use {! Wauto.rwauto} and {! Weauto.rweauto} instead of {! Wauto.wauto} and {! Weauto.weauto}.
+  This function is similar to {! waterprove} but use {! wp_auto.rwp_auto} and {! wp_eauto.rwp_eauto} instead of {! wp_auto.wp_auto} and {! wp_eauto.wp_eauto}.
 
   Arguments:
     - [depth] ([int]): max depth of the proof search

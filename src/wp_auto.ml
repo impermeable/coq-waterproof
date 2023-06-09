@@ -96,7 +96,7 @@ let pr_info_nop (): unit = Feedback.msg_notice (str "idtac.")
 (** 
   Prints a debug header if [log] is [true]
 *)
-let pr_dbg_header (): unit = Feedback.msg_notice (str "(* info wauto: *)")
+let pr_dbg_header (): unit = Feedback.msg_notice (str "(* info wp_auto: *)")
 
 (**
   Tries the given tactic and calls an info printer if it fails
@@ -255,7 +255,7 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
           let hinttac = tac_of_hint trace db_list local_db concl forbidden_tactics in
           (local_db::db_list)
             |> List.map_append (fun db -> try hintmap db with Not_found -> [])
-            |> List.map 
+            |> List.map
               begin fun h ->
                 tclTraceThen
                   (hinttac h) @@
@@ -285,9 +285,9 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
     end
 
 (** 
-  Generates the {! wauto} function
+  Generates the {! wp_auto} function
 *)
-let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
+let gen_wp_auto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
   wrap_hint_warning @@
     trace_goal_enter begin fun gl ->
     let db_list =
@@ -301,17 +301,17 @@ let gen_wauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list
 (**
   Waterproof auto
 
-  This function is a rewrite around coq-core.Auto.auto with the same arguments to be able to retrieve which tactics have been used in case of success.
+  This function is a rewrite around {! Auto.auto} with the same arguments to be able to retrieve which hints have been used in case of success.
 
   Returns a typed tactic containing the full trace
 *)
-let wauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): trace tactic =
-  gen_wauto log ~n lems (Some dbnames) [] []
+let wp_auto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list): trace tactic =
+  gen_wp_auto log ~n lems (Some dbnames) [] []
 
 (**
   Restricted Waterproof auto
 
-  This function acts the same as {! wauto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
+  This function acts the same as {! wp_auto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
 *)
-let rwauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
-  tclPROGRESS @@ gen_wauto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics
+let rwp_auto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
+  tclPROGRESS @@ gen_wp_auto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics

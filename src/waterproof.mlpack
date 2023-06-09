@@ -3,8 +3,9 @@ Exceptions
 Hint_dataset_declarations
 Hint_dataset
 Proofutils
-Wauto
-Weauto
+Wp_auto
+Wp_eauto
+Wp_rewrite
 Waterprove
 Databases
 G_waterproof

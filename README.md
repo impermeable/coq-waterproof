@@ -121,9 +121,9 @@ Qed.
 
 ## Automation
 
-The more advanced tactics rely on automation. The automation function is called `waterprove`, which employs `wauto` and `weauto`, together with a customizable set of hint-databases.
+The more advanced tactics rely on automation. The automation function is called `waterprove`, which employs `wp_auto` and `wp_eauto`, together with a customizable set of hint-databases.
 
-`wauto` and `weauto` are rewrite of `auto` and `eauto` with better backtracking support, which can be use to retrieve the full backtrace during the execution of those functions, which allows to have a better control on the execution flow of the hints. For example, it can be used to reject a complete proof if certain lemmas are not used and continue to search for a new one.  
+`wp_auto` and `wp_eauto` are rewrite of `auto` and `eauto` with better backtracking support, which can be use to retrieve the full backtrace during the execution of those functions, which allows to have a better control on the execution flow of the hints. For example, it can be used to reject a complete proof if certain lemmas are not used and continue to search for a new one.  
 
 ### Configuration
 
@@ -147,6 +147,10 @@ For example, `sample_proof.v` contains the statement
 We conclude that (& -r < -r/2 = 1 - r/2 - 1 ≤ Rmax(1/2, 1 - r/2) - 1 = x - 1).
 ```
 The chain of inequalities is used to show that `-r < x - 1`.
+
+## TODO
+
+ [ ] Split total statements in Ltac2 before calling `waterprove` to have more precise error locations
 
 ## Background
 

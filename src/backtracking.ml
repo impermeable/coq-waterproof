@@ -93,7 +93,7 @@ let pr_trace (trace: trace): unit =
   Feedback.msg_notice (prlist_with_sep fnl pr_trace_atom trace.trace)
 
 (**
-  Returns the trace atoms that have been actually applied during a [trace tactic] (like {! Wauto.wauto})
+  Returns the trace atoms that have been actually applied during a [trace tactic] (like {! wp_auto.wp_auto})
 
   It is supposed here that the given [trace] has not been modified after getting it from the [trace tactic].
 *)

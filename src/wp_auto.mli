@@ -64,11 +64,11 @@ val search :
 (**
   Waterproof auto
 
-  This function is a rewrite around coq-core.Auto.auto with the same arguments to be able to retrieve which tactics have been used in case of success.
+  This function is a rewrite around {! Auto.auto} with the same arguments to be able to retrieve which hints have been used in case of success.
 
   Returns a typed tactic containing the full trace
 *)
-val wauto :
+val wp_auto :
   bool ->
   int ->
   Tactypes.delayed_open_constr list ->
@@ -78,9 +78,9 @@ val wauto :
 (**
   Restricted Waterproof auto
 
-  This function acts the same as {! wauto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
+  This function acts the same as {! wp_auto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
 *)
-val rwauto :
+val rwp_auto :
   bool ->
   int ->
   Tactypes.delayed_open_constr list ->

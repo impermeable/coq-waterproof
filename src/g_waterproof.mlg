@@ -106,6 +106,13 @@ let define6 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd rep
   define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc arity_one))))) @@
   fun x0 x1 x2 x3 x4 x5 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4) (repr_to r5 x5)
 
+(** 
+  Defines a function of arity 7 of the same way than {! define1}
+*)
+let define7 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (r5: 'f repr) (r6: 'g repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> 'f -> 'g -> valexpr tactic): unit =
+  define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc arity_one)))))) @@
+  fun x0 x1 x2 x3 x4 x5 x6 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4) (repr_to r5 x5) (repr_to r6 x6)
+
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
 let thaw (r: 'a repr) (f: (unit, 'a) fun1): 'a tactic = app_fun1 f unit r ()
 
@@ -134,6 +141,7 @@ let _ = define1
 let _ = define2
 let _ = define3
 let _ = define5
+let _ = define7
 
 (** Converts a {! Hint_dataset_declarations.database_type} into a [valexpr] *)
 let database_type_to_valexp (database_type: database_type): valexpr = match database_type with
@@ -165,20 +173,25 @@ let () =
 let () =
   define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
     fun depth shield lems database_type ->
-      waterprove depth ~shield (List.map (fun lem -> delayed_of_thunk constr lem) lems) database_type >>=
-      fun () -> tclUNIT @@ of_unit ()
+      begin
+        waterprove
+          depth
+          ~shield
+          (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          database_type
+      end >>= fun () -> tclUNIT @@ of_unit ()
 
 (* Exports {! Waterprove.rwaterprove} to Ltac2 *)
 let () =
   define6 "rwaterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) (list constr) (list constr) @@
     fun depth shield lems database_type must_use forbidden ->
-      tclENV >>= fun env ->
-      rwaterprove
-        depth
-        ~shield
-        (List.map (fun lem -> delayed_of_thunk constr lem) lems)
-        database_type
-        must_use
-        forbidden
-        >>= fun () -> tclUNIT @@ of_unit ()
+      begin
+        rwaterprove
+          depth
+          ~shield
+          (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          database_type
+          must_use
+          forbidden
+      end >>= fun () -> tclUNIT @@ of_unit ()
 }

@@ -30,7 +30,7 @@ open Util
 
 open Backtracking
 open Proofutils
-open Wauto
+open Wp_auto
 
 (* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
 
@@ -118,7 +118,7 @@ let initial_state (log: bool) (evk: Proofview_monad.goal_with_state) (local_db: 
 (**
   Prints a debug header
 *)
-let pr_dbg_header () = Feedback.msg_notice (str "(* info weauto: *)")
+let pr_dbg_header () = Feedback.msg_notice (str "(* info wp_eauto: *)")
 
 let tclTraceComplete (t: trace tactic): trace tactic =
   t >>= fun res ->
@@ -373,9 +373,9 @@ let esearch (log: bool) (depth: int) (lems: Tactypes.delayed_open_constr list) (
   end
 
 (**
-  Generates the {! weauto} function
+  Generates the {! wp_eauto} function
 *)
-let gen_weauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
+let gen_wp_eauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
   wrap_hint_warning @@
     trace_goal_enter begin fun gl ->
     let db_list =
@@ -389,19 +389,17 @@ let gen_weauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr lis
 (**
   Waterproof eauto
 
-  This function is a rewrite around coq-core.Eauto.eauto with the same arguments to be able to retrieve which tactics have been used in case of success.
+  This function is a rewrite around {! Eauto.eauto} with the same arguments to be able to retrieve which hints have been used in case of success.
 
-  The given [debug] will be updated with the trace at the end of the execution (consider using).
-
-  The code structure has been rearranged to match the one of [Wauto.wauto].
+  The code structure has been rearranged to match the one of [wp_auto.wp_auto].
 *)
-let weauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (db_names: hint_db_name list): trace tactic =
-  gen_weauto log ~n lems (Some db_names) [] []
+let wp_eauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (db_names: hint_db_name list): trace tactic =
+  gen_wp_eauto log ~n lems (Some db_names) [] []
 
 (**
   Restricted Waterproof eauto
 
-  This function acts the same as {! weauto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
+  This function acts the same as {! wp_eauto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
 *)
-let rweauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
-  tclPROGRESS @@ gen_weauto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics
+let rwp_eauto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
+  tclPROGRESS @@ gen_wp_eauto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics

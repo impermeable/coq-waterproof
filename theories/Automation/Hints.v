@@ -84,7 +84,7 @@ Create HintDb wp_decidability_reals.
     Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
     We cannot do the same for >= as it is not defined as <=.
   *)
-  #[export] Hint Extern 1 => unfold Rgt : wp_decidability_reals.
+  #[export] Hint Unfold Rgt : wp_decidability_reals.
 
   #[export] Hint Resolve Req_EM_T : wp_decidability_reals.
   #[export] Hint Resolve Rlt_le_dec : wp_decidability_reals.
@@ -183,7 +183,7 @@ Create HintDb wp_eq_minus.
   (** <<(x - y) / z = x / z - y / z>> *)
   #[export] Hint Extern 1 => (rewrite Rdiv_minus_distr) :  wp_eq_minus.
 
-  #[export] Hint Extern 1 => (unfold Rminus) : wp_eq_minus.
+  #[export] Hint Unfold Rminus : wp_eq_minus.
 
 
 (** * Simplification with 0 *)

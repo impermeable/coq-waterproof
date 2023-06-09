@@ -49,7 +49,7 @@ val shield_test : unit -> unit Proofview.tactic
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 val waterprove :
-  int -> 
+  int ->
   ?shield:bool ->
   Tactypes.delayed_open_constr list ->
   Hint_dataset_declarations.database_type ->
@@ -58,7 +58,7 @@ val waterprove :
 (**
   Restricted Waterprove
 
-  This function is similar to {! waterprove} but use {! Wauto.rwauto} and {! Weauto.rweauto} instead of {! Wauto.wauto} and {! Weauto.weauto}.
+  This function is similar to {! waterprove} but use {! wp_auto.rwp_auto} and {! wp_eauto.rwp_eauto} instead of {! wp_auto.wp_auto} and {! wp_eauto.wp_eauto}.
 
   Arguments:
     - [depth] ([int]): max depth of the proof search
@@ -69,10 +69,10 @@ val waterprove :
     - [forbidden] ([string list]): list of hints that must not be used during the automatic solving
 *)
 val rwaterprove :
-  int -> 
+  int ->
   ?shield:bool ->
   Tactypes.delayed_open_constr list ->
   Hint_dataset_declarations.database_type ->
-  EConstr.t list ->
-  EConstr.t list ->
+  Evd.econstr list ->
+  Evd.econstr list ->
   unit Proofview.tactic
