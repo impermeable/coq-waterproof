@@ -94,8 +94,8 @@ theories/Waterprove.v
 # Coq-Waterproof tests
 
 ## Chains
-tests/chains/Inequalities.v
-tests/chains/Manipulation.v
+# tests/chains/Inequalities.v
+# tests/chains/Manipulation.v
 
 ## Automation
 

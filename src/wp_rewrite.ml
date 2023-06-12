@@ -20,10 +20,12 @@ open Genarg
 open Ltac_plugin.Tacarg
 open Proofview
 
+open CErrors
+open Constr
+open Equality
+open Locus
 open Names
 open Pp
-open Constr
-open CErrors
 open Util
 
 (* Rewriting rules *)
@@ -31,6 +33,7 @@ type rew_rule = { rew_id : KerName.t;
                   rew_lemma : constr;
                   rew_type: types;
                   rew_pat: constr;
+                  rew_ctx: Univ.ContextSet.t;
                   rew_l2r: bool;
                   rew_tac: Genarg.glob_generic_argument option }
 
@@ -143,13 +146,6 @@ sig
      closed term or a pattern (with untyped Evars). No Metas accepted *)
   val add : constr -> ident -> t -> t
 
-  (*
-   * High-level primitives describing specific search problems
-   *)
-
-  (** [search_pattern dn c] returns all terms/patterns in dn
-     matching/matched by c *)
-
   (** [find_all dn] returns all idents contained in dn *)
   val find_all : t -> ident list
 
@@ -221,6 +217,7 @@ struct
     TDnet.add dn c id
 
   let find_all dn = TDnet.lookup dn (fun () -> Everything) ()
+
 end
 
 type rewrite_db = {
@@ -235,9 +232,7 @@ let empty_rewrite_db = {
   rdb_maxuid = 0;
 }
 
-(* Summary and Object declaration *)
-let rewtab =
-  ref (String.Map.empty : rewrite_db String.Map.t)
+let rewtab: rewrite_db String.Map.t ref = ref String.Map.empty
 
 let raw_find_base bas = String.Map.find bas !rewtab
 
@@ -252,15 +247,100 @@ let find_rewrites bas =
   let sort r1 r2 = Int.compare (KNmap.find r2.rew_id db.rdb_order) (KNmap.find r1.rew_id db.rdb_order) in
   List.sort sort (HintDN.find_all db.rdb_hintdn)
 
-let print_rewrite_hintdb env sigma bas =
-  (str "Database " ++ str bas ++ fnl () ++
+let print_rewrite_hintdb (env: Environ.env) (sigma: Evd.evar_map) (db_name: string) =
+  (str "Database " ++ str db_name ++ fnl () ++
            prlist_with_sep fnl
            (fun h ->
              str (if h.rew_l2r then "rewrite -> " else "rewrite <- ") ++
                Printer.pr_lconstr_env env sigma h.rew_lemma ++ str " of type " ++ Printer.pr_lconstr_env env sigma h.rew_type ++
                Option.cata (fun tac -> str " then use tactic " ++
                Pputils.pr_glb_generic env sigma tac) (mt ()) h.rew_tac)
-           (find_rewrites bas))
+           (find_rewrites db_name))
+
+type raw_rew_rule = (constr Univ.in_universe_context_set * bool * Genarg.raw_generic_argument option) CAst.t
+
+let tclMAP_rev f args =
+  List.fold_left (fun accu arg -> Tacticals.tclTHEN accu (f arg)) (Proofview.tclUNIT ()) args
+
+(* Applies all the rules of one base *)
+let one_base where tac_main bas =
+  let lrul = find_rewrites bas in
+  let rewrite dir c tac =
+    let c = (EConstr.of_constr c, Tactypes.NoBindings) in
+    general_rewrite ~where ~l2r:dir AllOccurrences ~freeze:true ~dep:false ~with_evars:false ~tac:(tac, Naive) c
+  in
+  let try_rewrite h tc =
+  Proofview.Goal.enter begin fun gl ->
+    let sigma = Proofview.Goal.sigma gl in
+    let subst, ctx' = UnivGen.fresh_universe_context_set_instance h.rew_ctx in
+    let c' = Vars.subst_univs_level_constr subst h.rew_lemma in
+    let sigma = Evd.merge_context_set Evd.univ_flexible sigma ctx' in
+    Proofview.tclTHEN (Proofview.Unsafe.tclEVARS sigma) (rewrite h.rew_l2r c' tc)
+  end in
+  let open Proofview.Notations in
+  Proofview.tclProofInfo [@ocaml.warning "-3"] >>= fun (_name, poly) ->
+  let eval h =
+    let tac = match h.rew_tac with
+    | None -> Proofview.tclUNIT ()
+    | Some (Genarg.GenArg (Genarg.Glbwit wit, tac)) ->
+      let ist = { Geninterp.lfun = Id.Map.empty
+                ; poly
+                ; extra = Geninterp.TacStore.empty } in
+      Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
+    in
+    Tacticals.tclREPEAT_MAIN (Tacticals.tclTHENFIRST (try_rewrite h tac) tac_main)
+  in
+  let lrul = tclMAP_rev eval lrul in
+  Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS lrul)
+
+(* The AutoRewrite tactic *)
+let autorewrite tac_main lbas =
+  Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS
+    (tclMAP_rev (fun bas -> (one_base None tac_main bas)) lbas))
+
+let autorewrite_multi_in idl tac_main lbas =
+  Proofview.Goal.enter begin fun gl ->
+  (* let's check at once if id exists (to raise the appropriate error) *)
+    let _ = List.map (fun id -> Tacmach.pf_get_hyp id gl) idl in
+  Tacticals.tclMAP (fun id ->
+    Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS
+      (tclMAP_rev (fun bas -> (one_base (Some id) tac_main bas)) lbas)))
+    idl
+  end
+
+let gen_auto_multi_rewrite tac_main lbas cl =
+  let try_do_hyps treat_id l =
+    autorewrite_multi_in (List.map treat_id l) tac_main lbas
+  in
+  let concl_tac = (if cl.concl_occs != NoOccurrences then autorewrite tac_main lbas else Proofview.tclUNIT ()) in
+  if not (Locusops.is_all_occurrences cl.concl_occs) &&
+     cl.concl_occs != NoOccurrences
+  then
+    let info = Exninfo.reify () in
+    Tacticals.tclZEROMSG ~info (str"The \"at\" syntax isn't available yet for the autorewrite tactic.")
+  else
+    match cl.onhyps with
+    | Some [] -> concl_tac
+    | Some l -> Tacticals.tclTHENFIRST concl_tac (try_do_hyps (fun ((_,id),_) -> id) l)
+    | None ->
+      let hyp_tac =
+        (* try to rewrite in all hypothesis (except maybe the rewritten one) *)
+        Proofview.Goal.enter begin fun gl ->
+          let ids = Tacmach.pf_ids_of_hyps gl in
+          try_do_hyps (fun id -> id)  ids
+        end
+      in
+      Tacticals.tclTHENFIRST concl_tac hyp_tac
+
+let wp_autorewrite (lbas: string list) (cl: clause) (tac: unit tactic): unit tactic =
+  let onconcl = match cl.Locus.concl_occs with NoOccurrences -> false | _ -> true in
+  match onconcl,cl.Locus.onhyps with
+    | false,Some [_] | true,Some [] | false,Some [] ->
+        Proofview.wrap_exceptions (fun () -> gen_auto_multi_rewrite tac lbas cl)
+    | _ ->
+      let info = Exninfo.reify () in
+      Tacticals.tclZEROMSG ~info
+        (strbrk "autorewrite .. in .. using can only be used either with a unique hypothesis or on the conclusion.")
 
 (* Same hack as auto hints: we generate an essentially unique identifier for
    rewrite hints. *)
@@ -328,8 +408,8 @@ let find_applied_relation ?loc env sigma c left2right =
                        spc () ++ str"of this term does not end with an applied relation.")
 
 (* To add rewriting rules to a base *)
-let add_rew_rules env sigma base lrul =
-  let ist = Genintern.empty_glob_sign (Global.env ()) in
+let add_rew_rules (env: Environ.env) (sigma: Evd.evar_map) base (lrul: raw_rew_rule list) =
+  let ist = Genintern.empty_glob_sign env in
   let intern tac = snd (Genintern.generic_intern ist tac) in
   let map {CAst.loc;v=((c,ctx),b,t)} =
     let sigma = Evd.merge_context_set Evd.univ_rigid sigma ctx in
@@ -337,7 +417,7 @@ let add_rew_rules env sigma base lrul =
     let pat = EConstr.Unsafe.to_constr info.hyp_pat in
     let uid = fresh_key () in
     { rew_id = uid; rew_lemma = c; rew_type = EConstr.Unsafe.to_constr info.hyp_ty;
-      rew_pat = pat; rew_l2r = b;
+      rew_pat = pat; rew_ctx = ctx; rew_l2r = b;
       rew_tac = Option.map intern t }
   in
   let lrul = List.map map lrul in
@@ -353,29 +433,30 @@ let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.co
   let ctx = (DeclareUctx.declare_universe_context ~poly:false univ_ctx; Univ.ContextSet.empty) in
   CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) ((constr, ctx), true, Option.map (in_gen (rawwit wit_ltac)) None)
 
-(**
-  Waterproof rewrite
-  
+(**  
   This function will add in the rewrite hint database "core" every hint possible created from the hypothesis
 *)
-let wp_rewrite (): unit tactic =
+let fill_local_rewrite_database (): unit tactic =
   Goal.enter @@ fun goal ->
     let env = Goal.env goal in
     let sigma = Goal.sigma goal in
 
     let hyps = List.map (fun decl ->
-      let c = Environ.lookup_named (Context.Named.Declaration.get_id decl) env in
-      Feedback.msg_notice (str "#" ++ Printer.pr_named_decl env sigma c);
       Constrexpr_ops.mkIdentC @@ Context.Named.Declaration.get_id decl
     ) (Goal.hyps goal) in
 
     let new_rules = List.map (to_raw_rew_rule env sigma) hyps in
-    let added_rule_counter = ref 0 in
     List.iter (fun rule ->
       try
-        add_rew_rules env sigma "core" [rule];
-        incr added_rule_counter
+        add_rew_rules env sigma "wp_core" [rule];
       with _ -> ()
     ) new_rules;
 
+    Feedback.msg_notice @@ print_rewrite_hintdb env sigma "wp_core";
+
     tclUNIT ()
+
+let clear_rewrite_database (): unit =
+  try
+    rewtab := String.Map.remove "wp_core" !rewtab
+  with Not_found -> ()

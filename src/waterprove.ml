@@ -86,7 +86,6 @@ let shield_test (): unit tactic =
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   tclORELSE
     begin
-      wp_rewrite () <*>
       tclORELSE
         (tclPROGRESS @@ tclIGNORE @@ wp_auto false depth lems databases)
         (fun _ -> tclPROGRESS @@ tclIGNORE @@ wp_eauto false depth lems databases)
@@ -131,13 +130,22 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     begin
       let sigma = Proofview.Goal.sigma goal in
       let conclusion = Proofview.Goal.concl goal in
+      fill_local_rewrite_database () >>= fun () ->
+      wp_autorewrite ["wp_core"] {onhyps = Some []; concl_occs = Locus.AllOccurrences} @@
       tclORELSE
         (automation_routine 2 lems (get_current_databases database_type))
         begin fun _ ->
           if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
-          automation_routine depth lems (get_current_databases database_type)
+          tclORELSE
+            (automation_routine depth lems (get_current_databases database_type)) @@
+            begin fun (exn, info) ->
+              clear_rewrite_database ();
+              tclZERO ~info exn
+            end
         end
-    end
+    end >>= fun () ->
+    clear_rewrite_database ();
+    tclUNIT ()
 
 (**
   Restricted Waterprove

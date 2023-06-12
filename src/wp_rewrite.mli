@@ -16,13 +16,20 @@
 (*                                                                            *)
 (******************************************************************************)
 
+val wp_autorewrite :
+  string list ->
+  Locus.clause ->
+  unit Proofview.tactic ->
+  unit Proofview.tactic
+
 val print_rewrite_hintdb :
   Environ.env -> Evd.evar_map -> string -> Pp.t
 
 (**
-  Waterproof rewrite
-  
   This function will add in the rewrite hint database "core" every hint possible created from the hypothesis
 *)
-val wp_rewrite :
+val fill_local_rewrite_database :
   unit -> unit Proofview.tactic
+
+val clear_rewrite_database :
+  unit -> unit
