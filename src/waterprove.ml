@@ -21,14 +21,12 @@ open EConstr
 open Hints
 open Pp
 open Proofview
-open Proofview.Notations
 
 open Exceptions
 open Hint_dataset
 open Hint_dataset_declarations
 open Wp_auto
 open Wp_eauto
-open Wp_rewrite
 
 (**
   List of forbidden inductive types
@@ -87,7 +85,7 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
   tclORELSE
     begin
       tclORELSE
-        (tclPROGRESS @@ tclIGNORE @@ wp_auto false depth lems databases)
+        (tclPROGRESS @@ tclIGNORE @@ (Feedback.msg_notice @@ str "~~~~~~~~~~~~~~~~~~~"; wp_auto false depth lems databases))
         (fun _ -> tclPROGRESS @@ tclIGNORE @@ wp_eauto false depth lems databases)
     end
     begin
@@ -130,8 +128,6 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     begin
       let sigma = Proofview.Goal.sigma goal in
       let conclusion = Proofview.Goal.concl goal in
-      fill_local_rewrite_database () >>= fun () ->
-      wp_autorewrite ["wp_core"] {onhyps = Some []; concl_occs = Locus.AllOccurrences} @@
       tclORELSE
         (automation_routine 2 lems (get_current_databases database_type))
         begin fun _ ->
@@ -139,13 +135,10 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
           tclORELSE
             (automation_routine depth lems (get_current_databases database_type)) @@
             begin fun (exn, info) ->
-              clear_rewrite_database ();
               tclZERO ~info exn
             end
         end
-    end >>= fun () ->
-    clear_rewrite_database ();
-    tclUNIT ()
+    end
 
 (**
   Restricted Waterprove

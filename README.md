@@ -14,7 +14,6 @@ Mathematicians unfamiliar with the Coq syntax are able to read the resulting pro
 
 ## Installation
 
-
 ### Linux
 
 #### With Opam

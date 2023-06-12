@@ -58,13 +58,58 @@ let rec tail_end (l: 'a list) (n: int): 'a list = match (l, n) with
 *)
 module StringMap = Map.Make(String)
 
-(**
-  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
+(** Maps the given function to the list then applies every returned tactic *)
+let tclMAP_rev (f: 'a -> unit tactic) (args: 'a list): unit tactic =
+  List.fold_left (fun accu arg -> Tacticals.tclTHEN accu (f arg)) (Proofview.tclUNIT ()) args
 
-  This is **really** useful to manipulate references
-*)
-let tclRealThen (first: unit tactic) (second: 'a tactic lazy_t): 'a tactic =
-  tclBIND first (fun () -> tclTHEN (tclUNIT ()) (Lazy.force second))
+(** Generic mergeable type *)
+module type Mergeable = sig
+
+  (** Type of the elements *)
+  type elt
+
+  (** Empty value *)
+  val empty: elt
+
+  (** How to merge two elements *)
+  val merge: elt -> elt -> elt
+
+end
+
+(** Generalization of tactics defined in coq-core for {! Mergeable}-typed tactics *)
+module TypedTactics(M: Mergeable) = struct
+
+  (** Merge of tactics' returned elements *)
+  let typedThen (tactic1: M.elt tactic) (tactic2: M.elt tactic): M.elt tactic =
+    tactic1 >>= fun elt1 ->
+    tactic2 >>= fun elt2 ->
+    tclUNIT @@ M.merge elt1 elt2
+
+  (** Same as {! typedThen} with a list of tactics *)
+  let typedLongThen (tactics: M.elt tactic list): M.elt tactic =
+    List.fold_left typedThen (tclUNIT M.empty) tactics
+
+  (** Generalization of {! Proofview.Goal.enter} *)
+  let typedGoalEnter (f: Goal.t -> M.elt tactic): M.elt tactic =
+    Goal.goals >>= fun goals ->
+    let tactics = List.map (fun goal_tactic -> goal_tactic >>= f) goals in
+    List.fold_left (fun acc tac -> typedThen acc tac) (tclUNIT M.empty) tactics
+
+  (** Generalisation of {! Proofview.tclINDEPENDENT} *)
+  let typedIndependant (tactic: M.elt tactic): M.elt tactic =
+    tclINDEPENDENTL tactic >>= fun elts -> tclUNIT @@ List.fold_left M.merge M.empty elts
+
+end
+
+module TraceTactics = TypedTactics(
+  struct
+    type elt = trace
+
+    let empty: elt = no_trace
+
+    let merge: elt -> elt -> elt = merge_traces
+  end
+)
 
 (**
   Rewrite of [Auto.tclLOG]
@@ -116,50 +161,14 @@ let trace_check_used (must_use: t list) (trace: trace): trace tactic =
     else tclUNIT trace
 
 (**
-  Wrapper around {! Proofview.tclTHEN} with a merge of tactics' traces
-*)
-let tclTraceThen (tac1: trace tactic) (tac2: trace tactic): trace tactic =
-  tac1 >>= fun trace1 ->
-  tac2 >>= fun trace2 ->
-  tclUNIT @@ merge_traces trace1 trace2
-
-(**
-  Merge a list of traces contained in a tactic into one trace
-
-  Useful to combine with {! Proofview.tclINDEPENDENTL}
-*)
-let tclAggregateTraces (tac: trace list tactic): trace tactic =
-  tac >>= fun traces ->
-  tclUNIT @@ List.fold_left merge_traces no_trace traces
-
-(**
-  Wrapper around {! Proofview.Goal.enter} to allow [Backtracking.trace tactic] and not just [unit tactic]
-*)
-let trace_goal_enter (f: Goal.t -> trace tactic): trace tactic =
-  let value = ref [] in
-  tclRealThen
-    begin
-      Goal.enter @@ fun goal ->
-        begin
-          f goal >>= fun trace ->
-          value := trace::!value;
-          tclUNIT ()
-        end
-    end @@
-    lazy (tclUNIT @@ List.fold_left merge_traces no_trace (List.rev !value))
-
-(**
   Rewrite of {! Tacticals.tclORELSE0} to give the trace of the failed tactic instead of the exception
 *)
-let tclOrElse0 (tac1: trace tactic) (f: trace -> trace tactic): trace tactic =
-  tclAggregateTraces @@ 
-    begin
-      tclINDEPENDENTL @@
-      tclORELSE tac1 
-        begin fun (e, info) -> match e with
-          | SearchBound trace -> f trace
-          | _ -> f no_trace
-        end
+let tclOrElse0 (tac: trace tactic) (f: trace -> trace tactic): trace tactic =
+  TraceTactics.typedIndependant @@
+  tclORELSE tac 
+    begin fun (e, info) -> match e with
+      | SearchBound trace -> f trace
+      | _ -> f no_trace
     end
 
 (**

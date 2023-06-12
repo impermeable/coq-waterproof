@@ -94,13 +94,68 @@ module StringMap : sig
   val of_seq : (key * 'a) Seq.t -> 'a t
 end
 
-(**
-  Wrapper around [Proofview.tclTHEN] who actually execute the first tactic before the second
-*)
-val tclRealThen :
-  unit Proofview.tactic ->
-  'a Proofview.tactic lazy_t ->
-  'a Proofview.tactic
+(** Maps the given function to the list then applies every returned tactic *)
+val tclMAP_rev :
+  ('a -> unit Proofview.tactic) ->
+  'a list ->
+  unit Proofview.tactic
+
+(** Generic mergeable type *)
+module type Mergeable = sig
+
+  (** Type of the elements *)
+  type elt
+
+  (** Empty value *)
+  val empty : elt
+
+  (** How to merge two elements *)
+  val merge : elt -> elt -> elt
+
+end
+
+(** Generalization of tactics defined in coq-core for {! Mergeable}-typed tactics *)
+module TypedTactics : functor (M : Mergeable) -> sig
+
+  (** Merge of tactics' returned elements *)
+  val typedThen :
+    M.elt Proofview.tactic ->
+    M.elt Proofview.tactic ->
+    M.elt Proofview.tactic
+
+  (** Same as {! typedThen} with a list of tactics *)
+  val typedLongThen :
+    M.elt Proofview.tactic list -> M.elt Proofview.tactic
+
+  (** Generalization of {! Proofview.Goal.enter} *)
+  val typedGoalEnter :
+    (Proofview.Goal.t -> M.elt Proofview.tactic) ->
+    M.elt Proofview.tactic
+
+  (** Generalisation of {! Proofview.tclINDEPENDENT} *)
+  val typedIndependant :
+    M.elt Proofview.tactic -> M.elt Proofview.tactic
+
+end
+
+module TraceTactics : sig
+  val typedThen :
+    Backtracking.trace Proofview.tactic ->
+    Backtracking.trace Proofview.tactic ->
+    Backtracking.trace Proofview.tactic
+
+  val typedLongThen :
+    Backtracking.trace Proofview.tactic list ->
+    Backtracking.trace Proofview.tactic
+
+  val typedGoalEnter :
+    (Proofview.Goal.t -> Backtracking.trace Proofview.tactic) ->
+    Backtracking.trace Proofview.tactic
+
+  val typedIndependant :
+    Backtracking.trace Proofview.tactic ->
+    Backtracking.trace Proofview.tactic
+end
 
 (**
   Rewrite of [Auto.tclLOG]
@@ -108,6 +163,12 @@ val tclRealThen :
   Updates the trace contained in the given tactic.
 
   Fails if the hint's name is forbidden, or if the proof will be complete without using all must-use lemmas.
+
+  Arguments:
+  - [pp: Environ.env -> Evd.evar_map -> Pp.t * Pp.t]: function to obtain the printable version of [(hint_name, source_hint_database)]
+  - [tac: trace tactic]: tactic that will be tried
+  - [must_use: : Pp.t list]: list of tactics that must be used during the automation
+  - [forbidden: : Pp.t list]: list of tactics that mustn't be used during the automation
 *)
 val tclLOG :
   (Environ.env -> Evd.evar_map -> Pp.t * Pp.t) ->
@@ -121,30 +182,6 @@ val tclLOG :
 val trace_check_used :
   Pp.t list ->
   Backtracking.trace ->
-  Backtracking.trace Proofview.tactic
-
-(**
-  Wrapper around {! Proofview.tclTHEN} with a merge of tactics' traces
-*)
-val tclTraceThen :
-  Backtracking.trace Proofview.tactic ->
-  Backtracking.trace Proofview.tactic ->
-  Backtracking.trace Proofview.tactic
-
-(**
-  Merge a list of traces contained in a tactic into one trace
-
-  Useful to combine with {! Proofview.tclINDEPENDENTL}
-*)
-val tclAggregateTraces :
-  Backtracking.trace list Proofview.tactic ->
-  Backtracking.trace Proofview.tactic
-
-(**
-  Wrapper around {! Proofview.Goal.enter} to allow [Backtracking.trace tactic] and not just [unit tactic]
-*)
-val trace_goal_enter :
-  (Proofview.Goal.t -> Backtracking.trace Proofview.tactic) ->
   Backtracking.trace Proofview.tactic
 
 (**

@@ -29,6 +29,11 @@ val exists_evaluable_reference : Environ.env -> Tacred.evaluable_global_referenc
 val pr_info_nop : unit -> unit
 
 (**
+  Returns a logged [autorewrite] tactic
+*)
+val dbg_autorewrite : Pp.t list -> trace Proofview.tactic
+
+(**
   Tries the given tactic and calls an info printer if it fails
 *)
 val tclTryDbg :
