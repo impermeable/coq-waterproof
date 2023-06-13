@@ -140,8 +140,6 @@ Proof.
     We conclude that (& |b n - l| = |a n - l| < ε).
 Qed.
 
-
-
 (** From this, it is fairly easy to prove that sequences that are exactly the same also converge to the same limit.
 We do this by first using the lemma, and then proving that the sequences are indeed eventually equal.*)
 
@@ -149,12 +147,12 @@ Lemma eq_seq_conv_to_same_lim :
   ∀ (a : ℕ → ℝ) (b : ℕ → ℝ) (l : ℝ),
     (∀ n : ℕ, a n = b n) ⇒ a ⟶ l ⇒ b ⟶ l.
 Proof.
-    Take a, b : (ℕ → ℝ) and l : R.
-    Assume that (for all n : ℕ, a n = b n).
-    By conv_evt_eq_seq it suffices to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
-    Choose k := O.
-    Take n : ℕ; such that (n ≥ k)%nat.
-    We conclude that (a n = b n).
+  Take a, b : (ℕ → ℝ) and l : R.
+  Assume that (for all n : ℕ, a n = b n).
+  By conv_evt_eq_seq it suffices to show that (∃ k : ℕ, ∀ n : ℕ, (n ≥ k)%nat ⇒ a n = b n).
+  Choose k := O.
+  Take n : ℕ; such that (n ≥ k)%nat.
+  We conclude that (a n = b n).
 Qed.
 
 

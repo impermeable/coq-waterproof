@@ -51,7 +51,7 @@ Create HintDb wp_classical_logic.
   #[export] Hint Resolve all_not_not_ex : wp_classical_logic.
   #[export] Hint Resolve not_all_not_ex : wp_classical_logic.
   #[export] Hint Resolve not_all_ex_not : wp_classical_logic.
-  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
+  (* #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic. *)
 
 (** * Constructive logic *)
 

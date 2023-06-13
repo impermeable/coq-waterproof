@@ -147,7 +147,6 @@ let rec e_trivial_fail_db (db_list: hint_db list) (local_db: hint_db) (forbidden
     let secvars = compute_secvars gl in
     let tacl =
       e_assumption ::
-      (dbg_autorewrite forbidden_tactics) ::
       (Tactics.intro <*> next) ::
       (e_trivial_resolve (Tacmach.pf_env gl) (Tacmach.project gl) db_list local_db secvars (Tacmach.pf_concl gl) forbidden_tactics)
     in
@@ -203,8 +202,7 @@ and esearch_find (env: Environ.env) (sigma: Evd.evar_map) (db_list: hint_db list
     let tactic = tclLOG (pr_hint hint) (FullHint.run hint tac) forbidden_tactics in
     (tactic, cost, FullHint.print env sigma hint)
   in
-  (List.map tac_of_hint flagged_hints) @
-  [dbg_autorewrite forbidden_tactics, {cost_priority = 100; cost_subgoals = 100}, str "wp_autorewrite"]
+  (List.map tac_of_hint flagged_hints)
 
 and e_trivial_resolve (env: Environ.env) (sigma: Evd.evar_map) (db_list: hint_db list) (local_db: hint_db) (secvars: Id.Pred.t) (gl: types) (forbidden_tactics: Pp.t list): trace tactic list =
   let filter (tac, pr, _) = if pr.cost_priority = 0 then Some tac else None in
@@ -330,7 +328,7 @@ let resolve_esearch (max_depth: int) (dblist: hint_db list) (local_lemmas: Tacty
     | tac :: l ->
       tclORELSE
         (tac >>= fun state ->
-          let module SearchState = (val (search_tactics_factory state)) in
+          let module SearchState = (val (search_tactics_factory {state with tactics_resolution = []})) in
           let module StateTactics = TypedTactics(SearchState) in
           let search_goal_enter: (Goal.t -> search_state tactic) -> search_state tactic = StateTactics.typedGoalEnter in
           search_goal_enter @@ fun goal ->

@@ -239,8 +239,6 @@ Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
                   | [ |- ?b -> (~~?a)]
                     => apply (pos_not_neg_func $a $b)
                   end
-                  | (* Try context specific manipulation, e.g. negating order relations *)
-                    waterprove 3 false [] Negative
                   ] ) ]
       in
       match Control.case attempt with

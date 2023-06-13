@@ -82,31 +82,18 @@ let shield_test (): unit tactic =
   Function that will actually call automation functions
 *)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
+  Feedback.msg_notice @@ int 1;
   tclORELSE
-    begin
-      tclORELSE
-        (tclPROGRESS @@ tclIGNORE @@ (Feedback.msg_notice @@ str "~~~~~~~~~~~~~~~~~~~"; wp_auto false depth lems databases))
-        (fun _ -> tclPROGRESS @@ tclIGNORE @@ wp_eauto false depth lems databases)
-    end
-    begin
-      fun (exn, info) ->
-        tclZERO ~info exn
-    end
+    (tclPROGRESS @@ tclIGNORE @@ wp_auto false depth lems databases)
+    (fun _ -> tclPROGRESS @@ tclIGNORE @@ wp_eauto false depth lems databases)
 
 (**
   Same function as {! automation_routine} but with restricted version of automation functions
 *)
 let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): unit tactic =
   tclORELSE
-    begin
-      tclORELSE
-        (tclPROGRESS @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden)
-        (fun _ -> tclPROGRESS @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden)
-    end
-    begin
-      fun (exn, info) ->
-        tclZERO ~info exn
-    end
+    (tclPROGRESS @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden)
+    (fun _ -> tclPROGRESS @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden)
 
 (**
   Waterprove
@@ -124,6 +111,7 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type): unit tactic =
+  Feedback.msg_notice @@ int 0;
   Proofview.Goal.enter @@ fun goal ->
     begin
       let sigma = Proofview.Goal.sigma goal in
@@ -132,11 +120,7 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
         (automation_routine 2 lems (get_current_databases database_type))
         begin fun _ ->
           if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
-          tclORELSE
-            (automation_routine depth lems (get_current_databases database_type)) @@
-            begin fun (exn, info) ->
-              tclZERO ~info exn
-            end
+          automation_routine depth lems (get_current_databases database_type)
         end
     end
 

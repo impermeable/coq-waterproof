@@ -302,20 +302,20 @@ let one_base (where: variable option) (tac: unit tactic) (base: string) (rewrite
       let sigma = Evd.merge_context_set Evd.univ_flexible sigma ctx' in
       Proofview.tclTHEN (Proofview.Unsafe.tclEVARS sigma) (rewrite rule.rew_l2r c' tac)
     end
-  in Proofview.tclProofInfo [@ocaml.warning "-3"] >>= fun (_name, poly) ->
+  in
   let eval (rule: rew_rule) =
     let tac = match rule.rew_tac with
       | None -> Proofview.tclUNIT ()
       | Some (Genarg.GenArg (Genarg.Glbwit wit, tac)) ->
         let ist = {
           Geninterp.lfun = Id.Map.empty;
-          poly;
+          poly = false;
           extra = Geninterp.TacStore.empty
         } in Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
-    in Tacticals.tclREPEAT_MAIN (Tacticals.tclTHENFIRST (try_rewrite rule tac) tac)
+    in Tacticals.tclTHENFIRST (try_rewrite rule tac) tac
   in
   let rules = tclMAP_rev eval rew_rules in
-  Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS rules)
+  Proofview.tclPROGRESS rules
 
 (** The [autorewrite] tactic *)
 let autorewrite (tac: unit tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
@@ -434,4 +434,5 @@ let wp_autorewrite (print_hints: bool): unit tactic =
       if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma "wp_core" rewrite_tab;
       gen_auto_multi_rewrite (tclUNIT ()) ["wp_core"] clause rewrite_tab
     end
-  )
+  ) >>= fun () ->
+  tclUNIT ()
