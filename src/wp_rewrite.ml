@@ -255,42 +255,24 @@ let add_rew_rules (rewrite_database: rewrite_db) (rew_rules: rew_rule list): rew
     rdb_maxuid = accu.rdb_maxuid + 1;
   }) rewrite_database rew_rules
 
-(** Type alias for rewrite tabs *)
-type rewrite_tab = rewrite_db String.Map.t
 
-(** Empty rewrite tab *)
-let empty_rewrite_tab: rewrite_tab = String.Map.empty
+module RewriteDatabase: Mergeable with type elt = rewrite_db = struct
+  type elt = rewrite_db
 
-module RewriteTab: Mergeable with type elt = rewrite_tab = struct
-  type elt = rewrite_tab
+  let empty = empty_rewrite_db
 
-  let empty = empty_rewrite_tab
-
-  let merge = String.Map.merge @@ fun base rewrite_db1_opt rewrite_db2_opt ->
-    match (rewrite_db1_opt, rewrite_db2_opt) with
-      | None, _ -> rewrite_db2_opt
-      | _, None -> rewrite_db1_opt
-      | Some rewrite_db1, Some rewrite_db2 ->
-        Some (add_rew_rules rewrite_db1 (HintDN.find_all rewrite_db2.rdb_hintdn))
+  let merge rewrite_db1 rewrite_db2 = add_rew_rules rewrite_db1 (HintDN.find_all rewrite_db2.rdb_hintdn)
 end
 
-module RewriteTabTactics = TypedTactics(RewriteTab)
+module RewriteDatabaseTactics = TypedTactics(RewriteDatabase)
 
-(**
-  Returns the rewrite base associated with the given name
-
-  Raises an [Not_found] exception if it does not exists
-*)
-let find_base (base: string) (rewrite_tab: rewrite_tab): rewrite_db = String.Map.find base rewrite_tab
-
-let find_rewrites (base: string) (rewrite_tab: rewrite_tab): rew_rule list =
-  let rewrite_database = find_base base rewrite_tab in
+let find_rewrites (rewrite_database: rewrite_db): rew_rule list =
   let sort r1 r2 = Int.compare (KNmap.find r2.rew_id rewrite_database.rdb_order) (KNmap.find r1.rew_id rewrite_database.rdb_order) in
   List.sort sort (HintDN.find_all rewrite_database.rdb_hintdn)
 
 (** Applies all the rules of one base *)
-let one_base (where: variable option) (tactic: trace tactic) (base: string) (rewrite_tab: rewrite_tab): unit tactic =
-  let rew_rules = find_rewrites base rewrite_tab in
+let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: rewrite_db): unit tactic =
+  let rew_rules = find_rewrites rewrite_database in
   let rewrite (dir: bool) (c: constr) (tac: unit tactic): unit tactic =
     let c = (EConstr.of_constr c, Tactypes.NoBindings) in
     general_rewrite ~where ~l2r:dir AllOccurrences ~freeze:true ~dep:false ~with_evars:false ~tac:(tac, AllMatches) c
@@ -319,42 +301,37 @@ let one_base (where: variable option) (tactic: trace tactic) (base: string) (rew
   Tacticals.tclREPEAT_MAIN @@ Proofview.tclPROGRESS rules
 
 (** The [autorewrite] tactic *)
-let autorewrite (tac: trace tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
+let autorewrite (tac: trace tactic) (rewrite_database: rewrite_db): unit tactic =
   Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS @@
-    tclMAP_rev (fun base -> (one_base None tac base rewrite_tab)) bases
-  )
+  one_base None tac rewrite_database)
 
-let autorewrite_multi_in (idl: variable list) (tac: trace tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
+let autorewrite_multi_in (idl: variable list) (tac: trace tactic) (rewrite_database: rewrite_db): unit tactic =
   Proofview.Goal.enter begin fun gl ->
     Tacticals.tclMAP (fun id ->
-      Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS @@
-        tclMAP_rev (fun base -> (one_base (Some id) tac base rewrite_tab)) bases
+      Tacticals.tclREPEAT_MAIN (
+        Proofview.tclPROGRESS @@
+        one_base (Some id) tac rewrite_database
       )
     ) idl
   end
 
-let try_do_hyps (treat_id: 'a -> variable) (l: 'a list): trace tactic -> string list -> rewrite_tab -> unit tactic =
+let try_do_hyps (treat_id: 'a -> variable) (l: 'a list): trace tactic -> rewrite_db -> unit tactic =
   autorewrite_multi_in (List.map treat_id l)
 
-let gen_auto_multi_rewrite (tac: trace tactic) (bases: string list) (cl: clause) (rewrite_tab: rewrite_tab): unit tactic =
-  let concl_tac = (if cl.concl_occs != NoOccurrences then autorewrite tac bases rewrite_tab else Proofview.tclUNIT ()) in
+let gen_auto_multi_rewrite (tac: trace tactic) (cl: clause) (rewrite_tab: rewrite_db): unit tactic =
+  let concl_tac = (if cl.concl_occs != NoOccurrences then autorewrite tac rewrite_tab else Proofview.tclUNIT ()) in
   if not @@ Locusops.is_all_occurrences cl.concl_occs && cl.concl_occs != NoOccurrences
     then Tacticals.tclZEROMSG ~info:(Exninfo.reify ()) (str"The \"at\" syntax isn't available yet for the autorewrite tactic.")
     else match cl.onhyps with
       | Some [] -> concl_tac
-      | Some l -> Tacticals.tclTHENFIRST concl_tac (try_do_hyps (fun ((_,id),_) -> id) l tac bases rewrite_tab)
+      | Some l -> Tacticals.tclTHENFIRST concl_tac (try_do_hyps (fun ((_,id),_) -> id) l tac rewrite_tab)
       | None ->
         let hyp_tac =
           Proofview.Goal.enter begin fun gl ->
             let ids = Tacmach.pf_ids_of_hyps gl in
-            try_do_hyps (fun id -> id)  ids tac bases rewrite_tab
+            try_do_hyps (fun id -> id)  ids tac rewrite_tab
           end
         in Tacticals.tclTHENFIRST concl_tac hyp_tac
-
-(** Add a rule to the given rewrite hint database *)
-let cache_hintrewrite (base: string) (rew_rule: rew_rule) (rewrite_tab: rewrite_tab): rewrite_tab =
-  let rewrite_database = try find_base base rewrite_tab with Not_found -> empty_rewrite_db in
-  String.Map.add base (add_rew_rules rewrite_database [rew_rule]) rewrite_tab
 
 let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2right =
   let ctype = Retyping.get_type_of env sigma (EConstr.of_constr c) in
@@ -367,7 +344,7 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
         str " of this term does not end with an applied relation."
       )
 
-let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (base: string) (rule : raw_rew_rule) (rewrite_tab: rewrite_tab): rewrite_tab =
+let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
   let ist = Genintern.empty_glob_sign env in
   let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
   let to_rew_rule ({CAst.loc;v=((c,ctx),b,t)}: raw_rew_rule): rew_rule =
@@ -384,19 +361,18 @@ let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (base: string) (ru
       rew_tac = Option.map intern t
     }
   in
-  cache_hintrewrite base (to_rew_rule rule) rewrite_tab
+  add_rew_rules rewrite_database [to_rew_rule rule]
 
 (** Prints the current rewrite hint database *)
-let print_rewrite_hintdb (env: Environ.env) (sigma: Evd.evar_map) (db_name: string) (rewrite_tab: rewrite_tab) =
-  str "Database " ++
-  str db_name ++
+let print_rewrite_hintdb (env: Environ.env) (sigma: Evd.evar_map) (rewrite_database: rewrite_db) =
+  str "Local rewrite database" ++
   fnl () ++
   prlist_with_sep fnl (fun h ->
     str (if h.rew_l2r then "rewrite -> " else "rewrite <- ") ++
     Printer.pr_lconstr_env env sigma h.rew_lemma ++ str " of type " ++ Printer.pr_lconstr_env env sigma h.rew_type ++
     Option.cata (fun tac -> str " then use tactic " ++
     Pputils.pr_glb_generic env sigma tac) (mt ()) h.rew_tac
-  ) (find_rewrites db_name rewrite_tab)
+  ) (find_rewrites rewrite_database)
 
 (**
   Converts a given hypothesis into a raw rule than can be added to the hint rewrite database    
@@ -411,8 +387,8 @@ let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.co
 (**  
   This function will add in the rewrite hint database "core" every hint possible created from the hypothesis
 *)
-let fill_local_rewrite_database (): rewrite_tab tactic =
-  RewriteTabTactics.typedGoalEnter @@ fun goal ->
+let fill_local_rewrite_database (): rewrite_db tactic =
+  RewriteDatabaseTactics.typedGoalEnter @@ fun goal ->
     let env = Goal.env goal in
     let sigma = Goal.sigma goal in
 
@@ -423,9 +399,9 @@ let fill_local_rewrite_database (): rewrite_tab tactic =
     let new_rules = List.map (to_raw_rew_rule env sigma) hyps in
     tclUNIT @@ List.fold_left (fun acc rule ->
       try
-        fill_rewrite_tab env sigma "wp_core" rule acc
+        fill_rewrite_tab env sigma rule acc
       with _ -> acc
-    ) empty_rewrite_tab new_rules
+    ) RewriteDatabase.empty new_rules
 
 let wp_autorewrite ?(print_hints: bool = false) (tac: trace tactic): unit tactic =
   let clause = {onhyps = Some []; concl_occs = Locus.AllOccurrences} in
@@ -433,6 +409,6 @@ let wp_autorewrite ?(print_hints: bool = false) (tac: trace tactic): unit tactic
     Goal.enter @@ begin fun goal ->
     let env = Goal.env goal in
     let sigma = Goal.sigma goal in
-    if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma "wp_core" rewrite_tab;
-    Tacticals.tclREPEAT @@ tclPROGRESS @@ gen_auto_multi_rewrite tac ["wp_core"] clause rewrite_tab
+    if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma rewrite_tab;
+    Tacticals.tclREPEAT @@ tclPROGRESS @@ gen_auto_multi_rewrite tac clause rewrite_tab
   end >>= fun _ -> tclUNIT ()
