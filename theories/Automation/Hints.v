@@ -40,6 +40,7 @@ Create HintDb wp_core.
   #[export] Hint Resolve eq_sym : wp_core.
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
+  #[export] Hint Extern 1 ( _ = _ ) => congruence : wp_core.
   #[export] Hint Extern 0 (total_statement _) => repeat split; cbn : wp_core. 
 
 (** * Classical logic *)
@@ -51,7 +52,7 @@ Create HintDb wp_classical_logic.
   #[export] Hint Resolve all_not_not_ex : wp_classical_logic.
   #[export] Hint Resolve not_all_not_ex : wp_classical_logic.
   #[export] Hint Resolve not_all_ex_not : wp_classical_logic.
-  (* #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic. *)
+  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
 
 (** * Constructive logic *)
 
@@ -84,7 +85,7 @@ Create HintDb wp_decidability_reals.
     Automatically unfold > to <so (_ > _) no longer has to occur in the options below.
     We cannot do the same for >= as it is not defined as <=.
   *)
-  #[export] Hint Unfold Rgt : wp_decidability_reals.
+  #[export] Hint Extern 1 => unfold Rgt : wp_decidability_reals.
 
   #[export] Hint Resolve Req_EM_T : wp_decidability_reals.
   #[export] Hint Resolve Rlt_le_dec : wp_decidability_reals.
@@ -183,7 +184,7 @@ Create HintDb wp_eq_minus.
   (** <<(x - y) / z = x / z - y / z>> *)
   #[export] Hint Extern 1 => (rewrite Rdiv_minus_distr) :  wp_eq_minus.
 
-  #[export] Hint Unfold Rminus : wp_eq_minus.
+  #[export] Hint Extern 1 => (unfold Rminus) : wp_eq_minus.
 
 
 (** * Simplification with 0 *)
@@ -352,23 +353,25 @@ Create HintDb wp_negation_nat.
 Create HintDb wp_reals.
 
   #[export] Hint Extern 3 => ltac2:(simpl_member_subset ()); lra : wp_reals.
-  #[export] Hint Extern 7 (pred R _ _) => simpl; lra : wp_reals.
+  #[export] Hint Extern 3 (pred R _ _) => simpl; lra : wp_reals.
 
-  #[export] Hint Extern 7 ( Rle _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 ( Rge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 ( Rlt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 ( Rgt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 ( @eq R _ _ ) => ltac2:(simpl_ineq_chains ()); field : wp_reals.
 
-  #[export] Hint Extern 7 (~ (Rle _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 (~ (Rlt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 (~ (Rgt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 7 (~ (@eq R _ _ ) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 ( Rle _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 ( Rge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 ( Rlt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 ( Rgt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
 
-  #[export] Hint Extern 7 ( Rle _ _ ) => cbn; nra : wp_reals.
-  #[export] Hint Extern 7 ( Rge _ _ ) => cbn; nra : wp_reals.
-  #[export] Hint Extern 7 ( Rlt _ _ ) => cbn; nra : wp_reals.
-  #[export] Hint Extern 7 ( Rgt _ _ ) => cbn; nra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rle _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rlt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+
+  #[export] Hint Extern 3 ( Rle _ _ ) => cbn; nra : wp_reals.
+  #[export] Hint Extern 3 ( Rge _ _ ) => cbn; nra : wp_reals.
+  #[export] Hint Extern 3 ( Rlt _ _ ) => cbn; nra : wp_reals.
+  #[export] Hint Extern 3 ( Rgt _ _ ) => cbn; nra : wp_reals.
 
   #[export] Hint Resolve eq_sym : wp_reals.
   #[export] Hint Resolve false_Req : wp_reals.
@@ -412,7 +415,7 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rplus_lt_compat : wp_reals.
   #[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
-  #[export] Hint Extern 0 => rewrite Rabs_zero : wp_reals.
+  #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
 
 (** * Real number negation *)
 

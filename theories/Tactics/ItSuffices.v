@@ -61,8 +61,8 @@ Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr opt
   let hyp_name := Fresh.in_goal @h in
   let f () := enough ($hyp_name : $statement) by (
     match proving_lemma with
-      | None => waterprove 5 true [] Positive
-      | Some lemma => rwaterprove 5 true [fun () => lemma] Positive [lemma] []
+      | None => waterprove 5 true [] Main
+      | Some lemma => rwaterprove 5 true [fun () => lemma] Main [lemma] []
     end
   ) in
   try_enough_expression f statement.

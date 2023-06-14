@@ -55,8 +55,7 @@ VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
   | [ "Waterproof" "List" "Automation" "Databases" ] ->
     {
       Feedback.msg_notice ((str "Loaded datasets : ") ++ (List.fold_left (fun acc dataset_name -> acc ++ str " " ++ str dataset_name) (str "") !loaded_hint_dataset));
-      Feedback.msg_notice ((str "Positive databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Positive));
-      Feedback.msg_notice ((str "Negative databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Negative));
+      Feedback.msg_notice ((str "Main databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Main));
       Feedback.msg_notice ((str "Decidability databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Decidability));
       Feedback.msg_notice ((str "Shorten databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Shorten))
     }

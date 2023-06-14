@@ -189,62 +189,60 @@ Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
   let type_h := get_value_of_hyp h in
   let sort_h := get_value_of_hyp type_h in
   match check_constr_equal sort_h constr:(Prop) with
-  | false => Control.zero (NegationError
-                         "Can only manipulate negation in propositions.")
+  | false => Control.zero (NegationError "Can only manipulate negation in propositions.")
   | true => 
-      let attempt () :=
-        revert $h_id;
-        solve[ repeat (
-          first [ (* finish proof *)
-                  exact id 
-                | lazy_match! goal with
-                  (* without negation *)
-                  | [ |- (?a \/ ?b) -> (?c \/ ?d)]
-                    => apply (or_func $a $b $c $d)
-                  | [ |- (?a /\ ?b) -> (?c /\ ?d)]
-                    => apply (and_func $a $b $c $d)
-                  | [ |- (?a -> ?b) -> (?c -> ?d)]
-                    => apply (impl_func $a $b $c $d)
-                  | [ |- (forall x, @?p x) -> (forall x, @?q x)] (* matching on a forall statement !!! *)
-                    => apply (all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
-                  | [ |- (exists x, @?p x) -> (exists x, @?q x)]
-                    => apply (ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
-                  (* with negation *)
-                  | [ |- ~(?a \/ ?b) -> (?c /\ ?d)]
-                    => apply (not_or_and_func $a $b $c $d)
-                  | [ |- (?c /\ ?d) -> ~(?a \/ ?b)]
-                    => apply (not_or_and_func $a $b $c $d)
-                  | [ |- ~(?a /\ ?b) -> (?c \/ ?d)]
-                    => apply (not_and_or_func $a $b $c $d)
-                  | [ |- (?c \/ ?d) -> ~(?a /\ ?b)]
-                    => apply (or_not_and_func $a $b $c $d)
-                  | [ |- ~(?a /\ ?b) -> (?a -> ?c)]
-                    => apply (not_and_impl_func $a $b $c)
-                  | [ |- (?a -> ?c) -> ~(?a /\ ?b)]
-                    => apply (impl_not_and_func $a $b $c)
-                  | [ |- ~(?a -> ?b) -> (?a /\ ?c)]
-                    => apply (not_impl_and_func $a $b $c)
-                  | [ |- (?a /\ ?c) -> ~(?a -> ?b)]
-                    => apply (and_not_impl_func $a $b $c)
-                  | [ |- ~(forall x, @?p x) -> (exists x, @?q x)]
-                    => apply (not_all_ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
-                  | [ |- (exists x, @?q x) -> ~(forall x, @?p x)]
-                    => apply (ex_not_all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
-                  | [ |- ~(exists x, @?p x) -> (forall x, @?q x)]
-                    => apply (not_ex_all_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
-                  | [ |- (forall x, @?q x) -> ~(exists x, @?p x)]
-                    => apply (all_not_ex_func _ $p $q); let x_id := Fresh.in_goal @x in intro $x_id
-                  | [ |- (~~?a) -> ?b]
-                    => apply (not_neg_pos_func $a $b)
-                  | [ |- ?b -> (~~?a)]
-                    => apply (pos_not_neg_func $a $b)
-                  end
-                  ] ) ]
-      in
-      match Control.case attempt with
-      | Val _ => ()
-      | Err exn => Control.zero (NegationError "Failed to solve by manipulating negation.")
-      end
+    let attempt () :=
+      revert $h_id;
+      repeat (
+        first [ (* finish proof *)
+            exact id 
+          | lazy_match! goal with
+            (* without negation *)
+            | [ |- (?a \/ ?b) -> (?c \/ ?d)] => apply (or_func $a $b $c $d)
+            | [ |- (?a /\ ?b) -> (?c /\ ?d)] => apply (and_func $a $b $c $d)
+            | [ |- (?a -> ?b) -> (?c -> ?d)] => apply (impl_func $a $b $c $d)
+            | [ |- (forall x, @?p x) -> (forall x, @?q x)] =>
+              apply (all_func _ $p $q);
+              let x_id := Fresh.in_goal @x in
+              intro $x_id
+            | [ |- (exists x, @?p x) -> (exists x, @?q x)] =>
+              apply (ex_func _ $p $q);
+              let x_id := Fresh.in_goal @x in
+              intro $x_id
+            | [ |- ~(?a \/ ?b) -> (?c /\ ?d)] => apply (not_or_and_func $a $b $c $d)
+            | [ |- (?c /\ ?d) -> ~(?a \/ ?b)] => apply (not_or_and_func $a $b $c $d)
+            | [ |- ~(?a /\ ?b) -> (?c \/ ?d)] => apply (not_and_or_func $a $b $c $d)
+            | [ |- (?c \/ ?d) -> ~(?a /\ ?b)] => apply (or_not_and_func $a $b $c $d)
+            | [ |- ~(?a /\ ?b) -> (?a -> ?c)] => apply (not_and_impl_func $a $b $c)
+            | [ |- (?a -> ?c) -> ~(?a /\ ?b)] => apply (impl_not_and_func $a $b $c)
+            | [ |- ~(?a -> ?b) -> (?a /\ ?c)] => apply (not_impl_and_func $a $b $c)
+            | [ |- (?a /\ ?c) -> ~(?a -> ?b)] => apply (and_not_impl_func $a $b $c)
+            | [ |- ~(forall x, @?p x) -> (exists x, @?q x)] =>
+              apply (not_all_ex_func _ $p $q);
+              let x_id := Fresh.in_goal @x in
+              intro $x_id
+            | [ |- (exists x, @?q x) -> ~(forall x, @?p x)] =>
+              apply (ex_not_all_func _ $p $q);
+              let x_id := Fresh.in_goal @x in
+              intro $x_id
+              | [ |- ~(exists x, @?p x) -> (forall x, @?q x)] =>
+              apply (not_ex_all_func _ $p $q);
+              let x_id := Fresh.in_goal @x in
+              intro $x_id
+            | [ |- (forall x, @?q x) -> ~(exists x, @?p x)] =>
+              apply (all_not_ex_func _ $p $q);
+              let x_id := Fresh.in_goal @x in
+              intro $x_id
+            | [ |- (~~?a) -> ?b] => apply (not_neg_pos_func $a $b)
+            | [ |- ?b -> (~~?a)] => apply (pos_not_neg_func $a $b)
+          end
+        ]
+      )
+    in
+    match Control.case attempt with
+    | Val _ => ()
+    | Err exn => Control.zero (NegationError "Failed to solve by manipulating negation.")
+    end
   end.
 
 

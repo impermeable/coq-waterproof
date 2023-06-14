@@ -28,6 +28,7 @@ open Proofview
 open Proofview.Notations
 open Util
 
+open Backtracking
 open Proofutils
 
 (* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
@@ -288,11 +289,11 @@ let find_rewrites (base: string) (rewrite_tab: rewrite_tab): rew_rule list =
   List.sort sort (HintDN.find_all rewrite_database.rdb_hintdn)
 
 (** Applies all the rules of one base *)
-let one_base (where: variable option) (tac: unit tactic) (base: string) (rewrite_tab: rewrite_tab): unit tactic =
+let one_base (where: variable option) (tactic: trace tactic) (base: string) (rewrite_tab: rewrite_tab): unit tactic =
   let rew_rules = find_rewrites base rewrite_tab in
   let rewrite (dir: bool) (c: constr) (tac: unit tactic): unit tactic =
     let c = (EConstr.of_constr c, Tactypes.NoBindings) in
-    general_rewrite ~where ~l2r:dir AllOccurrences ~freeze:true ~dep:false ~with_evars:false ~tac:(tac, Naive) c
+    general_rewrite ~where ~l2r:dir AllOccurrences ~freeze:true ~dep:false ~with_evars:false ~tac:(tac, AllMatches) c
   in
   let try_rewrite (rule: rew_rule) (tac: unit tactic): unit tactic =
     Proofview.Goal.enter begin fun gl ->
@@ -312,18 +313,18 @@ let one_base (where: variable option) (tac: unit tactic) (base: string) (rewrite
           poly = false;
           extra = Geninterp.TacStore.empty
         } in Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
-    in Tacticals.tclTHENFIRST (try_rewrite rule tac) tac
+    in Tacticals.tclREPEAT_MAIN (tclTHEN (try_rewrite rule tac) (tclIGNORE tactic))
   in
   let rules = tclMAP_rev eval rew_rules in
-  Proofview.tclPROGRESS rules
+  Tacticals.tclREPEAT_MAIN @@ Proofview.tclPROGRESS rules
 
 (** The [autorewrite] tactic *)
-let autorewrite (tac: unit tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
+let autorewrite (tac: trace tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
   Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS @@
     tclMAP_rev (fun base -> (one_base None tac base rewrite_tab)) bases
   )
 
-let autorewrite_multi_in (idl: variable list) (tac: unit tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
+let autorewrite_multi_in (idl: variable list) (tac: trace tactic) (bases: string list) (rewrite_tab: rewrite_tab): unit tactic =
   Proofview.Goal.enter begin fun gl ->
     Tacticals.tclMAP (fun id ->
       Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS @@
@@ -332,10 +333,10 @@ let autorewrite_multi_in (idl: variable list) (tac: unit tactic) (bases: string 
     ) idl
   end
 
-let try_do_hyps (treat_id: 'a -> variable) (l: 'a list): unit tactic -> string list -> rewrite_tab -> unit tactic =
+let try_do_hyps (treat_id: 'a -> variable) (l: 'a list): trace tactic -> string list -> rewrite_tab -> unit tactic =
   autorewrite_multi_in (List.map treat_id l)
 
-let gen_auto_multi_rewrite (tac: unit tactic) (bases: string list) (cl: clause) (rewrite_tab: rewrite_tab): unit tactic =
+let gen_auto_multi_rewrite (tac: trace tactic) (bases: string list) (cl: clause) (rewrite_tab: rewrite_tab): unit tactic =
   let concl_tac = (if cl.concl_occs != NoOccurrences then autorewrite tac bases rewrite_tab else Proofview.tclUNIT ()) in
   if not @@ Locusops.is_all_occurrences cl.concl_occs && cl.concl_occs != NoOccurrences
     then Tacticals.tclZEROMSG ~info:(Exninfo.reify ()) (str"The \"at\" syntax isn't available yet for the autorewrite tactic.")
@@ -377,7 +378,9 @@ let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (base: string) (ru
       rew_id = uid;
       rew_lemma = c;
       rew_type = EConstr.Unsafe.to_constr info.hyp_ty;
-      rew_pat = pat; rew_ctx = ctx; rew_l2r = b;
+      rew_pat = pat;
+      rew_ctx = ctx;
+      rew_l2r = b;
       rew_tac = Option.map intern t
     }
   in
@@ -424,15 +427,12 @@ let fill_local_rewrite_database (): rewrite_tab tactic =
       with _ -> acc
     ) empty_rewrite_tab new_rules
 
-let wp_autorewrite (print_hints: bool): unit tactic =
+let wp_autorewrite ?(print_hints: bool = false) (tac: trace tactic): unit tactic =
   let clause = {onhyps = Some []; concl_occs = Locus.AllOccurrences} in
-  Proofview.wrap_exceptions (fun () ->
-    fill_local_rewrite_database () >>= fun rewrite_tab ->
-      Goal.enter @@ begin fun goal ->
-      let env = Goal.env goal in
-      let sigma = Goal.sigma goal in
-      if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma "wp_core" rewrite_tab;
-      gen_auto_multi_rewrite (tclUNIT ()) ["wp_core"] clause rewrite_tab
-    end
-  ) >>= fun () ->
-  tclUNIT ()
+  fill_local_rewrite_database () >>= fun rewrite_tab ->
+    Goal.enter @@ begin fun goal ->
+    let env = Goal.env goal in
+    let sigma = Goal.sigma goal in
+    if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma "wp_core" rewrite_tab;
+    Tacticals.tclREPEAT @@ tclPROGRESS @@ gen_auto_multi_rewrite tac ["wp_core"] clause rewrite_tab
+  end >>= fun _ -> tclUNIT ()

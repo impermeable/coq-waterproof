@@ -77,56 +77,56 @@ theories/Waterprove.v
 # Coq-Waterproof libraries
 
 ## Analysis
-# theories/Libs/Analysis/ContinuityDomainNat.v
-# theories/Libs/Analysis/ContinuityDomainR.v
-# theories/Libs/Analysis/LimsupLiminfBolzano.v
-# theories/Libs/Analysis/MetricSpaces.v
-# theories/Libs/Analysis/OpenAndClosed.v
-# theories/Libs/Analysis/SequencesMetric.v
-# theories/Libs/Analysis/Sequences.v
-# theories/Libs/Analysis/SequentialAccumulationPoints.v
-# theories/Libs/Analysis/Series.v
-# theories/Libs/Analysis/SubsequencesInduction.v
-# theories/Libs/Analysis/SubsequencesMetric.v
-# theories/Libs/Analysis/Subsequences.v
-# theories/Libs/Analysis/SupAndInf.v
+theories/Libs/Analysis/ContinuityDomainNat.v
+theories/Libs/Analysis/ContinuityDomainR.v
+theories/Libs/Analysis/LimsupLiminfBolzano.v
+theories/Libs/Analysis/MetricSpaces.v
+theories/Libs/Analysis/OpenAndClosed.v
+theories/Libs/Analysis/SequencesMetric.v
+theories/Libs/Analysis/Sequences.v
+theories/Libs/Analysis/SequentialAccumulationPoints.v
+theories/Libs/Analysis/Series.v
+theories/Libs/Analysis/SubsequencesInduction.v
+theories/Libs/Analysis/SubsequencesMetric.v
+theories/Libs/Analysis/Subsequences.v
+theories/Libs/Analysis/SupAndInf.v
 
 # Coq-Waterproof tests
 
 ## Chains
-# tests/chains/Inequalities.v
-# tests/chains/Manipulation.v
+tests/chains/Inequalities.v
+tests/chains/Manipulation.v
 
 ## Automation
 
 ### General  
-# tests/automation/Shield.v
+tests/automation/Shield.v
 
 ### Databases
-# tests/automation/databases/Core.v
-# tests/automation/databases/Decidability.v
-# tests/automation/databases/Empty.v
-# tests/automation/databases/Integers.v
-# tests/automation/databases/RealsAndIntegers.v
+tests/automation/databases/Core.v
+tests/automation/databases/Decidability.v
+tests/automation/databases/Empty.v
+tests/automation/databases/Integers.v
+tests/automation/databases/RealsAndIntegers.v
 
 ## Tactics
-# tests/tactics/Assume.v
-# tests/tactics/Because.v
-# tests/tactics/BothDirections.v
-# tests/tactics/BothStatements.v
-# tests/tactics/Claims.v
-# tests/tactics/Choose.v
-# tests/tactics/Conclusion.v
-# tests/tactics/Contradiction.v
-# tests/tactics/Define.v
-# tests/tactics/Either.v
-# tests/tactics/Induction.v
-# tests/tactics/ItHolds.v
-# tests/tactics/ItSuffices.v
-# tests/tactics/Sets.v
-# tests/tactics/Take.v
-# tests/tactics/ToShow.v
-# tests/tactics/Unfold.v
+tests/tactics/Assume.v
+tests/tactics/Because.v
+tests/tactics/BothDirections.v
+tests/tactics/BothStatements.v
+tests/tactics/Claims.v
+tests/tactics/Choose.v
+tests/tactics/Conclusion.v
+tests/tactics/Contradiction.v
+tests/tactics/Define.v
+tests/tactics/Either.v
+tests/tactics/Induction.v
+tests/tactics/ItHolds.v
+tests/tactics/ItSuffices.v
+tests/tactics/Sets.v
+tests/tactics/Take.v
+tests/tactics/ToShow.v
+tests/tactics/Unfold.v
 
 ## Libs
-# tests/libs/Negation.v
+tests/libs/Negation.v

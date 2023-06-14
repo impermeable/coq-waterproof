@@ -27,6 +27,7 @@ open Hint_dataset
 open Hint_dataset_declarations
 open Wp_auto
 open Wp_eauto
+open Wp_rewrite
 
 (**
   List of forbidden inductive types
@@ -82,18 +83,23 @@ let shield_test (): unit tactic =
   Function that will actually call automation functions
 *)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
-  Feedback.msg_notice @@ int 1;
-  tclORELSE
-    (tclPROGRESS @@ tclIGNORE @@ wp_auto false depth lems databases)
-    (fun _ -> tclPROGRESS @@ tclIGNORE @@ wp_eauto false depth lems databases)
+  Tacticals.tclFIRST [
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto false depth lems databases
+  ]
 
 (**
   Same function as {! automation_routine} but with restricted version of automation functions
 *)
 let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): unit tactic =
-  tclORELSE
-    (tclPROGRESS @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden)
-    (fun _ -> tclPROGRESS @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden)
+  Tacticals.tclFIRST [
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ rwp_auto false depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ rwp_eauto false depth lems databases must_use forbidden
+  ]
 
 (**
   Waterprove
@@ -111,7 +117,6 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type): unit tactic =
-  Feedback.msg_notice @@ int 0;
   Proofview.Goal.enter @@ fun goal ->
     begin
       let sigma = Proofview.Goal.sigma goal in

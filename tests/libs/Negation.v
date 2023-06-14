@@ -232,7 +232,8 @@ Close Scope R_scope.
 Goal forall n m : nat, ~(n < m) -> (n >= m).
 Proof.
   intros n m h.
-  Fail solve_by_manipulating_negation_in @h.
+  solve_by_manipulating_negation_in @h.
+Fail Qed.
 Abort.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -242,4 +243,5 @@ Goal forall n m : nat, ~(n < m) -> (n >= m).
 Proof.
   intros n m h.
   solve_by_manipulating_negation_in @h.
+Fail Qed.
 Abort.

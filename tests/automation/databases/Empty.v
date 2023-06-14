@@ -24,10 +24,10 @@ Waterproof Clear Automation.
 
 Goal 0 = 0.
 Proof.
-  Fail waterprove 5 false [] Positive.
+  Fail waterprove 5 false [] Main.
 Abort.
 
 Goal forall x y: nat, forall f: nat -> nat, x = y -> f (S x) = f (S y).
 Proof.
-  Fail waterprove 5 false [] Positive.
+  Fail waterprove 5 false [] Main.
 Abort.

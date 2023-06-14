@@ -24,7 +24,7 @@ type hint_dataset
 (**
   Type referencing all database lists that a {! hint_dataset} should contain
 *)
-type database_type = Positive | Negative | Decidability | Shorten
+type database_type = Main | Decidability | Shorten
 
 (**
   Returns the name of the given [dataset]
