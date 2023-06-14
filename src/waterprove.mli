@@ -17,21 +17,9 @@
 (******************************************************************************)
 
 (**
-  Returns a [bool] from a [EConstr.constr] indicating if this term is forbidden in automation.
-
-  Forbidden patterns: [forall _, _], [exists _, _], [_ /\ _] and [_ \/ _]
-*)
-val is_forbidden : Evd.evar_map -> EConstr.constr -> bool
-
-(**
   Is automation shield enabled ? 
 *)
 val automation_shield : bool ref
-
-(**
-  Tests that the current goal is not forbidden with the shield on.
-*)
-val shield_test : unit -> unit Proofview.tactic
 
 (**
   Waterprove

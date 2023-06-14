@@ -16,10 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Constr
 open EConstr
 open Hints
-open Pp
 open Proofview
 
 open Exceptions
@@ -30,54 +28,9 @@ open Wp_eauto
 open Wp_rewrite
 
 (**
-  List of forbidden inductive types
-*)
-let forbidden_inductive_types: string list = [
-  "Coq.Init.Logic.all"; (* forall (should not be necessary) *)
-  "Coq.Init.Logic.and"; (* /\ *)
-  "Coq.Init.Logic.ex"; (* exists *)
-  "Coq.Init.Logic.ex2"; (* exists2 *) 
-  "Coq.Init.Logic.or"; (* \/ *)
-]
-
-(**
   Is automation shield enabled ? 
 *)
 let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
-
-(**
-  Returns a [bool] from a [EConstr.constr] indicating if this term is forbidden in automation.
-
-  Forbidden patterns: [forall _, _], [exists _, _], [_ /\ _] and [_ \/ _]
-*)
-let rec is_forbidden (sigma: Evd.evar_map) (term: constr): bool =
-  let exists_in_array (term_array: constr array): bool = Array.exists (fun term -> is_forbidden sigma term) term_array in
-  match kind sigma term with
-    | Prod (binder, _, _) -> Names.Name.print binder.binder_name <> str "_"
-    | Cast (sub_term, _, _) -> is_forbidden sigma sub_term
-    | Lambda (_, _, right_side) -> true
-    | LetIn (_, value, _, right_side) -> is_forbidden sigma value || is_forbidden sigma right_side
-    | App (f, args) -> is_forbidden sigma f || exists_in_array args
-    | Case (_, _, params, _, _, c, branches) ->
-      is_forbidden sigma c || exists_in_array params || Array.exists (fun (_, branch) -> is_forbidden sigma branch) branches
-    | Fix (_, (_, _, bodies)) | CoFix (_, (_, _, bodies)) -> exists_in_array bodies
-    | Proj (_, sub_term) -> is_forbidden sigma sub_term
-    | Array (_, vals, def, _) -> is_forbidden sigma def || exists_in_array vals
-    | Ind ((name, _), _) -> (* [exists], [/\], [\/], ... are defined by inductive types so they are caught here *)
-      List.mem (Names.MutInd.print name) @@ List.map str forbidden_inductive_types
-    | _ -> false
-
-(**
-  Tests that the current goal is not forbidden with the shield on.
-*)
-let shield_test (): unit tactic =
-  Proofview.Goal.enter @@ fun goal ->
-    begin
-      let sigma = Proofview.Goal.sigma goal in
-      let conclusion = Proofview.Goal.concl goal in
-      if is_forbidden sigma conclusion then throw (FailedTest "shield");
-      tclUNIT ()
-    end
 
 (**
   Function that will actually call automation functions
@@ -119,12 +72,10 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
 let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type): unit tactic =
   Proofview.Goal.enter @@ fun goal ->
     begin
-      let sigma = Proofview.Goal.sigma goal in
-      let conclusion = Proofview.Goal.concl goal in
       tclORELSE
         (automation_routine 2 lems (get_current_databases database_type))
         begin fun _ ->
-          if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+          if shield && !automation_shield then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
           automation_routine depth lems (get_current_databases database_type)
         end
     end
@@ -147,13 +98,12 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
     begin
       let env = Proofview.Goal.env goal in
       let sigma = Proofview.Goal.sigma goal in
-      let conclusion = Proofview.Goal.concl goal in
       let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
       let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
       tclORELSE
         (restricted_automation_routine 2 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
         begin fun _ ->
-          if shield && !automation_shield && is_forbidden sigma conclusion then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+          if shield && !automation_shield then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
           restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
         end
     end

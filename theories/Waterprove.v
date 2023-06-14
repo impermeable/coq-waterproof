@@ -20,6 +20,7 @@ Require Export Ltac2.Ltac2.
 
 Require Import Waterproof.
 
+Require Import Ltac2.Bool.
 Require Import Ltac2.Init.
 
 Local Ltac2 Type database_type_ffi.
@@ -40,8 +41,18 @@ Local Ltac2 database_type_to_ffi (db_type: database_type): database_type_ffi :=
     | Shorten => database_type_shorten ()
   end.
 
-Ltac2 waterprove (depth: int) (log: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
-  waterprove_ffi depth log lems (database_type_to_ffi db_type).
+Ltac2 contains_shilded_pattern (): bool :=
+  lazy_match! goal with
+    | [ |- forall _, _ ] => true
+    | [ |- exists _, _ ] => true
+    | [ |- _ /\ _] => true
+    | [ |- _ \/ _] => true
+    | [ |- _] => false
+  end
+.
 
-Ltac2 rwaterprove (depth: int) (log: bool) (lems: (unit -> constr) list) (db_type: database_type) (must_use: constr list) (forbidden: constr list): unit  :=
-  rwaterprove_ffi depth log lems (database_type_to_ffi db_type) must_use forbidden.
+Ltac2 waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
+  waterprove_ffi depth (shield && contains_shilded_pattern ()) lems (database_type_to_ffi db_type).
+
+Ltac2 rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type) (must_use: constr list) (forbidden: constr list): unit  :=
+  rwaterprove_ffi depth (shield && contains_shilded_pattern ()) lems (database_type_to_ffi db_type) must_use forbidden.
