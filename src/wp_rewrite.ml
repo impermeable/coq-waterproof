@@ -270,7 +270,7 @@ let find_rewrites (rewrite_database: rewrite_db): rew_rule list =
   let sort r1 r2 = Int.compare (KNmap.find r2.rew_id rewrite_database.rdb_order) (KNmap.find r1.rew_id rewrite_database.rdb_order) in
   List.sort sort (HintDN.find_all rewrite_database.rdb_hintdn)
 
-(** Applies all the rules of one base *)
+(** Applies all the rules of one hint rewrite database *)
 let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: rewrite_db): unit tactic =
   let rew_rules = find_rewrites rewrite_database in
   let rewrite (dir: bool) (c: constr) (tac: unit tactic): unit tactic =
@@ -302,8 +302,9 @@ let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: 
 
 (** The [autorewrite] tactic *)
 let autorewrite (tac: trace tactic) (rewrite_database: rewrite_db): unit tactic =
-  Tacticals.tclREPEAT_MAIN (Proofview.tclPROGRESS @@
-  one_base None tac rewrite_database)
+  Tacticals.tclREPEAT_MAIN (
+    Proofview.tclPROGRESS @@ one_base None tac rewrite_database
+  )
 
 let autorewrite_multi_in (idl: variable list) (tac: trace tactic) (rewrite_database: rewrite_db): unit tactic =
   Proofview.Goal.enter begin fun gl ->
@@ -403,12 +404,17 @@ let fill_local_rewrite_database (): rewrite_db tactic =
       with _ -> acc
     ) RewriteDatabase.empty new_rules
 
+(**
+  Waterproof autorewrite
+
+  This tactic is a rewrite of the coq-core's [autorewrite] tactic that will only consider current hypothesis as rewrite hints.
+*)
 let wp_autorewrite ?(print_hints: bool = false) (tac: trace tactic): unit tactic =
   let clause = {onhyps = Some []; concl_occs = Locus.AllOccurrences} in
-  fill_local_rewrite_database () >>= fun rewrite_tab ->
+  fill_local_rewrite_database () >>= fun rewrite_db ->
     Goal.enter @@ begin fun goal ->
     let env = Goal.env goal in
     let sigma = Goal.sigma goal in
-    if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma rewrite_tab;
-    Tacticals.tclREPEAT @@ tclPROGRESS @@ gen_auto_multi_rewrite tac clause rewrite_tab
+    if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma rewrite_db;
+    Tacticals.tclREPEAT @@ tclPROGRESS @@ gen_auto_multi_rewrite tac clause rewrite_db
   end >>= fun _ -> tclUNIT ()

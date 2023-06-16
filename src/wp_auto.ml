@@ -313,4 +313,4 @@ let wp_auto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbna
   This function acts the same as {! wp_auto} but will fail if all proof found contain at least one must-use lemma that is unused or one hint that is in the [forbidden] list.
 *)
 let rwp_auto (log: bool) (n: int) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
-  tclPROGRESS @@ gen_wp_auto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics
+  gen_wp_auto log ~n lems (Some dbnames) must_use_tactics forbidden_tactics

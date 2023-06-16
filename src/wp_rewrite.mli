@@ -16,6 +16,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**
+  Waterproof autorewrite
+
+  This tactic is a rewrite of the coq-core's [autorewrite] tactic that will only consider current hypothesis as rewrite hints.
+*)
 val wp_autorewrite :
   ?print_hints:bool ->
   Backtracking.trace Proofview.tactic ->
