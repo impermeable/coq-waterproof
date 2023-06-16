@@ -50,8 +50,8 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ rwp_auto false depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ rwp_eauto false depth lems databases must_use forbidden
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto false depth lems databases
   ]
 
 (**

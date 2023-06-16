@@ -149,7 +149,9 @@ The chain of inequalities is used to show that `-r < x - 1`.
 
 ## TODO
 
- [ ] Split total statements in Ltac2 before calling `waterprove` to have more precise error locations
+- [ ] Split total statements in Ltac2 before calling `waterprove` to have more precise error locations
+- [ ] Add a restricted version of `wp_autorewrite` then change the `restricted_automation_routine` in [`src/waterprove.ml`](src/waterprove.ml)
+- [ ] Flatten the search tree during `wp_auto` and `wp_eauto` not to make restricted versions skip branches
 
 ## Background
 
