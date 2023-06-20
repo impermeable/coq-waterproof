@@ -77,4 +77,3 @@ Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))): R_scope.
 
 Close Scope nat_scope.
 Close Scope R_scope.
-

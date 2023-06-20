@@ -23,12 +23,6 @@ Require Import Notations.Common.
 Unset Auto Template Polymorphism.
 Record subset (X : Type) := as_subset { pred :> X -> Prop }.
 
-Declare Scope subset_scope.
-Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.
-
-Notation "'subset' U" := 
-  (Ensemble U) (at level 50). 
-
 Notation "'set_of_subsets' U" := 
   (Ensemble (Ensemble U)) (at level 50). 
 
@@ -63,3 +57,6 @@ Notation "A 'and' B 'are' 'disjoint'" :=
   
 Notation "｛ x : T | P ｝" := 
   (fun (x : T) ↦ P) (x at level 99).
+
+Declare Scope subset_scope.
+Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.
