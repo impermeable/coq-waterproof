@@ -20,6 +20,7 @@ From Ltac2 Require Import Ltac2.
 From Ltac2 Require Option.
 
 Require Import Inequalities.
+Require Export Notations.Sets.
 
 (**
   Writes out an inequality chain as a big conjunction.

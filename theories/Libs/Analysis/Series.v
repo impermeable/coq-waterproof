@@ -29,10 +29,10 @@ Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 
-#[export] Hint Resolve Rabs_Rabsolu : reals.
-#[export] Hint Resolve Rabs_minus_sym : reals.
-#[export] Hint Resolve Rmult_lt_0_compat : reals.
-#[export] Hint Resolve Rinv_lt_contravar : reals.
+#[export] Hint Resolve Rabs_Rabsolu : wp_reals.
+#[export] Hint Resolve Rabs_minus_sym : wp_reals.
+#[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
+#[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
 Open Scope R_scope.
 

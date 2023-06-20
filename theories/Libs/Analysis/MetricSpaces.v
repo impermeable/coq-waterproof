@@ -100,7 +100,7 @@ Either (x = y) or (x ≠ y).
   By Req_false we conclude that (Reqb x y = false).
 Qed.
 
-#[export] Hint Resolve d'_eq_0 : reals.
-#[export] Hint Resolve d'_eq_3 : reals.
-#[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : reals.
-#[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : reals.
+#[export] Hint Resolve d'_eq_0 : wp_reals.
+#[export] Hint Resolve d'_eq_3 : wp_reals.
+#[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : wp_reals.
+#[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_false; lra : wp_reals.

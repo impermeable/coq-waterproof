@@ -76,6 +76,7 @@ theories/Waterprove.v
 # Coq-Waterproof libraries
 
 ## Analysis
+theories/Libs/Analysis.v
 theories/Libs/Analysis/ContinuityDomainNat.v
 theories/Libs/Analysis/ContinuityDomainR.v
 theories/Libs/Analysis/LimsupLiminfBolzano.v

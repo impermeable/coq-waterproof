@@ -774,17 +774,17 @@ Proof.
       We conclude that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
 Qed.
 
-#[export] Hint Resolve bounded_by_upper_bound_propform : reals.
-#[export] Hint Resolve bounded_by_lower_bound_propform : reals.
-#[export] Hint Resolve alt_char_inf : reals.
-#[export] Hint Resolve alt_char_sup : reals.
-#[export] Hint Resolve <- alt_char_inf : reals.
-#[export] Hint Resolve <- alt_char_sup : reals.
+#[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.
+#[export] Hint Resolve bounded_by_lower_bound_propform : wp_reals.
+#[export] Hint Resolve alt_char_inf : wp_reals.
+#[export] Hint Resolve alt_char_sup : wp_reals.
+#[export] Hint Resolve <- alt_char_inf : wp_reals.
+#[export] Hint Resolve <- alt_char_sup : wp_reals.
 
 (** ### **Hints***)
-#[export] Hint Unfold is_lub : reals.
-#[export] Hint Unfold is_inf : reals.
-#[export] Hint Unfold is_upper_bound : reals.
+#[export] Hint Unfold is_lub : wp_reals.
+#[export] Hint Unfold is_inf : wp_reals.
+#[export] Hint Unfold is_upper_bound : wp_reals.
 #[export] Hint Unfold is_lower_bound :reals.
 
 Close Scope R_scope.

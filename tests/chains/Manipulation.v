@@ -21,10 +21,12 @@ Require Import Ltac2.Ltac2.
 Require Import Coq.Reals.Reals.
 Require Import micromega.Lra.
 
+Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.
 Require Import Waterproof.Tactics.
 
 Open Scope R_scope.
+Open Scope subset_scope.
 
 (** Test 0: Go from a chain of inequalities to the statement *)
 Goal forall x : R, (& x < 4 <= 5 = 2 + 3 < 10) -> (x < 10).
@@ -45,4 +47,18 @@ Goal forall X : Type, forall (a b c d e f g h : X),
   Fail ltac1:(congruence). (* at this stage, congruence still does not work *)
   split_conjunctions ().
   ltac1:(congruence). (* now congruence should work *)
+Qed.
+
+Waterproof Enable Automation RealsAndIntegers.
+
+Goal forall x: R, x: [0, 4] -> 0 <= x.
+Proof.
+  Take x: R.
+  Assume that (x: [0, 4]).
+  We conclude that (0 <= x).
+Qed.
+
+Goal 2: [0, 4].
+Proof.
+  We conclude that (2: [0, 4]).
 Qed.

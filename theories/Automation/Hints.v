@@ -443,7 +443,7 @@ Create HintDb wp_negation_reals.
 
 Create HintDb wp_sets.
 
-  #[export] Hint Resolve left_in_closed_open left_in_closed_open : wp_sets.
+  #[export] Hint Resolve left_in_closed_open : wp_sets.
   #[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
 
 (** * Intuition *)
