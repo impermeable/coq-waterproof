@@ -1,0 +1,76 @@
+(******************************************************************************)
+(*                  This file is part of Waterproof-lib.                      *)
+(*                                                                            *)
+(*   Waterproof-lib is free software: you can redistribute it and/or modify   *)
+(*    it under the terms of the GNU General Public License as published by    *)
+(*     the Free Software Foundation, either version 3 of the License, or      *)
+(*                    (at your option) any later version.                     *)
+(*                                                                            *)
+(*     Waterproof-lib is distributed in the hope that it will be useful,      *)
+(*      but WITHOUT ANY WARRANTY; without even the implied warranty of        *)
+(*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         *)
+(*               GNU General Public License for more details.                 *)
+(*                                                                            *)
+(*     You should have received a copy of the GNU General Public License      *)
+(*   along with Waterproof-lib. If not, see <https://www.gnu.org/licenses/>.  *)
+(*                                                                            *)
+(******************************************************************************)
+
+DECLARE PLUGIN "coq-waterproof.databases"
+
+{
+
+open Pp
+open Stdarg
+
+open Hint_dataset
+open Hint_dataset_declarations
+
+}
+
+VERNAC COMMAND EXTEND DatasetAddSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Automation" ident(dataset) ] ->
+    {
+      let dataset_name = Names.Id.to_string dataset in
+      load_dataset dataset_name
+    }
+END
+
+VERNAC COMMAND EXTEND DatasetRemoveSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Automation" ident(dataset) ] ->
+    {
+      let dataset_name = Names.Id.to_string dataset in
+      remove_dataset dataset_name
+    }
+END
+
+VERNAC COMMAND EXTEND DatasetClearSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Clear" "Automation" ] ->
+    {
+      clear_dataset ()
+    }
+END
+
+VERNAC COMMAND EXTEND DatasetDeclareSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Declare" "Automation" ident(dataset) ] ->
+    {
+      create_new_dataset (Names.Id.to_string dataset)
+    }
+END
+
+VERNAC COMMAND EXTEND DatasetSetSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Set" ident(database_type) "Databases" ident(dataset_name) ident_list_sep(databases, ",") ] ->
+    {
+      populate_dataset (Names.Id.to_string dataset_name) (database_type_of_string @@ Names.Id.to_string database_type) (List.map Names.Id.to_string databases)
+    }
+END
+
+VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
+  | [ "Waterproof" "List" "Automation" "Databases" ] ->
+    {
+      Feedback.msg_notice ((str "Loaded datasets : ") ++ (List.fold_left (fun acc dataset_name -> acc ++ str " " ++ str dataset_name) (str "") !loaded_hint_dataset));
+      Feedback.msg_notice ((str "Main databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Main));
+      Feedback.msg_notice ((str "Decidability databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Decidability));
+      Feedback.msg_notice ((str "Shorten databases :") ++ List.fold_left (fun acc database_name -> acc ++ str " " ++ str database_name) (str "") (get_current_databases Shorten))
+    }
+END
