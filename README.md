@@ -1,11 +1,11 @@
 [![Build][build-badge]][build-link]
 [![Documentation][documentation-badge]][documentation-link]
 
-[build-badge]: https://github.com/BalthazarPatiachvili/coq-waterproof/workflows/Build/badge.svg
-[documentation-badge]: https://github.com/BalthazarPatiachvili/coq-waterproof/workflows/Documentation/badge.svg
+[build-badge]: https://github.com/impermeable/coq-waterproof/workflows/Build/badge.svg
+[documentation-badge]: https://github.com/impermeable/coq-waterproof/workflows/Documentation/badge.svg
 
-[build-link]: https://github.com/BalthazarPatiachvili/coq-waterproof/actions?query=workflow:"Build"
-[documentation-link]: https://github.com/BalthazarPatiachvili/coq-waterproof/actions?query=workflow:"Documentation"
+[build-link]: https://github.com/impermeable/coq-waterproof/actions?query=workflow:"Build"
+[documentation-link]: https://github.com/impermeable/coq-waterproof/actions?query=workflow:"Documentation"
 
 # coq-waterproof
 
