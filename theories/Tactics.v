@@ -32,7 +32,6 @@ Require Export Tactics.Help.
 Require Export Tactics.Induction.
 Require Export Tactics.ItHolds.
 Require Export Tactics.ItSuffices.
-Require Export Tactics.Sets.
 Require Export Tactics.Take.
 Require Export Tactics.ToShow.
 Require Export Tactics.Unfold.

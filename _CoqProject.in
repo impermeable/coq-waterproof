@@ -60,7 +60,6 @@ theories/Tactics/Help.v
 theories/Tactics/Induction.v
 theories/Tactics/ItHolds.v
 theories/Tactics/ItSuffices.v
-theories/Tactics/Sets.v
 theories/Tactics/Take.v
 theories/Tactics/ToShow.v
 theories/Tactics/Unfold.v
@@ -123,7 +122,6 @@ tests/tactics/Either.v
 tests/tactics/Induction.v
 tests/tactics/ItHolds.v
 tests/tactics/ItSuffices.v
-tests/tactics/Sets.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v

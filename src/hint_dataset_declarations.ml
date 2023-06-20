@@ -18,6 +18,8 @@
 
 open Hints
 
+open Exceptions
+
 (**
   Interface to load and unload usual hint databases such as reals, integers, classical logic, ...
 *)
@@ -34,6 +36,16 @@ type hint_dataset = {
 type database_type = Main | Decidability | Shorten
 
 (**
+  Converts a string to a {! database_type}
+*)
+let database_type_of_string (database_type: string): database_type = match database_type with
+  | "Main" -> Main
+  | "Decidability" -> Decidability
+  | "Shorten" -> Shorten
+  | _ -> throw (NonExistingDataset "") (* TODO *)
+
+
+(**
   Returns the name of the given [dataset]
 *)
 let name (dataset: hint_dataset): string = dataset.name
@@ -45,6 +57,24 @@ let get_databases (dataset: hint_dataset) (databases: database_type): hint_db_na
   | Main -> dataset.main_databases
   | Decidability -> dataset.decidability_databases
   | Shorten -> dataset.shorten_databases
+
+(**
+  Create a new empty dataset with a given name
+*)
+let new_dataset (name: string): hint_dataset = {
+  name;
+  main_databases = [];
+  decidability_databases = [];
+  shorten_databases = []
+}
+
+(**
+  Sets the databases of the given type for the given dataset
+*)
+let set_databases (dataset: hint_dataset) (database_type: database_type) (databases: string list): hint_dataset = match database_type with
+  | Main -> { dataset with main_databases = databases }
+  | Decidability -> { dataset with decidability_databases = databases }
+  | Shorten -> { dataset with shorten_databases = databases }
 
 let empty: hint_dataset = {
   name = "Empty";
@@ -86,4 +116,11 @@ let sets: hint_dataset = {
   main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "wp_negation_nat"; "wp_negation_int"];
   decidability_databases: hint_db_name list = ["wp_decidability_nat"];
   shorten_databases: hint_db_name list = ["wp_classical_logic"];
+}
+
+let intuition: hint_dataset = {
+  name = "Intuition";
+  main_databases: hint_db_name list = ["wp_intuition"];
+  decidability_databases: hint_db_name list = [];
+  shorten_databases: hint_db_name list = [];
 }

@@ -135,7 +135,32 @@ The behavior of the automation tactics can be configured by importing specific f
     Waterproof Enable Automation RealsAndIntegers.
     ```
 
+* **Removing a Database**: Example:
+    ```coq
+    Require Import Waterproof.Automation.
 
+    Waterproof Enable Automation RealsAndIntegers.
+    Waterproof Disable Automation RealsAndIntegers.
+    ```
+
+* **Clearing every Databases**: Example:
+    ```coq
+    Require Import Waterproof.Automation.
+
+    Waterproof Enable Automation RealsAndIntegers.
+    Waterproof Enable Automation Intuition.
+    Waterproof Clear Automation.
+    ```
+
+* **Declaring a new automation dataset**: Example:
+  ```coq
+  Require Import Waterproof.Automation.
+  
+  Waterproof Declare Automation Foo.
+  Waterproof Set Main Databases Foo core, wp_core.
+  Waterproof Set Decidability Databases Foo wp_decidability_classical.
+  Waterproof Set Shorten Databases Foo core.
+  ```
 
 ## Chains of (in)equalities
 In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.

@@ -445,4 +445,9 @@ Create HintDb wp_sets.
 
   #[export] Hint Resolve left_in_closed_open left_in_closed_open : wp_sets.
   #[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
-  (* #[export] Hint Extern 3 (_ = _) => try (ltac2:(trivial_set_equality ())) : wp_sets. *)
+
+(** * Intuition *)
+
+Create HintDb wp_intuition.
+
+  #[export] Hint Extern 7 => intuition (auto 2 with core): wp_intuition.

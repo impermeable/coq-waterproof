@@ -27,6 +27,11 @@ type hint_dataset
 type database_type = Main | Decidability | Shorten
 
 (**
+  Converts a string to a {! database_type}
+*)
+val database_type_of_string : string -> database_type
+
+(**
   Returns the name of the given [dataset]
 *)
 val name : hint_dataset -> string
@@ -34,7 +39,24 @@ val name : hint_dataset -> string
 (**
   Returns the list of databases for the given {! database_type}
 *)
-val get_databases : hint_dataset -> database_type -> Hints.hint_db_name list
+val get_databases :
+  hint_dataset ->
+  database_type ->
+  Hints.hint_db_name list
+
+(**
+  Create a new empty dataset with a given name
+*)
+val new_dataset : string -> hint_dataset
+
+(**
+  Sets the databases of the given type for the given dataset
+*)
+val set_databases :
+  hint_dataset ->
+  database_type ->
+  string list ->
+  hint_dataset
 
 val empty : hint_dataset
 val core : hint_dataset
@@ -42,3 +64,4 @@ val algebra : hint_dataset
 val integers : hint_dataset
 val reals_and_integers : hint_dataset
 val sets : hint_dataset
+val intuition: hint_dataset

@@ -22,9 +22,9 @@
 val loaded_hint_dataset : string list ref
 
 (**
-  Complete list of all existing dataset names
+  Dictionary with dataset names as keys and datasets as values
 *)
-val existing_dataset_names: string list
+val existing_datasets: Hint_dataset_declarations.hint_dataset Proofutils.StringMap.t ref
 
 (**
   Replace all current loaded hints by the ones declared in the [hint_dataset]
@@ -40,6 +40,20 @@ val remove_dataset : string -> unit
   Clears all the currently loaded datasets
 *)
 val clear_dataset : unit -> unit
+
+(**
+  Creates a new empty dataset from a given name
+*)
+val create_new_dataset: string -> unit
+
+(**
+  Sets the databases of a given {! database_type} in a given dataset
+*)
+val populate_dataset :
+  string ->
+  Hint_dataset_declarations.database_type ->
+  string list ->
+  unit
 
 (**
   Returns the list of databases of the current loaded dataset for the given {! Hint_dataset_declarations.database_type}

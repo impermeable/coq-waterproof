@@ -51,6 +51,20 @@ VERNAC COMMAND EXTEND DatasetClearSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND DatasetDeclareSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Declare" "Automation" ident(dataset) ] ->
+    {
+      create_new_dataset (Names.Id.to_string dataset)
+    }
+END
+
+VERNAC COMMAND EXTEND DatasetSetSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Set" ident(database_type) "Databases" ident(dataset_name) ident_list_sep(databases, ",") ] ->
+    {
+      populate_dataset (Names.Id.to_string dataset_name) (database_type_of_string @@ Names.Id.to_string database_type) (List.map Names.Id.to_string databases)
+    }
+END
+
 VERNAC COMMAND EXTEND DatabaseQuery CLASSIFIED AS QUERY
   | [ "Waterproof" "List" "Automation" "Databases" ] ->
     {
