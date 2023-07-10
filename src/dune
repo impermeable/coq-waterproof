@@ -4,4 +4,4 @@
   (libraries coq-core.plugins.ltac coq-core.plugins.ltac2)
   (flags :standard -rectypes -w -27))
 
-(coq.pp (modules g_waterproof databases))
+(coq.pp (modules g_waterproof))
