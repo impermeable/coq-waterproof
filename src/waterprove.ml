@@ -107,3 +107,10 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
           restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
         end
     end
+
+(** 
+  Sends a warning and returns the message as a string
+*)
+let print_warning (input : Pp.t) : string tactic = 
+  Feedback.msg_warning input;
+  tclUNIT @@ Pp.string_of_ppcmds input

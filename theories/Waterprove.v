@@ -32,6 +32,8 @@ Local Ltac2 @ external database_type_shorten: unit -> database_type_ffi := "coq-
 Local Ltac2 @ external waterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> unit := "coq-waterproof" "waterprove".
 Local Ltac2 @ external rwaterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> constr list -> constr list -> unit := "coq-waterproof" "rwaterprove".
 
+Ltac2 @ external print_warning_ffi : message -> unit := "coq-waterproof" "external_print_warning".
+
 Ltac2 Type database_type := [ Main | Decidability | Shorten ].
 
 Local Ltac2 database_type_to_ffi (db_type: database_type): database_type_ffi :=

@@ -192,4 +192,10 @@ let () =
           forbidden
       end >>= fun () -> tclUNIT @@ of_unit ()
 
+let () =
+  define1 "external_print_warning" pp @@ 
+    fun input ->
+      print_warning input
+    >>= fun (my_string : string) -> tclUNIT @@ of_unit ()
+
 }
