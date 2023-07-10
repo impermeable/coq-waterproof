@@ -11,3 +11,6 @@ src/waterproof.mlpack
 
 theories/Waterproof.v
 theories/Waterprove.v
+
+# Test file
+tests/test_warning.v
