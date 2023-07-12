@@ -25,12 +25,12 @@ Require Import Ltac2.Init.
 
 Local Ltac2 Type database_type_ffi.
 
-Local Ltac2 @ external database_type_main: unit -> database_type_ffi := "coq-waterproof" "database_type_main".
-Local Ltac2 @ external database_type_decidability: unit -> database_type_ffi := "coq-waterproof" "database_type_decidability".
-Local Ltac2 @ external database_type_shorten: unit -> database_type_ffi := "coq-waterproof" "database_type_shorten".
+Local Ltac2 @ external database_type_main: unit -> database_type_ffi := "coq-core.plugins.coq-waterproof" "database_type_main".
+Local Ltac2 @ external database_type_decidability: unit -> database_type_ffi := "coq-core.plugins.coq-waterproof" "database_type_decidability".
+Local Ltac2 @ external database_type_shorten: unit -> database_type_ffi := "coq-core.plugins.coq-waterproof" "database_type_shorten".
 
-Local Ltac2 @ external waterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> unit := "coq-waterproof" "waterprove".
-Local Ltac2 @ external rwaterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> constr list -> constr list -> unit := "coq-waterproof" "rwaterprove".
+Local Ltac2 @ external waterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> unit := "coq-core.plugins.coq-waterproof" "waterprove".
+Local Ltac2 @ external rwaterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> constr list -> constr list -> unit := "coq-core.plugins.coq-waterproof" "rwaterprove".
 
 Ltac2 Type database_type := [ Main | Decidability | Shorten ].
 
