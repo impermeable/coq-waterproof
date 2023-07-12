@@ -23,4 +23,4 @@ Require Import Waterproof.
 Require Import Ltac2.Bool.
 Require Import Ltac2.Init.
 
-Ltac2 @ external print_warning_ffi : message -> unit := "coq-waterproof" "external_print_warning".
+Ltac2 @ external print_warning_ffi : message -> unit := "coq-core.plugins.coq-waterproof" "external_print_warning".
