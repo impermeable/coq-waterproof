@@ -1,16 +1,4 @@
-src/META.coq-waterproof
--R theories/ Waterproof
--I src
 -I @LTAC2_CAML_FILES@
-
-src/waterprove.ml
-src/waterprove.mli
-src/g_waterproof.mlg
-src/g_waterproof.mli
-src/waterproof.mlpack
+-R theories/ Waterproof
 
 theories/Waterproof.v
-theories/Waterprove.v
-
-# Test file
-tests/test_warning.v
