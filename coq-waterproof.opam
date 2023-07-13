@@ -22,11 +22,11 @@ depends: [
 build: [
   ["autoreconf" "-i" "-s"]
   ["./configure"]
-  ["dune" "build" "-p" "coq-waterproof"]
+#  ["dune" "build" "-p" "coq-waterproof"]
   [make "-j%{jobs}%"]
 ]
 
 install: [
   [make "install"]
-  ["dune" "install" "coq-waterproof"]
+#  ["dune" "install" "coq-waterproof"]
 ]
