@@ -2,7 +2,6 @@
   (name Waterproof)
   (package coq-waterproof)
   (flags :standard)
-  (plugins coq-waterproof.plugin coq-core.plugins.ltac coq-core.plugins.ltac2)
-  (theories Ltac2))
+  (plugins coq-waterproof.plugin coq-core.plugins.ltac coq-core.plugins.ltac2))
 
 (include_subdirs qualified)
