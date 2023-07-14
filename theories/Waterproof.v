@@ -16,5 +16,5 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Declare ML Module "coq-core.plugins.ltac2".
+From Ltac2 Require Import Init.
 Declare ML Module "waterproof:coq-waterproof.plugin".
