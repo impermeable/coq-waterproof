@@ -586,36 +586,6 @@ Abort.
 #[export] Hint Resolve _inf_is_approximated : wp_reals.
 
 
-(** Helpful lemmas for upper and lower bounds. *)
-(* Require special tactics as not enough information in goal. *)
-
-Lemma _upper_bound_behaves_as_bound (A : ℝ → Prop) (M : ℝ) (a : ℝ) 
-  (def : is_upper_bound A M <-> forall a : R, A a -> a <= M) :
-  M is an upper bound for A -> A a -> a ≤ M.
-Proof. intros; apply def; assumption. Qed.
-Local Ltac2 _use_upper_bound_behaves_as_bound () :=
-  lazy_match! goal with
-  | [ _ : is_upper_bound ?a ?m |- _ <= ?m ] => 
-    apply (_upper_bound_behaves_as_bound $a)
-  end.
-
-Check definition_supremum.
-
-
-Lemma _lower_bound_behaves_as_bound (A : ℝ → Prop) (m : ℝ) (a : ℝ) 
-  (def : is_lower_bound A m <-> forall a : R, A a -> m <= a) :
-  m is a lower bound for A -> A a -> m ≤ a.
-Proof. intros; apply def; assumption. Qed.
-Local Ltac2 _use_lower_bound_behaves_as_bound () :=
-  lazy_match! goal with
-  | [ _ : is_lower_bound ?a ?m |- ?m <= _ ] => 
-    apply (_lower_bound_behaves_as_bound $a)
-  end.
-
-#[export] Hint Extern 1 => ltac2:(_use_upper_bound_behaves_as_bound ()) : wp_reals.
-#[export] Hint Extern 1 => ltac2:(_use_lower_bound_behaves_as_bound ()) : wp_reals.
-
-
 (** Advanced lemmas *)
 (* Use that sup A is an upper bound for A,
   skips explicit unfolding of def upper bound *)
@@ -626,11 +596,11 @@ Lemma _sup_behaves_as_bound (A : R -> Prop) (a : R)
   (A a) -> a <= sup A.
 Proof.
   intros.
-  assert (sup A is an upper bound for A) by apply def; reflexivity.
-  apply (_upper_bound_behaves_as_bound A).
-  - apply definition_upper_bound.
+  assert (sup A is an upper bound for A) as H1 by apply def; reflexivity.
+  rewrite _rule_def_upper_bound in H1.
+  apply H1.
   - assumption.
-  - assumption. 
+  - apply definition_upper_bound.
 Qed.
 
 (* Use that inf A is a lower bound for A,
@@ -642,11 +612,11 @@ Qed.
   (A a) -> inf A <= a.
 Proof.
   intros.
-  assert (inf A is a lower bound for A) by apply def; reflexivity.
-  apply (_lower_bound_behaves_as_bound A).
-  - apply definition_lower_bound.
+  assert (inf A is a lower bound for A) as H1 by apply def; reflexivity.
+  rewrite _rule_def_lower_bound in H1.
+  apply H1.
   - assumption.
-  - assumption. 
+  - apply definition_lower_bound.
 Qed.
 
 
