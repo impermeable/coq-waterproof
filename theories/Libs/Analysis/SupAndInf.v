@@ -27,637 +27,761 @@ Require Import Tactics.
 Open Scope R_scope.
 
 Waterproof Enable Automation RealsAndIntegers.
-
-Notation is_bounded_above := bound.
-Notation is_sup := is_lub.
-
-(* Implement notations for these concepts. *)
-Notation "M 'is' 'the' '_supremum_' 'of' A" := (is_lub A M) (at level 69).
-Notation "M 'is' 'the' 'supremum' 'of' A" := (is_lub A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_lub    ()          := unfold is_lub.
-Local Ltac2 unfold_is_lub_in (h : ident) := unfold is_lub in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "supremum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
-
-Notation "A 'is' '_bounded' 'from' 'above_'" := (bound A) (at level 69).
-Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69, only parsing).
-Local Ltac2 unfold_bound    ()          := unfold bound.
-Local Ltac2 unfold_bound_in (h : ident) := unfold bound in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_bound unfold_bound_in cl.
-
-Notation "M 'is' 'an' '_upper' 'bound_' 'of' A" := (is_upper_bound A M) (at level 69).
-Notation "M 'is' 'an' 'upper' 'bound' 'of' A" := (is_upper_bound A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_upper_bound    ()          := unfold is_upper_bound.
-Local Ltac2 unfold_is_upper_bound_in (h : ident) := unfold is_upper_bound in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
-
-(** Maximum *)
-Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound of A).
-
-Notation "M 'is' 'the' '_maximum_' 'of' A" := (is_max A M) (at level 69).
-Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_max    ()          := unfold is_max.
-Local Ltac2 unfold_is_max_in (h : ident) := unfold is_max in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "maximum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_max unfold_is_max_in cl.
+Waterproof Enable Automation Intuition.
 
 
+(** Functions used for using and expanding definitions *)
 
-(** ## The completeness axiom
+Require Import Logic.FunctionalExtensionality.
+Axiom prop_univ : forall {P Q : Prop}, (P <-> Q) -> (P = Q).
 
-The completeness axiom of the real numbers says that when a subset $A$ of the real numbers is bounded from above, and when there exists an element in the set, then there exists an $L$ such that $L$ is the supremum of $A$.*)
-Lemma R_complete : ∀ (A : ℝ → Prop) (a : ℝ),
-  (A a) ⇒ (A is bounded from above) ⇒ exists M : R, M is the supremum of A.
+Require Import Util.Init.
+Require Import Ltac2.Message.
+Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
+
+
+(** Definitions and notation for non-emptyness and boundedness. *)
+
+(** Non-empty *)
+(* Definition *)
+Axiom is_non_empty : (R -> Prop) -> Prop.
+Axiom definition_non_empty : forall A : R -> Prop, 
+  is_non_empty A   <->   there exists x : R, A x.
+Lemma _rule_def_non_empty 
+  (def : forall A : R -> Prop, is_non_empty A <-> there exists x : R, A x) :
+  is_non_empty   =   fun (A : R -> Prop) => there exists x : R, A x.
 Proof.
-    Take A : (ℝ → Prop) and a : ℝ.
-    Assume that (A a).
-    Assume that (A is bounded from above) (i).
-    We claim that (there exists x : ℝ, A x).
-    { Choose (a). We conclude that (A a). }
-    By completeness it holds that ({M | M is the supremum of A}) (ii).
-    Obtain M according to (ii), so for M : ℝ it holds that (M is the supremum of A).
-    Choose (M).
-    We conclude that (M is the supremum of A).
+  apply functional_extensionality; intro A; apply prop_univ.
+  apply def.
 Qed.
+(* Notation *)
+Notation "A 'is' '_non-empty_'" := (is_non_empty A) (at level 69).
+Notation "A 'is' 'non-empty'" := (is_non_empty A) (at level 69, only parsing).
+(* Hint for using definition *)
+(* #[export] Hint Extern 1 => (rewrite -> _unfold_def_non_empty) : wp_reals. *)
+#[export] Hint Extern 1 => (rewrite _rule_def_non_empty) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_def_non_empty in h end) : wp_reals.
+
+(** Tests for using definition _without_ definition added as hint. *)
+Goal [0,1] is non-empty.
+Proof.
+  Fail It suffices to show that (there exists x : R, [0,1] x).
+  By definition_non_empty it suffices to show that (there exists x : R, [0,1] x).
+Abort.
+Goal there exists x : R, [0,1] x.
+Proof.
+  Fail It suffices to show that ([0,1] is non-empty).
+  By definition_non_empty it suffices to show that ([0,1] is non-empty).
+Abort.
+
+(** Tests for using definition _with_ definition added as hint. *)
+Section SmallTest.
+#[local] Hint Resolve definition_non_empty : wp_reals.
+
+Goal [0,1] is non-empty.
+Proof.
+  It suffices to show that (there exists x : R, [0,1] x).
+  (* Note: still requires additional lemma, since auto uses 'simple apply'. *)
+Abort.
+
+Goal [0,1] is non-empty.
+Proof.
+  By definition_non_empty it suffices to show that (there exists x : R, [0,1] x).
+Abort.
+End SmallTest.
+
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_non_empty (t : constr) :=
+  lazy_match! t with
+  | context [ is_non_empty ?a ] => 
+    let def := get_type constr:(definition_non_empty $a) in
+    print (of_string "");
+    print (concat (of_constr constr:(definition_non_empty)) (of_string ":"));
+    print (concat (of_string "      ") (of_constr def))
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'non-empty' does not occur in ") (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "non-empty" "in" t(constr) := 
+  exp_def_non_empty t.
+
+(** Test for expanding definition. *)
+Goal False.
+Proof.
+  Expand the definition of non-empty in ([0,1] is non-empty).
+  Expand the definition of non-empty in (bound [0,1]).
+Abort.
 
 
+(** Continuation file *)
 
-(** 
-Axiom completeness : ∀ A : ℝ → Prop,
-      is_bounded_above A ⇒ 
-        ((∃ x : ℝ, x ∈ A) ⇒ { M : ℝ | is_sup A M }).
-```*)
-(** ## Lower bounds
+(** is an upper bound *)
+(* Definition *)
+Axiom is_upper_bound : (R -> Prop) -> R -> Prop.
+Axiom definition_upper_bound : forall (A : R -> Prop) (M : R), 
+  is_upper_bound A M   <->   (for all a : R, A a -> a <= M).
+(* Notation *)
+Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := 
+  (is_upper_bound A M) (at level 69).
+Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := 
+  (is_upper_bound A M) (at level 69, only parsing).
+(* Hint for using definition *)
+Check fun (A : R -> Prop) (M : R) => forall a : R, A a -> a <= M.
+Lemma _rule_def_upper_bound 
+  (def : forall (A : R -> Prop) (M : R), 
+    is_upper_bound A M <-> (for all a : R, A a -> a <= M)) :
+  is_upper_bound   =   fun (A : R -> Prop) (M : R) => forall a : R, A a -> a <= M.
+Proof.
+  apply functional_extensionality; intro A.
+  apply functional_extensionality; intro M.
+  apply prop_univ; apply def.
+Qed.
+#[export] Hint Extern 1 => (rewrite -> _rule_def_upper_bound) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_def_upper_bound in h end) : wp_reals.
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_upper_bound (t : constr) :=
+  lazy_match! t with
+  | context [ is_upper_bound ?a ?m ] => 
+    let def := get_type constr:(definition_upper_bound $a $m) in
+    print (of_string "");
+    print (concat (of_constr constr:(definition_upper_bound)) (of_string ":"));
+    print (concat (of_string "      ") (of_constr def))
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'upper bound' does not occur in ") (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" "in" t(constr) := 
+  exp_def_upper_bound t.
 
-A number $m : ℝ$ is called a lower bound of a subset $A : ℝ → \mathsf{Prop}$, if for all $a : \mathbb{R}$, if $a \in A$ then $a ≥ m$.*)
-Definition is_lower_bound (A : ℝ → Prop) (m : ℝ) :=
-  ∀ a : ℝ, (A a) ⇒ m ≤ a.
-(** We say that a subset $A : ℝ → \mathsf{Prop}$ is bounded below if there exists an $m : ℝ$ such that $m$ is a lower bound of $A$.*)
-Definition is_bounded_below (A : ℝ → Prop) :=
-  ∃ m : ℝ, is_lower_bound A m.
-(** ## The infimum
+(* small test unfolding notation *)
+Goal False.
+Proof. 
+  Expand the definition of upper bound in (1 is an upper bound for [0,1]).
+Abort.
 
-A real number $m : ℝ$ is called the **infimum** of a subset $A : ℝ → \mathsf{Prop}$ if it is the largest lower bound.*)
-Definition is_inf :=
-  fun (A : ℝ → Prop) m 
-    => (is_lower_bound A m) ∧ (∀ l : R, is_lower_bound A l ⇒ l ≤ m).
+(** is a lower bound *)
+(* Definition *)
+Axiom is_lower_bound : (R -> Prop) -> R -> Prop.
+Axiom definition_lower_bound : forall (A : R -> Prop) (m : R), 
+  is_lower_bound A m   <->   (for all a : R, A a -> m <= a).
+(* Notation *)
+Notation "m 'is' 'a' '_lower' 'bound_' 'for' A" := 
+  (is_lower_bound A m) (at level 69).
+Notation "m 'is' 'a' 'lower' 'bound' 'for' A" := 
+  (is_lower_bound A m) (at level 69, only parsing).
+(* Hint for using definition *)
+Lemma _rule_def_lower_bound 
+  (def : forall (A : R -> Prop) (m : R), 
+    is_lower_bound A m <-> (for all a : R, A a -> m <= a)) :
+  is_lower_bound   =   fun (A : R -> Prop) (m : R) => forall a : R, A a -> m <= a.
+Proof.
+  apply functional_extensionality; intro A.
+  apply functional_extensionality; intro m.
+  apply prop_univ; apply def.
+Qed.
+#[export] Hint Extern 1 => (rewrite -> _rule_def_lower_bound) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_def_lower_bound in h end) : wp_reals.
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_lower_bound (t : constr) :=
+  lazy_match! t with
+  | context [ is_lower_bound ?a ?m ] => 
+    let def := get_type constr:(definition_lower_bound $a $m) in
+    print (of_string "");
+    print (concat (of_constr constr:(definition_lower_bound)) (of_string ":"));
+    print (concat (of_string "      ") (of_constr def))
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'lower bound' does not occur in ") (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" "in" t(constr) := 
+  exp_def_lower_bound t.
 
-(* Implement notations for these concepts. *)
-Notation "m 'is' 'the' '_infimum_' 'of' A" := (is_inf A m) (at level 69).
-Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only parsing).
-Local Ltac2 unfold_is_inf    ()          := unfold is_inf.
-Local Ltac2 unfold_is_inf_in (h : ident) := unfold is_inf in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "infimum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
+(** is bounded above *)
+(* Definition *)
+Axiom is_bounded_above : (R -> Prop) -> Prop.
+Axiom definition_bounded_above : forall (A : R -> Prop), 
+  is_bounded_above A   <->   there exists M : ℝ, is_upper_bound A M.
+(* Notation *)
+Notation "A 'is' '_bounded' 'from' 'above_'" := (is_bounded_above A) (at level 69).
+Notation "A 'is' 'bounded' 'from' 'above'" := 
+  (is_bounded_above A) (at level 69, only parsing).
+(* Hint for using definition *)
+Lemma _rule_def_bounded_above 
+  (def : forall (A : R -> Prop),
+    is_bounded_above A <-> there exists M : ℝ, is_upper_bound A M) :
+  is_bounded_above   =   fun (A : R -> Prop) => there exists M : ℝ, is_upper_bound A M.
+Proof.
+  apply functional_extensionality; intro A.
+  apply prop_univ; apply def.
+Qed.
+#[export] Hint Extern 1 => (rewrite _rule_def_bounded_above) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_def_bounded_above in h end) : wp_reals.
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_bounded_above (t : constr) :=
+  lazy_match! t with
+  | context [ is_bounded_above ?a ] => 
+    let def := get_type constr:(definition_bounded_above $a) in
+    print (of_string "");
+    print (concat (of_constr constr:(definition_bounded_above)) (of_string ":"));
+    print (concat (of_string "      ") (of_constr def))
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'bounded from above' does not occur in ")
+          (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" "in" t(constr) := 
+  exp_def_bounded_above t.
 
+(* small test unfolding notation *)
+Goal False.
+Proof. 
+  Expand the definition of bounded from above in ([0,1] is bounded from above).
+Abort.
+
+(** is bounded below *)
+(* Definition *)
+Axiom is_bounded_below : (R -> Prop) -> Prop.
+Axiom definition_bounded_below : forall (A : R -> Prop), 
+  is_bounded_below A   <->   there exists m : ℝ, is_lower_bound A m.
+(* Notation *)
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
-Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
-Local Ltac2 unfold_is_bounded_below_in (h : ident) := unfold is_bounded_below in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
-
-Notation "M 'is' 'a' '_lower' 'bound_' 'of' A" := (is_lower_bound A M) (at level 69).
-Notation "M 'is' 'a' 'lower' 'bound' 'of' A" := (is_lower_bound A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_lower_bound    ()          := unfold is_lower_bound.
-Local Ltac2 unfold_is_lower_bound_in (h : ident) := unfold is_lower_bound in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
-
-
-(** ## Reflection of a subset of ℝ in the origin
-
-Before we continue showing properties of the infimum, 
-we first introduce the reflection of subsets of $\mathbb{R}$ 
-in the origin. 
-Given a subset $A : ℝ → \mathsf{Prop}$, 
-we consider the set $-A$ 
-(which we write as $\mathsf{set\_opp} A$), defined by*)
-Definition set_opp (A : ℝ -> Prop) := (fun x ↦ (A (-x))).
-
-(** TODO: add this to additional lemmas.. *)
-(** Hint Resolve neg_opp_is_original_elem : additional.*)
-Lemma upp_bd_set_to_low_bd_set_opp :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    M is an upper bound of A ⇒ 
-      is_lower_bound (set_opp A) (-M).
+Notation "A 'is' 'bounded' 'from' 'below'" := 
+  (is_bounded_below A) (at level 69, only parsing).
+(* Hint for using definition *)
+Lemma _rule_def_bounded_below 
+  (def : forall (A : R -> Prop),
+    is_bounded_below A <-> there exists m : ℝ, is_lower_bound A m) :
+  is_bounded_below   =   fun (A : R -> Prop) => (there exists m : ℝ, is_lower_bound A m).
 Proof.
-    Take A : (ℝ → Prop) and M : ℝ.
-    Assume that (M is an upper bound of A) (i).
-    We need to show that (∀ a : ℝ, (set_opp A a) ⇒ -M ≤ a).
-    Expand the definition of lower bound.
-    That is, write the goal as (for all a : ℝ, set_opp A a ⇨ -M ≤ a).
-    Take b : ℝ. Assume that (set_opp A b).
-    Define a := (-b).
-    It holds that (A a).
-    By (i) it holds that (a ≤ M).
-    We conclude that (-M ≤ b).
+  apply functional_extensionality; intro A.
+  apply prop_univ; apply def.
+Qed.
+#[export] Hint Extern 1 => (rewrite _rule_def_bounded_below) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_def_bounded_below in h end) : wp_reals.
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_bounded_below (t : constr) :=
+  lazy_match! t with
+  | context [ is_bounded_below ?a ] => 
+    let def := get_type constr:(definition_bounded_below $a) in
+    print (of_string "");
+    print (concat (of_constr constr:(definition_bounded_below)) (of_string ":"));
+    print (concat (of_string "      ") (of_constr def))
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'bounded from below' does not occur in ")
+          (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" "in" t(constr) := 
+  exp_def_bounded_below t.
+
+(* small test unfolding notation *)
+Goal False.
+Proof. 
+  Expand the definition of bounded from below in ([0,1] is bounded from below).
+Abort.
+
+
+(** Definitions, notations and alternative characterizations for supremum and infimum. *)
+
+(** Definition of supremum.
+  Uses axiomatic approach to mimic `sup A` notation
+  and to enforce explicit unfolding of definitions. *)
+(* Definition *)
+Axiom sup : (R -> Prop) -> R.
+Notation "'sup' A" := (sup A) (at level 10) : R_scope. (* force not using parentheses *)
+Axiom definition_supremum : 
+  for all (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from above) (M : R),
+  sup A = M   ⇔   M is an upper bound for A
+                  ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L).
+Lemma alternative_characterization_supremum :
+  for all (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from above) (M : R),
+  sup A = M   ⇔   M is an upper bound for A 
+                  ∧ (for all ε : R, ε > 0 -> 
+                        there exists a : R, A a ∧ a > M - ε).
+Proof.
+  intros A H1A H2A M; split.
+  - intro supA_eq_M; split.
+    + apply definition_supremum; assumption.
+    + Take ε : R. Assume that (ε > 0).
+      We argue by contradiction. Assume that  
+      (¬ there exists a : R, A a ∧ a > M - ε).
+      It holds that (forall a : R, A a -> a <= M - ε).
+      We claim that 
+        (for all L : R, L is an upper bound for A -> sup A <= L) (i).
+      { apply definition_supremum ; try assumption; reflexivity. }
+      By definition_upper_bound it holds that 
+        ((M - ε) is an upper bound for A).
+      By (i) it holds that (& M = sup A <= M - ε).
+      It holds that (ε <= 0).
+      It holds that (¬ ε > 0). ↯.
+- intro H. apply definition_supremum; try assumption.
+  split.
+  + apply H.
+  + Take L : R. Assume that (L is an upper bound for A).
+    We argue by contradiction. Assume that (¬ M ≤ L).
+    It holds that (L < M).
+    Define ε := (M - L). It holds that (ε > 0).
+    It holds that (there exists a : R, A a ∧ a > M - (M - L)).
+    It holds that (there exists a : R, A a ∧ a > L).
+    It holds that (¬ (for all a : R, A a -> a <= L)).
+    By definition_upper_bound it holds that 
+      (¬ L is an upper bound for A). ↯.
+Qed.
+(* Hints for using definition and alternative characterization. *)
+Lemma _rule_def_supremum 
+  (A : R -> Prop) (M : R) (H1A : A is non-empty) (H2A : A is bounded from above) 
+  (def : sup A = M <->
+    M is an upper bound for A ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) : 
+  (sup A = M)   =   (M is an upper bound for A 
+                      ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)).
+Proof. apply prop_univ; apply def; assumption. Qed.
+#[export] Hint Extern 1 => (match goal with 
+                            | |- sup ?a = ?m => rewrite (_rule_def_supremum a m)
+                            | |- ?m = sup ?a => symmetry; rewrite (_rule_def_supremum a m)
+                            end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | h : sup ?a = ?m |- _ => rewrite (_rule_def_supremum a m) in h
+                            | h : ?m = sup ?a |- _ => symmetry in h; rewrite (_rule_def_supremum a m) in h
+                            end) : wp_reals.
+                          
+Lemma _rule_alt_char_supremum 
+  (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from above) (M : R)
+  (char : sup A = M ⇔ 
+    M is an upper bound for A ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)) :
+  (sup A = M)   =   (M is an upper bound for A
+                      ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)).
+Proof. apply prop_univ; apply char; assumption. Qed.
+#[export] Hint Extern 1 => (rewrite _rule_alt_char_supremum) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_alt_char_supremum in h end) : wp_reals.
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_supremum (t : constr) :=
+  lazy_match! t with
+  | context [ sup ?a ] => 
+    let def_with_constraints := get_type constr:(definition_supremum $a) in
+    lazy_match! def_with_constraints with
+    | ?h1 -> ?h2 -> ?def =>
+      let alt_char_with_constraints := 
+        get_type constr:(alternative_characterization_supremum $a) in
+      lazy_match! alt_char_with_constraints with
+      | _ -> _ -> ?alt_char =>
+        print (of_string "");
+        print (concat_list ((of_string "Given that ") :: (of_constr h1)
+                              :: (of_string " and ") :: (of_constr h2) 
+                              :: (of_string ":") :: []));
+        print (concat (of_constr constr:(definition_supremum)) (of_string ":"));
+        print (concat (of_string "      ") (of_constr def));
+        print (concat (of_constr constr:(alternative_characterization_supremum))
+                      (of_string ":"));
+        print (concat (of_string "      ") (of_constr alt_char))
+      end
+    end
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'sup' does not occur in ")
+          (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "supremum" "in" t(constr) := 
+  exp_def_supremum t.
+Ltac2 Notation "Expand" "the" "definition" "of" "sup" "in" t(constr) := 
+  exp_def_supremum t.
+
+Goal False.
+  Expand the definition of supremum in (sup [0,1]).
+Abort.
+
+
+(** Definition of infimum.
+  Uses axiomatic approach to mimic `inf A` notation
+  and to enforce explicit unfolding of definitions. *)
+(* Definition *)
+Axiom inf : (R -> Prop) -> R.
+Notation "'inf' A" := (inf A) (at level 10) : R_scope. (* force not using parentheses *)
+Axiom definition_infimum : 
+  for all (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from below) (m : R),
+  inf A = m   ⇔   m is a lower bound for A
+                  ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m).
+Lemma alternative_characterization_infimum :
+  for all (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from below) (m : R),
+  inf A = m   ⇔   m is a lower bound for A 
+                  ∧ (for all ε : R, ε > 0 -> 
+                        there exists a : R, A a ∧ a < m + ε).
+Proof.
+  intros A H1A H2A m; split.
+  - intro infA_eq_m; split.
+    + apply definition_infimum; assumption.
+    + Take ε : R. Assume that (ε > 0).
+      We argue by contradiction. Assume that  
+      (¬ there exists a : R, A a ∧ a < m + ε).
+      It holds that (forall a : R, A a -> a >= m + ε).
+      We claim that 
+        (for all l : R, l is a lower bound for A -> l <= inf A) (i).
+      { apply definition_infimum ; try assumption; reflexivity. }
+      By definition_lower_bound it holds that 
+        ((m + ε) is a lower bound for A).
+      By (i) it holds that (& m + ε <= inf A = m).
+      It holds that (ε <= 0).
+      It holds that (¬ ε > 0). ↯.
+- intro H. apply definition_infimum; try assumption.
+  split.
+  + apply H.
+  + Take l : R. Assume that (l is a lower bound for A).
+    We argue by contradiction. Assume that (¬ l <= m).
+    It holds that (l > m).
+    Define ε := (l - m). It holds that (ε > 0).
+    It holds that (there exists a : R, A a ∧ a < m + (l - m)).
+    It holds that (there exists a : R, A a ∧ a < l).
+    It holds that (¬ (for all a : R, A a -> l <= a)).
+    By definition_lower_bound it holds that 
+      (¬ l is a lower bound for A). ↯.
+Qed.
+(* Hints for using definition and alternative characterization. *)
+Lemma _rule_def_infimum
+  (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from below) (m : R)
+  (def : inf A = m ⇔ 
+    m is a lower bound for A ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
+  (inf A = m)   =   (m is a lower bound for A 
+                      ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)).
+Proof. apply prop_univ; apply def; assumption. Qed.
+#[export] Hint Extern 1 => (rewrite _rule_def_infimum) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_def_infimum in h end) : wp_reals.
+Lemma _rule_alt_char_infimum
+  (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from below) (m : R)
+  (char : inf A = m ⇔ 
+    m is a lower bound for A ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a < m + ε)) :
+  (inf A = m)   =   (m is a lower bound for A 
+                      ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a < m + ε)).
+Proof. apply prop_univ; apply char; assumption. Qed.
+#[export] Hint Extern 1 => (rewrite _rule_alt_char_infimum) : wp_reals.
+#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
+                              rewrite _rule_alt_char_infimum in h end) : wp_reals.
+(* Tactic for expanding definition *)
+Local Ltac2 exp_def_infimum (t : constr) :=
+  lazy_match! t with
+  | context [ inf ?a ] => 
+    let def_with_constraints := get_type constr:(definition_infimum $a) in
+    lazy_match! def_with_constraints with
+    | ?h1 -> ?h2 -> ?def =>
+      let alt_char_with_constraints := 
+        get_type constr:(alternative_characterization_infimum $a) in
+      lazy_match! alt_char_with_constraints with
+      | _ -> _ -> ?alt_char =>
+        print (of_string "");
+        print (concat_list ((of_string "Given that ") :: (of_constr h1)
+                              :: (of_string " and ") :: (of_constr h2) 
+                              :: (of_string ":") :: []));
+        print (concat (of_constr constr:(definition_infimum)) (of_string ":"));
+        print (concat (of_string "      ") (of_constr def));
+        print (concat (of_constr constr:(alternative_characterization_infimum))
+                      (of_string ":"));
+        print (concat (of_string "      ") (of_constr alt_char))
+      end
+    end
+  | _ => 
+    print (of_string ""); 
+    print (concat (of_string "'inf' does not occur in ")
+          (of_constr t))
+  end.
+Ltac2 Notation "Expand" "the" "definition" "of" "infimum" "in" t(constr) := 
+  exp_def_infimum t.
+Ltac2 Notation "Expand" "the" "definition" "of" "inf" "in" t(constr) := 
+  exp_def_infimum t.
+
+Goal False.
+  Expand the definition of inf in (inf [0,1]).
+  Expand the definition of infimum in (sup [0,1]).
+Abort.
+
+
+(** 'sup' and 'inf' satisfy their defining properties. *)
+
+Lemma _sup_is_upper_bound (A : R -> Prop) (H1A : A is non-empty)
+  (H2A : A is bounded from above)
+  (def : forall (M : R),
+    sup A = M   ⇔   M is an upper bound for A
+                      ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) :
+  sup A is an upper bound for A.
+Proof.
+  apply def; reflexivity.
+Qed.
+  
+Lemma _sup_is_least_upper_bound (A : R -> Prop) 
+  (H1A : A is non-empty) (H2A : A is bounded from above)
+  (def : forall (M : R),
+    sup A = M   ⇔   M is an upper bound for A
+                      ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) :
+  forall L : R, L is an upper bound for A -> sup A <= L.
+Proof.
+  apply def; reflexivity.
 Qed.
 
-Lemma low_bd_set_to_upp_bd_set_opp :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    is_lower_bound A m ⇒
-      -m is an upper bound of (set_opp A).
+Lemma _sup_is_approximated (A : R -> Prop) 
+  (H1A : A is non-empty) (H2A : A is bounded from above) 
+  (char : forall M : R,
+    sup A = M   ⇔   M is an upper bound for A 
+                      ∧ (for all ε : R, ε > 0 -> 
+                        there exists a : R, A a ∧ a > M - ε)) :
+  for all ε : R, ε > 0 -> 
+    there exists a : R, A a ∧ 
+      a > sup A - ε.
 Proof.
-    Take A : (ℝ → Prop) and m : ℝ.
-    Assume that (is_lower_bound A m) (i).
-    Expand the definition of upper bound.
-    That is, write the goal as (for all b : ℝ, (set_opp A b) ⇒ b ≤ -m).
-    Take b : ℝ. Assume that (set_opp A b).
-    Define a := (-b).
-    By (i) it holds that (m ≤ a).
-    We conclude that (& b = -a <= -m).
+  apply char; reflexivity.
 Qed.
 
 
-Lemma low_bd_set_opp_to_upp_bd_set :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    is_lower_bound (set_opp A) m ⇒ 
-      -m is an upper bound of A.
+Lemma _inf_is_lower_bound (A : R -> Prop) (H1A : A is non-empty)
+  (H2A : A is bounded from below)
+  (def : forall m : R,
+    inf A = m   ⇔   m is a lower bound for A
+                      ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
+  inf A is a lower bound for A.
 Proof.
-    Take A : (ℝ → Prop) and m : ℝ.
-    Assume that (is_lower_bound (set_opp A) m) (i).
-    We need to show that (∀ a : ℝ, (A a) ⇒ a ≤ -m).
-    Expand the definition of upper bound.
-    That is, write the goal as (for all a : ℝ, (A a) ⇒ a ≤ -m).
-    Take a : ℝ. Assume that (A a).
-    Expand the definition of lower bound in (i).
-    That is, write (i) as (for all b : ℝ, (set_opp A b) ⇒ m ≤ b).
-    We claim that (A (--a)).
-    { It holds that (--a = a) (ii).
-      It holds that (A a) (iii).
-      (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
-    }
-    It holds that ((set_opp A) (-a)).
-    Define b := (-a).
-    It holds that (m ≤ b).
-    It holds that (m ≤ -a).
-    We conclude that (a ≤ - m).
+  apply def; reflexivity.
+Qed.
+
+Lemma _inf_is_largest_lower_bound (A : R -> Prop) 
+  (H1A : A is non-empty) (H2A : A is bounded from below) 
+  (def : forall m : R,
+    inf A = m   ⇔   m is a lower bound for A
+                    ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
+  forall l : R, l is a lower bound for A -> l <= inf A.
+Proof.
+  apply def; reflexivity.
+Qed.
+
+Lemma _inf_is_approximated (A : R -> Prop) 
+  (H1A : A is non-empty) (H2A : A is bounded from below) 
+  (char : for all m : R,
+    inf A = m   ⇔   m is a lower bound for A 
+                      ∧ (for all ε : R, ε > 0 -> 
+                        there exists a : R, A a ∧ a < m + ε)) :
+  for all ε : R, ε > 0 -> 
+    there exists a : R, A a ∧
+      a < inf A + ε.
+Proof.
+  apply char; reflexivity.
 Qed.
 
 
-Lemma upp_bd_set_opp_to_low_bd_set :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    is_upper_bound (set_opp A) M ⇒
-      is_lower_bound A (-M).
+#[export] Hint Resolve _sup_is_upper_bound : wp_reals.
+Goal False.
 Proof.
-    Take A : (ℝ → Prop) and M : ℝ.
-    Assume that (is_upper_bound (set_opp A) M) (i).
-    We need to show that (∀ a : ℝ, (A a) ⇒ -M ≤ a).
-    Expand the definition of is_lower_bound.
-    That is, write the goal as (for all a : ℝ, (A a) ⇒ -M ≤ a).
-    Take a : ℝ. Assume that (A a).
-    We claim that (A (--a)).
-    { It holds that (--a = a) (ii).
-      It holds that (A a) (iii).
-      (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
-    }
-    It holds that ((set_opp A) (-a)).
-    Define b := (-a).
-    By (i) it holds that (b ≤ M).
-    It holds that (-a ≤ M).
-    We conclude that (- M ≤ a).
+  We claim that ([0,1] is non-empty). { admit. }
+  We claim that ([0,1] is bounded from above). { admit. }
+  By definition_supremum it holds that (sup [0,1] is an upper bound for [0,1]).
+Abort.
+#[export] Hint Resolve _sup_is_least_upper_bound : wp_reals.
+#[export] Hint Resolve _sup_is_approximated : wp_reals.
+
+#[export] Hint Resolve _inf_is_lower_bound : wp_reals.
+#[export] Hint Resolve _inf_is_largest_lower_bound : wp_reals.
+#[export] Hint Resolve _inf_is_approximated : wp_reals.
+
+
+(** Helpful lemmas for upper and lower bounds. *)
+(* Require special tactics as not enough information in goal. *)
+
+Lemma _upper_bound_behaves_as_bound (A : ℝ → Prop) (M : ℝ) (a : ℝ) 
+  (def : is_upper_bound A M <-> forall a : R, A a -> a <= M) :
+  M is an upper bound for A -> A a -> a ≤ M.
+Proof. intros; apply def; assumption. Qed.
+Local Ltac2 _use_upper_bound_behaves_as_bound () :=
+  lazy_match! goal with
+  | [ _ : is_upper_bound ?a ?m |- _ <= ?m ] => 
+    apply (_upper_bound_behaves_as_bound $a)
+  end.
+
+Check definition_supremum.
+
+
+Lemma _lower_bound_behaves_as_bound (A : ℝ → Prop) (m : ℝ) (a : ℝ) 
+  (def : is_lower_bound A m <-> forall a : R, A a -> m <= a) :
+  m is a lower bound for A -> A a -> m ≤ a.
+Proof. intros; apply def; assumption. Qed.
+Local Ltac2 _use_lower_bound_behaves_as_bound () :=
+  lazy_match! goal with
+  | [ _ : is_lower_bound ?a ?m |- ?m <= _ ] => 
+    apply (_lower_bound_behaves_as_bound $a)
+  end.
+
+#[export] Hint Extern 1 => ltac2:(_use_upper_bound_behaves_as_bound ()) : wp_reals.
+#[export] Hint Extern 1 => ltac2:(_use_lower_bound_behaves_as_bound ()) : wp_reals.
+
+
+(** Advanced lemmas *)
+(* Use that sup A is an upper bound for A,
+  skips explicit unfolding of def upper bound *)
+Lemma _sup_behaves_as_bound (A : R -> Prop) (a : R)
+  (def : for all M : R, sup A = M 
+          <-> M is an upper bound for A
+          ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) :
+  (A a) -> a <= sup A.
+Proof.
+  intros.
+  assert (sup A is an upper bound for A) by apply def; reflexivity.
+  apply (_upper_bound_behaves_as_bound A).
+  - apply definition_upper_bound.
+  - assumption.
+  - assumption. 
 Qed.
 
-Lemma bdd_below_to_bdd_above_set_opp :
-  ∀ (A : ℝ → Prop),
-    is_bounded_below A ⇒ is_bounded_above (set_opp A).
+(* Use that inf A is a lower bound for A,
+  skips explicit unfolding of def lower bound *)
+  Lemma _inf_behaves_as_bound (A : R -> Prop) (a : R)
+  (def : for all m : R, inf A = m 
+          <-> m is a lower bound for A
+          ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
+  (A a) -> inf A <= a.
 Proof.
-    Take A : (ℝ → Prop).
-    Assume that (is_bounded_below A) (i).
-    We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
-    Expand the definition of is_bounded_below in (i).
-    That is, write (i) as (there exists m : ℝ, is_lower_bound A m).
-    Obtain m according to (i), so for m : R it holds that (is_lower_bound A m) (ii).
+  intros.
+  assert (inf A is a lower bound for A) by apply def; reflexivity.
+  apply (_lower_bound_behaves_as_bound A).
+  - apply definition_lower_bound.
+  - assumption.
+  - assumption. 
+Qed.
+
+
+Section ConsistencyResults.
+
+  (** Consistency results.
+    Serve as sanity checks, but are not interesting for students. *)
+
+  Context (A : R -> Prop).
+
+  #[local] Hint Resolve definition_non_empty : wp_reals.
+  #[local] Hint Resolve definition_upper_bound : wp_reals.
+  #[local] Hint Resolve definition_lower_bound : wp_reals.
+  #[local] Hint Resolve definition_bounded_above : wp_reals.
+  #[local] Hint Resolve definition_bounded_below : wp_reals.
+
+  #[local] Hint Resolve _sup_behaves_as_bound : wp_reals.
+  #[local] Hint Resolve _inf_behaves_as_bound : wp_reals.
+
+  (** The supremum introduced here equals the one from the 'completeness' axiom
+    in the standard Coq library. *)
+  Check definition_bounded_above.
+
+  Lemma _bdd_above_implies_bound : A is bounded from above -> bound A.
+  Proof.
+    Assume that (A is bounded from above).
+    It holds that (there exists M : R, M is an upper bound for A).
+    It holds that (there exists M : R, for all a : R, A a -> a <= M).
+    We conclude that (bound A).
+  Qed.
+
+  Lemma _sup_is_standard (H1A : A is non-empty) (H2A : A is bounded from above) : 
+    sup A = proj1_sig(_, _, completeness A
+              (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A)).
+  Proof.
+    Define M := (proj1_sig(_, _, completeness A
+                  (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A))).
+    Time By definition_supremum it suffices to show that 
+      (is_upper_bound A M ∧ (for all L : ℝ, is_upper_bound A L ⇨ M ≤ L)).
+    Define HypM := (proj2_sig(_, _, completeness A
+                      (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A))).
+    By HypM we conclude that 
+      (M is an upper bound for A ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)).
+  Qed.
+
+  (** Proof that the infimum is the 'opposite' of the supremum. *)
+  Local Definition _min (A : R -> Prop) (b : R) := there exists a : R, (A a) ∧ b = -a.
+  (* TODO: limit scope of '_min' to this module?*)
+  Declare Scope _definition_inf_scope.
+  Notation "-' A" := (_min A) (at level 10) : _definition_inf_scope.
+  Open Scope _definition_inf_scope.
+
+  Lemma _prop1_min :
+    forall a : R, A a -> -'A (-a).
+  Proof.
+    Take a : R. Assume that (A a).
+    We need to show that (there exists x : R, (A x) ∧ -a = -x).
+    Choose (a). We conclude that (A a ∧ -a = -a).
+  Qed.
+
+  Lemma _prop2_min :
+  forall a : R, -'A a -> A (-a).
+  Proof.
+    Take a : R. Assume that (-'A a).
+    It holds that (there exists x : R, A x ∧ a = -x) (i).
+    Obtain x according to (i), so for x : R it holds that (A x ∧ a = -x).
+    It holds that (-a = x).
+    We conclude that (A (-a)).
+  Qed.
+
+  Lemma _nonempty_implies_min_nonempty :
+    A is non-empty -> -'A is non-empty.
+  Proof.
+    Assume that (A is non-empty). It holds that (there exists a : R, A a) (i).
+    Obtain a according to (i), so for a : R it holds that (A a). 
+    It suffices to show that (there exists b : R, -'A b).
+    Choose b := (-a). 
+    By _prop1_min we conclude that (-'A b).
+  Qed.
+
+  Lemma _bdd_below_implies_min_bdd_above :
+    A is bounded from below -> -'A is bounded from above.
+  Proof.
+    Assume that (A is bounded from below).
+    It holds that (there exists l : R, l is a lower bound for A) (i).
+    Obtain l according to (i), so for l : R it holds that (l is a lower bound for A) (ii).
+    It suffices to show that (there exists L : R, L is an upper bound for -'A).
+    Choose L := (-l). It suffices to show that (forall x : R, -'A x -> x <= L).
+    Take x : R. Assume that (-'A x).
+    By _prop2_min it holds that (A (-x)).
+    Check ii.
+    (*Fail By (ii) it holds that (l <= -x).*)
+    It holds that (l <= -x).
+    We conclude that (& x <= -l = L).
+  Qed.
+
+  Lemma _inf_is_opposite_sup (H1A : A is non-empty) (H2A : A is bounded from below) : 
+    inf A = - sup (-' A).
+  Proof.
+    By _nonempty_implies_min_nonempty it holds that (-'A is non-empty).
+    By _bdd_below_implies_min_bdd_above it holds that (-'A is bounded from above).
+    (* ... so sup -A is well-defined. *)
+    By definition_infimum it suffices to show that
+      (-sup(-'A) is a lower bound for A
+       ∧ (for all l : ℝ, l is a lower bound for A -> l ≤ -sup(-'A))).
+    We show both statements.
+    - We need to show that (-sup(-'A) is a lower bound for A).
+      It suffices to show that (for all a : R, A a -> -sup(-'A) <= a).
+      Take a : R. Assume that (A a).
+      By _prop1_min it holds that (-'A (-a)).
+      By definition_supremum it holds that (-a <= sup (-'A)).
+      We conclude that (-sup(-'A) <= a).
+    - We need to show that  
+        (for all l : R, l is a lower bound for A -> l <= -sup -'A).
+      Take l : R. Assume that (l is a lower bound for A).
+      It suffices to show that (sup (-'A) <= -l).
+      We claim that (-l is an upper bound for -'A).
+      { (* seen before in _bdd_below_implies_min_bdd_above *)
+        It suffices to show that (forall x : R, -'A x -> x <= -l).
+        Take x : R. Assume that (-'A x).
+        By _prop2_min it holds that (A (-x)).
+        It holds that (l <= -x).
+        We conclude that (x <= -l). 
+      }
+      By definition_supremum we conclude that (sup (-'A) <= -l).
+    Qed.
     
-    Choose M := (-m).
-    By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) (M)).
-Qed.
+    Close Scope _definition_inf_scope.
+
+End ConsistencyResults.
 
 
-Lemma sup_set_opp_is_inf_set :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    is_sup (set_opp A) M ⇒ is_inf A (-M).
-Proof.
-    Take A : (ℝ → Prop) and M : ℝ.
-    Assume that (is_sup (set_opp A) M) (i).
-    Expand the definition of is_lub in (i).
-      That is, write (i) as (is_upper_bound (set_opp A) M 
-        ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
-      Because (i) both (is_upper_bound (set_opp A) M) (ii) and
-        (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
-    Expand the definition of is_inf.
-    That is, write the goal as
-      (is_lower_bound A (- M) ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ -M)).
-    We show both statements.
-    - We need to show that (is_lower_bound A (- M)).
-      We claim that (is_upper_bound (set_opp A) M).
-      Expand the definition of is_upper_bound.
-      That is, write the goal as (for all a : ℝ, (set_opp A a) ⇒ a ≤ M).
-      Take a : ℝ. Assume that (set_opp A a).
-      
-      Expand the definition of is_upper_bound in (ii).
-      That is, write (ii) as (for all x : ℝ, (set_opp A x) ⇒ x ≤ M).
-      By (ii) it holds that (is_upper_bound (set_opp A) M).
-      We conclude that (a <= M).
 
-      By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
+(* *** OLD STUFF (below) ***
 
-    - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
-      Take l : ℝ.
-      Assume that (is_lower_bound A l).
-      Expand the definition of is_lub in (i).
-      That is, write (i) as (is_upper_bound (set_opp A) M 
-        ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
-      By (ii) it holds that (∀ b : ℝ, is_upper_bound (set_opp A) b ⇒ M ≤ b) (iii).
-      By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
-      By (iii) it holds that (M ≤ -l).
-      We conclude that (l ≤ - M).
-Qed.
-
-Lemma exists_inf :
-  ∀ (A : ℝ → Prop) (x : ℝ), (A x) ⇒ is_bounded_below A ⇒
-    exists (m : ℝ), is_inf A m.
-Proof.
-    Take A : (ℝ → Prop).
-    Take z : ℝ. Assume that (A z).
-    Assume that (is_bounded_below A) (vi).
-    Define B := (set_opp A).
-    We claim that (is_bounded_above B) (i).
-    { By bdd_below_to_bdd_above_set_opp it suffices to show that (is_bounded_below A).
-      We conclude that (is_bounded_below A).
-    }
-    We claim that (A (--z)).
-    { It holds that (--z = z) (ii).
-      It holds that (A z) (iii).
-      (* TODO: We conclude that (--z ∈ A). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
-    }
-    It holds that ((set_opp A) (-z)) (iv).
-    It holds that (B (-z)).    
-    By R_complete it holds that (there exists M : ℝ, is_sup B M) (v).
-    Obtain M according to (v), so for M : R it holds that (is_sup B M).
-    Choose m := (- M).
-    By sup_set_opp_is_inf_set we conclude that (is_inf A m).
-Qed.
-
-(** ### A supremum is an upper bound
-
-If $M$ is the supremum of a set $A$, it is also an upper bound.*)
-Lemma sup_is_upp_bd :
-  ∀ A : (ℝ → Prop),
-    ∀ M : ℝ,
-      is_sup A M ⇒ is_upper_bound A M.
-Proof.
-    Take A : (ℝ → Prop).
-    Take M : ℝ.
-    Assume that (is_sup A M) (i).
-    Expand the definition of is_lub in (i).
-    That is, write (i) as (is_upper_bound A M 
-      ∧ (for all b : ℝ, is_upper_bound A b ⇨ M ≤ b)).
-    Because (i) both (is_upper_bound A M) and
-      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
-    It follows that (is_upper_bound A M).
-Qed.
-
-(** ### Any upper bound is greater than or equal to the supremum*)
-Lemma any_upp_bd_ge_sup :
-  ∀ A : (ℝ → Prop),
-    ∀ M L : ℝ,
-      is_sup A M ⇒ (is_upper_bound A L ⇒ M ≤ L).
-Proof.
-    Take A : (ℝ → Prop).
-    Take M : ℝ.
-    Take L : ℝ.
-    Assume that (is_sup A M) (i).
-    Assume that (is_upper_bound A L).
-    Because (i) both (is_upper_bound A M) and
-      (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
-    (** We need to show that $M \leq L$.*)
-    We conclude that (M ≤ L).
-Qed.
-(** ## Infima*)
-(** ## An infimum is a lower bound*)
-Lemma inf_is_low_bd :
-  ∀ A : (ℝ → Prop),
-    ∀ m : ℝ,
-      is_inf A m ⇒ is_lower_bound A m.
-Proof.
-    Take A : (ℝ → Prop).
-    Take m : R.
-    Assume that (is_inf A m) (i).
-    Because (i) both (is_lower_bound A m) (ii) and
-      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
-    By (ii) we conclude that (is_lower_bound A m).
-Qed.
-(** ## Any lower bound is less than or equal to the infimum*)
-Lemma any_low_bd_le_inf :
-  ∀ A : (ℝ → Prop),
-    ∀ m l : ℝ,
-      is_inf A m ⇒ is_lower_bound A l ⇒ l ≤ m.
-Proof.
-    Take A : (ℝ → Prop).
-    Take m : ℝ.
-    Take l : ℝ.
-    Assume that (is_inf A m) (i).
-    Assume that (is_lower_bound A l).
-    Because (i) both (is_lower_bound A m) and
-      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
-    We conclude that (l ≤ m).
-Qed.
-
-(** ### $\varepsilon$-characterizations*)
-Lemma exists_almost_maximizer :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    is_sup A M ⇒
-      ∀ (L : ℝ), L < M ⇒ 
-        ∃ a : ℝ, (A a) ∧ L < a.
-Proof.
-    Take A : (ℝ → Prop).
-    Take M : ℝ.
-    Assume that (is_sup A M).
-    Take L : ℝ.
-    Assume that (L < M).
-    We argue by contradiction.
-    Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) (i). 
-    It holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
-    By (ii) it holds that (is_upper_bound A L).
-    (** TODO: why can't this be done automatically? *)
-    By any_upp_bd_ge_sup it holds that (M <= L).
-    It holds that (¬(M ≤ L)).
-    Contradiction.
-Qed.
-
-Lemma exists_almost_minimizer :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    is_inf A m ⇒
-      ∀ (L : ℝ), L > m ⇒ 
-        ∃ a : ℝ, (A a) ∧ L > a.
-Proof.
-    Take A : (ℝ → Prop).
-    Take m : ℝ.
-    Assume that (is_inf A m).
-    Take L : ℝ.
-    Assume that (L > m).
-    We argue by contradiction.
-    Assume that (¬ (there exists a : ℝ, (A a) ∧ L > a)).
-    It holds that (∀ x : ℝ, (A x) ⇒ L ≤ x) (i).
-    By (i) it holds that (is_lower_bound A L).
-    (** TODO: why can't this be done automatically? *)
-    By any_low_bd_le_inf it holds that (L <= m).
-    It holds that (¬(L ≤ m)).
-    Contradiction.
-Qed.
-
-Lemma if_almost_maximizer_then_every_upp_bd_larger :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    (∀ (L : ℝ), L < M ⇒ ∃ a : ℝ, (A a) ∧ L < a)
-       ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
-Proof.
-Take A : (ℝ → Prop) and M : ℝ.
-Assume that (∀ L : ℝ, L < M ⇒ there exists a : ℝ, (A a) ∧ L < a) (i).
-Take K : ℝ.
-Assume that (is_upper_bound A K) (ii).
-Expand the definition of is_upper_bound in (ii).
-That is, write (ii) as
-  (∀ a : ℝ, (A a) ⇒ a ≤ K).
-We need to show that (M ≤ K).
-We argue by contradiction.
-Assume that (¬ M ≤ K).
-It holds that (M > K).
-By (i) it holds that (∃ a : ℝ, (A a) ∧ K < a) (iii).
-Obtain a according to (iii), so for a : ℝ it holds that ((A a) ∧ (K < a)) (iv).
-Because (iv) both (A a) and (K < a) hold.
-By (ii) it holds that (a ≤ K).
-It holds that (K < K).
-It holds that (¬ (K < K)).
-Contradiction.
-Qed.
-
-Lemma if_almost_minimizer_then_every_low_bd_smaller :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    (∀ (L : ℝ), L > m ⇒ ∃ a : ℝ, (A a) ∧ L > a)
-       ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
-Proof.
-Take A : (ℝ → Prop) and m : ℝ.
-Assume that (∀ L : ℝ, L > m ⇒ there exists a : ℝ, (A a) ∧ L > a) (i).
-Take K : ℝ.
-Assume that (is_lower_bound A K) (ii).
-Expand the definition of is_lower_bound in (ii).
-That is, write (ii) as
-  (∀ a : ℝ, (A a) ⇒ K ≤ a).
-We need to show that (K ≤ m).
-We argue by contradiction.
-Assume that (¬ K ≤ m).
-It holds that (K > m).
-By (i) it holds that (∃ a : ℝ, (A a) ∧ K > a) (iii).
-Obtain a according to (iii), so for a : ℝ it holds that ((A a) ∧ (K > a)) (iv).
-Because (iv) both (A a) and (K > a) hold.
-By ii it holds that (K ≤ a).
-It holds that (K > K).
-It holds that (¬ (K > K)).
-Contradiction.
-Qed.
-
-Lemma if_almost_maximizer_ε_then_every_upp_bd_larger :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : ℝ, (A a) ∧ M - ε < a)
-       ⇒ ∀ (K : ℝ), is_upper_bound A K ⇒ M ≤ K.
-Proof.
-  Take A : (ℝ → Prop) and M : ℝ.
-  Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (i).
-  apply if_almost_maximizer_then_every_upp_bd_larger.
-  Take L : ℝ; such that (L < M).
-  It holds that (M - L > 0).
-  Define ε1 := (M - L).
-  It holds that (ε1 > 0).
-  By (i) it holds that (there exists a : ℝ, (A a) ∧ M - ε1 < a) (ii).
-  Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (M - ε1 < a)) (iii).
-  Because (iii) both (A a) and (M - ε1 < a) hold.
-  Choose (a).
-  We show both (A a) and (L < a).
-  - We conclude that (A a).
-  - We conclude that (& L = M - (M - L) = M - ε1 < a).
-Qed.
-
-Lemma if_almost_minimizer_ε_then_every_low_bd_smaller :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    (∀ (ε : ℝ), ε > 0 ⇒ ∃ a : ℝ, (A a) ∧ m + ε > a)
-       ⇒ ∀ (K : ℝ), is_lower_bound A K ⇒ K ≤ m.
-Proof.
-  Take A : (ℝ → Prop) and m : ℝ.
-  Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) (i).
-  apply if_almost_minimizer_then_every_low_bd_smaller.
-  Take L : ℝ; such that (L > m).
-  It holds that (L - m > 0).
-  Define ε1 := (L - m).
-  It holds that (ε1 > 0).
-  By (i) it holds that (there exists a : ℝ, (A a) ∧ m + ε1 > a) (ii).
-  Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (m + ε1 > a)) (iii).
-  Choose (a).
-  Because (iii) both (A a) and (m + ε1 > a) hold.
-  We show both (A a) and (L > a).
-  - We conclude that (A a).
-  - We conclude that (& a < m + ε1 = m + L - m = L).
-Qed.
-
-Lemma exists_almost_maximizer_ε :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    is_sup A M ⇒
-      ∀ (ε : ℝ), ε > 0 ⇒ 
-        ∃ a : R, (A a) ∧ M - ε < a.
-Proof.
-    Take A : (ℝ → Prop).
-    Take M : ℝ.
-    Assume that (is_sup A M).
-    Take ε : ℝ; such that (ε > 0).
-    It holds that (M - ε < M).
-    (** TODO: fix this *)
-    apply exists_almost_maximizer with (L := M- ε) (M := M).
-    - We conclude that (is_sup A M).
-    - We conclude that (M - ε < M).
-Qed.
-
-Lemma exists_almost_minimizer_ε :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    is_inf A m ⇒
-      ∀ (ε : ℝ), ε > 0 ⇒ 
-        ∃ a : ℝ, (A a) ∧ m + ε > a.
-Proof.
-    Take A : (ℝ → Prop).
-    Take m : ℝ.
-    Assume that (is_inf A m).
-    Take ε : ℝ; such that (ε > 0).
-    It holds that (m + ε > m).
-    (** TODO: fix this *)
-    apply exists_almost_minimizer with (L := m + ε) (m := m).
-    - We conclude that (is_inf A m).
-    - We conclude that (m + ε > m).
-Qed.
-
-Definition is_sup_alt_char (A : ℝ → Prop) (M : ℝ):=
-  is_upper_bound A M ∧ (∀ (ε : ℝ), ε > 0 ⇒ 
-        ∃ a : ℝ, (A a) ∧ M - ε < a).
-
-Definition is_inf_alt_char (A : ℝ → Prop) (m : ℝ):=
-  is_lower_bound A m ∧ (∀ (ε : ℝ), ε > 0 ⇒ 
-        ∃ a : ℝ, (A a) ∧ m +  ε > a).
-
-Theorem alt_char_sup :
-  ∀ (A : ℝ → Prop) (M : ℝ),
-    is_sup A M ⇔ is_sup_alt_char A M.
-Proof.
-  Take A : (ℝ → Prop) and M : ℝ.
-  We show both directions.
-  - We need to show that (is_sup A M ⇨ is_sup_alt_char A M).
-    Assume that (is_sup A M) (i).
-    Expand the definition of is_sup_alt_char.
-    That is, write the goal as (
-    is_upper_bound A M
-    ∧ (for all ε : ℝ,
-      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                M - ε < a) ).
-    We show both statements.
-    + We need to show that (is_upper_bound A M).
-      Expand the definition of is_lub in (i).
-      That is, write (i) as (
-      is_upper_bound A M
-      ∧ (for all M0 : ℝ,
-        is_upper_bound A M0 ⇨ M ≤ M0) ).
-      Because (i) both (is_upper_bound A M) and
-        (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
-      It follows that (is_upper_bound A M).
-
-    + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a ).
-      apply exists_almost_maximizer_ε.
-      We conclude that (M is the supremum of A).
-
-  - We need to show that (is_sup_alt_char A M ⇨ is_sup A M).
-    Assume that (is_sup_alt_char A M) (i).
-    Expand the definition of is_sup_alt_char in (i).
-    That is, write (i) as (
-    is_upper_bound A M
-    ∧ (for all ε : ℝ,
-      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                M - ε < a) ).
-    Because (i) both (is_upper_bound A M) (ii) and
-      (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (iii) hold.
-
-    Expand the definition of is_lub.
-    That is, write the goal as (
-    is_upper_bound A M
-    ∧ (for all M0 : ℝ,
-      is_upper_bound A M0 ⇨ M ≤ M0) ).
-    We show both statements.
-    + We need to show that (is_upper_bound A M).
-      By (ii) we conclude that (is_upper_bound A M).
-    + We need to show that (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
-      apply if_almost_maximizer_ε_then_every_upp_bd_larger.
-      By (iii) we conclude that (for all ε : ℝ,
-      ε > 0 ⇨ there exists a : ℝ,
-                A(a) ∧ M - ε < a).
-Qed.
-
-Theorem alt_char_inf :
-  ∀ (A : ℝ → Prop) (m : ℝ),
-    is_inf A m ⇔ is_inf_alt_char A m.
-Proof.
-  Take A : (ℝ → Prop) and m : ℝ.
-  We show both directions.
-  - We need to show that (is_inf A m ⇨ is_inf_alt_char A m).
-    Assume that (is_inf A m) (i).
-    Expand the definition of is_inf_alt_char.
-    That is, write the goal as (
-    is_lower_bound A m
-    ∧ (for all ε : ℝ,
-      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                m + ε > a) ).
-    We show both statements.
-    + We need to show that (is_lower_bound A m).
-      Expand the definition of is_inf in (i).
-      That is, write (i) as (
-      is_lower_bound A m ∧ (for all l : ℝ,
-                          is_lower_bound A l ⇨ l ≤ m) 
-      ).
-      Because (i) both (is_lower_bound A m) and
-        (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
-      It follows that (is_lower_bound A m).
-
-    + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).
-        
-      By exists_almost_minimizer_ε we conclude that
-      (for all ε : ℝ,
-        ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-              m + ε > a).
-
-  - We need to show that (is_inf_alt_char A m ⇨ is_inf A m).
-    Assume that (is_inf_alt_char A m) (i).
-    Expand the definition of is_inf_alt_char in (i).
-    That is, write (i) as (
-      is_lower_bound A m
-      ∧ (for all ε : ℝ,
-      ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                m + ε > a) ).
-    Because (i) both (is_lower_bound A m) (ii) and
-      (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
-
-    Expand the definition of is_inf.
-    That is, write the goal as (
-      is_lower_bound A m ∧ (for all l : ℝ,
-                          is_lower_bound A l ⇨ l ≤ m)
-    ).
-    We show both statements.
-    + We need to show that (is_lower_bound A m).
-      By (ii) we conclude that (is_lower_bound A m).
-    + We need to show that (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m).
-      By if_almost_minimizer_ε_then_every_low_bd_smaller
-      we conclude that (for all l : ℝ,
-      is_lower_bound A l ⇨ l ≤ m).
-Qed.
 
 
 Lemma max_or_strict :
@@ -785,6 +909,6 @@ Qed.
 #[export] Hint Unfold is_lub : wp_reals.
 #[export] Hint Unfold is_inf : wp_reals.
 #[export] Hint Unfold is_upper_bound : wp_reals.
-#[export] Hint Unfold is_lower_bound :reals.
+#[export] Hint Unfold is_lower_bound :reals. *)
 
 Close Scope R_scope.
