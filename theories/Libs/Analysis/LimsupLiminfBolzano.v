@@ -123,13 +123,13 @@ Proof.
       (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (Nn + k)%nat), maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat) (maj_ss a Nn (i))).
     Obtain M according to (ii), so for M : R it holds that 
-      (is_sup (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M) (iii).
+      (is_lub (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M) (iii).
     Expand the definition of is_lub in (iii).
-    That is, write (iii) as (is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)
-      ∧ (for all b : ℝ, is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b)).
-    Because (iii) both (is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)) (iv)
-      and (for all b : ℝ, is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b) hold.
-    Expand the definition of is_upper_bound in (iv).
+    That is, write (iii) as (Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)
+      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b)).
+    Because (iii) both (Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)) (iv)
+      and (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b) hold.
+    Expand the definition of Raxioms.is_upper_bound in (iv).
     That is, write (iv) as (for all x : ℝ, EUn (fun k ↦ (a (Nn + k)%nat), x) ⇨ x ≤ M).
     It holds that (Nn + (n-Nn) = n)%nat.
     It suffices to show that (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
@@ -259,9 +259,9 @@ Proof.
 Qed.
 
 (** ## Comparing definitions of lim sup*)
-Lemma lim_sup_bdd_is_sup_seq_acc_pts :
+Lemma lim_sup_bdd_is_lub_seq_acc_pts :
   ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))),
-    is_sup (is_seq_acc_pt a) (proj1_sig (_,_, lim_sup_bdd a (i) (ii))).
+    is_lub (is_seq_acc_pt a) (proj1_sig (_,_, lim_sup_bdd a (i) (ii))).
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
@@ -269,11 +269,11 @@ Proof.
     (* TODO: fix that we refer to is_lub here. Moreover, we show both statements should work immediately. *)
     Expand the definition of is_lub.
     That is, write the goal as 
-      (is_upper_bound (is_seq_acc_pt a) (proj1_sig (_,_, lim_sup_bdd a (i) (ii)))
-      ∧ (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b ⇨ proj1_sig (_,_,lim_sup_bdd a (i) (ii)) ≤ b)).
+      (Raxioms.is_upper_bound (is_seq_acc_pt a) (proj1_sig (_,_, lim_sup_bdd a (i) (ii)))
+      ∧ (for all b : ℝ, Raxioms.is_upper_bound (is_seq_acc_pt a) b ⇨ proj1_sig (_,_,lim_sup_bdd a (i) (ii)) ≤ b)).
     We show both statements.
-    - We need to show that (is_upper_bound (is_seq_acc_pt a) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
-      Expand the definition of is_upper_bound.
+    - We need to show that (Raxioms.is_upper_bound (is_seq_acc_pt a) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
+      Expand the definition of Raxioms.is_upper_bound.
       That is, write the goal as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ proj1_sig (_,_,lim_sup_bdd a (i) (ii))).
       Take x : ℝ.
       Assume that (is_seq_acc_pt a x).
@@ -284,10 +284,10 @@ Proof.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))
           it holds that (L ≥ x).
       We conclude that (x ≤ L).
-    - We need to show that (for all b : ℝ, is_upper_bound (is_seq_acc_pt a) b 
+    - We need to show that (for all b : ℝ, Raxioms.is_upper_bound (is_seq_acc_pt a) b 
         ⇨ proj1_sig (_,_,lim_sup_bdd a (i) (ii)) ≤ b).
-      Take b : ℝ; such that (is_upper_bound (is_seq_acc_pt a) b) (iii).
-      Expand the definition of is_upper_bound in (iii).
+      Take b : ℝ; such that (Raxioms.is_upper_bound (is_seq_acc_pt a) b) (iii).
+      Expand the definition of Raxioms.is_upper_bound in (iii).
       That is, write (iii) as (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
       Expand the definition of is_seq_acc_pt in (iii).
       That is, write (iii) as (for all x : ℝ, 

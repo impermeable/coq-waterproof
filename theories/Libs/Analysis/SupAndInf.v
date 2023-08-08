@@ -16,8 +16,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Classical.
-Require Import Classical_Pred_Type.
 Require Import Coq.Reals.Reals.
 
 Require Import Automation.
@@ -65,33 +63,7 @@ Notation "A 'is' 'non-empty'" := (is_non_empty A) (at level 69, only parsing).
 #[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
                               rewrite _rule_def_non_empty in h end) : wp_reals.
 
-(** Tests for using definition _without_ definition added as hint. *)
-Goal [0,1] is non-empty.
-Proof.
-  Fail It suffices to show that (there exists x : R, [0,1] x).
-  By definition_non_empty it suffices to show that (there exists x : R, [0,1] x).
-Abort.
-Goal there exists x : R, [0,1] x.
-Proof.
-  Fail It suffices to show that ([0,1] is non-empty).
-  By definition_non_empty it suffices to show that ([0,1] is non-empty).
-Abort.
 
-(** Tests for using definition _with_ definition added as hint. *)
-Section SmallTest.
-#[local] Hint Resolve definition_non_empty : wp_reals.
-
-Goal [0,1] is non-empty.
-Proof.
-  It suffices to show that (there exists x : R, [0,1] x).
-  (* Note: still requires additional lemma, since auto uses 'simple apply'. *)
-Abort.
-
-Goal [0,1] is non-empty.
-Proof.
-  By definition_non_empty it suffices to show that (there exists x : R, [0,1] x).
-Abort.
-End SmallTest.
 
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_non_empty (t : constr) :=
@@ -750,11 +722,11 @@ End ConsistencyResults.
 
 
 
-(* *** OLD STUFF (below) ***
+(* *** OLD STUFF (below) *** *)
 
 
 
-Lemma max_or_strict :
+(* Lemma max_or_strict :
   ∀ (A : ℝ → Prop) (M : ℝ),
     is_sup A M ⇒ 
       (A M) ∨ (∀ a : ℝ, (A a) ⇒ a < M).
@@ -785,10 +757,10 @@ Proof.
       We conclude that (a < M).
     }
     Contradiction.
-Qed.
+Qed. *)
 
 (** * Lemmas for convenience*)
-Lemma bounded_by_upper_bound_propform :
+(* Lemma bounded_by_upper_bound_propform :
   ∀ (A : ℝ → Prop) (M : ℝ) (b : ℝ),
     is_upper_bound A M ⇒ A b ⇒ b ≤ M.
 Proof.
@@ -810,6 +782,59 @@ Proof.
     Assume that (is_lower_bound A m) (i).
     Assume that (A b) (ii).
     We conclude that (m ≤ b).
+Qed. *)
+
+Lemma any_upp_bd_ge_sup :
+  ∀ A : (ℝ → Prop),
+    ∀ M L : ℝ,
+      is_lub A M ⇒ (Raxioms.is_upper_bound A L ⇒ M ≤ L).
+Proof.
+    Take A : (ℝ → Prop).
+    Take M : ℝ.
+    Take L : ℝ.
+    Assume that (is_lub A M) (i).
+    Assume that (Raxioms.is_upper_bound A L).
+    unfold is_lub in i.
+    It holds that (for all M0 : ℝ, Raxioms.is_upper_bound A M0 ⇨ M ≤ M0).
+    We conclude that (M ≤ L).
+Qed.
+
+Lemma exists_almost_maximizer :
+  ∀ (A : ℝ → Prop) (M : ℝ),
+    is_lub A M ⇒
+      ∀ (L : ℝ), L < M ⇒ 
+        ∃ a : ℝ, (A a) ∧ L < a.
+Proof.
+    Take A : (ℝ → Prop).
+    Take M : ℝ.
+    Assume that (is_lub A M).
+    Take L : ℝ.
+    Assume that (L < M).
+    We argue by contradiction.
+    Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) (i). 
+    It holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
+    By (ii) it holds that (Raxioms.is_upper_bound A L).
+    (** TODO: why can't this be done automatically? *)
+    By any_upp_bd_ge_sup it holds that (M <= L).
+    It holds that (¬(M ≤ L)).
+    Contradiction.
+Qed.
+
+Lemma exists_almost_maximizer_ε :
+  ∀ (A : ℝ → Prop) (M : ℝ),
+    is_lub A M ⇒
+      ∀ (ε : ℝ), ε > 0 ⇒ 
+        ∃ a : R, (A a) ∧ M - ε < a.
+Proof.
+    Take A : (ℝ → Prop).
+    Take M : ℝ.
+    Assume that (is_lub A M).
+    Take ε : ℝ; such that (ε > 0).
+    It holds that (M - ε < M).
+    (** TODO: fix this *)
+    apply exists_almost_maximizer with (L := M- ε) (M := M).
+    - We conclude that (is_lub A M).
+    - We conclude that (M - ε < M).
 Qed.
 
 Lemma seq_ex_almost_maximizer_ε :
@@ -822,7 +847,7 @@ Proof.
     That is, write the goal as (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
-    Obtain l according to (lub_a_prf), so for l : R it holds that (is_sup (EUn a) l).
+    Obtain l according to (lub_a_prf), so for l : R it holds that (is_lub (EUn a) l).
     Take ε : ℝ; such that (ε > 0).
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
     Obtain y according to (iv), so for y : R it holds that 
@@ -867,18 +892,5 @@ Proof.
     - We need to show that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
       We conclude that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
 Qed.
-
-#[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.
-#[export] Hint Resolve bounded_by_lower_bound_propform : wp_reals.
-#[export] Hint Resolve alt_char_inf : wp_reals.
-#[export] Hint Resolve alt_char_sup : wp_reals.
-#[export] Hint Resolve <- alt_char_inf : wp_reals.
-#[export] Hint Resolve <- alt_char_sup : wp_reals.
-
-(** ### **Hints***)
-#[export] Hint Unfold is_lub : wp_reals.
-#[export] Hint Unfold is_inf : wp_reals.
-#[export] Hint Unfold is_upper_bound : wp_reals.
-#[export] Hint Unfold is_lower_bound :reals. *)
 
 Close Scope R_scope.
