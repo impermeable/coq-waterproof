@@ -58,13 +58,9 @@ Qed.
 Notation "A 'is' '_non-empty_'" := (is_non_empty A) (at level 69).
 Notation "A 'is' 'non-empty'" := (is_non_empty A) (at level 69, only parsing).
 (* Hint for using definition *)
-(* #[export] Hint Extern 1 => (rewrite -> _unfold_def_non_empty) : wp_reals. *)
 #[export] Hint Extern 1 => (rewrite _rule_def_non_empty) : wp_reals.
 #[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
                               rewrite _rule_def_non_empty in h end) : wp_reals.
-
-
-
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_non_empty (t : constr) :=
   lazy_match! t with
@@ -72,7 +68,7 @@ Local Ltac2 exp_def_non_empty (t : constr) :=
     let def := get_type constr:(definition_non_empty $a) in
     print (of_string "");
     print (concat (of_constr constr:(definition_non_empty)) (of_string ":"));
-    print (concat (of_string "      ") (of_constr def))
+    print (concat (of_string "    ") (of_constr def))
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'non-empty' does not occur in ") (of_constr t))
@@ -80,15 +76,6 @@ Local Ltac2 exp_def_non_empty (t : constr) :=
 Ltac2 Notation "Expand" "the" "definition" "of" "non-empty" "in" t(constr) := 
   exp_def_non_empty t.
 
-(** Test for expanding definition. *)
-Goal False.
-Proof.
-  Expand the definition of non-empty in ([0,1] is non-empty).
-  Expand the definition of non-empty in (bound [0,1]).
-Abort.
-
-
-(** Continuation file *)
 
 (** is an upper bound *)
 (* Definition *)
@@ -101,7 +88,6 @@ Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" :=
 Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := 
   (is_upper_bound A M) (at level 69, only parsing).
 (* Hint for using definition *)
-Check fun (A : R -> Prop) (M : R) => forall a : R, A a -> a <= M.
 Lemma _rule_def_upper_bound 
   (def : forall (A : R -> Prop) (M : R), 
     is_upper_bound A M <-> (for all a : R, A a -> a <= M)) :
@@ -121,7 +107,7 @@ Local Ltac2 exp_def_upper_bound (t : constr) :=
     let def := get_type constr:(definition_upper_bound $a $m) in
     print (of_string "");
     print (concat (of_constr constr:(definition_upper_bound)) (of_string ":"));
-    print (concat (of_string "      ") (of_constr def))
+    print (concat (of_string "    ") (of_constr def))
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'upper bound' does not occur in ") (of_constr t))
@@ -129,11 +115,6 @@ Local Ltac2 exp_def_upper_bound (t : constr) :=
 Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" "in" t(constr) := 
   exp_def_upper_bound t.
 
-(* small test unfolding notation *)
-Goal False.
-Proof. 
-  Expand the definition of upper bound in (1 is an upper bound for [0,1]).
-Abort.
 
 (** is a lower bound *)
 (* Definition *)
@@ -165,7 +146,7 @@ Local Ltac2 exp_def_lower_bound (t : constr) :=
     let def := get_type constr:(definition_lower_bound $a $m) in
     print (of_string "");
     print (concat (of_constr constr:(definition_lower_bound)) (of_string ":"));
-    print (concat (of_string "      ") (of_constr def))
+    print (concat (of_string "    ") (of_constr def))
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'lower bound' does not occur in ") (of_constr t))
@@ -201,7 +182,7 @@ Local Ltac2 exp_def_bounded_above (t : constr) :=
     let def := get_type constr:(definition_bounded_above $a) in
     print (of_string "");
     print (concat (of_constr constr:(definition_bounded_above)) (of_string ":"));
-    print (concat (of_string "      ") (of_constr def))
+    print (concat (of_string "    ") (of_constr def))
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'bounded from above' does not occur in ")
@@ -209,12 +190,7 @@ Local Ltac2 exp_def_bounded_above (t : constr) :=
   end.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" "in" t(constr) := 
   exp_def_bounded_above t.
-
-(* small test unfolding notation *)
-Goal False.
-Proof. 
-  Expand the definition of bounded from above in ([0,1] is bounded from above).
-Abort.
+  
 
 (** is bounded below *)
 (* Definition *)
@@ -244,7 +220,7 @@ Local Ltac2 exp_def_bounded_below (t : constr) :=
     let def := get_type constr:(definition_bounded_below $a) in
     print (of_string "");
     print (concat (of_constr constr:(definition_bounded_below)) (of_string ":"));
-    print (concat (of_string "      ") (of_constr def))
+    print (concat (of_string "    ") (of_constr def))
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'bounded from below' does not occur in ")
@@ -252,12 +228,6 @@ Local Ltac2 exp_def_bounded_below (t : constr) :=
   end.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" "in" t(constr) := 
   exp_def_bounded_below t.
-
-(* small test unfolding notation *)
-Goal False.
-Proof. 
-  Expand the definition of bounded from below in ([0,1] is bounded from below).
-Abort.
 
 
 (** Definitions, notations and alternative characterizations for supremum and infimum. *)
@@ -308,7 +278,7 @@ Proof.
 Qed.
 (* Hints for using definition and alternative characterization. *)
 Lemma _rule_def_supremum 
-  (A : R -> Prop) (M : R) (H1A : A is non-empty) (H2A : A is bounded from above) 
+  (A : R -> Prop) (M : R)
   (def : sup A = M <->
     M is an upper bound for A ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) : 
   (sup A = M)   =   (M is an upper bound for A 
@@ -321,18 +291,22 @@ Proof. apply prop_univ; apply def; assumption. Qed.
 #[export] Hint Extern 1 => (match goal with 
                             | h : sup ?a = ?m |- _ => rewrite (_rule_def_supremum a m) in h
                             | h : ?m = sup ?a |- _ => symmetry in h; rewrite (_rule_def_supremum a m) in h
-                            end) : wp_reals.
-                          
+                            end) : wp_reals.     
 Lemma _rule_alt_char_supremum 
-  (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from above) (M : R)
+  (A : R -> Prop) (M : R)
   (char : sup A = M ⇔ 
     M is an upper bound for A ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)) :
   (sup A = M)   =   (M is an upper bound for A
                       ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)).
 Proof. apply prop_univ; apply char; assumption. Qed.
-#[export] Hint Extern 1 => (rewrite _rule_alt_char_supremum) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_alt_char_supremum in h end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | |- sup ?a = ?m => rewrite (_rule_alt_char_supremum a m)
+                            | |- ?m = sup ?a => symmetry; rewrite (_rule_alt_char_supremum a m)
+                            end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | h : sup ?a = ?m |- _ => rewrite (_rule_alt_char_supremum a m) in h
+                            | h : ?m = sup ?a |- _ => symmetry in h; rewrite (_rule_alt_char_supremum a m) in h
+                            end) : wp_reals.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_supremum (t : constr) :=
   lazy_match! t with
@@ -349,10 +323,10 @@ Local Ltac2 exp_def_supremum (t : constr) :=
                               :: (of_string " and ") :: (of_constr h2) 
                               :: (of_string ":") :: []));
         print (concat (of_constr constr:(definition_supremum)) (of_string ":"));
-        print (concat (of_string "      ") (of_constr def));
+        print (concat (of_string "    ") (of_constr def));
         print (concat (of_constr constr:(alternative_characterization_supremum))
                       (of_string ":"));
-        print (concat (of_string "      ") (of_constr alt_char))
+        print (concat (of_string "    ") (of_constr alt_char))
       end
     end
   | _ => 
@@ -364,10 +338,6 @@ Ltac2 Notation "Expand" "the" "definition" "of" "supremum" "in" t(constr) :=
   exp_def_supremum t.
 Ltac2 Notation "Expand" "the" "definition" "of" "sup" "in" t(constr) := 
   exp_def_supremum t.
-
-Goal False.
-  Expand the definition of supremum in (sup [0,1]).
-Abort.
 
 
 (** Definition of infimum.
@@ -416,25 +386,35 @@ Proof.
 Qed.
 (* Hints for using definition and alternative characterization. *)
 Lemma _rule_def_infimum
-  (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from below) (m : R)
+  (A : R -> Prop) (m : R)
   (def : inf A = m ⇔ 
     m is a lower bound for A ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
   (inf A = m)   =   (m is a lower bound for A 
                       ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)).
 Proof. apply prop_univ; apply def; assumption. Qed.
-#[export] Hint Extern 1 => (rewrite _rule_def_infimum) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_def_infimum in h end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | |- inf ?a = ?m => rewrite (_rule_def_infimum a m)
+                            | |- ?m = inf ?a => symmetry; rewrite (_rule_def_infimum a m)
+                            end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | h : inf ?a = ?m |- _ => rewrite (_rule_def_infimum a m) in h
+                            | h : ?m = inf ?a |- _ => symmetry in h; rewrite (_rule_def_infimum a m) in h
+                            end) : wp_reals.
 Lemma _rule_alt_char_infimum
-  (A : R -> Prop) (H1A : A is non-empty) (H2A : A is bounded from below) (m : R)
+  (A : R -> Prop) (m : R)
   (char : inf A = m ⇔ 
     m is a lower bound for A ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a < m + ε)) :
   (inf A = m)   =   (m is a lower bound for A 
                       ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a < m + ε)).
 Proof. apply prop_univ; apply char; assumption. Qed.
-#[export] Hint Extern 1 => (rewrite _rule_alt_char_infimum) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_alt_char_infimum in h end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | |- inf ?a = ?m => rewrite (_rule_alt_char_infimum a m)
+                            | |- ?m = inf ?a => symmetry; rewrite (_rule_alt_char_infimum a m)
+                            end) : wp_reals.
+#[export] Hint Extern 1 => (match goal with 
+                            | h : inf ?a = ?m |- _ => rewrite (_rule_alt_char_infimum a m) in h
+                            | h : ?m = inf ?a |- _ => symmetry in h; rewrite (_rule_alt_char_infimum a m) in h
+                            end) : wp_reals.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_infimum (t : constr) :=
   lazy_match! t with
@@ -451,10 +431,10 @@ Local Ltac2 exp_def_infimum (t : constr) :=
                               :: (of_string " and ") :: (of_constr h2) 
                               :: (of_string ":") :: []));
         print (concat (of_constr constr:(definition_infimum)) (of_string ":"));
-        print (concat (of_string "      ") (of_constr def));
+        print (concat (of_string "    ") (of_constr def));
         print (concat (of_constr constr:(alternative_characterization_infimum))
                       (of_string ":"));
-        print (concat (of_string "      ") (of_constr alt_char))
+        print (concat (of_string "    ") (of_constr alt_char))
       end
     end
   | _ => 
@@ -467,16 +447,10 @@ Ltac2 Notation "Expand" "the" "definition" "of" "infimum" "in" t(constr) :=
 Ltac2 Notation "Expand" "the" "definition" "of" "inf" "in" t(constr) := 
   exp_def_infimum t.
 
-Goal False.
-  Expand the definition of inf in (inf [0,1]).
-  Expand the definition of infimum in (sup [0,1]).
-Abort.
-
 
 (** 'sup' and 'inf' satisfy their defining properties. *)
 
-Lemma _sup_is_upper_bound (A : R -> Prop) (H1A : A is non-empty)
-  (H2A : A is bounded from above)
+Lemma _sup_is_upper_bound (A : R -> Prop)
   (def : forall (M : R),
     sup A = M   ⇔   M is an upper bound for A
                       ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) :
@@ -485,8 +459,7 @@ Proof.
   apply def; reflexivity.
 Qed.
   
-Lemma _sup_is_least_upper_bound (A : R -> Prop) 
-  (H1A : A is non-empty) (H2A : A is bounded from above)
+Lemma _sup_is_least_upper_bound (A : R -> Prop)
   (def : forall (M : R),
     sup A = M   ⇔   M is an upper bound for A
                       ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) :
@@ -495,8 +468,7 @@ Proof.
   apply def; reflexivity.
 Qed.
 
-Lemma _sup_is_approximated (A : R -> Prop) 
-  (H1A : A is non-empty) (H2A : A is bounded from above) 
+Lemma _sup_is_approximated (A : R -> Prop)
   (char : forall M : R,
     sup A = M   ⇔   M is an upper bound for A 
                       ∧ (for all ε : R, ε > 0 -> 
@@ -509,8 +481,7 @@ Proof.
 Qed.
 
 
-Lemma _inf_is_lower_bound (A : R -> Prop) (H1A : A is non-empty)
-  (H2A : A is bounded from below)
+Lemma _inf_is_lower_bound (A : R -> Prop)
   (def : forall m : R,
     inf A = m   ⇔   m is a lower bound for A
                       ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
@@ -519,8 +490,7 @@ Proof.
   apply def; reflexivity.
 Qed.
 
-Lemma _inf_is_largest_lower_bound (A : R -> Prop) 
-  (H1A : A is non-empty) (H2A : A is bounded from below) 
+Lemma _inf_is_largest_lower_bound (A : R -> Prop)
   (def : forall m : R,
     inf A = m   ⇔   m is a lower bound for A
                     ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
@@ -529,8 +499,7 @@ Proof.
   apply def; reflexivity.
 Qed.
 
-Lemma _inf_is_approximated (A : R -> Prop) 
-  (H1A : A is non-empty) (H2A : A is bounded from below) 
+Lemma _inf_is_approximated (A : R -> Prop)
   (char : for all m : R,
     inf A = m   ⇔   m is a lower bound for A 
                       ∧ (for all ε : R, ε > 0 -> 
@@ -544,12 +513,6 @@ Qed.
 
 
 #[export] Hint Resolve _sup_is_upper_bound : wp_reals.
-Goal False.
-Proof.
-  We claim that ([0,1] is non-empty). { admit. }
-  We claim that ([0,1] is bounded from above). { admit. }
-  By definition_supremum it holds that (sup [0,1] is an upper bound for [0,1]).
-Abort.
 #[export] Hint Resolve _sup_is_least_upper_bound : wp_reals.
 #[export] Hint Resolve _sup_is_approximated : wp_reals.
 
@@ -610,7 +573,6 @@ Section ConsistencyResults.
 
   (** The supremum introduced here equals the one from the 'completeness' axiom
     in the standard Coq library. *)
-  Check definition_bounded_above.
 
   Lemma _bdd_above_implies_bound : A is bounded from above -> bound A.
   Proof.
@@ -626,7 +588,7 @@ Section ConsistencyResults.
   Proof.
     Define M := (proj1_sig(_, _, completeness A
                   (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A))).
-    Time By definition_supremum it suffices to show that 
+    By definition_supremum it suffices to show that 
       (is_upper_bound A M ∧ (for all L : ℝ, is_upper_bound A L ⇨ M ≤ L)).
     Define HypM := (proj2_sig(_, _, completeness A
                       (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A))).
@@ -679,7 +641,6 @@ Section ConsistencyResults.
     Choose L := (-l). It suffices to show that (forall x : R, -'A x -> x <= L).
     Take x : R. Assume that (-'A x).
     By _prop2_min it holds that (A (-x)).
-    Check ii.
     (*Fail By (ii) it holds that (l <= -x).*)
     It holds that (l <= -x).
     We conclude that (& x <= -l = L).

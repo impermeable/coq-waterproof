@@ -129,3 +129,4 @@ tests/tactics/Unfold.v
 
 ## Libs
 tests/libs/Negation.v
+tests/libs/Analysis/SupAndInf.v
