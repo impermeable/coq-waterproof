@@ -61,7 +61,7 @@ Local Ltac2 wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
     | Val _ =>
       (* problem is the extra lemma: it is not used for proof that new goal is enough *)
       Control.zero (AutomationFailure (concat_list 
-        [of_string "Could not verify how this follows from "; of_constr xtr_lemma;
+        [of_string "Could not verify this follows from "; of_constr xtr_lemma;
           of_string "."]))
     end
   end.
