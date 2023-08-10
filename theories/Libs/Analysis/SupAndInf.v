@@ -588,7 +588,7 @@ Section ConsistencyResults.
   Proof.
     Define M := (proj1_sig(_, _, completeness A
                   (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A))).
-    By definition_supremum it suffices to show that 
+    By definition_supremum we need to show that
       (is_upper_bound A M ∧ (for all L : ℝ, is_upper_bound A L ⇨ M ≤ L)).
     Define HypM := (proj2_sig(_, _, completeness A
                       (_bdd_above_implies_bound H2A) (proj1(_, _, definition_non_empty A) H1A))).
@@ -626,7 +626,7 @@ Section ConsistencyResults.
   Proof.
     Assume that (A is non-empty). It holds that (there exists a : R, A a) (i).
     Obtain a according to (i), so for a : R it holds that (A a). 
-    It suffices to show that (there exists b : R, -'A b).
+    We need to show that (there exists b : R, -'A b).
     Choose b := (-a). 
     By _prop1_min we conclude that (-'A b).
   Qed.
@@ -637,8 +637,8 @@ Section ConsistencyResults.
     Assume that (A is bounded from below).
     It holds that (there exists l : R, l is a lower bound for A) (i).
     Obtain l according to (i), so for l : R it holds that (l is a lower bound for A) (ii).
-    It suffices to show that (there exists L : R, L is an upper bound for -'A).
-    Choose L := (-l). It suffices to show that (forall x : R, -'A x -> x <= L).
+    We need to show that (there exists L : R, L is an upper bound for -'A).
+    Choose L := (-l). We need to show that (forall x : R, -'A x -> x <= L).
     Take x : R. Assume that (-'A x).
     By _prop2_min it holds that (A (-x)).
     (*Fail By (ii) it holds that (l <= -x).*)
@@ -652,12 +652,12 @@ Section ConsistencyResults.
     By _nonempty_implies_min_nonempty it holds that (-'A is non-empty).
     By _bdd_below_implies_min_bdd_above it holds that (-'A is bounded from above).
     (* ... so sup -A is well-defined. *)
-    By definition_infimum it suffices to show that
+    By definition_infimum we need to show that
       (-sup(-'A) is a lower bound for A
        ∧ (for all l : ℝ, l is a lower bound for A -> l ≤ -sup(-'A))).
     We show both statements.
     - We need to show that (-sup(-'A) is a lower bound for A).
-      It suffices to show that (for all a : R, A a -> -sup(-'A) <= a).
+      We need to show that (for all a : R, A a -> -sup(-'A) <= a).
       Take a : R. Assume that (A a).
       By _prop1_min it holds that (-'A (-a)).
       By definition_supremum it holds that (-a <= sup (-'A)).
@@ -665,10 +665,10 @@ Section ConsistencyResults.
     - We need to show that  
         (for all l : R, l is a lower bound for A -> l <= -sup -'A).
       Take l : R. Assume that (l is a lower bound for A).
-      It suffices to show that (sup (-'A) <= -l).
+      We need to show that (sup (-'A) <= -l).
       We claim that (-l is an upper bound for -'A).
       { (* seen before in _bdd_below_implies_min_bdd_above *)
-        It suffices to show that (forall x : R, -'A x -> x <= -l).
+        We need to show that (forall x : R, -'A x -> x <= -l).
         Take x : R. Assume that (-'A x).
         By _prop2_min it holds that (A (-x)).
         It holds that (l <= -x).
