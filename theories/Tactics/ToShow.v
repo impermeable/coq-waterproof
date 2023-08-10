@@ -25,7 +25,7 @@ Require Import Waterprove.
 
 (* Require Import Automation. *)
 
-Ltac2 Type exn ::= [ GoalCheckError(message) | AutomationFailure(message) ].
+Ltac2 Type exn ::= [ GoalCheckError(message) ]. (* [AutomationFailure] added in [Waterprove]. *)
 
 Require Import Ltac2.Message.
 

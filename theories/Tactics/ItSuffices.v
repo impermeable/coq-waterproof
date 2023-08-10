@@ -21,9 +21,7 @@ Require Import Ltac2.Message.
 
 Require Import Util.Init.
 Require Import Util.Goals.
-Require Import Waterprove.
-
-Ltac2 Type exn ::= [ AutomationFailure(message) ].
+Require Import Waterprove. (* Defines AutomationFailure exception type. *)
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
