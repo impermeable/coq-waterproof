@@ -17,6 +17,8 @@
 (******************************************************************************)
 
 Require Export Ltac2.Ltac2.
+Ltac2 Type exn ::= [AutomationFailure(message)].
+  (* not used here, used by files that use [waterprove]/[rwaterprove]. *)
 
 Require Import Waterproof.
 
