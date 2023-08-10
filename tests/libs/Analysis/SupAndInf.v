@@ -36,13 +36,13 @@ Open Scope R_scope.
 (* Test 1: expanding definition in goal. *)
 Goal [0,1] is non-empty.
 Proof.
-  By definition_non_empty it suffices to show that (there exists x : R, [0,1] x).
+  By definition_non_empty we need to show that (there exists x : R, [0,1] x).
 Abort.
 
 (* Test 2: expanding definition in hypothesis. *)
 Goal there exists x : R, [0,1] x.
 Proof.
-  By definition_non_empty it suffices to show that ([0,1] is non-empty).
+  By definition_non_empty we need to show that ([0,1] is non-empty).
 Abort.
 
 (* Test 3: expand larger definition in goal *)
@@ -50,7 +50,7 @@ Goal sup [0,1] = 1.
 Proof.
   assert ([0,1] is non-empty) by admit.
   assert ([0,1] is bounded from above) by admit.
-  Time By definition_supremum it suffices to show that 
+  Time By definition_supremum we need to show that 
     (1 is an upper bound for [0,1] 
       ∧ (for all L : R, L is an upper bound for [0,1] -> 1 <= L)).
 Abort.
@@ -64,20 +64,20 @@ Section DefAddedToHints.
 (* Test 4: no definition needed for expanding of goal  *)
 Goal [0,1] is non-empty.
 Proof.
-  It suffices to show that (there exists x : R, [0,1] x).
+  We need to show that (there exists x : R, [0,1] x).
 Abort.
 
 (* Test 5: no definition needed for expanding of hypothesis *)
 Goal [0,1] is non-empty.
 Proof.
-  It suffices to show that (there exists x : R, [0,1] x).
+  We need to show that (there exists x : R, [0,1] x).
 Abort.
 
 (* Test 6: mentioning correct definition is not punished by restricted automated proof search.  *)
 Goal [0,1] is non-empty.
 Proof.
-  Fail By definition_upper_bound it suffices to show that (there exists x : R, [0,1] x). (* TODO: incorrect error message? *)
-  By definition_non_empty it suffices to show that (there exists x : R, [0,1] x).
+  Fail By definition_upper_bound we need to show that (there exists x : R, [0,1] x).
+  By definition_non_empty we need to show that (there exists x : R, [0,1] x).
 Abort.
 End DefAddedToHints.
 
@@ -143,4 +143,3 @@ Proof.
   By definition_supremum it holds that (0 <= sup [0,1]).
 Abort.
 End AdvancedSupLemma.
-
