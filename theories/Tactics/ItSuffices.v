@@ -17,14 +17,20 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
 
 Require Import Util.Init.
+Require Import Util.Goals.
 Require Import Waterprove.
 
-Ltac2 Type exn ::= [ AutomationFailure(string) ].
+Ltac2 Type exn ::= [ AutomationFailure(message) ].
 
-Local Ltac2 raise_automation_failure () :=
-  Control.zero (AutomationFailure "Waterproof could not verify that this statement is enough to prove the goal.").
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
+
+
+(* Local Ltac2 raise_automation_failure () :=
+  Control.zero (AutomationFailure "Waterproof could not verify that this statement is enough to prove the goal."). *)
 
 (**
   Execute a function [f] (assuming it contains an expression that applies the [enough ... by ...] tactic).
@@ -39,11 +45,11 @@ Local Ltac2 raise_automation_failure () :=
     - [AutomationFailure], in case [f] throws an error.
       This typically happens if the [enough ... by ...]-expression fails to prove the goal.
 *)
-Local Ltac2 try_enough_expression (f: unit -> unit) (statement: constr) :=
+(* Local Ltac2 try_enough_expression (f: unit -> unit) (statement: constr) :=
   match Control.case f with
     | Val _ => ()
     | Err exn => raise_automation_failure ()
-  end.
+  end. *)
 
 (**
   Try if the [waterprove] automation would be able to solve the current goal, if [statement] were to hold.
@@ -57,15 +63,39 @@ Local Ltac2 try_enough_expression (f: unit -> unit) (statement: constr) :=
   Raises exceptions:
     - [AutomationFailure], in case [waterprove] fails to prove the goal, even if [statement] is given.
 *)
-Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr option) :=
-  let hyp_name := Fresh.in_goal @h in
-  let f () := enough ($hyp_name : $statement) by (
-    match proving_lemma with
-      | None => waterprove 5 true [] Main
-      | Some lemma => rwaterprove 5 true [fun () => lemma] Main [lemma] []
+Local Ltac2 wp_enough (new_goal : constr) :=
+  let err_msg := concat_list
+    [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
+  match Control.case (fun () =>
+    enough $new_goal by (waterprove 5 true [] Main))
+  with
+  | Val _ => ()
+  | Err exn => Control.zero (AutomationFailure err_msg)
+  end.
+  
+Local Ltac2 wp_enough_by (new_goal : constr) (xtr_lemma : constr) := 
+  let err_msg := concat_list
+    [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
+  match Control.case (fun () =>
+    enough $new_goal by 
+      (rwaterprove 5 true [fun () => xtr_lemma] Main [xtr_lemma] []))
+  with
+  | Val _ => ()
+  | Err exn => 
+    (* check if it would work without lemma *)
+    match Control.case (fun () =>
+      enough $new_goal by 
+        (waterprove 5 true [] Main))
+    with
+    | Err exn => Control.zero (AutomationFailure err_msg)
+    | Val _ =>
+      (* problem is the extra lemma: it is not used for proof that new goal is enough *)
+      Control.zero (AutomationFailure (concat_list 
+        [of_string "Could not verify how this follows from "; of_constr xtr_lemma;
+          of_string "."]))
     end
-  ) in
-  try_enough_expression f statement.
+  end.
+
 
 (**
   Same as the function [apply_enough_with_waterprove].
@@ -80,8 +110,9 @@ Ltac2 apply_enough_with_waterprove (statement:constr) (proving_lemma: constr opt
   Raises exceptions:
     - [AutomationFailure], in case no proof is found for the goal, even if [statement] is given.
 *)
-Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr) := 
-  apply_enough_with_waterprove statement None.
+Ltac2 Notation "It" "suffices" "to" "show" that(opt("that")) statement(constr) := 
+  panic_if_goal_wrapped ();
+  wp_enough statement.
 
 (**
   Same as "It suffices to show that" except it adds an additional lemma temporarily to the underlying automation.
@@ -93,5 +124,6 @@ Ltac2 Notation "It" "suffices" "to" "show" "that" statement(constr) :=
   Raises exceptions:
     - [AutomationFailure], in case no proof is found for the goal, even if [statement] is given.
 *)
-Ltac2 Notation "By" lemma(constr) "it" "suffices" "to" "show" "that" statement(constr) :=
-  apply_enough_with_waterprove statement (Some lemma).
+Ltac2 Notation "By" xtr_lemma(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+  panic_if_goal_wrapped ();
+  wp_enough_by statement xtr_lemma.
