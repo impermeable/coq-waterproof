@@ -130,7 +130,7 @@ Local Ltac2 change_to_equivalent_goal_by (new_g : constr) (xtr_lemma : constr) :
           | Val _ =>
             (* problem is the extra lemma: it is not used for proof equivalence *)
             Control.zero (AutomationFailure ( concat_list 
-              [of_string "Could not verify how this follows from "; of_constr xtr_lemma;
+              [of_string "Could not verify this follows from "; of_constr xtr_lemma;
                 of_string "."]))
           end
         | Val _ => ()
