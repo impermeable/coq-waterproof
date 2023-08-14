@@ -135,3 +135,74 @@ Proof.
     Fail It holds that (x = 2) (h).
     It holds that (x = 2) (i).
 Abort.
+
+
+(** Tests for restricted version of 'By ...' clause *)
+Variable A B : Prop.
+Variable f : A -> B.
+
+(* Test 5: regular check that assertion works. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  It holds that B.
+Abort.
+
+(* Test 6: check that assertion works with label *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  It holds that B (i).
+Abort.
+
+(* Test 7: check that assertion fails with label that is already used. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  Fail It holds that B (H).
+Abort.
+
+(* Test 7b: assertion fails if label already used, even before it is checked whether 
+    assertion is actually valid.
+ *)
+Goal A -> False.
+Proof.
+intro H.
+Fail It holds that B (H).
+Abort.
+
+(* Test 8: 'By ...' succeeds if additional lemma is needed for proof assertion. *)
+Goal A -> False.
+Proof.
+  intro H.
+  By f it holds that B.
+Abort.
+(* Test 8b: also when lemma is included in local hypotheses. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  By f it holds that B.
+Abort.
+
+(* Test 9: 'By ...' fails if additional lemma is not enough to prove assertion. *)
+Goal False.
+Proof.
+  Fail By f it holds that B.
+Abort.
+
+(* Test 10: 'By ...' succeeds if additional lemma is not needed for proof assertion. *)
+Variable g : B -> A.
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  Fail By g it holds that B.
+Abort.
+
+
+
+
