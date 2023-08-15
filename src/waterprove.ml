@@ -16,11 +16,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Pp
 open EConstr
 open Hints
 open Proofview
 
-open Exceptions
+(* open Exceptions *)
 open Hint_dataset
 open Hint_dataset_declarations
 open Wp_auto
@@ -75,7 +76,9 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
       tclORELSE
         (automation_routine 2 lems (get_current_databases database_type))
         begin fun _ ->
-          if shield && !automation_shield then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+          if shield && !automation_shield then (Tacticals.tclZEROMSG (str "No applicable tactic."))
+          else
+            (* throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns"); *)
           automation_routine depth lems (get_current_databases database_type)
         end
     end
@@ -103,7 +106,9 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
       tclORELSE
         (restricted_automation_routine 2 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
         begin fun _ ->
-          if shield && !automation_shield then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
+          if shield && !automation_shield then (Tacticals.tclZEROMSG (str "No applicable tactic."))
+          else
+            (* throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns"); *)
           restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
         end
-    end
+      end
