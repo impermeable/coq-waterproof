@@ -25,6 +25,7 @@ Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
+Require Import Util.Since.
 Require Import Waterprove.
 
 
@@ -69,10 +70,10 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
   identifier starting with '_H' is generated.
-  [xtr_lemma] has to be used in the proof that [claim] holds, otherwise an [AutomationFailure]
-  error is thrown.
+  [xtr_lemma] has to be used in the proof that [claim] holds, otherwise an [ByFailure]
+  error is thrown with [xtr_lemma] as parameter.
   *)
-Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
+Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
   let err_msg := concat_list
     [of_string "Could not verify that "; of_constr claim; of_string "."] in
   let id := 
@@ -95,12 +96,20 @@ Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : co
     | Err exn => Control.zero (AutomationFailure err_msg)
     | Val _ =>
       (* problem is the extra lemma: it is not used for proof equivalence *)
-      Control.zero (AutomationFailure ( concat_list 
-        [of_string "Could not verify this follows from "; of_constr xtr_lemma;
-         of_string "."]))
+      Control.zero (ByFailure xtr_lemma)
     end
   end.
 
+(** Adaptation of [core_wp_assert_by] that turns the [ByFailure] errors 
+  which might be thrown into user readable errors. *)
+Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
+  wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma.
+
+(** Adaptation of [core_wp_assert_by] that allows user to use mathematical statements themselves
+  instead of references to them as extra information for the automation system.
+  Uses the code in [Since.v]. *)
+Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim : constr) :=
+  since_framework (core_wp_assert_by claim label) xtr_claim.
 
 
 (**
@@ -120,7 +129,10 @@ Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : co
 Ltac2 Notation "By" xtr_lemma(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_by claim label xtr_lemma.
-    
+
+Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+  panic_if_goal_wrapped ();
+  wp_assert_since claim label xtr_claim.
     
 (** * It holds that ... (...)
   Attempts to assert a claim and proves it automatically.

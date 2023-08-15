@@ -194,7 +194,7 @@ Proof.
   Fail By f it holds that B.
 Abort.
 
-(* Test 10: 'By ...' succeeds if additional lemma is not needed for proof assertion. *)
+(* Test 10: 'By ...' fails if additional lemma is not needed for proof assertion. *)
 Variable g : B -> A.
 Goal A -> False.
 Proof.
@@ -203,6 +203,56 @@ Proof.
   Fail By g it holds that B.
 Abort.
 
+(** Tests for 'Since ...' clause. *)
+(* Test 11: 'Since ...' works if claimed cause is proven previously. *)
+(* Note that no additional hypotheses are added by the Since-tactic. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  Since (A -> B) it holds that B.
+Abort.
+
+(* Test 12: 'Since ...' fails if claimed cause is not proven previously. *)
+Goal A -> False.
+Proof.
+  intro H.
+  Fail Since (A -> B) it holds that B.
+Abort.
+
+(* Test 13: 'Since ...' fails if claimed cause is not necessary to proof final claim. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  pose g.
+  Fail Since (B -> A) it holds that B.
+Abort.
+
+(* Test 14: 'Since ...' works with proofs of causal claim provided as external hints. *)
+#[local] Hint Resolve f : core.
+Goal A -> False.
+Proof.
+  intro H.
+  Since (A -> B) it holds that B.
+Abort.
 
 
+(** Test that references to lemmas cannot be used in the 
+  'Since ...' tactic, and that statements cannot be used in the 
+  'By ...' tactic. *)
 
+(* Test 15: 'By ...' with statement fails.*)
+Goal A -> False.
+Proof.
+  intro H.
+  Fail By (A -> B) it holds that B.
+  Since (A -> B) it holds that B.
+Abort.
+
+(* Test 16: 'Since ...' with reference fails. *)
+Goal A -> False.
+Proof.
+  intro H.
+  Fail Since f it holds that B.
+Abort.
