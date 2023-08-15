@@ -106,3 +106,10 @@ Goal B.
   Fail By h it suffices to show that A.
 Abort.
 
+
+(* Test 10: 'Since ...' works. For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
+Goal B.
+Proof.
+  pose g.
+  Since (A -> B) it suffices to show that A.
+Abort.

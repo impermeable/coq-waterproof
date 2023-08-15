@@ -21,6 +21,7 @@ Require Import Ltac2.Message.
 
 Require Import Util.Init.
 Require Import Util.Goals.
+Require Import Util.Since.
 Require Import Waterprove. (* Defines AutomationFailure exception type. *)
 
 Local Ltac2 concat_list (ls : message list) : message :=
@@ -41,7 +42,7 @@ Local Ltac2 wp_enough (new_goal : constr) :=
 (** Attempts to prove that proposed goal is enough to show current goal,
   given an additional lemma that has to be used in said proof.
   If succesful, replaces current goal by proposed goal. *)
-Local Ltac2 wp_enough_by (new_goal : constr) (xtr_lemma : constr) := 
+Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) := 
   let err_msg := concat_list
     [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
   match Control.case (fun () =>
@@ -58,12 +59,20 @@ Local Ltac2 wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
     | Err exn => Control.zero (AutomationFailure err_msg)
     | Val _ =>
       (* problem is the extra lemma: it is not used for proof that new goal is enough *)
-      Control.zero (AutomationFailure (concat_list 
-        [of_string "Could not verify this follows from "; of_constr xtr_lemma;
-          of_string "."]))
+      Control.zero (ByFailure xtr_lemma)
     end
   end.
 
+(** Adaptation of [core_wp_enough_by] that turns the [ByFailure] errors 
+  which might be thrown into user readable errors. *)
+Local Ltac2 wp_enough_by (claim : constr) (xtr_lemma : constr) :=
+  wrapper_core_by_tactic (core_wp_enough_by claim) xtr_lemma.
+
+(** Adaptation of [core_wp_assert_by] that allows user to use mathematical statements themselves
+  instead of references to them as extra information for the automation system.
+  Uses the code in [Since.v]. *)
+Local Ltac2 wp_enough_since (claim : constr) (xtr_claim : constr) :=
+  since_framework (core_wp_enough_by claim) xtr_claim.
 
 Ltac2 Notation "It" "suffices" "to" "show" that(opt("that")) statement(constr) := 
   panic_if_goal_wrapped ();
@@ -73,3 +82,7 @@ Ltac2 Notation "It" "suffices" "to" "show" that(opt("that")) statement(constr) :
 Ltac2 Notation "By" xtr_lemma(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
   panic_if_goal_wrapped ();
   wp_enough_by statement xtr_lemma.
+
+Ltac2 Notation "Since" xtr_claim(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+  panic_if_goal_wrapped ();
+  wp_enough_since statement xtr_claim.
