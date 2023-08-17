@@ -42,16 +42,16 @@ Local Ltac2 check_if_not_reference (x : constr) :=
       match check_constr_equal type_x constr:(Type) with
       | true => ()
       | false => Control.zero (BySinceError (concat_list
-        [of_string "Cannot use reference "; of_constr x; of_string " with 'Since ...'.";
-        of_string " Try 'By "; of_constr x; of_string " ...' instead."]))
+        [of_string "Cannot use reference "; of_constr x; of_string " with 'Since'.
+Try 'By "; of_constr x; of_string " ...' instead."]))
       end
     end
   end.
 
 Local Ltac2 check_if_not_statement (x : constr) :=
   let err_msg := concat_list
-    [of_string "Cannot use statement "; of_constr x; of_string " with 'By ...'.";
-      of_string " Try 'Since "; of_constr x; of_string " ...' instead."]
+    [of_string "Cannot use statement "; of_constr x; of_string " with 'By'.
+Try 'Since "; of_constr x; of_string " ...' instead."]
   in
   let type_x := get_type x in
   match check_constr_equal type_x constr:(Prop) with
@@ -71,10 +71,9 @@ Local Ltac2 check_if_not_statement (x : constr) :=
 (** Attempts to prove [claimed_cause] with minimal automation, 
   and then executes [by_tactic] with the proof of [claimed_cause] 
   as an argument. 
-  Expects that [by_tactic] can throw a [(Waterprove.)ByFailure] error,
-  those errors are caught; the type of the constr-parameter of the [ByFailure] error
-  is used in a new error that is thrown. It is expected that the constr-parameter
-  is the proof which was passed into the [by_tactic], so its type is [claimed_cause].
+  Expects that [by_tactic] can throw a [(Waterprove.)FailedToUse] error,
+  those errors are caught; the extra lemma that the automation failed to use
+  is used in a new error that is thrown.
 *)
 
 Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
@@ -90,13 +89,13 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
   (* attempt to prove [claimed_cause]*)
   match Control.case (fun () =>
     assert $claimed_cause as $id_cause by
-      (waterprove 0 true [] Shorten))
+      (waterprove 0 true Shorten))
   with
-  | Err exn => 
+  | Err (FailedToProve _) => 
     Control.zero (AutomationFailure (concat_list 
-    [of_string "State that "; of_constr claimed_cause; of_string " holds";
-    of_string " before using it in 'Since "; of_constr claimed_cause;
-    of_string " ...'."]))
+      [of_string "State that "; of_constr claimed_cause; of_string " holds";
+       of_string " before using it in 'Since "; of_constr claimed_cause; of_string " ...'."]))
+  | Err exn => Control.zero exn
   | Val _ => 
     (* use proof of [claimed_cause] in [by_tactic] *)
     let cause := Control.hyp id_cause in
@@ -104,15 +103,12 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
       by_tactic cause)
     with
     | Val _ => clear $id_cause
-    | Err exn => 
-      match exn with
-      | ByFailure h => 
-        let type_h := (get_type h) in
-        clear $id_cause;
-        Control.zero (AutomationFailure (concat_list
+    | Err (FailedToUse h) => 
+      let type_h := (get_type h) in
+      clear $id_cause;
+      Control.zero (AutomationFailure (concat_list
         [of_string "Could not verify this follows from "; of_constr type_h; of_string "."]))
-      | _ => clear $id_cause; Control.zero exn
-      end
+    | Err exn => clear $id_cause; Control.zero exn
     end
   end.
 
@@ -120,15 +116,12 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
   such that the main fucntionality can be reused in 'Since ...'-tactics.
 
   Checks whether [xtr_lemma] is not a statement (i.e. not a Prop/Set/Type) and
-  catches [(Waterprove.)ByFailure] errors to turn them into user-readable errors. *)
+  catches [(Waterprove.)FailedToUse] errors to turn them into user-readable errors. *)
 Ltac2 wrapper_core_by_tactic (by_tactic : constr -> unit) (xtr_lemma : constr) :=
   check_if_not_statement xtr_lemma;
   match Control.case (fun () => by_tactic xtr_lemma) with
   | Val _ => ()
-  | Err exn => 
-    match exn with
-    | ByFailure h => Control.zero (AutomationFailure (concat_list
+  | Err (FailedToUse h) => Control.zero (AutomationFailure (concat_list
       [of_string "Could not verify this follows from "; of_constr h; of_string "."]))
-    | _ => Control.zero exn
-    end
+  | Err exn => Control.zero exn
   end.

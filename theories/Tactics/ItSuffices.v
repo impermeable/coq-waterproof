@@ -33,11 +33,13 @@ Local Ltac2 wp_enough (new_goal : constr) :=
   let err_msg := concat_list
     [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
   match Control.case (fun () =>
-    enough $new_goal by (waterprove 5 true [] Main))
+    enough $new_goal by (waterprove 5 true Main))
   with
   | Val _ => ()
-  | Err exn => Control.zero (AutomationFailure err_msg)
+  | Err (FailedToProve _) => Control.zero (AutomationFailure err_msg)
+  | Err exn => Control.zero exn
   end.
+  
 
 (** Attempts to prove that proposed goal is enough to show current goal,
   given an additional lemma that has to be used in said proof.
@@ -47,23 +49,14 @@ Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
     [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
   match Control.case (fun () =>
     enough $new_goal by 
-      (rwaterprove 5 true [fun () => xtr_lemma] Main [xtr_lemma] []))
+      (rwaterprove 5 true Main xtr_lemma))
   with
   | Val _ => ()
-  | Err exn => 
-    (* check if it would work without lemma *)
-    match Control.case (fun () =>
-      enough $new_goal by 
-        (waterprove 5 true [] Main))
-    with
-    | Err exn => Control.zero (AutomationFailure err_msg)
-    | Val _ =>
-      (* problem is the extra lemma: it is not used for proof that new goal is enough *)
-      Control.zero (ByFailure xtr_lemma)
-    end
+  | Err (FailedToProve _) => Control.zero (AutomationFailure err_msg)
+  | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 
-(** Adaptation of [core_wp_enough_by] that turns the [ByFailure] errors 
+(** Adaptation of [core_wp_enough_by] that turns the [FailedToUse] errors 
   which might be thrown into user readable errors. *)
 Local Ltac2 wp_enough_by (claim : constr) (xtr_lemma : constr) :=
   wrapper_core_by_tactic (core_wp_enough_by claim) xtr_lemma.

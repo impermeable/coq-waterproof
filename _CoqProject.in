@@ -102,6 +102,7 @@ tests/chains/Manipulation.v
 
 ### General  
 tests/automation/Shield.v
+tests/automation/Chains.v
 
 ### Databases
 tests/automation/databases/Core.v
