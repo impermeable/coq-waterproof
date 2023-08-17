@@ -93,7 +93,7 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
         end
       end;
       (* Convert current goal to the given inequality chain.*)
-      enough $sttd_goal by (waterprove 5 false [] Main)
+      enough $sttd_goal by (waterprove 5 false Main)
     (* For the rest, just check for judgemental equality. *)
     | _ => 
       match target_equals_goal_judgementally sttd_goal with
@@ -105,36 +105,29 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
 
 (** Attempts to solve current goal. *)
 Local Ltac2 conclude () := 
-  let err_msg := concat_list
-    [of_string "Could not verify that "; of_constr (Control.goal ()); of_string "."] 
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] 
   in
-  match Control.case (fun () => waterprove 5 true [] Main) with
+  match Control.case (fun () => waterprove 5 true Main) with
   | Val _ => ()
-  | Err exn => Control.zero (AutomationFailure err_msg)
+  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err exn => Control.zero exn
   end.
 
 (** Attempts to solve current goal using additional lemma which has to be used. *)
 Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
-  let err_msg := concat_list
-    [of_string "Could not verify that "; of_constr (Control.goal ()); of_string "."] 
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] 
   in
   match Control.case (fun () =>
-    rwaterprove 5 true [fun () => xtr_lemma] Main [xtr_lemma] [])
+    rwaterprove 5 true Main xtr_lemma)
   with
   | Val _ => ()
-  | Err exn => 
-    (* check if it would work without extra lemma *)
-    match Control.case (fun () =>
-      waterprove 5 true [] Main)
-    with
-    | Err exn => Control.zero (AutomationFailure err_msg)
-    | Val _ =>
-      (* problem is the extra lemma: it is not used for proof that new goal is enough *)
-      Control.zero (ByFailure xtr_lemma)
-    end
+  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 
-(** Adaptation of [core_conclude_by] that turns the [ByFailure] errors 
+(** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors 
   which might be thrown into user readable errors. *)
 Local Ltac2 conclude_by (xtr_lemma : constr) :=
   wrapper_core_by_tactic core_conclude_by xtr_lemma.

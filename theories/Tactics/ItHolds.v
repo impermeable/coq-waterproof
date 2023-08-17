@@ -50,8 +50,8 @@ Local Ltac2 try_out_label (label : ident) :=
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
   identifier starting with '_H' is generated. *)
 Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
-  let err_msg := concat_list
-    [of_string "Could not verify that "; of_constr claim; of_string "."] in
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] in
   let id := 
     match label with 
     | None => Fresh.in_goal @_H
@@ -60,22 +60,22 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
   in
   match Control.case (fun () =>
     assert $claim as $id by 
-      (waterprove 5 true [] Main))
+      (waterprove 5 true Main))
   with
   | Val _ => ()
-  | Err exn => Control.zero (AutomationFailure err_msg)
+  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err exn => Control.zero exn
   end.
 
 
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
   identifier starting with '_H' is generated.
-  [xtr_lemma] has to be used in the proof that [claim] holds, otherwise an [ByFailure]
-  error is thrown with [xtr_lemma] as parameter.
+  [xtr_lemma] has to be used in the proof that [claim] holds.
   *)
 Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
-  let err_msg := concat_list
-    [of_string "Could not verify that "; of_constr claim; of_string "."] in
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] in
   let id := 
     match label with 
     | None => Fresh.in_goal @_H
@@ -84,23 +84,14 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
   in
   match Control.case (fun () =>
     assert $claim as $id by 
-      (rwaterprove 5 true [fun() => xtr_lemma] Main [xtr_lemma] []))
+      (rwaterprove 5 true Main xtr_lemma))
   with
   | Val _ => ()
-  | Err exn => (* failed, if due to restricition, give feedback *)
-    (* check if it would work without lemma *)
-    match Control.case (fun () =>
-    assert $claim as $id by 
-        (waterprove 5 true [] Main))
-    with
-    | Err exn => Control.zero (AutomationFailure err_msg)
-    | Val _ =>
-      (* problem is the extra lemma: it is not used for proof equivalence *)
-      Control.zero (ByFailure xtr_lemma)
-    end
+  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 
-(** Adaptation of [core_wp_assert_by] that turns the [ByFailure] errors 
+(** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors 
   which might be thrown into user readable errors. *)
 Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
   wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma.
