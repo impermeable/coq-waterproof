@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "2.0.0"
+version: "2.0.1"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [ "Jim Portegies <j.w.portegies@tue.nl>" ]
 
@@ -20,13 +20,9 @@ depends: [
 ]
 
 build: [
-  ["autoreconf" "-i" "-s"]
-  ["./configure"]
-  ["dune" "build"]
-  [make "-j%{jobs}%"]
+  ["dune" "build" "-p" "coq-waterproof"]
 ]
 
 install: [
-  [make "install"]
-  ["dune" "install"]
+  ["dune" "install" "-p" "coq-waterproof"]
 ]
