@@ -52,6 +52,7 @@ theories/Tactics/BothDirections.v
 theories/Tactics/BothStatements.v
 theories/Tactics/Claims.v
 theories/Tactics/Choose.v
+theories/Tactics/Obtain.v
 theories/Tactics/Conclusion.v
 theories/Tactics/Contradiction.v
 theories/Tactics/Define.v
@@ -118,6 +119,7 @@ tests/tactics/BothDirections.v
 tests/tactics/BothStatements.v
 tests/tactics/Claims.v
 tests/tactics/Choose.v
+tests/tactics/Obtain.v
 tests/tactics/Conclusion.v
 tests/tactics/Contradiction.v
 tests/tactics/Define.v
