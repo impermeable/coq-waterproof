@@ -60,5 +60,5 @@ Notation "x ↔ y" := (x <-> y) (at level 95, no associativity): type_scope.
 Notation "x ⇔ y" := (x <-> y) (at level 95, no associativity): type_scope.
 Notation "¬ x" := (~x) (at level 75, right associativity) : type_scope.
 
-Notation "'Show' 'a' 'contradiction' 'by:' '(1)' 'Showing' 'that' 'both' 'P' 'and' '¬P' 'hold' 'for' 'some' 'statement' 'P.' '(2)' 'Writing' '‘Contradiction.‘' 'or' '‘↯.‘.'" := (False)
-  (only printing, format "'[ ' Show  a  contradiction  by: ']' '//' (1)  Showing  that  both  P  and  ¬P  hold  for  some  statement  P. '//' (2)  Writing  ‘Contradiction.‘  or  ‘↯.‘.").
+Notation "'Derive' 'a' 'contradiction.'" := (False)
+  (only printing).

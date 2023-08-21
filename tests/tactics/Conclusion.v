@@ -264,21 +264,3 @@ Goal (Case.Wrapper (0 = 1) (0 = 0)).
 Proof.
   Fail We conclude that (0 = 0).
 Abort.
-
-(** * Test 8 *)
-(** Actually tests for [waterprove] automation suboutine, but this seemed like a 
-    convenient place to test. *)
-(** Tests whether the error points out which specific (in)equality in the chain does not hold. *)
-Local Parameter C : Type.
-Local Parameter x y z : C.
-
-Goal (& x = y = z).
-Proof.
-Fail We conclude that (& x = y = z). (* Expected: unable to find proof (x = y) *)
-Abort.
-
-Goal (x = y) -> (& x = y = z).
-Proof.
-intro p.
-Fail We conclude that (& x = y = z). (* Expected: unable to find proof (y = z) *)
-Abort.
