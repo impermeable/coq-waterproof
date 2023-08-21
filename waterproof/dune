@@ -1,0 +1,15 @@
+(coq.theory
+ (name Waterproof)
+ (package coq-waterproof)
+ (modules :standard \
+   theory.analysis.subsequences_new_induction
+   experiments.choose_experiment
+ )
+ (flags
+   -w -local-declaration
+   -w -deprecated-instance-without-locality
+   -w -redundant-pattern
+   -w -ltac2-in-modtype))
+
+(include_subdirs qualified)
+(dirs :standard \ deprecated)

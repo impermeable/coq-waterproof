@@ -1,5 +1,5 @@
-(lang dune 3.2)
-(using coq 0.3)
+(lang dune 3.6)
+(using coq 0.6)
 
 (package
  (name coq-waterproof)
