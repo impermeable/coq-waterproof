@@ -85,7 +85,7 @@ Ltac2 goal_as (t:constr) :=
   lazy_match! goal with
     | [|- ExpandDef.Goal.Wrapper ?v] =>
       match Constr.equal v t with
-        | true => apply (ExpandDef.Goal.wrap)
+        | true => apply (ExpandDef.Goal.wrap); change $t
         | false => Control.zero (ExpandDefError "Wrong goal specified.")
       end
     | [|- ExpandDef.Hyp.Wrapper _ _ _] => Control.zero (ExpandDefError "Specify the effect of expanding definition in *hypothesis*.")
@@ -113,8 +113,8 @@ Ltac2 hyp_as (h : ident) (t:constr) :=
       match Constr.equal s t with
         | true => 
           match Constr.equal g h_hyp with
-            | true => apply (fun G => ExpandDef.Hyp.wrap G $s $g)
-            | false => Control.zero (ExpandDefError "Wrong hypothesis specified.")
+            | true => apply (fun G => ExpandDef.Hyp.wrap G $s $g); change $t in $h
+            | false => Control.zero (ExpandDefError "Wrong statement specified.")
           end
         | false => Control.zero (ExpandDefError "Wrong rewriting specified.")
       end
