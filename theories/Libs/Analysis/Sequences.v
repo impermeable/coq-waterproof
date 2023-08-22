@@ -317,8 +317,7 @@ Proof.
     Assume that (∀ n : ℕ, a n ≥ M).
     Define b := (opp_seq a).
     Assume that (Un_cv a L).
-    Expand the definition of opp_seq in (b).
-    That is, write (b) as ( ℕ ⇨ ℝ ). (*TODO *)
+    It holds that (b = (fun n => - a n)).
     By CV_opp it holds that (Un_cv b (-L)).
     We claim that (-L ≤ -M).
     { By upp_bd_seq_is_upp_bd_lim it suffices to show that
