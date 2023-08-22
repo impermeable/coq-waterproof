@@ -25,3 +25,19 @@ jobs:
             startGroup "Install dependencies"
               sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
             endGroup
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Build and export
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          tags: waterproof-image:latest
+          outputs: type=docker,dest=/tmp/waterproof-image.tar
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: myimage
+          path: /tmp/waterproof-image.tar
