@@ -615,8 +615,8 @@ Section ConsistencyResults.
   forall a : R, -'A a -> A (-a).
   Proof.
     Take a : R. Assume that (-'A a).
-    It holds that (there exists x : R, A x ∧ a = -x) (i).
-    Obtain x according to (i), so for x : R it holds that (A x ∧ a = -x).
+    It holds that (there exists x : R, A x ∧ a = -x).
+    Obtain such an x.
     It holds that (-a = x).
     We conclude that (A (-a)).
   Qed.
@@ -624,8 +624,8 @@ Section ConsistencyResults.
   Lemma _nonempty_implies_min_nonempty :
     A is non-empty -> -'A is non-empty.
   Proof.
-    Assume that (A is non-empty). It holds that (there exists a : R, A a) (i).
-    Obtain a according to (i), so for a : R it holds that (A a). 
+    Assume that (A is non-empty). It holds that (there exists a : R, A a).
+    Obtain such an a. 
     It suffices to show that (there exists b : R, -'A b).
     Choose b := (-a). 
     By _prop1_min we conclude that (-'A b).
@@ -635,13 +635,13 @@ Section ConsistencyResults.
     A is bounded from below -> -'A is bounded from above.
   Proof.
     Assume that (A is bounded from below).
-    It holds that (there exists l : R, l is a lower bound for A) (i).
-    Obtain l according to (i), so for l : R it holds that (l is a lower bound for A) (ii).
+    It holds that (there exists l : R, l is a lower bound for A).
+    Obtain such an l. It holds that (l is a lower bound for A) (i).
     It suffices to show that (there exists L : R, L is an upper bound for -'A).
     Choose L := (-l). It suffices to show that (forall x : R, -'A x -> x <= L).
     Take x : R. Assume that (-'A x).
     By _prop2_min it holds that (A (-x)).
-    (*Fail By (ii) it holds that (l <= -x).*)
+    (*Fail By (i) it holds that (l <= -x).*)
     It holds that (l <= -x).
     We conclude that (& x <= -l = L).
   Qed.
@@ -808,15 +808,13 @@ Proof.
     That is, write the goal as (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
-    Obtain l according to (lub_a_prf), so for l : R it holds that (is_lub (EUn a) l).
+    clear add_eq.
+    Obtain such an l.
     Take ε : ℝ; such that (ε > 0).
-    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
-    Obtain y according to (iv), so for y : R it holds that 
-      ((EUn a) y ∧ y > l - ε) (v).
-    Because (v) both (EUn a y) (vi) and (y > l - ε) hold.
-    Expand the definition of EUn in (vi).
-    That is, write (vi) as (there exists n : ℕ , y = a n).
-    Obtain n according to (vi), so for n : nat it holds that (y = a n).
+    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
+    Obtain such a y. It holds that ((EUn a) y ∧ y > l - ε) (ii).
+    It holds that (there exists n : ℕ , y = a n).
+    Obtain such an n.
     Choose k := n.
     It suffices to show that (l - ε < a n).
     We conclude that (& l - ε < y = a n).
@@ -843,9 +841,8 @@ Proof.
     Assume that (has_ub a) (i).
     Take m, Nn : ℕ.
     By seq_ex_almost_maximizer_m it holds that
-      (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)) (ii).
-    Obtain k according to (ii), so for k : nat it holds that
-      (a (Nn + k)%nat > sequence_ub a i Nn - 1 / (m + 1)).
+      (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)).
+    Obtain such a k.
     Choose l := (Nn+k)%nat.
     We show both statements.
     - We need to show that (l ≥ Nn)%nat.

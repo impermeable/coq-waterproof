@@ -103,8 +103,8 @@ Proof.
       It holds that (0 < IZR( up x )).
       By lt_0_IZR it holds that (0 < up x)%Z.
       It holds that (0 <= up x)%Z.
-      By IZN it holds that (∃ k : ℕ, up x = Z.of_nat k) (i).
-      Obtain k according to (i), so for k : nat it holds that (up x = Z.of_nat k) (ii).
+      By IZN it holds that (∃ k : ℕ, up x = Z.of_nat k).
+      Obtain such a k. It holds that (up x = Z.of_nat k) (ii).
       Choose n := k.
       We need to show that (INR k > x).
       By INR_IZR_INZ it holds that (INR k = IZR (Z.of_nat k)).
@@ -129,11 +129,11 @@ Proof.
       for all n : ℕ, (n ≥ N)%nat ⇨ |b n - l| < ε ).
     Take ε : ℝ; such that (ε > 0).
     It holds that
-      (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε) (ii).
-    Obtain N1 according to (ii), so for N1 : nat it holds that 
-      (for all n : ℕ, (n ≥ N1)%nat ⇨ |a n - l| < ε).
-    Obtain K according to (i), so for K : nat it holds that 
-      (for all n : ℕ, (n ≥ K)%nat ⇨ a n = b n).
+      (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε).
+    Obtain such an N1.
+    By (i) it holds that 
+      (there exists K : nat, for all n : ℕ, (n ≥ K)%nat ⇨ a n = b n).
+    Obtain such a K.
     Choose M := (Nat.max N1 K).
     Take n : ℕ; such that (n ≥ M)%nat.
     It holds that (b n = a n).
@@ -196,9 +196,8 @@ Proof.
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
     Take ε : ℝ; such that (ε > 0).
-    By archimed_mod it holds that (there exists n : ℕ, n > / ε) (i).
-    Obtain n1 according to (i), so for n : nat it holds that (n > /ε).
-    Choose N := n1.
+    By archimed_mod it holds that (there exists n : ℕ, n > / ε).
+    Obtain such an n1. Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
     Expand the definition of Rabs.
     That is, write the goal as (｜1 / (n + 1) - 0｜ < ε).
@@ -241,12 +240,10 @@ Proof.
     Assume that (c ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |b n - l| < ε).
     Take ε : ℝ; such that (ε > 0).
-    It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε) (i).
-    It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε) (ii).
-    Obtain Na according to (i), so for Na : nat it holds that 
-      (∀ n : ℕ, (n ≥ Na)%nat ⇒ |a n - l| < ε).
-    Obtain Nc according to (ii), so for Nc : nat it holds that 
-      (∀ n : ℕ, (n ≥ Nc)%nat ⇒ |c n - l| < ε).
+    It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε).
+    Obtain such an Na.
+    It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε).
+    Obtain such an Nc.
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that (n ≥ Nn)%nat.
     We claim that (-ε < a n - l).
@@ -296,9 +293,8 @@ Proof.
       That is, write (i) as (for all eps : ℝ, eps > 0 
         ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
         ⇨ ｜ a n - L ｜ < eps).
-      It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε) (iii).
-      Obtain Nn according to (iii), so for Nn : nat it holds that
-        (∀n : ℕ, (n ≥ Nn)%nat ⇒ R_dist (a n) L < ε).
+      It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
+      Obtain such an Nn.
       It holds that (R_dist (a Nn) L < ε) (iv).
       Expand the definition of Rabs in (iv).
       That is, write (iv) as (｜a(Nn) - L｜ < ε).
@@ -359,12 +355,10 @@ Proof.
     That is, write (i) as (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ a n - m ｜ < eps ).
-    It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε) (iii).
-    It holds that (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε)  (iv).
-    Obtain N1 according to (iii), so for N1 : nat it holds that
-      (∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
-    Obtain N2 according to (iv), so for N2 : nat it holds that
-      (∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
+    It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
+    Obtain such an N1.
+    It holds that (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
+    Obtain such an N2.
     Define N3 := (Nat.max N1 N2).
     We claim that (b N3 < a N3).
     { It holds that (R_dist (b N3) l < ε)  (v).
@@ -379,7 +373,6 @@ Proof.
                             = m - (m - l)/2 = m - ε < a N3).
     }
     It holds that (a N3 <= b N3).
-    It holds that (~ a N3 <= b N3).
     Contradiction.
 Qed.
 
@@ -407,13 +400,15 @@ Proof.
 Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
-  Assume that (is_bounded a) (i).
-  Obtain q according to (i), so for q : R it holds that
-    (there exists M : R, M > 0 ∧ (for all n : ℕ, | a n - q | ≤ M)) (ii).
-  Obtain M1 according to (ii), so for M1 : R it holds that
-    (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (iii).
-  Because (iii) both (M1 > 0) and
-    (for all n : ℕ, | a n - q | ≤ M1) hold.
+  Assume that (is_bounded a).
+  It holds that (there exists q : R, 
+    there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)).
+  Obtain such a q.
+  It holds that (there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)).
+  Obtain such an M1.
+  It holds that (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (i).
+  Because (i) both (M1 > 0) and 
+    (for all n : ℕ, | a n - q | ≤ M1).
   We need to show that (
     there exists M : ℝ ,
       M > 0 ∧ (for all n : ℕ,
@@ -435,7 +430,11 @@ We show both directions.
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
-  Assume that (there exists M : ℝ, M > 0 ∧ ∀ n : ℕ, |a n| ≤ M) (i).
+  Assume that (there exists M1 : ℝ, M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1).
+  Obtain such an M1. It holds that 
+    (M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1) (i).
+  Because (i) both (M1 > 0) and
+  (for all n : ℕ, | a n | ≤ M1) hold.
   (* Expand the definition of is_bounded. *)
   We need to show that (
 there exists q M : ℝ ,
@@ -443,10 +442,6 @@ M > 0 ∧ (for all n : ℕ,
 | a n - q | ≤ M)
 ).
   Choose q := 0.
-  Obtain M1 according to (i), so for M1 : R it holds that
-    (M1 > 0 ∧ (for all n : ℕ, | a n | ≤ M1)) (ii).
-  Because (ii) both (M1 > 0) and
-    (for all n : ℕ, | a n | ≤ M1) hold.
   Choose M := M1.
   We show both statements.
   + We need to show that (M > 0).
