@@ -79,7 +79,7 @@ Proof.
           (proj1_sig(_, _, decreasing_cv (sequence_ub a (i), (Wn_decreasing a (i)), (ii))) 
             ≤ sequence_ub a (i) Nn).
         Define v := (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)).
-        clear add_eq0.
+        clear _defeq0.
         Obtain such an l.
         We need to show that (l ≤ sequence_ub a (i) Nn).
         By Wn_decreasing it holds that (Un_decreasing (sequence_ub a (i))).
@@ -122,7 +122,7 @@ Proof.
     That is, write the goal as
       (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (Nn + k)%nat), maj_ss a Nn (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat) (maj_ss a Nn (i))).
-    clear add_eq.
+    clear _defeq.
     Obtain such an M. It holds that 
       (is_lub (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M) (iii).
     Expand the definition of is_lub in (iii).
@@ -279,7 +279,7 @@ Proof.
       Assume that (is_seq_acc_pt a x).
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
-      clear add_eq.
+      clear _defeq.
       Obtain such an L. simpl.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))
           it holds that (L ≥ x).

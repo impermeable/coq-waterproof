@@ -56,12 +56,12 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
   let copy_val := Control.hyp copy in
   (* Create identifiers if not specified. *)
   let uu := match u with
-    | None   => Fresh.in_goal @__wp__hu
+    | None   => Fresh.in_goal @_Ha
     | Some u => u
   end
   in
   let vv := match v with
-    | None   => Fresh.in_goal @__wp__hv
+    | None   => Fresh.in_goal @_Hb
     | Some v => v
   end
   in
@@ -106,12 +106,12 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
   let copy_val := Control.hyp copy in
   (* Create identifiers if not specified. *)
   let uu := match u with
-    | None   => Fresh.in_goal @__wp__hu
+    | None   => Fresh.in_goal @_Ha
     | Some u => u
   end
   in
   let vv := match v with
-    | None   => Fresh.in_goal @__wp__hv
+    | None   => Fresh.in_goal @_Hb
     | Some v => v
   end
   in

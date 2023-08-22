@@ -808,7 +808,7 @@ Proof.
     That is, write the goal as (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
-    clear add_eq.
+    clear _defeq.
     Obtain such an l.
     Take ε : ℝ; such that (ε > 0).
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
