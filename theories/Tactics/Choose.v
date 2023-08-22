@@ -45,7 +45,7 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     | [ |- exists _ : _, _] =>
       pose ($s := $t);
       let v := Control.hyp s in
-      let w := Fresh.fresh (Fresh.Free.of_goal ()) @add_eq in
+      let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       exists $v;
       assert ($w : $v = $t) by reflexivity
     | [ |- _ ] => Control.zero (ChooseError "`Choose` can only be applied to 'exists' goals")

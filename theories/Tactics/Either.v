@@ -41,7 +41,7 @@ Qed.
     - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) :=
-  let h_id := Fresh.in_goal @H in
+  let h_id := Fresh.in_goal @_temp in
   let attempt () :=
     assert ({$t1} + {$t2}) as $h_id;
     Control.focus 1 1 (fun () => 
@@ -142,7 +142,7 @@ Qed.
     - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
-  let h_id := Fresh.in_goal @H in
+  let h_id := Fresh.in_goal @_temp in
   let attempt () :=
     assert (sumtriad $t1 $t2 $t3) as $h_id;
     Control.focus 1 1 (fun () => 

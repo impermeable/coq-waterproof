@@ -66,7 +66,7 @@ Ltac2 contradiction () :=
   | [ id_h : _ |- _ ] =>
     let h := Control.hyp id_h in
     let prop_h := get_type h in
-    let id_contra := Fresh.in_goal @_contraH in
+    let id_contra := Fresh.in_goal @_Hcontra in
     lazy_match! prop_h with
     | ~ ?p => 
       (* Try to find a proof of p *)

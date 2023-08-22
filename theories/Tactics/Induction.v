@@ -54,7 +54,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
   let x_hyp := Control.hyp x in
   let type_x := (get_value_of_hyp x_hyp) in
   match (Constr.equal type_x constr:(nat)) with
-    | true => let ih_x := Fresh.in_goal @IH in
+    | true => let ih_x := Fresh.in_goal @_IH in
       induction $x_hyp as [ | $x $ih_x]; 
       Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
       Control.focus 2 2 (fun () => revert $ih_x; rewrite (Sn_eq_nplus1 $x_hyp); apply (NaturalInduction.Step.unwrap))
