@@ -15,42 +15,13 @@ jobs:
     steps:
       - name: Set up git repository
         uses: actions/checkout@v3
-
-      - name: Echo github workspace variable
-        run: | 
-          echo $GITHUB_WORKSPACE
-          echo $GITHUB_SHA
-          echo $GITHUB_REF
-          echo $GITHUB_REF_NAME
-
-      - name: Create file that can be imported by WSL
-        run: |
-          docker build --build-arg SOURCE=$GITHUB_SHA --build-arg BRANCH=$GITHUB_REF_NAME -t waterproof-image:tmp .
-          docker run -d -it --name waterproof-container waterproof-image:tmp
-          docker export --output="/tmp/ubuntu-waterproof.tar" waterproof-container
       
-      # - name: Build plugin
-      #   uses: coq-community/docker-coq-action@v1
-      #   with:
-      #     custom_image: 'coqorg/coq:8.17-ocaml-4.14-flambda'
-      #     opam_file: 'coq-waterproof.opam'
-      #     before_script: |
-      #       startGroup "Install dependencies"
-      #         sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
-      #       endGroup
-      
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v2
-      
-      # - name: Build and export
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     tags: waterproof-image:latest
-      #     outputs: type=docker,dest=/tmp/waterproof-image.tar
-      
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ubuntu-waterproof
-      #     path: /tmp/ubuntu-waterproof.tar
+      - name: Build plugin
+        uses: coq-community/docker-coq-action@v1
+        with:
+          custom_image: 'coqorg/coq:8.17-ocaml-4.14-flambda'
+          opam_file: 'coq-waterproof.opam'
+          before_script: |
+            startGroup "Install dependencies"
+              sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
+            endGroup
