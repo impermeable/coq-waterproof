@@ -732,8 +732,9 @@ Proof.
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
     Obtain such a y. It holds that ((EUn a) y ∧ y > l - ε) (iv).
     Because (iv) both (EUn a y) (v) and (y > l - ε) hold.
-    By (v) it holds that (there exists n : ℕ , y = a n).
-    Obtain such an n.
+    Expand the definition of EUn in (v).
+    That is, write (v) as (there exists n : ℕ , y = a n).
+    Obtain n according to (v).
     Choose k := n.
     We need to show that (l - ε < a n).
     We conclude that (& l - ε < y = a n).

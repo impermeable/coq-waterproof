@@ -81,10 +81,22 @@ Proof.
   assert_goal_is constr:((n = 0)%nat).
 Abort.
 
+(** Test 6: works with specifying statement.  *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Obtain n according to (i).
+Abort.
+
+(** Test 7: fails if specified statement does not exist.  *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Fail Obtain n according to (ii).
+Abort.
 
 
-
-(** Test 6: more advanced use of the [Obtain...such that...] in the context of limits of sequences *)
+(** Test 8: more advanced use of the [Obtain...such that...] in the context of limits of sequences *)
 Local Open Scope R_scope.
 
 Definition evt_eq_sequences (a b : nat -> R) := (exists k : nat, forall n : nat, (n >= k)%nat -> a n = b n).
