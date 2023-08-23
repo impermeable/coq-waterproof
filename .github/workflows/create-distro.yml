@@ -29,8 +29,8 @@ jobs:
           docker run -d -it --name waterproof-container waterproof-image:tmp
           docker export --output="/tmp/ubuntu-waterproof.tar" waterproof-container
       
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ubuntu-waterproof
-      #     path: /tmp/ubuntu-waterproof.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ubuntu-waterproof
+          path: /tmp/ubuntu-waterproof.tar
