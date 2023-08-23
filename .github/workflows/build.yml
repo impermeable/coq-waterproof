@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      #- name: Set up git repository
-      #  uses: actions/checkout@v3
+      - name: Set up git repository
+        uses: actions/checkout@v3
 
       - name: Echo github workspace variable
         run: | 
@@ -25,7 +25,7 @@ jobs:
 
       - name: Create file that can be imported by WSL
         run: |
-          docker build -t waterproof-image:tmp .
+          docker build --build-arg SOURCE=$GITHUB_SHA --build-arg BRANCH=$GITHUB_REF_NAME -t waterproof-image:tmp .
           docker run -d -it --name waterproof-container waterproof-image:tmp
           docker export --output="/tmp/ubuntu-waterproof.tar" waterproof-container
       
