@@ -13,11 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up git repository
-        uses: actions/checkout@v3
+      #- name: Set up git repository
+      #  uses: actions/checkout@v3
 
-      - name: Check docker version
-        run: docker run -d -it --name waterproof-container ubuntu:latest; docker container ls
+      - name: Echo github workspace variable
+        run: | 
+          echo $GITHUB_WORKSPACE
+          echo $GITHUB_SHA
+
+      - name: Create file that can be imported by WSL
+        run: |
+          docker build --build-arg source=$GITHUB_SHA -t waterproof-image:tmp .;
+          docker run -d -it --name waterproof-container waterproof-image:tmp;
+          docker export --output="/tmp/ubuntu-waterproof.tar" waterproof-container
       
       # - name: Build plugin
       #   uses: coq-community/docker-coq-action@v1
@@ -42,5 +50,5 @@ jobs:
       # - name: Upload artifact
       #   uses: actions/upload-artifact@v3
       #   with:
-      #     name: myimage
-      #     path: /tmp/waterproof-image.tar
+      #     name: ubuntu-waterproof
+      #     path: /tmp/ubuntu-waterproof.tar
