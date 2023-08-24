@@ -64,3 +64,9 @@ val rwaterprove :
   Evd.econstr list ->
   Evd.econstr list ->
   unit Proofview.tactic
+
+(** 
+  Sends a warning
+*)
+val print_warning :
+  Pp.t -> unit Proofview.tactic

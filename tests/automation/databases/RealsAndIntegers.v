@@ -17,6 +17,7 @@
 (******************************************************************************)
 
 Require Import Coq.Reals.Reals.
+Require Import Ltac2.Ltac2.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
