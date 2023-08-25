@@ -256,3 +256,33 @@ Proof.
   intro H.
   Fail Since f it holds that B.
 Abort.
+
+
+(** Tests for workaround occuring anomalies in [_rwaterprove]. *)
+(* Test 17: impossible goal with use of lemma in hypotheses. *)
+Goal False.
+Proof.
+  assert (A -> B) as f' by admit.
+  Fail By (f') it holds that B.
+Abort.
+
+(* Test 18: possible goal with right hypothesis provided. *)
+Variable C : Prop.
+Goal A -> False.
+Proof.
+  intro H.
+  assert (A -> B) as f' by admit.
+  assert (B -> C) as g' by admit.
+  By g' it holds that C.
+Abort.
+
+(* Test 19: possible goal with wrong hypothesis provided. *)
+Variable D : Prop.
+Goal A -> False.
+Proof.
+  intro H.
+  assert (A -> B) as f' by admit.
+  assert (B -> C) as g' by admit.
+  assert D as k' by admit.
+  Fail By k' it holds that C.
+Abort.

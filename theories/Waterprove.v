@@ -17,6 +17,7 @@
 (******************************************************************************)
 
 Require Export Ltac2.Ltac2.
+Require Import Ltac2.Message.
 Ltac2 Type exn ::=  [ AutomationFailure (message)
                     | FailedToUse (constr)
                     | FailedToProve (constr) ].
@@ -59,9 +60,58 @@ Local Ltac2 contains_shielded_pattern (): bool :=
 Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
   waterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type).
 
-Local Ltac2 _rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type) (must_use: constr list) (forbidden: constr list): unit  :=
-  rwaterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type) must_use forbidden.
+(** Checks whether [x] is in the current list of hypotheses *)
+(* TODO: there could be a better way with [Control.hyps], but this seems to work. *)
+Local Ltac2 in_hypotheses (x : constr) :=
+  match! goal with
+  | [ h_id : _ |- _ ] =>
+    (* check if xtr_lemma matches h *)
+    let h := Control.hyp h_id in
+    match Constr.equal x h with
+    | false => Control.zero (AutomationFailure (of_string "inner_error: try next hypothesis."))
+    | true => true
+    end
+  | [ |- _ ] => false
+  end.
 
+Local Ltac2 _rwaterprove (depth: int) (shield: bool) (db_type: database_type) 
+  (xtr_lemma : constr) : unit :=
+  (* workaround for anomalies when additional extra lemma is one of the hypotheses *)
+  (* (Gross! Wish we could remove this... :( )) *)
+  (* Anonalies occur when 
+      1. the goal can be solved and [xtr_lemma] is the most recent hypothesis added
+      2. the goal cannot be solved and [xtr_lemma] is a hypothesis *)
+  match in_hypotheses xtr_lemma with
+  | false =>
+    (* xtr_lemma is not one of the hypotheses, so we can use rwaterprove without risking anomalies. *)
+    rwaterprove_ffi depth (shield && contains_shielded_pattern ()) [fun () => xtr_lemma] (database_type_to_ffi db_type) [xtr_lemma] []
+  | true =>
+    (* try if the goal can be solved by (unrestricted) [_waterprove] 
+      (the automation has acces to hypotheses by default) *)
+    let trial := Fresh.in_goal @_trial in
+    let g := Control.goal () in
+    match Control.case (fun () =>
+      assert $g as $trial
+        by _waterprove depth shield [] Main)
+    with
+    | Err exn => Control.zero exn
+    | Val _ =>
+      clear $trial;
+      (* Goal can be shown by the automation. This means we can safely 
+        try to show it with the restricted version
+        if we add an additional lemma such that [xtr_lemma] is not the most recently added one. *)
+      let temp := Fresh.in_goal @_temp in
+      assert True as $temp;
+      Control.focus 1 1 (fun () => exact I);
+      match Control.case (fun () =>
+        rwaterprove_ffi depth (shield && contains_shielded_pattern ()) [fun () => xtr_lemma] 
+          (database_type_to_ffi db_type) [xtr_lemma] [])
+      with
+      | Val _ => ()
+      | Err exn => clear $temp; Control.zero exn
+      end
+    end
+  end.
 
 (** Subroutine to solve conjunction of statements piece by piece.
   Throws [FailedToProve] error with statement that could not be proven. *)
@@ -111,7 +161,7 @@ Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
     split;
     (* Attempt to prove 1st goal with extra lemma. *)
     match Control.case (fun () => Control.focus 1 1 (fun () =>
-      _rwaterprove depth shield [fun () => xtr_lemma] db_type [xtr_lemma] []))
+      _rwaterprove depth shield db_type xtr_lemma))
     with
     | Val _ => 
       (* succesfully used lemma; prove remaining goals, but without restriction. *)
@@ -131,7 +181,7 @@ Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
   | [ |- _ ] =>
     (* Prove remaining goal with restriction. *)
     match Control.case (fun () =>
-      _rwaterprove depth shield [fun () => xtr_lemma] db_type [xtr_lemma] [])
+      _rwaterprove depth shield db_type xtr_lemma)
     with
     | Val _ => ()
     | Err exn => (* failed, if due to restricition, give feedback *)
@@ -189,7 +239,7 @@ Ltac2 rwaterprove (depth: int) (shield: bool) (db_type: database_type) (xtr_lemm
   | [ |- _] =>
     (* Prove goal with restriction. *)
     match Control.case (fun () =>
-      _rwaterprove depth shield [fun () => xtr_lemma] db_type [xtr_lemma] [])
+      _rwaterprove depth shield db_type xtr_lemma)
     with
     | Val _ => ()
     | Err exn => (* failed, if due to restricition, give feedback *)
