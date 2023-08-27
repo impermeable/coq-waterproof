@@ -2,7 +2,15 @@ opam-version: "2.0"
 name: "coq-waterproof"
 version: "2.0.1+8.17"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
-authors: [ "Jim Portegies <j.w.portegies@tue.nl>" ]
+authors: [
+  "Jelle Wemmenhove"
+  "Balthazar Pathiachvili"
+  "Cosmin Manea"
+  "Lulof Pirée"
+  "Adrian Vrămuleţ"
+  "Tudor Voicu"
+  "Jim Portegies <j.w.portegies@tue.nl>"
+]
 
 synopsis: "Coq proofs in a style that resembles non-mechanized mathematical proofs"
 description: """
@@ -14,7 +22,7 @@ license: "LGPL-3.0-or-later"
 homepage: "https://github.com/impermeable/coq-waterproof"
 bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
 
-depends: [ 
+depends: [
   "ocaml" {>= "4.14.1"}
   "coq" {>= "8.17" & < "8.18"}
 ]

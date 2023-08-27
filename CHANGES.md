@@ -1,6 +1,6 @@
 # Change log for the coq-waterproof library
 
-## Version 2.0.1
+## Version 2.0.1+8.17
 
 - Build the plugin with dune
 
