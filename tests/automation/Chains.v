@@ -18,10 +18,10 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Waterproof.
-Require Import Notations.
+Require Import Waterproof.Waterproof.
+Require Import Waterproof.Notations.
 
-Require Import Waterprove.
+Require Import Waterproof.Waterprove.
 
 
 (** Tests whether the error points out which specific (in)equality in the chain does not hold. *)

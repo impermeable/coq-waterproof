@@ -18,14 +18,14 @@
 
 Require Import Coq.Reals.Reals.
 
-Require Import Automation.
-Require Import Notations.
-Require Import Tactics.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Notations.
+Require Import Waterproof.Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 Waterproof Enable Automation Intuition.
 
-Require Import Libs.Analysis.SupAndInf.
+Require Import Waterproof.Libs.Analysis.SupAndInf.
 
 Open Scope R_scope.
 
