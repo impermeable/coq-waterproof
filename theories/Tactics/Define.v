@@ -33,7 +33,7 @@ Require Import Util.Goals.
 Local Ltac2 defining (u: ident) (t: constr) :=
   set ($u := $t);
   let u_constr := Control.hyp u in 
-  let w := Fresh.fresh (Fresh.Free.of_goal ()) @add_eq in
+  let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
   assert ($w : $u_constr = $t) by reflexivity.
     
 

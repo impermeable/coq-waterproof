@@ -21,10 +21,11 @@ Require Import Ltac2.Ltac2.
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Tactics.Unfold.
+Require Import Waterprove.
 
-Ltac2 Type exn ::= [ GoalCheckError(string) ].
+Ltac2 Type exn ::= [ GoalCheckError(message) ].
 
-Local Ltac2 idtac () := ().
+Require Import Ltac2.Message.
 
 (**
   Check if the type of the goal is syntactically equal to [t].
@@ -38,40 +39,16 @@ Local Ltac2 idtac () := ().
   Raises Exceptions:
     - [GoalCheckError], if the goal is not syntactically equal to [t].
 *)
-Local Ltac2 check_goal := fun (t:constr) =>
+Local Ltac2 check_goal (t:constr) :=
   lazy_match! goal with
     | [ |- ?g] => 
       match check_constr_equal g t with
-        | true => idtac ()
+        | true => ()
                   (* print (concat (of_string "The goal is indeed: ") (of_constr t))*)
-        | false => Control.zero (GoalCheckError "Wrong goal specified.")
+        | false => Control.zero (GoalCheckError (of_string "Wrong goal specified."))
       end
-    | [|-_] => Control.zero (GoalCheckError "Wrong goal specified.")
   end.
 
-(**
-  Check if the type of the goal is convertible to [t], if so, it replaces the goal by t.
-
-  Arguments:
-    - [t: constr], any constr to be compared against the goal.
-
-  Does:
-    - Prints a confirmation that the goal equals the provided type.
-    
-  Raises Exceptions:
-    - [GoalCheckError], if the goal is not convertible to [t].
-*)
-Local Ltac2 check_and_change_goal (t:constr) :=
-  lazy_match! goal with
-    | [ |- ?g] => 
-      match check_constr_equal g t with
-        | true =>
-          idtac ();
-          change $t
-        | false => Control.zero (GoalCheckError "Wrong goal specified.")
-      end
-    | [|-_] => Control.zero (GoalCheckError "Wrong goal specified.")
-  end.
 
 
 (**
@@ -91,9 +68,8 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
     | [|- StateGoal.Wrapper ?g] =>
       match (check_constr_equal g t) with
         | true  => apply StateGoal.wrap
-        | false => Control.zero (GoalCheckError "Wrong goal specified.")
+        | false => Control.zero (GoalCheckError (of_string "Wrong goal specified."))
       end
-    | [|- _] => idtac ()
   end.
 
 (**
@@ -117,11 +93,11 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
     - 2) [GoalCheckError], if the argument [t] does not match the wrapped goal.
     - 3) [GoalCheckError], if the goal is not convertible to [t].
 *)
-Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
+Local Ltac2 to_show (t : constr) :=
   lazy_match! goal with
     | [|- ExpandDef.Goal.Wrapper _] => goal_as t; change $t (*[goal_as] is from unfold.v*)
     | [|- StateGoal.Wrapper _] => unwrap_state_goal t; change $t
-    | [|- _] => panic_if_goal_wrapped (); check_goal t; change $t
+    | [|- _] => panic_if_goal_wrapped ();  check_goal t; change $t
   end.
 
 (*
@@ -138,6 +114,6 @@ Local Ltac2 unwrap_or_check_and_change_goal (t : constr) :=
   Optional string keywords do need to have a name, even though the parser will not populate this name. 
   (That's why it reads "that(opt('that'))" instead of "opt('that')".
 *)
-Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) := unwrap_or_check_and_change_goal t.
+Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) := to_show t.
 
-Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) := unwrap_or_check_and_change_goal t.
+Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) := to_show t.

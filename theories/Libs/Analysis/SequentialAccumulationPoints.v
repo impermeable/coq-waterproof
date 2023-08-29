@@ -46,16 +46,15 @@ Proof.
   Expand the definition of is_upper_bound.
   That is, write the goal as (there exists m : ℝ,
     for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ m).
-  Obtain M according to (i), so for M : R it holds that
-    (is_upper_bound (EUn a) M) (ii).
+  By (i) it holds that (there exists M : R, is_upper_bound (EUn a) M).
+  Obtain such an M. It holds that (is_upper_bound (EUn a) M) (ii).
   Choose m := M.
   Take x : ℝ.
   Assume that (is_seq_acc_pt a x) (iii).
   Expand the definition of is_seq_acc_pt in (iii).
   That is, write (iii) as (there exists n : ℕ ⇨ ℕ,
     is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)).
-  Obtain n according to (iii), so for n : ℕ → ℕ it holds that
-    (is_index_seq n ∧ Un_cv (fun k ↦ (a(n(k))), x)) (iv).
+  Obtain such an n. It holds that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) (iv).
   Because (iv) both (is_index_seq n) and (Un_cv (fun k ↦ (a(n(k))), x)) hold.
   We need to show that (x ≤ M).
   By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).

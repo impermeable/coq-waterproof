@@ -35,16 +35,19 @@ Proof.
   reflexivity.
 Qed.
 
-(** * induction_with_hypothesis_naming
+(** * induction_without_hypothesis_naming
     Performs mathematical induction.
 
     Arguments:
         - [x: ident], the variable to perform the induction on.
 
     Does:
-        - performs induction on [x]. If [x] is a natural number, the first goal is wrapped in 
+        - performs induction on [x].
+        - If [x] is a natural number, the first goal is wrapped in 
           NaturalInduction.Base.Wrapper and the second goal is wrapped in
           NaturalInduction.Step.Wrapper.
+        - Otherwise, the resulting cases are wrapped in the StateGoal.Wrapper.
+
 *)
 Ltac2 induction_without_hypothesis_naming (x: ident) :=    
   match Control.case (fun () => Control.hyp x) with
@@ -54,12 +57,13 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
   let x_hyp := Control.hyp x in
   let type_x := (get_value_of_hyp x_hyp) in
   match (Constr.equal type_x constr:(nat)) with
-    | true => let ih_x := Fresh.in_goal @IH in
+    | true => let ih_x := Fresh.in_goal @_IH in
       induction $x_hyp as [ | $x $ih_x]; 
       Control.focus 1 1 (fun () => apply (NaturalInduction.Base.unwrap));
       Control.focus 2 2 (fun () => revert $ih_x; rewrite (Sn_eq_nplus1 $x_hyp); apply (NaturalInduction.Step.unwrap))
-    | false => induction $x_hyp
+    | false => induction $x_hyp; Control.enter (fun () => apply StateGoal.unwrap)
   end.
+
 
 Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
   panic_if_goal_wrapped ();

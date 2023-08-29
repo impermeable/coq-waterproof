@@ -57,8 +57,8 @@ Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
                   | h::t => Control.zero (AssumeError (of_string "Nothing left to assume after the negated expression."))
                   | [] => (* Assume negation : check whether a name has been given *)
                     match n with
-                      | None   => let h := Fresh.in_goal @__wp__h in intro $h
-                      | Some n => intro $n
+                      | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
+                      | Some n => intro $n; change $t in $n
                     end
                 end
             end
@@ -94,8 +94,8 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
                   match check_constr_equal u t with
                     | true => (* Check whether a name has been given *)
                       match n with
-                        | None   => let h := Fresh.in_goal @__wp__h in intro $h
-                        | Some n => intro $n
+                        | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
+                        | Some n => intro $n; change $t in $n
                           end
                     | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
                   end

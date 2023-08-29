@@ -16,19 +16,21 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
 
-Require Import Util.Constr.
-Require Import Util.Goals.
+(* Code copied from Coq.ssr.ssreflect.
+  Could not just import ssreflect because we have clashing notation. *)
 
-Local Ltac2 my_assert (t:constr) (id:ident option) := 
-  match id with
-    | None =>
-      let h := Fresh.in_goal @_H in
-      ltac2_assert h t
-    | Some id => ltac2_assert id t
-  end.
 
-Ltac2 Notation "We" "claim" "that" t(constr) id(opt(seq("(", ident, ")"))) :=
-  panic_if_goal_wrapped ();
-  my_assert t id.
+Lemma master_key : unit. Proof. exact tt. Qed.
+
+Definition locked {A} := let 'tt := master_key in fun x : A => x.
+
+Definition lock A (x : A) : x = locked x :=
+  (fun _evar_0_ : (fun u : unit => x = (let 'tt := u in fun x0 : A => x0) x) tt
+  =>
+  match master_key as u
+    return ((fun u0 : unit => x = (let 'tt := u0 in fun x0 : A => x0) x) u)
+  with
+  | tt => _evar_0_
+  end) eq_refl.
+ 

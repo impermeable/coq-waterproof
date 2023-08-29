@@ -52,6 +52,7 @@ theories/Tactics/BothDirections.v
 theories/Tactics/BothStatements.v
 theories/Tactics/Claims.v
 theories/Tactics/Choose.v
+theories/Tactics/Obtain.v
 theories/Tactics/Conclusion.v
 theories/Tactics/Contradiction.v
 theories/Tactics/Define.v
@@ -69,6 +70,8 @@ theories/Util/Constr.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v
+theories/Util/Since.v
+theories/Util/Lock.v
 
 theories/Waterproof.v
 theories/Waterprove.v
@@ -101,6 +104,7 @@ tests/chains/Manipulation.v
 
 ### General  
 tests/automation/Shield.v
+tests/automation/Chains.v
 
 ### Databases
 tests/automation/databases/Core.v
@@ -116,6 +120,7 @@ tests/tactics/BothDirections.v
 tests/tactics/BothStatements.v
 tests/tactics/Claims.v
 tests/tactics/Choose.v
+tests/tactics/Obtain.v
 tests/tactics/Conclusion.v
 tests/tactics/Contradiction.v
 tests/tactics/Define.v
@@ -129,3 +134,4 @@ tests/tactics/Unfold.v
 
 ## Libs
 tests/libs/Negation.v
+tests/libs/Analysis/SupAndInf.v
