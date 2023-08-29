@@ -196,4 +196,9 @@ let () =
   define1 "warn_external" pp @@ 
     fun input ->
       warn input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "throw_external" pp @@
+    fun input ->
+      err input >>= fun () -> tclUNIT @@ of_unit ()
 }

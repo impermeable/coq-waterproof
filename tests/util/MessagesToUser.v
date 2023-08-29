@@ -23,4 +23,5 @@ Require Import Waterproof.Util.MessagesToUser.
 Lemma test : 0 = 0.
 Proof.
   warn (Message.of_string "This warning _should_ be printed.").
+  Fail throw (Message.of_string "This error _should_ be raised.").
 Abort.
