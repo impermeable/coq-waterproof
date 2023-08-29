@@ -20,15 +20,17 @@ Mathematicians unfamiliar with the Coq syntax are able to read the resulting pro
 
 license: "LGPL-3.0-or-later"
 homepage: "https://github.com/impermeable/coq-waterproof"
+dev-repo: "git+https://github.com/impermeable/coq-waterproof.git"
 bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
 
 depends: [
   "ocaml" {>= "4.14.1"}
   "coq" {>= "8.17" & < "8.18"}
+  "dune" {>= "3.6."}
 ]
 
 build: [
-  ["dune" "build" "-p" "coq-waterproof"]
+  ["dune" "build" "-p" "coq-waterproof" "@install"]
 ]
 
 install: [
