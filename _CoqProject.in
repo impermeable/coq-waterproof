@@ -1,5 +1,10 @@
 src/META.coq-waterproof
 -R theories/ Waterproof
+# The following three lines can be commented out
+# to make coq-lsp work while working on the library:
+# -R _build/default/theories/ Waterproof
+# -I _build/install/default/lib/coq-waterproof/plugin
+# -I _build/install/default/lib/
 -I src
 -I @LTAC2_CAML_FILES@
 
@@ -72,6 +77,7 @@ theories/Util/Hypothesis.v
 theories/Util/Init.v
 theories/Util/Since.v
 theories/Util/Lock.v
+theories/Util/MessagesToUser.v
 
 theories/Waterproof.v
 theories/Waterprove.v
@@ -131,6 +137,7 @@ tests/tactics/ItSuffices.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v
+tests/util/MessagesToUser.v
 
 ## Libs
 tests/libs/Negation.v
