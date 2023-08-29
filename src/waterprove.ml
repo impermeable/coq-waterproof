@@ -74,7 +74,7 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
   Proofview.Goal.enter @@ fun goal ->
     begin
       tclORELSE
-        (automation_routine 2 lems (get_current_databases database_type))
+        (automation_routine 3 lems (get_current_databases database_type))
         begin fun _ ->
           if shield && !automation_shield then (Tacticals.tclZEROMSG (str "No applicable tactic."))
           else
@@ -104,7 +104,7 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
       let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
       let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
       tclORELSE
-        (restricted_automation_routine 2 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
+        (restricted_automation_routine 3 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
         begin fun _ ->
           if shield && !automation_shield then (Tacticals.tclZEROMSG (str "No applicable tactic."))
           else

@@ -61,7 +61,7 @@ Abort.
 
 (** Test 4: fails if previous statement is not a contraditcion 
     to some earlier statement. *)
-Variable P Q : Prop.
+Variable P Q A : Prop.
 Goal P -> Q.
     intro H.
     Fail Contradiction.
@@ -75,9 +75,9 @@ Abort.
 
 (* Test 6: Fail to circumvent shielding by attempting to 
     ask automation to find proof of ~~goal. *)
-Goal P -> (P -> Q) -> P /\ Q.
+Goal P -> (P -> A) -> (A -> Q) -> P /\ Q.
 Proof.
-    intros Hp H.
+    intros Hp H1 H2.
     Fail We conclude that (P /\ Q).
     We argue by contradiction.
     Assume that (~ (P /\ Q)).

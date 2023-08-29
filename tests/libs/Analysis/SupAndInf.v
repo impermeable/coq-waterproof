@@ -45,12 +45,23 @@ Proof.
   By definition_non_empty it suffices to show that ([0,1] is non-empty).
 Abort.
 
-(* Test 3: expand larger definition in goal *)
+(* Test 3a: expand larger definition in goal *)
 Goal sup [0,1] = 1.
 Proof.
   assert ([0,1] is non-empty) by admit.
   assert ([0,1] is bounded from above) by admit.
   Time By definition_supremum it suffices to show that 
+    (1 is an upper bound for [0,1] 
+      ∧ (for all L : R, L is an upper bound for [0,1] -> 1 <= L)).
+Abort.
+
+(* Test 3b: expand larger definition in hyp *)
+Goal sup [0,1] = 1 -> False.
+Proof.
+  intro H.
+  assert ([0,1] is non-empty) by admit.
+  assert ([0,1] is bounded from above) by admit.
+  Time By definition_supremum it holds that 
     (1 is an upper bound for [0,1] 
       ∧ (for all L : R, L is an upper bound for [0,1] -> 1 <= L)).
 Abort.
