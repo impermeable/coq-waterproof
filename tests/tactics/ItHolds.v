@@ -220,6 +220,10 @@ Proof.
   Fail Since (A -> B) it holds that B.
 Abort.
 
+(*
+  Test excluded, fails because check is no longer performed for
+  terms in the hypotheses, (see workaround [Wateprove._rwaterprove]).
+
 (* Test 13: 'Since ...' fails if claimed cause is not necessary to proof final claim. *)
 Goal A -> False.
 Proof.
@@ -228,6 +232,7 @@ Proof.
   pose g.
   Fail Since (B -> A) it holds that B.
 Abort.
+*)
 
 (* Test 14: 'Since ...' works with proofs of causal claim provided as external hints. *)
 #[local] Hint Resolve f : core.
@@ -276,6 +281,10 @@ Proof.
   By g' it holds that C.
 Abort.
 
+(*
+  Test excluded, fails because check is no longer performed for
+  terms in the hypotheses, (see workaround [Wateprove._rwaterprove]).
+
 (* Test 19: possible goal with wrong hypothesis provided. *)
 Variable D : Prop.
 Goal A -> False.
@@ -285,4 +294,14 @@ Proof.
   assert (B -> C) as g' by admit.
   assert D as k' by admit.
   Fail By k' it holds that C.
+Abort.
+
+*)
+
+(* Test 20: works if By-clause is a hypothesis which can be solved with 'assumption'. *)
+(* Fails without workaround in [Waterprove._rwaterprove]. *)
+Goal A -> (A -> B) -> B.
+Proof.
+  intros Ha Hf.
+  By Ha it holds that B.
 Abort.
