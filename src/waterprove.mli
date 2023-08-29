@@ -68,5 +68,5 @@ val rwaterprove :
 (** 
   Sends a warning
 *)
-val print_warning :
+val warn :
   Pp.t -> unit Proofview.tactic

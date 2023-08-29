@@ -22,5 +22,5 @@ Require Import Waterproof.Util.MessagesToUser.
 
 Lemma test : 0 = 0.
 Proof.
-  print_warning_ffi (Message.of_string "This warning _should_ be printed.").
+  warn (Message.of_string "This warning _should_ be printed.").
 Abort.

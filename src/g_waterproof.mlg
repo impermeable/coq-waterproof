@@ -193,7 +193,7 @@ let () =
       end >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
-  define1 "print_warning_external" pp @@ 
+  define1 "warn_external" pp @@ 
     fun input ->
-      print_warning input >>= fun () -> tclUNIT @@ of_unit ()
+      warn input >>= fun () -> tclUNIT @@ of_unit ()
 }
