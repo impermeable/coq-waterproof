@@ -51,4 +51,25 @@ Goal forall x : R, (& x < 5 = 2 + 3) -> (x < 5).
   auto with wp_reals.
 Qed.
 
+(** ** Testcases to deal with Rabs Rmin Rmax *)
+
+Goal forall b: R, b > 0 -> - Rmax( 0, 1 - b/2) >= - 1.
+  auto with wp_reals.
+Qed.
+
+Goal forall b: R, b > 0 -> Rmin( 0, -1 + b/2) <= 1.
+  auto with wp_reals.
+Qed.
+
+Goal forall r : R, r > 0 ->
+  | Rmax 0 (1 - r/2) - 1 | = 1 - (Rmax 0 (1 - r/2)).
+  auto with wp_reals.
+Qed.
+
+Goal forall x r : R, r > 0 ->
+  x = Rmax 0 (1 - r/2) -> Rabs (x - 1) < r.
+  intros x r r_gt_0 x_eq_Rmax.
+  auto with wp_reals.
+Qed.
+
 Close Scope R_scope.

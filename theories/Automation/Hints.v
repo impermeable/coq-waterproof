@@ -353,6 +353,7 @@ Create HintDb wp_negation_nat.
 Create HintDb wp_reals.
 
   #[export] Hint Extern 3 => ltac2:(simpl_member_subset ()); lra : wp_reals.
+
   #[export] Hint Extern 3 (pred R _ _) => simpl; lra : wp_reals.
 
   #[export] Hint Extern 3 ( @eq R _ _ ) => ltac2:(simpl_ineq_chains ()); field : wp_reals.
@@ -361,6 +362,19 @@ Create HintDb wp_reals.
   #[export] Hint Extern 3 ( Rge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
   #[export] Hint Extern 3 ( Rlt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
   #[export] Hint Extern 3 ( Rgt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+
+  #[export] Hint Extern 2 ( @eq R _ _ ) => ltac2:(crush_R_abs_min_max ()): wp_reals.
+
+  #[export] Hint Extern 2 ( Rle _ _ ) => ltac2:(crush_R_abs_min_max ()) : wp_reals.
+  #[export] Hint Extern 2 ( Rge _ _ ) => ltac2:(crush_R_abs_min_max ()) : wp_reals.
+  #[export] Hint Extern 2 ( Rlt _ _ ) => ltac2:(crush_R_abs_min_max ()) : wp_reals.
+  #[export] Hint Extern 2 ( Rgt _ _ ) => ltac2:(crush_R_abs_min_max ()) : wp_reals.
+
+  #[export] Hint Extern 3 (~ (Rle _ _) ) => cbn; ltac2:(crush_R_abs_min_max ()) : wp_reals.
+  #[export] Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(crush_R_abs_min_max ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rlt _ _) ) => cbn; ltac2:(crush_R_abs_min_max ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(crush_R_abs_min_max ()); lra : wp_reals.
+  #[export] Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(crush_R_abs_min_max ()); lra : wp_reals.
 
   #[export] Hint Extern 3 (~ (Rle _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
   #[export] Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.

@@ -22,10 +22,10 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import ClassicalChoice.
 
+Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Reals.
 Require Import Notations.
-Require Import Tactics.
 
 #[export] Hint Resolve Rabs_Rabsolu : wp_reals.
 #[export] Hint Resolve Rabs_minus_sym : wp_reals.
@@ -201,7 +201,7 @@ Proof.
     Take n : ℕ; such that (n ≥ n1)%nat.
     Expand the definition of Rabs.
     That is, write the goal as (｜1 / (n + 1) - 0｜ < ε).
-    By Rabs_def1 it suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
+    It suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
     We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
     - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
       We conclude that (& -ε < 0 < / (n + 1) = 1 / (n + 1) - 0).
@@ -264,7 +264,7 @@ Proof.
     }
     Expand the definition of Rabs.
     That is, write the goal as ((if Rcase_abs(b(n) - l) then - (b(n) - l) else b(n) - l) < ε).
-    By Rabs_def1 it suffices to show that (-ε < b n - l < ε).
+    It suffices to show that (-ε < b n - l < ε).
     It holds that (a n ≤ b n ∧ b n ≤ c n).
     We show both (- ε < b n - l) and ( b n - l < ε).
     - We conclude that (& - ε < a n - l <= b n - l).
