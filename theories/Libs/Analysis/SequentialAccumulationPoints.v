@@ -57,7 +57,7 @@ Proof.
   Obtain such an n. It holds that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) (iv).
   Because (iv) both (is_index_seq n) and (Un_cv (fun k ↦ (a(n(k))), x)) hold.
   We need to show that (x ≤ M).
-  By upp_bd_seq_is_upp_bd_lim it suffices to show that (for all k : nat, (a (n k) <= M)).
+  By (upp_bd_seq_is_upp_bd_lim (fun k => a (n k))) it suffices to show that (for all k : nat, (a (n k) <= M)).
   We claim that (for all k : ℕ, (a k) ≤ M) (v).
   { Expand the definition of is_upper_bound in (ii).
     That is, write (ii) as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).

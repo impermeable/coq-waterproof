@@ -196,7 +196,7 @@ Local Parameter A : R -> Prop.
 Goal (~ (exists x : R, A x /\ L < x)) -> (forall x : R, A x ->  ~(L < x)).
 Proof.
   intro H.
-  solve_by_manipulating_negation ().
+  solve_by_manipulating_negation (fun () => ()).
 Qed.
 
 
@@ -210,7 +210,7 @@ Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
   intro H.
-  solve_by_manipulating_negation ().
+  solve_by_manipulating_negation (fun () => ()).
 Qed.
 
 (* Test 23 *)
@@ -221,7 +221,7 @@ Goal (0 = 0) -> (2 = 2) -> ~ (forall eps : R, eps > 0 -> exists delta : R, delta
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
   intros zero_eq_zero two_eq_two H.
-  solve_by_manipulating_negation ().
+  solve_by_manipulating_negation (fun () => ()).
 Qed.
 Close Scope R_scope.
 

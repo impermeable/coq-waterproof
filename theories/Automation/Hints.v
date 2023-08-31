@@ -37,22 +37,28 @@ Require Import Libs.Reals.
 Create HintDb wp_core.
 
   #[export] Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : wp_core.
-  #[export] Hint Resolve eq_sym : wp_core.
+  (* #[export] Hint Resolve eq_sym : wp_core. *) 
+  (* including [eq_sym] slows down automation significantly, and we can apparantly do without :)
+    [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => congruence : wp_core.
-  #[export] Hint Extern 0 (total_statement _) => repeat split; cbn : wp_core. 
+  #[export] Hint Extern 2 => ltac2:(simpl_ineq_chains ()) : wp_core.
+
+(** * Definitions *)
+
+Create HintDb wp_definitions.
 
 (** * Classical logic *)
 
 Create HintDb wp_classical_logic.
+(* Taken care of by [wp_negation_logic] / [wp_negation_...] *)
 
-  #[export] Hint Resolve not_ex_all_not : wp_classical_logic.
-  #[export] Hint Resolve ex_not_not_all : wp_classical_logic.
-  #[export] Hint Resolve all_not_not_ex : wp_classical_logic.
-  #[export] Hint Resolve not_all_not_ex : wp_classical_logic.
-  #[export] Hint Resolve not_all_ex_not : wp_classical_logic.
-  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
+(** * Logical negation  *)
+
+Create HintDb wp_negation_logic.
+
+  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ())) : wp_negation_logic.
 
 (** * Constructive logic *)
 
@@ -72,7 +78,7 @@ Create HintDb wp_decidability_classical.
 
 (** * Natural numbers decidability *)
 
-Create HintDb wp_decidability_classical.
+Create HintDb wp_decidability_nat.
 
   #[export] Hint Resolve Nat.eq_dec : wp_decidability_nat.
 
@@ -99,6 +105,12 @@ Create HintDb wp_decidability_reals.
 
   (** <<x < y>>, <<x = y>> or <<y < x>> *)
   #[export] Hint Resolve total_order_T : wp_decidability_reals.
+
+  (** lemmas to relate <= with >= and < with > *)
+  #[export] Hint Resolve Rge_le : wp_decidability_reals.
+  #[export] Hint Resolve Rle_ge : wp_decidability_reals.
+  #[export] Hint Resolve Rgt_lt : wp_decidability_reals.
+  #[export] Hint Resolve Rlt_gt : wp_decidability_reals.
 
 
 (** * Real numbers' addition and multiplication *)
@@ -318,34 +330,22 @@ Create HintDb wp_eq_exp.
 
 Create HintDb wp_integers.
 
-  #[export] Hint Extern 3 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ring : wp_integers.
-  #[export] Hint Extern 3 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
-  #[export] Hint Extern 3 ( le _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
-  #[export] Hint Extern 3 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
-  #[export] Hint Extern 3 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
-  #[export] Hint Extern 3 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
+  #[export] Hint Extern 3 ( _ = _ ) => ring : wp_integers.
+  (* lia not needed: already included in zarith hint database *)
 
 
 (** * Integer negation *)
 
 Create HintDb wp_negation_int.
 
-  #[export] Hint Resolve  Zle_not_lt : wp_negation_int.
-  #[export] Hint Resolve  Zlt_not_le : wp_negation_int.
-  #[export] Hint Resolve  Zle_not_gt : wp_negation_int.
-  #[export] Hint Resolve  Zgt_not_le : wp_negation_int.
-  #[export] Hint Resolve  Znot_lt_ge : wp_negation_int.
-  #[export] Hint Resolve  Znot_lt_ge : wp_negation_int.
-  #[export] Hint Resolve  Znot_gt_le : wp_negation_int.
-  #[export] Hint Resolve  Znot_le_gt : wp_negation_int.
+  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lia))) : wp_negation_int.
+
 
 (** * Natural number negation *)
 
 Create HintDb wp_negation_nat.
 
-  #[export] Hint Resolve Nat.le_ngt : wp_negation_nat.
-  #[export] Hint Resolve not_lt : wp_negation_nat.
-  #[export] Hint Resolve not_le : wp_negation_nat.
+  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lia))) : wp_negation_nat.
 
 
 (** * Real numbers *)
@@ -356,12 +356,18 @@ Create HintDb wp_reals.
 
   #[export] Hint Extern 3 (pred R _ _) => simpl; lra : wp_reals.
 
-  #[export] Hint Extern 3 ( @eq R _ _ ) => ltac2:(simpl_ineq_chains ()); field : wp_reals.
+  #[export] Hint Extern 3 ( @eq R _ _ ) => field : wp_reals.
 
-  #[export] Hint Extern 3 ( Rle _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 ( Rge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 ( Rlt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 ( Rgt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
+  #[export] Hint Extern 3 ( Rle _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 3 ( Rge _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 3 ( Rlt _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 3 ( Rgt _ _ ) => lra : wp_reals.
+  
+  #[export] Hint Extern 3 (~ (Rle _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rge _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rlt _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 3 (~ (Rgt _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 3 (~ (@eq R _ _ ) ) => lra : wp_reals.
 
   #[export] Hint Extern 2 ( @eq R _ _ ) => ltac2:(crush_R_abs_min_max ()): wp_reals.
 
@@ -376,16 +382,10 @@ Create HintDb wp_reals.
   #[export] Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(crush_R_abs_min_max ()); lra : wp_reals.
   #[export] Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(crush_R_abs_min_max ()); lra : wp_reals.
 
-  #[export] Hint Extern 3 (~ (Rle _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 (~ (Rge _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 (~ (Rlt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 (~ (Rgt _ _) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-  #[export] Hint Extern 3 (~ (@eq R _ _ ) ) => cbn; ltac2:(simpl_ineq_chains ()); lra : wp_reals.
-
-  #[export] Hint Extern 3 ( Rle _ _ ) => cbn; nra : wp_reals.
-  #[export] Hint Extern 3 ( Rge _ _ ) => cbn; nra : wp_reals.
-  #[export] Hint Extern 3 ( Rlt _ _ ) => cbn; nra : wp_reals.
-  #[export] Hint Extern 3 ( Rgt _ _ ) => cbn; nra : wp_reals.
+  #[export] Hint Extern 3 ( Rle _ _ ) => nra : wp_reals.
+  #[export] Hint Extern 3 ( Rge _ _ ) => nra : wp_reals.
+  #[export] Hint Extern 3 ( Rlt _ _ ) => nra : wp_reals.
+  #[export] Hint Extern 3 ( Rgt _ _ ) => nra : wp_reals.
 
   #[export] Hint Resolve eq_sym : wp_reals.
   #[export] Hint Resolve false_Req : wp_reals.
@@ -435,22 +435,7 @@ Create HintDb wp_reals.
 
 Create HintDb wp_negation_reals.
 
-  #[export] Hint Resolve Rnot_le_lt : wp_negation_reals.
-  #[export] Hint Resolve Rnot_ge_gt : wp_negation_reals.
-  #[export] Hint Resolve Rnot_le_gt : wp_negation_reals.
-  #[export] Hint Resolve Rnot_ge_lt : wp_negation_reals.
-  #[export] Hint Resolve Rnot_lt_le : wp_negation_reals.
-  #[export] Hint Resolve Rnot_gt_le : wp_negation_reals.
-  #[export] Hint Resolve Rnot_gt_ge : wp_negation_reals.
-  #[export] Hint Resolve Rnot_lt_ge : wp_negation_reals.
-
-  #[export] Hint Resolve Rlt_not_le : wp_negation_reals.
-  #[export] Hint Resolve Rgt_not_le : wp_negation_reals.
-  #[export] Hint Resolve Rlt_not_ge : wp_negation_reals.
-  #[export] Hint Resolve Rle_not_lt : wp_negation_reals.
-  #[export] Hint Resolve Rge_not_lt : wp_negation_reals.
-  #[export] Hint Resolve Rle_not_gt : wp_negation_reals.
-  #[export] Hint Resolve Rge_not_gt : wp_negation_reals.
+  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
 
 
 (** * Sets *)
@@ -464,4 +449,4 @@ Create HintDb wp_sets.
 
 Create HintDb wp_intuition.
 
-  #[export] Hint Extern 7 => intuition (auto 2 with core): wp_intuition.
+  #[export] Hint Extern 8 => intuition (auto 2 with core): wp_intuition.

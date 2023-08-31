@@ -194,8 +194,10 @@ Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
     let attempt () :=
       revert $h_id;
       repeat (
-        first [ (* finish proof *)
-            exact id 
+        first [
+            (* finish directly if statements match *)
+            exact id
+            (* try all the different pattern matching to simplify goal *)
           | lazy_match! goal with
             (* without negation *)
             | [ |- (?a \/ ?b) -> (?c \/ ?d)] => apply (or_func $a $b $c $d)
@@ -209,6 +211,7 @@ Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
               apply (ex_func _ $p $q);
               let x_id := Fresh.in_goal @x in
               intro $x_id
+              (* with negation *)
             | [ |- ~(?a \/ ?b) -> (?c /\ ?d)] => apply (not_or_and_func $a $b $c $d)
             | [ |- (?c /\ ?d) -> ~(?a \/ ?b)] => apply (not_or_and_func $a $b $c $d)
             | [ |- ~(?a /\ ?b) -> (?c \/ ?d)] => apply (not_and_or_func $a $b $c $d)
@@ -235,7 +238,7 @@ Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
               intro $x_id
             | [ |- (~~?a) -> ?b] => apply (not_neg_pos_func $a $b)
             | [ |- ?b -> (~~?a)] => apply (pos_not_neg_func $a $b)
-          end
+            end
         ]
       )
     in
@@ -246,7 +249,7 @@ Ltac2 solve_by_manipulating_negation_in (h_id : ident) :=
   end.
 
 
-Ltac2 solve_by_manipulating_negation () :=
+Ltac2 solve_by_manipulating_negation (final_tac : unit -> unit) :=
   match! goal with
-  | [ h : _ |- _ ] => solve_by_manipulating_negation_in h
+  | [ h : _ |- _ ] => progress (solve_by_manipulating_negation_in h; intro $h); final_tac ()
   end.
