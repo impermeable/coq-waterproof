@@ -101,7 +101,39 @@ Ltac2 obtain_according_to_last (var : ident) :=
     "No statement to obtain variable from."))
   end.
 
+(** *
+  Attempts to obtain a variable from a user-specified statement.
+
+  Arguments:
+    - [var : ident], the name of the variable to be obtained.
+    - [hyp : ident], label of the statement the variable should be obtained from.
+  Does:
+    - Destructs the statement [hyp] into the variable [var] and its corresponding property.
+    - Copies the statement [hyp] into a new statement with the same label [hyp]
+      to preserve the statement despite its destruction.
+
+  Raises exceptions:
+    - [ObtainError], if no statement to destruct or if the previous statement was not an
+      existence statement or a sigma type.
+*)
+
+Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
+  let h := Control.hyp hyp in
+  let type_h := get_type h in
+  lazy_match! type_h with
+  | ex  ?pred => copy_and_destruct hyp var
+  | sig ?pred => copy_and_destruct hyp var
+  | _ => Control.zero (ObtainError (concat_list 
+    [of_string "Statement "; of_constr h; of_string " is not of the form 'there exists ...'."]))
+  end.
+
+  
 Ltac2 Notation "Obtain" "such" a(opt("a")) an(opt("an")) var(ident) :=
   panic_if_goal_wrapped ();
   try_out_label var;
   obtain_according_to_last var.
+
+Ltac2 Notation "Obtain" var(ident) "according" "to" hyp(seq("(", ident, ")")):=
+  panic_if_goal_wrapped ();
+  try_out_label var;
+  obtain_according_to var hyp.
