@@ -25,7 +25,7 @@ Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
 Require Import Util.Goals.
-Ltac2 Type exn ::= [ ObtainError(message) ].
+Require Import Util.MessagesToUser.
 
 (** Tries to make the assertion [True] with label [label].
   Throws an error if this fails, i.e. if the label is already used
@@ -81,8 +81,8 @@ Local Ltac2 copy_and_destruct (og_label : ident) (var_label : ident) :=
     - Copies the previous statement into a new statement with the same identifier 
       to preserve the statement despite its destruction.
 
-  Raises exceptions:
-    - [ObtainError], if no statement to destruct or if the previous statement was not an
+  Raises fatal exceptions:
+    - If no statement to destruct or if the previous statement was not an
       existence statement or a sigma type.
 *)
 
@@ -94,11 +94,11 @@ Ltac2 obtain_according_to_last (var : ident) :=
     lazy_match! type_h with
     | ex  ?pred => copy_and_destruct id_h var
     | sig ?pred => copy_and_destruct id_h var
-    | _ => Control.zero (ObtainError (of_string 
-      "Previous statement is not of the form 'there exists ...'."))
+    | _ => throw (of_string 
+      "Previous statement is not of the form 'there exists ...'.")
     end
-  | [ |- _] => Control.zero (ObtainError (of_string 
-    "No statement to obtain variable from."))
+  | [ |- _] => throw (of_string 
+    "No statement to obtain variable from.")
   end.
 
 (** *

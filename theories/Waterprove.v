@@ -18,7 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
-Ltac2 Type exn ::=  [ AutomationFailure (message)
+Ltac2 Type exn ::=  [ Inner
                     | FailedToUse (constr)
                     | FailedToProve (constr) ].
 
@@ -72,7 +72,7 @@ Local Ltac2 in_hypotheses (x : constr) :=
     (* check if xtr_lemma matches h *)
     let h := Control.hyp h_id in
     match Constr.equal x h with
-    | false => Control.zero (AutomationFailure (of_string "inner_error: try next hypothesis."))
+    | false => Control.zero Inner
     | true => true
     end
   | [ |- _ ] => false

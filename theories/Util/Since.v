@@ -22,14 +22,11 @@ Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
 Require Import Util.Constr.
-(* Require Import Util.Goals. *)
-(* Require Import Util.Hypothesis. *)
+Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
 Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
-
-Ltac2 Type exn ::= [ BySinceError(message) ].
 
 Local Ltac2 check_if_not_reference (x : constr) :=
   let type_x := get_type x in
@@ -41,27 +38,27 @@ Local Ltac2 check_if_not_reference (x : constr) :=
     | false => 
       match check_constr_equal type_x constr:(Type) with
       | true => ()
-      | false => Control.zero (BySinceError (concat_list
-        [of_string "Cannot use reference "; of_constr x; of_string " with 'Since'.
-Try 'By "; of_constr x; of_string " ...' instead."]))
+      | false => throw (concat_list
+        [of_string "Cannot use reference "; of_constr x; of_string " with `Since`.
+Try `By "; of_constr x; of_string " ...` instead."])
       end
     end
   end.
 
 Local Ltac2 check_if_not_statement (x : constr) :=
   let err_msg := concat_list
-    [of_string "Cannot use statement "; of_constr x; of_string " with 'By'.
-Try 'Since "; of_constr x; of_string " ...' instead."]
+    [of_string "Cannot use statement "; of_constr x; of_string " with `By`.
+Try `Since "; of_constr x; of_string " ...` instead."]
   in
   let type_x := get_type x in
   match check_constr_equal type_x constr:(Prop) with
-  | true => Control.zero (BySinceError err_msg)
+  | true => throw err_msg
   | false => 
     match check_constr_equal type_x constr:(Set) with
-    | true => Control.zero (BySinceError err_msg)
+    | true => throw err_msg
     | false => 
       match check_constr_equal type_x constr:(Type) with
-      | true => Control.zero (BySinceError err_msg)
+      | true => throw err_msg
       | false => ()
       end
     end
@@ -78,12 +75,7 @@ Try 'Since "; of_constr x; of_string " ...' instead."]
 
 Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
   (* first, check if [claimed_cause] is a statement. *)
-  match Control.case (fun () => 
-    check_if_not_reference claimed_cause)
-  with 
-  | Err exn => Control.zero exn
-  | Val _ => ()
-  end;
+  check_if_not_reference claimed_cause;
   
   let id_cause := Fresh.in_goal @_temp in
   (* attempt to prove [claimed_cause]*)
@@ -92,9 +84,9 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
       (waterprove 1 true Shorten))
   with
   | Err (FailedToProve _) => 
-    Control.zero (AutomationFailure (concat_list 
+    throw (concat_list 
       [of_string "State that "; of_constr claimed_cause; of_string " holds";
-       of_string " before using it in 'Since "; of_constr claimed_cause; of_string " ...'."]))
+       of_string " before using it in `Since ...`."])
   | Err exn => Control.zero exn
   | Val _ => 
     (* use proof of [claimed_cause] in [by_tactic] *)
@@ -106,8 +98,8 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
     | Err (FailedToUse h) => 
       let type_h := (get_type h) in
       clear $id_cause;
-      Control.zero (AutomationFailure (concat_list
-        [of_string "Could not verify this follows from "; of_constr type_h; of_string "."]))
+      throw (concat_list
+        [of_string "Could not verify this follows from "; of_constr type_h; of_string "."])
     | Err exn => clear $id_cause; Control.zero exn
     end
   end.
@@ -121,7 +113,7 @@ Ltac2 wrapper_core_by_tactic (by_tactic : constr -> unit) (xtr_lemma : constr) :
   check_if_not_statement xtr_lemma;
   match Control.case (fun () => by_tactic xtr_lemma) with
   | Val _ => ()
-  | Err (FailedToUse h) => Control.zero (AutomationFailure (concat_list
-      [of_string "Could not verify this follows from "; of_constr h; of_string "."]))
+  | Err (FailedToUse h) => throw (concat_list
+      [of_string "Could not verify this follows from "; of_constr h; of_string "."])
   | Err exn => Control.zero exn
   end.

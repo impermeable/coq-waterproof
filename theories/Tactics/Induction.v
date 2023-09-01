@@ -17,12 +17,11 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
 
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
-
-Ltac2 Type exn ::= [ NaturalInductionError(string) ].
-Ltac2 raise_natind_error (s:string) := Control.zero (NaturalInductionError s).
+Require Import Util.MessagesToUser.
 
 (* Lemma to write Sn in goal induction step as n+1. *)
 Lemma Sn_eq_nplus1 : forall n, S n = n + 1.
@@ -78,8 +77,8 @@ Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
     Does:
         - removes the NaturalInduction.Base.Wrapper from the goal
 
-    Raises Exceptions:
-        - [NaturalInductionError], if the [goal] is the type [t] wrapped in the base case wrapper, 
+    Raises fatal exceptions:
+        - If the [goal] is the type [t] wrapped in the base case wrapper, 
           i.e. the goal is not of the form [NaturalInduction.Base.Wrapper t].
 *)
 Ltac2 base_case (t:constr) :=
@@ -87,9 +86,9 @@ Ltac2 base_case (t:constr) :=
     | [|- NaturalInduction.Base.Wrapper ?v] =>
       match Constr.equal v t with
         | true => apply (NaturalInduction.Base.wrap)
-        | false => raise_natind_error("Wrong goal specified.")
+        | false => throw (of_string "Wrong goal specified.")
       end
-    | [|- _] => raise_natind_error("No need to indicate showing a base case.")
+    | [|- _] => throw (of_string "No need to indicate showing a base case.")
   end.
 
 Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" that(opt("that")) t(constr) := base_case t.
@@ -102,14 +101,14 @@ Ltac2 Notation "We" "first" "show" "the" "base" "case," "namely" that(opt("that"
     Does:
         - removes the NaturalInduction.Step.Wrapper from the goal
 
-    Raises Exceptions:
-        - [NaturalInductionError], if the [goal] is not wrapped in the induction step case wrapper, 
+    Raises fatal exceptions:
+        - If the [goal] is not wrapped in the induction step case wrapper, 
           i.e. the goal is not of the form [NaturalInduction.Step.Wrapper G] for some type [G].
 *)
 Ltac2 induction_step () := 
   lazy_match! goal with
     | [|- NaturalInduction.Step.Wrapper _] => apply (NaturalInduction.Step.wrap)
-    | [|- _] => raise_natind_error("No need to indicate showing an induction step.")
+    | [|- _] => throw (of_string "No need to indicate showing an induction step.")
   end.
 
 Ltac2 Notation "We" "now" "show" "the" "induction" "step" := induction_step ().

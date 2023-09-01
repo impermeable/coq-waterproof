@@ -19,6 +19,7 @@
 From Ltac2 Require Import Ltac2.
 
 Require Import Util.Goals.
+Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
 (* Switch order of decidable goal. *)
@@ -58,7 +59,7 @@ Ltac2 either_or (t1:constr) (t2:constr) :=
         destruct $h_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-      | Err exn => Control.zero (CaseError "Could not find a proof that the first or the second statement holds.")
+      | Err exn => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
     end.
 
 Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
@@ -165,7 +166,7 @@ Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
       Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
       Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
       Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
-    | Err exn => Control.zero (CaseError "Could not find a proof that the first, the second or the third statement holds.")
+    | Err exn => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
   end.
 
 Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) := 

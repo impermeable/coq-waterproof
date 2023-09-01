@@ -26,6 +26,7 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
 Require Import Util.Since.
+Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
 
@@ -63,7 +64,7 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
       (waterprove 5 true Main))
   with
   | Val _ => ()
-  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err (FailedToProve g) => throw (err_msg g)
   | Err exn => Control.zero exn
   end.
 
@@ -87,7 +88,7 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
       (rwaterprove 5 true Main xtr_lemma))
   with
   | Val _ => ()
-  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err (FailedToProve g) => throw (err_msg g)
   | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 
@@ -114,7 +115,7 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
     - [claim: constr], the actual content of the claim to prove.
 
     Raises exception:
-    - [AutomationFailure], if [rwaterprove] fails to prove the claim using the specified lemma.
+    - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
 Ltac2 Notation "By" xtr_lemma(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
@@ -134,7 +135,7 @@ Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label
     - [claim: constr], the actual content of the claim to prove.
 
     Raises exception:
-    - [AutomationFailure], if [rwaterprove] fails to prove the claim using the specified lemma.
+    - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
 Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")")))  :=

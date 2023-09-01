@@ -50,12 +50,12 @@ Qed.
 (** Test 3: This should raise an error, as the goal is not an exists goal *)
 Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
-    assert_raises_error (fun() => Choose (n)).
+    Fail Choose (n).
 Abort.
 
 
 (** Test 4: This should also raise an error, as the goal is not an exists goal *)
 Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
-    assert_raises_error (fun() => Choose m := n).
+    Fail Choose m := n.
 Abort.

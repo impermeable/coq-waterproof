@@ -53,8 +53,7 @@ Qed.
 *)
 Lemma test_we_conclude_2: True.
 Proof.
-    let result () := We conclude that False in
-    assert_raises_error result.
+    Fail We conclude that False.
 Abort.
 
 (** * Test 3

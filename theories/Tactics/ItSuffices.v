@@ -22,7 +22,8 @@ Require Import Ltac2.Message.
 Require Import Util.Init.
 Require Import Util.Goals.
 Require Import Util.Since.
-Require Import Waterprove. (* Defines AutomationFailure exception type. *)
+Require Import Util.MessagesToUser.
+Require Import Waterprove.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
@@ -36,7 +37,7 @@ Local Ltac2 wp_enough (new_goal : constr) :=
     enough $new_goal by (waterprove 5 true Main))
   with
   | Val _ => ()
-  | Err (FailedToProve _) => Control.zero (AutomationFailure err_msg)
+  | Err (FailedToProve _) => throw err_msg
   | Err exn => Control.zero exn
   end.
   
@@ -52,7 +53,7 @@ Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
       (rwaterprove 5 true Main xtr_lemma))
   with
   | Val _ => ()
-  | Err (FailedToProve _) => Control.zero (AutomationFailure err_msg)
+  | Err (FailedToProve _) => throw err_msg
   | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 

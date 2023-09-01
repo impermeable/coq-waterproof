@@ -18,11 +18,12 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
-
-Ltac2 Type exn ::= [ BothStatementsError(string) | InputError(message) ].
+Require Import Util.MessagesToUser.
 
 (**
   Split the proof of a conjuction statement into both of its parts, wraps both the resulting goals in a [StateGoal.Wrapper].
@@ -34,13 +35,13 @@ Ltac2 Type exn ::= [ BothStatementsError(string) | InputError(message) ].
     - splits the conjunction statement into its both parts.
     - wraps both goals in a [StateGoal.Wrapper].
 
-  Raises Exceptions:
-    - [BothStatementsError], if the [goal] is not a conjunction of statments.
+  Raises fatal exceptions:
+    - If the [goal] is not a conjunction of statments.
 *)
 Ltac2 both_directions_and () :=
   lazy_match! goal with 
     | [ |- _ /\ _] => split; Control.enter (fun () => apply StateGoal.unwrap)
-    | [ |- _ ] => Control.zero (BothStatementsError "This is not an 'and' statement, so try another tactic.")
+    | [ |- _ ] => throw (of_string "This is not an 'and' statement, so try another approach.")
   end.
 
 Ltac2 Notation "We" "show" "both" "statements" := 
@@ -52,9 +53,8 @@ Ltac2 Notation "We" "prove" "both" "statements" :=
   both_directions_and ().
 
 Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr) :=
-  concat (concat (concat (of_string "You need to show  ") (of_constr correct))
-    (concat (of_string " instead of ") (of_constr wrong))) (of_string ".").
-
+  concat_list [of_string "You need to show "; of_constr correct;
+    of_string " instead of "; of_constr wrong; of_string "."].
 (**
   Split the proof of a conjuction statement into two specified parts, but also verifies that the parts wrote by the user, in which the goal should split into, are the correct ones.
 
@@ -67,8 +67,8 @@ Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr) :=
     - If it cannot be written, it prints a statement saying what the respective part that does not match should actually be.
     - If the goal is of the form [t /\ s], it is changed to [s /\ t] before splitting.
 
-  Raises Exceptions:
-    - [BothStatementsError], if the [goal] is not a conjunction of the specified statments.
+  Raises fatal exceptions:
+    - If the [goal] is not a conjunction of the specified statments.
 *)
 Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
   lazy_match! goal with
@@ -77,7 +77,7 @@ Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
         | true  =>
           match check_constr_equal t v with
             | true  => split
-            | false => Control.zero (InputError (need_to_show_instead_of_msg v t))
+            | false => throw (need_to_show_instead_of_msg v t)
           end
         | false => (* Otherwise, check if it matches the second part *)
           match check_constr_equal s v with 
@@ -86,20 +86,20 @@ Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
                 | true  =>
                   apply and_comm; (* i.e. switch order *)
                   split
-                | false => Control.zero (InputError (need_to_show_instead_of_msg u t))
+                | false => throw (need_to_show_instead_of_msg u t)
               end
             | false => (* If s does not match anything, check if t matches something *)
               match check_constr_equal t u with 
-                | true  => Control.zero (InputError (need_to_show_instead_of_msg v s))
+                | true  => throw (need_to_show_instead_of_msg v s)
                 | false =>
                   match check_constr_equal t v with 
-                    | true  => Control.zero (InputError (need_to_show_instead_of_msg u s))
-                    | false => Control.zero (InputError (of_string "Neiher of these two statements are what you need to show."))
+                    | true  => throw (need_to_show_instead_of_msg u s)
+                    | false => throw (of_string "Neiher of these two statements are what you need to show.")
                   end
               end
           end
       end
-    | [ |- _ ] => Control.zero (BothStatementsError "This is not an 'and' statement, so try another tactic.")
+    | [ |- _ ] => throw (of_string "This is not an 'and' statement, so try another tactic.")
   end.
 
 

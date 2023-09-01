@@ -17,8 +17,10 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
 
 Require Import Util.Constr.
+Require Import Util.MessagesToUser.
 
 Module Case.
 
@@ -147,12 +149,9 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' '('
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Assume  that  ( A )."
   ).
 
-Ltac2 Type exn ::= [ GoalWrappedError(string) ].
 
 Ltac2 raise_goal_wrapped_error () := 
-  Control.zero (
-    GoalWrappedError "You cannot do this right now, follow the advice in the goal window."
-  ).
+  throw (of_string "You cannot do this right now, follow the advice in the goal window.").
 
 
 (**
@@ -172,7 +171,6 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- _] => ()
   end.
 
-  Ltac2 Type exn ::= [ CaseError(string) | InputError(message) ].
 
 (**
   Removes the Case.Wrapper.
@@ -191,9 +189,9 @@ Ltac2 case (t:constr) :=
     | [|- Case.Wrapper ?v _] =>
       match check_constr_equal v t with
         | true => apply (Case.wrap $v)
-        | false => Control.zero (CaseError "Wrong case specified.")
+        | false => throw (of_string "Wrong case specified.")
       end
-    | [|- _] => Control.zero (CaseError "No need to specify case.")
+    | [|- _] => throw (of_string "No need to specify case.")
   end.
 
 Ltac2 Notation "Case" t(constr) := case t.

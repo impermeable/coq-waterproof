@@ -26,9 +26,9 @@ Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
 Require Import Util.Goals.
+Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
-Ltac2 Type exn ::= [ContradictionError(message)].
 
 (**
   Starts a proof by contradiction.
@@ -74,8 +74,8 @@ Ltac2 contradiction () :=
         assert $p as $id_contra by
           (waterprove 5 true Main))
       with
-      | Err (FailedToProve g) => Control.zero (AutomationFailure (concat_list
-        [of_string "Could not verify that "; of_constr g; of_string "."]))
+      | Err (FailedToProve g) => throw (concat_list
+        [of_string "Could not verify that "; of_constr g; of_string "."])
       | Err exn => Control.zero exn
       | Val _ =>
         let p := Control.hyp id_contra in
@@ -87,14 +87,14 @@ Ltac2 contradiction () :=
       match Control.case (fun () =>
         assert (~ $p) as $id_contra)
       with
-      | Err exn => Control.zero (ContradictionError (concat_list
-        [of_string "Previous statement cannot be negated."]))
+      | Err exn => throw (concat_list
+        [of_string "Previous statement cannot be negated."])
       | Val _ =>
         match Control.case (fun () => Control.focus 1 1 (fun () =>
           (waterprove 5 true Main)))
         with
-        | Err (FailedToProve g) => Control.zero (AutomationFailure (concat_list
-          [of_string "Could not verify that "; of_constr g; of_string "."]))
+        | Err (FailedToProve g) => throw (concat_list
+          [of_string "Could not verify that "; of_constr g; of_string "."])
         | Err exn => Control.zero exn
         | Val _ =>
           let not_p := Control.hyp id_contra in
@@ -103,8 +103,7 @@ Ltac2 contradiction () :=
         end
       end
     end
-  | [ |- _ ] => Control.zero (ContradictionError (of_string 
-    "No statement to contradict."))
+  | [ |- _ ] => throw (of_string "No statement to contradict.")
   end.
 
 Ltac2 Notation "We" "argue" "by" "contradiction" := contra ().
