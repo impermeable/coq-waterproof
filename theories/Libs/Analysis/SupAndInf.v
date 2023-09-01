@@ -536,14 +536,10 @@ Local Ltac2 use_alt_char_sup_in_hyp () :=
 
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_supremum (t : constr) :=
-  lazy_match! t with
-  | context [ sup ?a ] => 
-    let def_with_constraints := get_type constr:(definition_supremum $a) in
-    lazy_match! def_with_constraints with
+  let print_info (def_w_hyps : constr) (alt_w_hyps : constr) :=
+    lazy_match! def_w_hyps with
     | ?h1 -> ?h2 -> ?def =>
-      let alt_char_with_constraints := 
-        get_type constr:(alternative_characterization_supremum $a) in
-      lazy_match! alt_char_with_constraints with
+      lazy_match! alt_w_hyps with
       | _ -> _ -> ?alt_char =>
         print (of_string "");
         print (concat_list ((of_string "Given that ") :: (of_constr h1)
@@ -556,6 +552,29 @@ Local Ltac2 exp_def_supremum (t : constr) :=
         print (concat (of_string "    ") (of_constr alt_char))
       end
     end
+  in
+  lazy_match! t with
+  | context [ sup ?a = ?m ] => 
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        definition_supremum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        alternative_characterization_supremum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps
+  | context [ ?m = sup ?a ] =>
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        definition_supremum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        alternative_characterization_supremum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps  
+  | context [ sup ?a ] => 
+    let def_with_hyps := get_type constr:(definition_supremum $a) in
+    let alt_char_with_hyps := get_type 
+      constr:(alternative_characterization_supremum $a) in
+    print_info def_with_hyps alt_char_with_hyps
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'sup' does not occur in ")
@@ -798,14 +817,10 @@ Proof. apply propositional_extensionality; apply char; assumption. Qed.
                             end) : wp_definitions.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_infimum (t : constr) :=
-  lazy_match! t with
-  | context [ inf ?a ] => 
-    let def_with_constraints := get_type constr:(definition_infimum $a) in
-    lazy_match! def_with_constraints with
+  let print_info (def_w_hyps : constr) (alt_w_hyps : constr) :=
+    lazy_match! def_w_hyps with
     | ?h1 -> ?h2 -> ?def =>
-      let alt_char_with_constraints := 
-        get_type constr:(alternative_characterization_infimum $a) in
-      lazy_match! alt_char_with_constraints with
+      lazy_match! alt_w_hyps with
       | _ -> _ -> ?alt_char =>
         print (of_string "");
         print (concat_list ((of_string "Given that ") :: (of_constr h1)
@@ -818,6 +833,29 @@ Local Ltac2 exp_def_infimum (t : constr) :=
         print (concat (of_string "    ") (of_constr alt_char))
       end
     end
+  in
+  lazy_match! t with
+  | context [ inf ?a = ?m ] => 
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        definition_infimum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        alternative_characterization_infimum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps
+  | context [ ?m = inf ?a ] =>
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        definition_infimum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        alternative_characterization_infimum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps  
+  | context [ inf ?a ] => 
+    let def_with_hyps := get_type constr:(definition_infimum $a) in
+    let alt_char_with_hyps := get_type 
+      constr:(alternative_characterization_infimum $a) in
+    print_info def_with_hyps alt_char_with_hyps
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'inf' does not occur in ")
