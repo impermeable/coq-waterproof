@@ -16,19 +16,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
+Require Export Ltac2.Ltac2.
+Require Import Ltac2.Bool.
+Require Import Ltac2.Init.
+
 Require Import Waterproof.Waterproof.
-Require Import Waterproof.Automation.
-Require Import Waterproof.Waterprove.
-Require Import Ltac2.Ltac2.
 
-Waterproof Enable Automation Core.
-
-Goal forall x: nat, 0 = 0.
-Proof.
-  waterprove 5 false Main.
-Qed.
-
-Goal forall x y: nat, forall f: nat -> nat, x = y -> f (S x) = f (S y).
-Proof.
-  waterprove 5 false Main.
-Qed.
+Ltac2 @ external warn: message -> unit := "coq-waterproof" "warn_external".
+Ltac2 @ external throw: message -> unit := "coq-waterproof" "throw_external".

@@ -24,6 +24,7 @@ Require Import Util.Goals.
 Require Import Util.Init.
 Require Import Util.Since.
 Require Import Waterprove.
+Require Import MessagesToUser.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
@@ -31,9 +32,8 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Ltac2 Type exn ::= [ ConcludeError(message) ]. (* AutomationFailure is defined in [Waterprove].*)
 
 Ltac2 warn_equivalent_goal_given () :=
-  print (of_string 
-"Warning: 
-The statement you provided does not exactly correspond to what you need to show. 
+  warn (of_string 
+"The statement you provided does not exactly correspond to what you need to show. 
 This can make your proof less readable."
   ).
 

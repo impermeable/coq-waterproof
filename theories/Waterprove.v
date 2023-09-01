@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
+Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Ltac2 Type exn ::=  [ AutomationFailure (message)
                     | FailedToUse (constr)
