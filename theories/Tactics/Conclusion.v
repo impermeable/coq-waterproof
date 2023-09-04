@@ -29,8 +29,6 @@ Require Import MessagesToUser.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
-Ltac2 Type exn ::= [ ConcludeError(message) ]. (* AutomationFailure is defined in [Waterprove].*)
-
 Ltac2 warn_equivalent_goal_given () :=
   warn (of_string 
 "The statement you provided does not exactly correspond to what you need to show. 
@@ -66,8 +64,8 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
   Arguments:
     - [sttd_goal: constr], stated goal, the expression that should equal the goal under focus.
     
-  Raises exceptions:
-    - [ConcludeError], if [sttd_goal] is not equivalent to the actual goal under focus, even after rewriting.
+  Raises fatal exceptions:
+    - If [sttd_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
 
 
@@ -89,7 +87,7 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
         let weak_glob_statement := constr:(weak_global_statement $u) in
         match target_equals_goal_judgementally weak_glob_statement with
         | true => ()
-        | false => Control.zero (ConcludeError (wrong_goal_msg sttd_goal))
+        | false => throw (wrong_goal_msg sttd_goal)
         end
       end;
       (* Convert current goal to the given inequality chain.*)
@@ -98,7 +96,7 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
     | _ => 
       match target_equals_goal_judgementally sttd_goal with
       | true => warn_equivalent_goal_given (); change $sttd_goal  
-      | false => Control.zero (ConcludeError (wrong_goal_msg sttd_goal))
+      | false => throw (wrong_goal_msg sttd_goal)
       end
     end
   end.
@@ -110,7 +108,7 @@ Local Ltac2 conclude () :=
   in
   match Control.case (fun () => waterprove 5 true Main) with
   | Val _ => ()
-  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err (FailedToProve g) => throw (err_msg g)
   | Err exn => Control.zero exn
   end.
 
@@ -123,7 +121,7 @@ Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
     rwaterprove 5 true Main xtr_lemma)
   with
   | Val _ => ()
-  | Err (FailedToProve g) => Control.zero (AutomationFailure (err_msg g))
+  | Err (FailedToProve g) => throw (err_msg g)
   | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 

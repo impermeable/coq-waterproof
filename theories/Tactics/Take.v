@@ -18,20 +18,21 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
-
-Ltac2 Type exn ::= [ TakeError(message) ].
+Require Import Util.MessagesToUser.
 
 Local Ltac2 too_many_of_type_message (t : constr) := 
-  concat (concat (of_string "Tried to introduce too many variables of type ") (of_constr t)) (of_string ".").
+  concat_list [of_string "Tried to introduce too many variables of type ";
+    of_constr t; of_string "."].
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
-  concat (concat 
-    (concat (of_string "Expected variable of type ") (of_constr e))
-    (concat (of_string " instead of ") (of_constr t))) (of_string ".").
+  concat_list [of_string "Expected variable of type "; of_constr e;
+    of_string " instead of "; of_constr t; of_string "."].
 
 
 (**
@@ -42,8 +43,8 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
         - [type: constr]: type of the variable [id].
     Does:
         - Introduces the variable [id].
-    Raises Exceptions:
-        - [TakeError], if the current goal does not require the introduction
+    Raises fatal exceptions:
+        - If the current goal does not require the introduction
           of a variable of type [type], including coercions of [type].
 *)
 Local Ltac2 intro_ident (id : ident) (type : constr) :=
@@ -53,9 +54,9 @@ Local Ltac2 intro_ident (id : ident) (type : constr) :=
       (* Check whether we need a variable of type [type], including coercions of [type]. *)
       match check_constr_equal u ct with
         | true  => intro $id
-        | false => Control.zero (TakeError (too_many_of_type_message type))
+        | false => throw (too_many_of_type_message type)
       end
-    | [ |- _] => Control.zero (TakeError (too_many_of_type_message type))
+    | [ |- _] => throw (too_many_of_type_message type)
   end.
 
 
@@ -68,8 +69,8 @@ Local Ltac2 intro_ident (id : ident) (type : constr) :=
   Does:
     - Introduces the variables in [pair].
     
-  Raises Exceptions:
-    - [TakeError], if the current goal does not require the introduction of a variable of type [type], including coercions of [type].
+  Raises fatal exceptions:
+    - If the current goal does not require the introduction of a variable of type [type], including coercions of [type].
 *)
 Local Ltac2 intro_per_type (pair : ident list * constr) :=
   let (ids, type) := pair in 
@@ -83,11 +84,11 @@ Local Ltac2 intro_per_type (pair : ident list * constr) :=
           let ct := get_coerced_type type in
           match check_constr_equal u ct with
             | true  => List.iter (fun id => intro_ident id type) ids
-            | false => Control.zero (TakeError (expected_of_type_instead_of_message u type))
+            | false => throw (expected_of_type_instead_of_message u type)
           end
-        | true  => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+        | true  => throw (of_string "Tried to introduce too many variables.")
       end
-    | [ |- _ ] => Control.zero (TakeError (of_string "Tried to introduce too many variables."))
+    | [ |- _ ] => throw (of_string "Tried to introduce too many variables.")
   end.
 
 
@@ -101,9 +102,9 @@ Local Ltac2 take (x : (ident list * constr) list) :=
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
         | false => List.iter intro_per_type x
-        | true  => Control.zero (TakeError (of_string "`Take ...` cannot be used to prove an implication (⇨). Use `Assume that ...` instead."))
+        | true  => throw (of_string "`Take ...` cannot be used to prove an implication (⇨). Use `Assume that ...` instead.")
       end
-    | [ |- _ ] => Control.zero (TakeError (of_string "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→)."))
+    | [ |- _ ] => throw (of_string "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→).")
   end.
 
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","), ":", constr), "and")) := 

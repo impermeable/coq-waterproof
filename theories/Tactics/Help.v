@@ -18,72 +18,43 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
+Require Import Util.MessagesToUser.
 
-Ltac2 Type exn ::= [ GoalHintError(string) ].
+Ltac2 Type exn ::= [ Inner ].
 
 Local Ltac2 create_forall_message (v_type: constr) :=
-  Message.concat
-    (Message.concat
-      (of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable of type ")
-      (Message.of_constr v_type)
-    )
-    ( of_string ".
-Use ‘Take ... : (...).’."
-    ).
+  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable of type "; of_constr v_type; of_string ".
+Use ‘Take ... : (...).’."].
 
 Local Ltac2 create_implication_message (premise: constr) :=
-  Message.concat
-    (Message.concat
-      (of_string "The goal is to show an implication (⇒).
-Assume the premise ")
-      (Message.of_constr premise)
-    )
-    (of_string ".
-Use ‘Assume that (...).’."
-    ).
+  concat_list [of_string "The goal is to show an implication (⇒).
+Assume the premise "; of_constr premise; of_string ".
+Use ‘Assume that (...).’."].
 
 Local Ltac2 create_function_message (premise: constr) :=
-  Message.concat
-    (Message.concat
-      (of_string "The goal is to construct a map (⇒).
-Introduce an arbitrary variable of type ")
-      (Message.of_constr premise)
-    )
-    ( of_string ".
-Use ‘Take ... : (...).’."
-    ).
+  concat_list [of_string "The goal is to construct a map (⇒).
+Introduce an arbitrary variable of type "; of_constr premise; of_string ".
+Use ‘Take ... : (...).’."].
 
 Local Ltac2 create_exists_message (premise: constr) :=
-    Message.concat
-      (Message.concat
-        (of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable of type ")
-        (Message.of_constr premise)
-      )
-      ( of_string ".
-Use ‘Choose ... := (...).’ or ‘Choose (...).’."
-      ).
+  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable of type "; of_constr premise; of_string ".
+Use ‘Choose ... := (...).’ or ‘Choose (...).’."].
 
 Local Ltac2 create_goal_wrapped_message () := of_string "Follow the advice in the goal window.".
 
 Local Ltac2 create_not_message (negated_type : constr) := 
-  Message.concat
-    (Message.concat
-      (Message.concat
-        (of_string "The goal is to show a negation (¬).
-Assume that the negated expression ")
-        (Message.of_constr negated_type)
-      ) 
-      (of_string " holds, then show a contradiction.")
-    )
-    (of_string "
-Use ‘Assume that (...).’ to do the first step."
-    ).
+  concat_list [of_string "The goal is to show a negation (¬).
+Assume that the negated expression "; of_constr negated_type; 
+of_string " holds, then show a contradiction.
+Use ‘Assume that (...).’ to do the first step."].
 
 (**
   Auxilliary tactic that checks if goal can be shown with minimal automation, i.e. only with core database.
@@ -139,7 +110,7 @@ Show one of the statements, use ‘It suffices to show that (...).’ with the d
     | _ => 
       match Control.case solvable_by_core_auto with
         | Val _ => of_string "The goal can be shown immediately, use ‘We conclude that (...).’."
-        | Err exn => Control.zero (GoalHintError "No hint available for this goal.")
+        | Err exn => Control.zero Inner
       end
   end.
 

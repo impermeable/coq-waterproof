@@ -36,10 +36,10 @@ let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
 *)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   Tacticals.tclFIRST [
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto true depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto true depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto true depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto true depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto false depth lems databases
   ]
 
 (**
@@ -47,10 +47,10 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
 *)
 let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): unit tactic =
   Tacticals.tclFIRST [
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto true depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto true depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto true depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto true depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto false depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto false depth lems databases
   ]
 
 (**

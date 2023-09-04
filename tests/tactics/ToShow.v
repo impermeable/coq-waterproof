@@ -54,6 +54,6 @@ Qed.
 (** Third test: this should raise an error, as the wrong goal is supplied. *)
 Lemma two_is_two: 2 = 2.
 Proof.
-  assert_raises_error (fun () => We need to show (0 = 2)).
+  Fail We need to show (0 = 2).
   reflexivity.
 Qed.

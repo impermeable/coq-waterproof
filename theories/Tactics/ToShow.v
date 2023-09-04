@@ -20,10 +20,9 @@ Require Import Ltac2.Ltac2.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
+Require Import Util.MessagesToUser.
 Require Import Tactics.Unfold.
 Require Import Waterprove.
-
-Ltac2 Type exn ::= [ GoalCheckError(message) ].
 
 Require Import Ltac2.Message.
 
@@ -36,16 +35,15 @@ Require Import Ltac2.Message.
   Does:
     - Prints a confirmation that the goal equals the provided type.
     
-  Raises Exceptions:
-    - [GoalCheckError], if the goal is not syntactically equal to [t].
+  Raises fatal exceptions:
+    - If the goal is not syntactically equal to [t].
 *)
 Local Ltac2 check_goal (t:constr) :=
   lazy_match! goal with
     | [ |- ?g] => 
       match check_constr_equal g t with
         | true => ()
-                  (* print (concat (of_string "The goal is indeed: ") (of_constr t))*)
-        | false => Control.zero (GoalCheckError (of_string "Wrong goal specified."))
+        | false => throw (of_string "Wrong goal specified.")
       end
   end.
 
@@ -60,15 +58,15 @@ Local Ltac2 check_goal (t:constr) :=
   Does: 
     - Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [StateGoal.Wrapper t].
 
-  Raises Exceptions:
-    - [GoalCheckError], if the argument [t] does not match the wrapped goal.
+  Raises fatal exceptions:
+    - If the argument [t] does not match the wrapped goal.
 *)
 Local Ltac2 unwrap_state_goal (t : constr) :=
   lazy_match! goal with
     | [|- StateGoal.Wrapper ?g] =>
       match (check_constr_equal g t) with
         | true  => apply StateGoal.wrap
-        | false => Control.zero (GoalCheckError (of_string "Wrong goal specified."))
+        | false => throw (of_string "Wrong goal specified.")
       end
   end.
 
@@ -88,10 +86,10 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
     - 1,2) Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [ExandDef.Goal.Wrapper t] ([StateGoal.Wrapper t] resp.).
     - 3) Prints a confirmation that the goal equals the provided type.
     
-  Raises Exceptions:
-    - 1) [ExpandDefError], if the argument [t] does not match the wrapped goal.
-    - 2) [GoalCheckError], if the argument [t] does not match the wrapped goal.
-    - 3) [GoalCheckError], if the goal is not convertible to [t].
+  Raises fatal exceptions:
+    - 1) If the argument [t] does not match the wrapped goal.
+    - 2) If the argument [t] does not match the wrapped goal.
+    - 3) If the goal is not convertible to [t].
 *)
 Local Ltac2 to_show (t : constr) :=
   lazy_match! goal with
