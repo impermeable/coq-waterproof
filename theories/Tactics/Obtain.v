@@ -123,8 +123,8 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   lazy_match! type_h with
   | ex  ?pred => copy_and_destruct hyp var
   | sig ?pred => copy_and_destruct hyp var
-  | _ => Control.zero (ObtainError (concat_list 
-    [of_string "Statement "; of_constr h; of_string " is not of the form 'there exists ...'."]))
+  | _ => throw (concat_list 
+    [of_string "Statement "; of_constr h; of_string " is not of the form 'there exists ...'."])
   end.
 
   
