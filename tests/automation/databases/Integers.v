@@ -42,7 +42,7 @@ Qed.
 
 Require Import Lia.
 Goal (& 3 < 4 <= 5).
-  cbn; repeat split; solve [ltac1:(debug auto with wp_core wp_integers)].
+  cbn; repeat split; solve [ltac1:(auto with wp_core wp_integers)].
 Qed.
 
 Goal (& 3 = 3 = 3).
