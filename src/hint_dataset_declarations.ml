@@ -86,36 +86,36 @@ let empty: hint_dataset = {
 let core: hint_dataset = {
   name = "Core";
   main_databases: hint_db_name list = ["core"];
-  decidability_databases: hint_db_name list = ["core"];
+  decidability_databases: hint_db_name list = ["nocore"];
   shorten_databases: hint_db_name list = ["core"];
 }
 
 let algebra: hint_dataset = {
   name = "Algebra";
-  main_databases: hint_db_name list = ["wp_core"; "arith"; "wp_algebra"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "zarith"; "wp_negation_nat"; "wp_negation_int"];
+  main_databases: hint_db_name list = ["wp_core"; "arith"; "zarith"; "wp_algebra"; "wp_integers"; "wp_negation_int"];
   decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_classical"; "wp_decidability_nat"];
-  shorten_databases: hint_db_name list = ["wp_classical_logic"; "wp_constructive_logic"; "wp_core"];
+  shorten_databases: hint_db_name list = ["wp_core"; "wp_negation_int"];
 }
 
 let integers: hint_dataset = {
   name = "Integers";
-  main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "wp_negation_nat"; "wp_negation_int"];
-  decidability_databases: hint_db_name list = ["wp_decidability_nat"];
-  shorten_databases: hint_db_name list = ["wp_classical_logic"];
+  main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_integers"; "wp_negation_int"];
+  decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_nat"];
+  shorten_databases: hint_db_name list = ["wp_core"; "wp_negation_int"];
 }
 
 let reals_and_integers: hint_dataset = {
   name = "RealsAndIntegers";
-  main_databases: hint_db_name list = ["arith"; "zarith"; "real"; "wp_core"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "wp_reals"; "wp_sets"; "wp_negation_nat"; "wp_negation_int"; "wp_negation_reals"];
-  decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_nat"; "wp_decidability_reals"; "wp_core"; "wp_reals"];
-  shorten_databases: hint_db_name list = ["wp_sets"; "wp_classical_logic"];
+  main_databases: hint_db_name list = ["arith"; "zarith"; "real"; "wp_core"; "wp_definitions"; "wp_integers"; "wp_reals"; "wp_negation_reals"];
+  decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_nat"; "wp_decidability_reals"];
+  shorten_databases: hint_db_name list = ["wp_core"; "wp_definitions"; "wp_negation_reals"];
 }
 
 let sets: hint_dataset = {
   name = "Sets";
-  main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_classical_logic"; "wp_constructive_logic"; "wp_integers"; "wp_negation_nat"; "wp_negation_int"];
-  decidability_databases: hint_db_name list = ["wp_decidability_nat"];
-  shorten_databases: hint_db_name list = ["wp_classical_logic"];
+  main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_integers"; "wp_negation_int"];
+  decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_nat"];
+  shorten_databases: hint_db_name list = ["wp_core"; "wp_negation_int"];
 }
 
 let intuition: hint_dataset = {

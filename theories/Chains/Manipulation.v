@@ -26,13 +26,13 @@ Require Export Notations.Sets.
   Writes out an inequality chain as a big conjunction.
 *)
 Ltac2 simpl_ineq_chains () :=
-  repeat (
+  progress (repeat (
     (* TODO: do this in a more structured way *)
     match! goal with
       | [ h : total_statement _ |- _ ] => 
         cbn in $h
     end
-  ).
+  )).
 
 (**
   Iteratively splits all conjunctions in the hypothesis into individual statements.
@@ -53,9 +53,9 @@ Ltac2 split_conjunctions () :=
   where $A := {x : X | (P x) holds}$.
 *)
 Ltac2 simpl_member_subset () :=
-  repeat (
+  progress (repeat (
     match! goal with
       | [ h : (pred _ _) _ |- _ ] => simpl in $h
       | [ |- _ ] => ()
     end
-  ).
+  )).

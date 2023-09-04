@@ -123,11 +123,13 @@ Abort.
 (* Test 11: supremum *)
 Goal False.
   Expand the definition of supremum in (sup [0,1]).
+  Expand the definition of supremum in (1 = sup [0,1]).
 Abort.
 
 (* Test 12: infimum *)
 Goal False.
   Expand the definition of inf in (inf [0,1]).
+  Expand the definition of inf in (0 = inf [0,1]).
   Expand the definition of infimum in (sup [0,1]).
 Abort.
 

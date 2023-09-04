@@ -89,7 +89,7 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
   (* attempt to prove [claimed_cause]*)
   match Control.case (fun () =>
     assert $claimed_cause as $id_cause by
-      (waterprove 0 true Shorten))
+      (waterprove 1 true Shorten))
   with
   | Err (FailedToProve _) => 
     Control.zero (AutomationFailure (concat_list 

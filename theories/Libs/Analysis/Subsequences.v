@@ -28,6 +28,8 @@ Require Import Libs.Negation.
 Require Import Notations.
 Require Import Tactics.
 
+Require Import Waterprove.
+
 Waterproof Enable Automation RealsAndIntegers.
 
 (** ## Creating a subsequence of elements satisfying a certain property
@@ -135,7 +137,6 @@ Proof.
       Because (ii) both (M ≤ g m M)%nat and (P m (a (g m M))) hold.
       We conclude that (P m (a (g m M))).
 Qed.
-
 
 Definition is_increasing (f : ℕ → ℕ) :=
   ∀ k : ℕ, (f k ≤ f (S k))%nat.

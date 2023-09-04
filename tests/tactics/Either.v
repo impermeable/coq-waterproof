@@ -65,12 +65,19 @@ Qed.
             Also tests whether the hypothesis name from the tactic can be chosen flexibly. *)
 Goal forall x : R, x >= 0 -> exists n : nat, INR(n) > x.
   intros x h.
-(*   assert ({0 = x} + {0 < x}).
+  (* assert ({0 = x} + {0 < x}).
   apply sumbool_comm.
   apply Rle_lt_or_eq_dec.
+  apply Rge_le.
+  Locate Rle_lt_or_eq_dec.
+  apply .
+
+  auto with wp_decidability_reals. *)
+  (* apply sumbool_comm.
+  apply Rle_lt_or_eq_dec.
   auto with wp_reals. *)
-  (* assert ({0 < x} + {0 = x}).
-  auto with wp_decidability_reals wp_reals. *)
+  (*assert ({0 < x} + {0 = x}). *)
+  (* auto with wp_decidability_reals wp_reals. *)
   Either (0 = x) or (x > 0).
     - Case (0 = x).
       admit.

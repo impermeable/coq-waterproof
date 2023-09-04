@@ -223,8 +223,10 @@ Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
 intro eps.
 intro eps_gt_0.
 assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
+cbn; repeat split.
 auto with wp_core wp_reals.
 auto with wp_reals.
+auto with wp_core wp_reals.
 Qed.
 
 Close Scope R_scope.

@@ -51,20 +51,42 @@ Local Ltac2 concat_list (ls : message list) : message :=
 (* Definition *)
 Definition is_non_empty (A : R -> Prop) := 
   locked (there exists x : R, A x).
+Notation "'_non_empty_def_type'" := 
+  (fun (A : R -> Prop) => there exists x : R, A x) (at level 69, only parsing).
 Lemma definition_non_empty (A : R -> Prop) :
-  is_non_empty A   <->  there exists x : R, A x.
+  is_non_empty A   <->  _non_empty_def_type A.
 Proof. unfold is_non_empty; rewrite <- lock; reflexivity. Qed.
 (* Hint for using definition *)
 Lemma _rule_def_non_empty 
-  (def : forall A : R -> Prop, is_non_empty A <-> there exists x : R, A x) :
-  is_non_empty   =   fun (A : R -> Prop) => there exists x : R, A x.
+  (def : forall A : R -> Prop, is_non_empty A <-> _non_empty_def_type A) :
+  is_non_empty   =   _non_empty_def_type.
 Proof.
   apply functional_extensionality; intro A.
   apply propositional_extensionality. apply def.
 Qed.
-#[export] Hint Extern 1 => (rewrite _rule_def_non_empty) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_def_non_empty in h end) : wp_reals.
+Local Ltac2 use_def_non_empty_in_goal () :=
+  let def_id := Fresh.in_goal @_temp in
+  enough (forall A : R -> Prop, is_non_empty A <-> _non_empty_def_type A) as $def_id;
+  Control.focus 1 1 (fun () => 
+    let def := Control.hyp def_id in
+    rewrite (_rule_def_non_empty $def); assumption
+  ).
+Local Ltac2 use_def_non_empty_in_hyp () :=
+  match! goal with
+  | [ h : _ |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough (forall A : R -> Prop, is_non_empty A <-> _non_empty_def_type A) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_non_empty $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  end.
+#[export] Hint Extern 1 => ltac2:(use_def_non_empty_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_non_empty_in_hyp ()) : wp_definitions.
+  Notation "A 'is' '_non-empty_'" := (is_non_empty A) (at level 69).
+  Notation "A 'is' 'non-empty'" := (is_non_empty A) (at level 69, only parsing).
+
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_non_empty (t : constr) :=
   lazy_match! t with
@@ -80,30 +102,48 @@ Local Ltac2 exp_def_non_empty (t : constr) :=
 Ltac2 Notation "Expand" "the" "definition" "of" "non-empty" "in" t(constr) := 
   exp_def_non_empty t.
 (* Notation *)
-Notation "A 'is' '_non-empty_'" := (is_non_empty A) (at level 69).
-Notation "A 'is' 'non-empty'" := (is_non_empty A) (at level 69, only parsing).
+
 
 
 (** is an upper bound *)
 (* Definition *)
 Definition is_upper_bound (A : R -> Prop) (M : R) :=
   locked (for all a : R, A a -> a <= M).
+Notation "'_upper_bound_def_type'" := 
+  (fun (A : R -> Prop) (M : R) => for all a : R, A a -> a <= M) (at level 69, only parsing).
 Lemma definition_upper_bound (A : R -> Prop) (M : R) : 
-  is_upper_bound A M   <->   (for all a : R, A a -> a <= M).
+  is_upper_bound A M   <->   _upper_bound_def_type A M.
 Proof. unfold is_upper_bound; rewrite <- lock; reflexivity. Qed.
 (* Hint for using definition *)
 Lemma _rule_def_upper_bound 
   (def : forall (A : R -> Prop) (M : R), 
-    is_upper_bound A M <-> (for all a : R, A a -> a <= M)) :
-  is_upper_bound   =   fun (A : R -> Prop) (M : R) => forall a : R, A a -> a <= M.
+    is_upper_bound A M <-> _upper_bound_def_type A M) :
+  is_upper_bound   =   _upper_bound_def_type.
 Proof.
   apply functional_extensionality; intro A.
   apply functional_extensionality; intro M.
   apply propositional_extensionality; apply def.
 Qed.
-#[export] Hint Extern 1 => (rewrite -> _rule_def_upper_bound) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_def_upper_bound in h end) : wp_reals.
+Local Ltac2 use_def_upper_bound_in_goal () :=
+  let def_id := Fresh.in_goal @_temp in
+  enough (forall (A : R -> Prop) (M : R), is_upper_bound A M <-> _upper_bound_def_type A M) as $def_id;
+  Control.focus 1 1 (fun () => 
+    let def := Control.hyp def_id in
+    rewrite (_rule_def_upper_bound $def); assumption
+  ).
+Local Ltac2 use_def_upper_bound_in_hyp () :=
+  match! goal with
+  | [ h : _ |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough (forall (A : R -> Prop) (M : R), is_upper_bound A M <-> _upper_bound_def_type A M) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_upper_bound $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  end.
+#[export] Hint Extern 1 => ltac2:(use_def_upper_bound_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_upper_bound_in_hyp ()) : wp_definitions.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_upper_bound (t : constr) :=
   lazy_match! t with
@@ -129,22 +169,41 @@ Notation "M 'is' 'an' 'upper' 'bound' 'for' A" :=
 (* Definition *)
 Definition is_lower_bound (A : R -> Prop) (m : R) :=
     locked (for all a : R, A a -> m <= a).
-Lemma definition_lower_bound (A : R -> Prop) (m : R) :
-  is_lower_bound A m   <->   (for all a : R, A a -> m <= a).
+Notation "'_lower_bound_def_type'" := 
+  (fun (A : R -> Prop) (m : R) => for all a : R, A a -> m <= a) (at level 69, only parsing).
+Lemma definition_lower_bound (A : R -> Prop) (M : R) : 
+  is_lower_bound A M   <->   _lower_bound_def_type A M.
 Proof. unfold is_lower_bound; rewrite <- lock; reflexivity. Qed.
 (* Hint for using definition *)
 Lemma _rule_def_lower_bound 
-  (def : forall (A : R -> Prop) (m : R), 
-    is_lower_bound A m <-> (for all a : R, A a -> m <= a)) :
-  is_lower_bound   =   fun (A : R -> Prop) (m : R) => forall a : R, A a -> m <= a.
+  (def : forall (A : R -> Prop) (M : R), 
+    is_lower_bound A M <-> _lower_bound_def_type A M) :
+  is_lower_bound   =   _lower_bound_def_type.
 Proof.
   apply functional_extensionality; intro A.
-  apply functional_extensionality; intro m.
+  apply functional_extensionality; intro M.
   apply propositional_extensionality; apply def.
 Qed.
-#[export] Hint Extern 1 => (rewrite -> _rule_def_lower_bound) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_def_lower_bound in h end) : wp_reals.
+Local Ltac2 use_def_lower_bound_in_goal () :=
+  let def_id := Fresh.in_goal @_temp in
+  enough (forall (A : R -> Prop) (M : R), is_lower_bound A M <-> _lower_bound_def_type A M) as $def_id;
+  Control.focus 1 1 (fun () => 
+    let def := Control.hyp def_id in
+    rewrite (_rule_def_lower_bound $def); assumption
+  ).
+Local Ltac2 use_def_lower_bound_in_hyp () :=
+  match! goal with
+  | [ h : _ |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough (forall (A : R -> Prop) (M : R), is_lower_bound A M <-> _lower_bound_def_type A M) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_lower_bound $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  end.
+#[export] Hint Extern 1 => ltac2:(use_def_lower_bound_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_lower_bound_in_hyp ()) : wp_definitions.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_lower_bound (t : constr) :=
   lazy_match! t with
@@ -170,21 +229,39 @@ Notation "m 'is' 'a' 'lower' 'bound' 'for' A" :=
 (* Definition *)
 Definition is_bounded_above (A : R -> Prop) :=
   locked (there exists M : ℝ, is_upper_bound A M).
-Lemma definition_bounded_above (A : R -> Prop) : 
-  is_bounded_above A   <->   there exists M : ℝ, is_upper_bound A M.
+Notation "'_bounded_above_def_type'" := 
+  (fun (A : R -> Prop) => there exists M : ℝ, is_upper_bound A M) (at level 69, only parsing).
+Lemma definition_bounded_above (A : R -> Prop) :
+  is_bounded_above A   <->  _bounded_above_def_type A.
 Proof. unfold is_bounded_above; rewrite <- lock; reflexivity. Qed.
 (* Hint for using definition *)
 Lemma _rule_def_bounded_above 
-  (def : forall (A : R -> Prop),
-    is_bounded_above A <-> there exists M : ℝ, is_upper_bound A M) :
-  is_bounded_above   =   fun (A : R -> Prop) => there exists M : ℝ, is_upper_bound A M.
+  (def : forall A : R -> Prop, is_bounded_above A <-> _bounded_above_def_type A) :
+  is_bounded_above   =   _bounded_above_def_type.
 Proof.
   apply functional_extensionality; intro A.
-  apply propositional_extensionality; apply def.
+  apply propositional_extensionality. apply def.
 Qed.
-#[export] Hint Extern 1 => (rewrite _rule_def_bounded_above) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_def_bounded_above in h end) : wp_reals.
+Local Ltac2 use_def_bounded_above_in_goal () :=
+  let def_id := Fresh.in_goal @_temp in
+  enough (forall A : R -> Prop, is_bounded_above A <-> _bounded_above_def_type A) as $def_id;
+  Control.focus 1 1 (fun () => 
+    let def := Control.hyp def_id in
+    rewrite (_rule_def_bounded_above $def); assumption
+  ).
+Local Ltac2 use_def_bounded_above_in_hyp () :=
+  match! goal with
+  | [ h : _ |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough (forall A : R -> Prop, is_bounded_above A <-> _bounded_above_def_type A) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_bounded_above $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  end.
+#[export] Hint Extern 1 => ltac2:(use_def_bounded_above_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_bounded_above_in_hyp ()) : wp_definitions.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_bounded_above (t : constr) :=
   lazy_match! t with
@@ -210,21 +287,39 @@ Notation "A 'is' 'bounded' 'from' 'above'" :=
 (* Definition *)
 Definition is_bounded_below (A : R -> Prop) :=
   locked (there exists m : ℝ, is_lower_bound A m).
-Lemma definition_bounded_below (A : R -> Prop) : 
-  is_bounded_below A   <->   there exists m : ℝ, is_lower_bound A m.
+Notation "'_bounded_below_def_type'" := 
+  (fun (A : R -> Prop) => there exists m : ℝ, is_lower_bound A m) (at level 69, only parsing).
+Lemma definition_bounded_below (A : R -> Prop) :
+  is_bounded_below A   <->  _bounded_below_def_type A.
 Proof. unfold is_bounded_below; rewrite <- lock; reflexivity. Qed.
 (* Hint for using definition *)
 Lemma _rule_def_bounded_below 
-  (def : forall (A : R -> Prop),
-    is_bounded_below A <-> there exists m : ℝ, is_lower_bound A m) :
-  is_bounded_below   =   fun (A : R -> Prop) => (there exists m : ℝ, is_lower_bound A m).
+  (def : forall A : R -> Prop, is_bounded_below A <-> _bounded_below_def_type A) :
+  is_bounded_below   =   _bounded_below_def_type.
 Proof.
   apply functional_extensionality; intro A.
-  apply propositional_extensionality; apply def.
+  apply propositional_extensionality. apply def.
 Qed.
-#[export] Hint Extern 1 => (rewrite _rule_def_bounded_below) : wp_reals.
-#[export] Hint Extern 1 => (match goal with | h : _ |- _ => 
-                              rewrite _rule_def_bounded_below in h end) : wp_reals.
+Local Ltac2 use_def_bounded_below_in_goal () :=
+  let def_id := Fresh.in_goal @_temp in
+  enough (forall A : R -> Prop, is_bounded_below A <-> _bounded_below_def_type A) as $def_id;
+  Control.focus 1 1 (fun () => 
+    let def := Control.hyp def_id in
+    rewrite (_rule_def_bounded_below $def); assumption
+  ).
+Local Ltac2 use_def_bounded_below_in_hyp () :=
+  match! goal with
+  | [ h : _ |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough (forall A : R -> Prop, is_bounded_below A <-> _bounded_below_def_type A) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_bounded_below $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  end.
+#[export] Hint Extern 1 => ltac2:(use_def_bounded_below_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_bounded_below_in_hyp ()) : wp_definitions.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_bounded_below (t : constr) :=
   lazy_match! t with
@@ -260,11 +355,14 @@ Definition sup (A : R -> Prop) := locked (
     end
   end
 ).
+Notation "'_sup_def_type'" := 
+  (fun (A : R -> Prop) (M : R) => 
+    M is an upper bound for A
+    ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) (at level 69, only parsing).
 
 Lemma definition_supremum (A : R -> Prop) 
   (H1A : A is non-empty) (H2A : A is bounded from above) (M : R) :
-  sup A = M   ⇔   M is an upper bound for A
-                  ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L).
+  sup A = M   ⇔   _sup_def_type A M.
 Proof.
   pose definition_non_empty as _def1;
   pose definition_upper_bound as _def2;
@@ -290,9 +388,10 @@ Proof.
         We conclude that (M' = M).
     + By (not_A_bound) it holds that
         (¬ (there exists M : ℝ, M is an upper bound for A)).
+      clear _def3.
       Contradiction.
-  - By definition_non_empty it holds that 
-      (there exists x : ℝ, A x).
+  - clear _def1.
+    By definition_non_empty it holds that (there exists x : ℝ, A x).
     Contradiction.
 Qed.
 
@@ -301,26 +400,60 @@ Notation "'sup' A" := (sup A) (at level 10) : R_scope. (* force not using parent
 (* Hints for using definition. *)
 Lemma _rule_def_supremum 
   (A : R -> Prop) (M : R)
-  (def : sup A = M <->
-    M is an upper bound for A ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)) : 
-  (sup A = M)   =   (M is an upper bound for A 
-                      ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)).
+  (def : sup A = M <-> _sup_def_type A M) : 
+  (sup A = M)   =   _sup_def_type A M.
 Proof. apply propositional_extensionality; apply def; assumption. Qed.
-#[export] Hint Extern 1 => (match goal with 
-                            | |- sup ?a = ?m => rewrite (_rule_def_supremum a m)
-                            | |- ?m = sup ?a => symmetry; rewrite (_rule_def_supremum a m)
-                            end) : wp_reals.
-#[export] Hint Extern 1 => (match goal with 
-                            | h : sup ?a = ?m |- _ => rewrite (_rule_def_supremum a m) in h
-                            | h : ?m = sup ?a |- _ => symmetry in h; rewrite (_rule_def_supremum a m) in h
-                            end) : wp_reals.
+Local Ltac2 use_def_sup_in_goal () :=
+  lazy_match! goal with 
+  | [ |- ?m = sup ?a] => symmetry
+  | [ |- _ ] => ()
+  end;
+  lazy_match! goal with 
+  | [ |- sup ?a = ?m] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough ((sup $a = $m) <-> _sup_def_type $a $m) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_supremum $a $m $def); assumption
+    )
+  end.
+
+Local Ltac2 use_def_sup_in_hyp () :=
+  match! goal with
+  | [ h : sup ?a = ?m |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough ((sup $a = $m) <-> _sup_def_type $a $m) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_supremum $a $m $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  | [ h : ?m = ?a |- _ ] =>
+    symmetry in $h;
+    let def_id := Fresh.in_goal @_temp in
+    enough ((sup $a = $m) <-> _sup_def_type $a $m) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_supremum $a $m $def) in $h;
+      let h_constr := Control.hyp h in
+      apply $h_constr
+    )
+  end.
+
+#[export] Hint Extern 1 => ltac2:(use_def_sup_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_sup_in_hyp ()) : wp_definitions.
+
 
 (** Alternative characterization *)
+Notation "'_sup_alt_char_type'" := 
+  (fun (A : R -> Prop) (M : R) => 
+    M is an upper bound for A 
+      ∧ (for all ε : R, ε > 0 -> 
+        there exists a : R, A a ∧ a > M - ε)) (at level 69, only parsing).
+
 Lemma alternative_characterization_supremum (A : R -> Prop) 
   (H1A : A is non-empty) (H2A : A is bounded from above) (M : R) :
-  sup A = M   ⇔   M is an upper bound for A 
-                  ∧ (for all ε : R, ε > 0 -> 
-                      there exists a : R, A a ∧ a > M - ε).
+  sup A = M   ⇔   _sup_alt_char_type A M.
 Proof.
   pose definition_non_empty as _def1;
   pose definition_upper_bound as _def2;
@@ -341,7 +474,7 @@ Proof.
       It holds that (ε <= 0). ↯.
   - Assume that (M is an upper bound for A
       ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)).
-    By definition_supremum it suffices to show that 
+    Time By definition_supremum it suffices to show that 
       (M is an upper bound for A
         ∧ (for all L : ℝ, L is an upper bound for A ⇨ M ≤ L)).
     split.
@@ -356,33 +489,57 @@ Proof.
       It holds that (¬ L is an upper bound for A). ↯.
 Qed.
 
-(* Hints for using definition and alternative characterization. *)
+(* Hints for using alternative characterization. *)
 Lemma _rule_alt_char_supremum 
   (A : R -> Prop) (M : R)
-  (char : sup A = M ⇔ 
-    M is an upper bound for A ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)) :
-  (sup A = M)   =   (M is an upper bound for A
-                      ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a > M - ε)).
+  (char : sup A = M ⇔ _sup_alt_char_type A M) :
+  (sup A = M)   =   (_sup_alt_char_type A M).
 Proof. apply propositional_extensionality; apply char; assumption. Qed.
-#[export] Hint Extern 1 => (match goal with 
-                            | |- sup ?a = ?m => rewrite (_rule_alt_char_supremum a m)
-                            | |- ?m = sup ?a => symmetry; rewrite (_rule_alt_char_supremum a m)
-                            end) : wp_reals.
-#[export] Hint Extern 1 => (match goal with 
-                            | h : sup ?a = ?m |- _ => rewrite (_rule_alt_char_supremum a m) in h
-                            | h : ?m = sup ?a |- _ => symmetry in h; rewrite (_rule_alt_char_supremum a m) in h
-                            end) : wp_reals.
+Local Ltac2 use_alt_char_sup_in_goal () :=
+  lazy_match! goal with 
+  | [ |- ?m = sup ?a] => symmetry
+  | [ |- _ ] => ()
+  end;
+  lazy_match! goal with 
+  | [ |- sup ?a = ?m] =>
+    let alt_char_id := Fresh.in_goal @_temp in
+    enough ((sup $a = $m) <-> _sup_alt_char_type $a $m) as $alt_char_id;
+    Control.focus 1 1 (fun () => 
+      let alt_char := Control.hyp alt_char_id in
+      rewrite (_rule_alt_char_supremum $a $m $alt_char); assumption
+    )
+  end.
+
+Local Ltac2 use_alt_char_sup_in_hyp () :=
+  match! goal with
+  | [ h : sup ?a = ?m |- _ ] =>
+    let alt_char_id := Fresh.in_goal @_temp in
+    enough ((sup $a = $m) <-> _sup_alt_char_type $a $m) as $alt_char_id;
+    Control.focus 1 1 (fun () => 
+      let alt_char := Control.hyp alt_char_id in
+      rewrite (_rule_alt_char_supremum $a $m $alt_char) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  | [ h : ?m = ?a |- _ ] =>
+    symmetry in $h;
+    let alt_char_id := Fresh.in_goal @_temp in
+    enough ((sup $a = $m) <-> _sup_alt_char_type $a $m) as $alt_char_id;
+    Control.focus 1 1 (fun () => 
+      let alt_char := Control.hyp alt_char_id in
+      rewrite (_rule_alt_char_supremum $a $m $alt_char) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  end.
+
+#[export] Hint Extern 1 => ltac2:(use_alt_char_sup_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_alt_char_sup_in_hyp ()) : wp_definitions.
 
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_supremum (t : constr) :=
-  lazy_match! t with
-  | context [ sup ?a ] => 
-    let def_with_constraints := get_type constr:(definition_supremum $a) in
-    lazy_match! def_with_constraints with
+  let print_info (def_w_hyps : constr) (alt_w_hyps : constr) :=
+    lazy_match! def_w_hyps with
     | ?h1 -> ?h2 -> ?def =>
-      let alt_char_with_constraints := 
-        get_type constr:(alternative_characterization_supremum $a) in
-      lazy_match! alt_char_with_constraints with
+      lazy_match! alt_w_hyps with
       | _ -> _ -> ?alt_char =>
         print (of_string "");
         print (concat_list ((of_string "Given that ") :: (of_constr h1)
@@ -395,6 +552,29 @@ Local Ltac2 exp_def_supremum (t : constr) :=
         print (concat (of_string "    ") (of_constr alt_char))
       end
     end
+  in
+  lazy_match! t with
+  | context [ sup ?a = ?m ] => 
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        definition_supremum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        alternative_characterization_supremum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps
+  | context [ ?m = sup ?a ] =>
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        definition_supremum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from above) =>
+        alternative_characterization_supremum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps  
+  | context [ sup ?a ] => 
+    let def_with_hyps := get_type constr:(definition_supremum $a) in
+    let alt_char_with_hyps := get_type 
+      constr:(alternative_characterization_supremum $a) in
+    print_info def_with_hyps alt_char_with_hyps
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'sup' does not occur in ")
@@ -459,10 +639,14 @@ Proof.
   We conclude that (& b <= -l = L).
 Qed.
 
+Notation "'_inf_def_type'" := 
+  (fun (A : R -> Prop) (m : R) => 
+    m is a lower bound for A
+      ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) (at level 69, only parsing).
+
 Lemma definition_infimum (A : R -> Prop) (H1A : A is non-empty)
   (H2A : A is bounded from below) (m : R) :
-  inf A = m   ⇔   m is a lower bound for A
-                   ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m).
+  inf A = m   ⇔   _inf_def_type A m.
 Proof.
   pose definition_bounded_above as _def1;
   pose definition_bounded_below as _def2;
@@ -526,28 +710,61 @@ Proof.
 
 Notation "'inf' A" := (inf A) (at level 10) : R_scope. (* force not using parentheses *)
  
-(* Hints for using definition and alternative characterization. *)
-Lemma _rule_def_infimum
+(* Hints for using definition. *)
+Lemma _rule_def_infimum 
   (A : R -> Prop) (m : R)
-  (def : inf A = m ⇔ 
-    m is a lower bound for A ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)) :
-  (inf A = m)   =   (m is a lower bound for A 
-                      ∧ (for all l : ℝ, l is a lower bound for A ⇨ l ≤ m)).
+  (def : inf A = m <-> _inf_def_type A m) : 
+  (inf A = m)   =   _inf_def_type A m.
 Proof. apply propositional_extensionality; apply def; assumption. Qed.
-#[export] Hint Extern 1 => (match goal with 
-                            | |- inf ?a = ?m => rewrite (_rule_def_infimum a m)
-                            | |- ?m = inf ?a => symmetry; rewrite (_rule_def_infimum a m)
-                            end) : wp_reals.
-#[export] Hint Extern 1 => (match goal with 
-                            | h : inf ?a = ?m |- _ => rewrite (_rule_def_infimum a m) in h
-                            | h : ?m = inf ?a |- _ => symmetry in h; rewrite (_rule_def_infimum a m) in h
-                            end) : wp_reals.
+Local Ltac2 use_def_inf_in_goal () :=
+  lazy_match! goal with 
+  | [ |- ?m = inf ?a] => symmetry
+  | [ |- _ ] => ()
+  end;
+  lazy_match! goal with 
+  | [ |- inf ?a = ?m] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough ((inf $a = $m) <-> _inf_def_type $a $m) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_infimum $a $m $def); assumption
+    )
+  end.
+
+Local Ltac2 use_def_inf_in_hyp () :=
+  match! goal with
+  | [ h : inf ?a = ?m |- _ ] =>
+    let def_id := Fresh.in_goal @_temp in
+    enough ((inf $a = $m) <-> _inf_def_type $a $m) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_infimum $a $m $def) in $h;
+      let h_constr := Control.hyp h in apply $h_constr
+    )
+  | [ h : ?m = ?a |- _ ] =>
+    symmetry in $h;
+    let def_id := Fresh.in_goal @_temp in
+    enough ((inf $a = $m) <-> _inf_def_type $a $m) as $def_id;
+    Control.focus 1 1 (fun () => 
+      let def := Control.hyp def_id in
+      rewrite (_rule_def_infimum $a $m $def) in $h;
+      let h_constr := Control.hyp h in
+      apply $h_constr
+    )
+  end.
+
+#[export] Hint Extern 1 => ltac2:(use_def_inf_in_goal ()) : wp_definitions.
+#[export] Hint Extern 1 => ltac2:(use_def_inf_in_hyp ()) : wp_definitions.
+
+Notation "'_inf_alt_char_type'" := 
+  (fun (A : R -> Prop) (m : R) => 
+    m is a lower bound for A 
+      ∧ (for all ε : R, ε > 0 -> 
+        there exists a : R, A a ∧ a < m + ε)) (at level 69, only parsing).
 
 Lemma alternative_characterization_infimum (A : R -> Prop) 
   (H1A : A is non-empty) (H2A : A is bounded from below) (m : R) :
-  inf A = m   ⇔   m is a lower bound for A 
-                    ∧ (for all ε : R, ε > 0 -> 
-                          there exists a : R, A a ∧ a < m + ε).
+  inf A = m   ⇔   _inf_alt_char_type A m.
 Proof.
   pose definition_non_empty as _def1;
   pose definition_lower_bound as _def2;
@@ -564,7 +781,7 @@ Proof.
       By definition_infimum it holds that
         (for all l : R, l is a lower bound for A -> l <= m) (i).
       It holds that ((m + ε) is a lower bound for A).
-      By (i) it holds that (m >= m + ε).
+      By (i) it holds that (m + ε <= m).
       It holds that (ε <= 0). ↯.
   - Assume that (m is a lower bound for A
       ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a < m + ε)).
@@ -577,9 +794,9 @@ Proof.
       We argue by contradiction. Assume that (¬ l ≤ m).
       It holds that (l > m).
       Define ε := (l - m). It holds that (ε > 0).
-      It holds that (there exists a : R, A a ∧ a < m + (l - m)).
+      It holds that (there exists a : R, A a ∧ a < m + (l - m)) (i).
       It holds that (there exists a : R, A a ∧ a < l).
-      It holds that (¬ (for all a : R, A a -> a >= l)).
+      It holds that (¬ (for all a : R, A a -> l <= a)).
       It holds that (¬ l is a lower bound for A). ↯.
 Qed.
 
@@ -590,24 +807,20 @@ Lemma _rule_alt_char_infimum
   (inf A = m)   =   (m is a lower bound for A 
                       ∧ (for all ε : R, ε > 0 -> there exists a : R, A a ∧ a < m + ε)).
 Proof. apply propositional_extensionality; apply char; assumption. Qed.
-#[export] Hint Extern 1 => (match goal with 
+#[export] Hint Extern 2 => (match goal with 
                             | |- inf ?a = ?m => rewrite (_rule_alt_char_infimum a m)
                             | |- ?m = inf ?a => symmetry; rewrite (_rule_alt_char_infimum a m)
-                            end) : wp_reals.
-#[export] Hint Extern 1 => (match goal with 
+                            end) : wp_definitions.
+#[export] Hint Extern 2 => (match goal with 
                             | h : inf ?a = ?m |- _ => rewrite (_rule_alt_char_infimum a m) in h
                             | h : ?m = inf ?a |- _ => symmetry in h; rewrite (_rule_alt_char_infimum a m) in h
-                            end) : wp_reals.
+                            end) : wp_definitions.
 (* Tactic for expanding definition *)
 Local Ltac2 exp_def_infimum (t : constr) :=
-  lazy_match! t with
-  | context [ inf ?a ] => 
-    let def_with_constraints := get_type constr:(definition_infimum $a) in
-    lazy_match! def_with_constraints with
+  let print_info (def_w_hyps : constr) (alt_w_hyps : constr) :=
+    lazy_match! def_w_hyps with
     | ?h1 -> ?h2 -> ?def =>
-      let alt_char_with_constraints := 
-        get_type constr:(alternative_characterization_infimum $a) in
-      lazy_match! alt_char_with_constraints with
+      lazy_match! alt_w_hyps with
       | _ -> _ -> ?alt_char =>
         print (of_string "");
         print (concat_list ((of_string "Given that ") :: (of_constr h1)
@@ -620,6 +833,29 @@ Local Ltac2 exp_def_infimum (t : constr) :=
         print (concat (of_string "    ") (of_constr alt_char))
       end
     end
+  in
+  lazy_match! t with
+  | context [ inf ?a = ?m ] => 
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        definition_infimum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        alternative_characterization_infimum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps
+  | context [ ?m = inf ?a ] =>
+    let def_with_hyps := get_type 
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        definition_infimum $a h1 h2 $m) in
+    let alt_char_with_hyps := get_type
+      constr:(fun (h1 : $a is non-empty) (h2 : $a is bounded from below) =>
+        alternative_characterization_infimum $a h1 h2 $m) in
+    print_info def_with_hyps alt_char_with_hyps  
+  | context [ inf ?a ] => 
+    let def_with_hyps := get_type constr:(definition_infimum $a) in
+    let alt_char_with_hyps := get_type 
+      constr:(alternative_characterization_infimum $a) in
+    print_info def_with_hyps alt_char_with_hyps
   | _ => 
     print (of_string ""); 
     print (concat (of_string "'inf' does not occur in ")
@@ -696,13 +932,13 @@ Proof.
 Qed.
 
 
-#[export] Hint Resolve _sup_is_upper_bound : wp_reals.
-#[export] Hint Resolve _sup_is_least_upper_bound : wp_reals.
-#[export] Hint Resolve _sup_is_approximated : wp_reals.
+#[export] Hint Resolve _sup_is_upper_bound : wp_definitions.
+#[export] Hint Resolve _sup_is_least_upper_bound : wp_definitions.
+#[export] Hint Resolve _sup_is_approximated : wp_definitions.
 
-#[export] Hint Resolve _inf_is_lower_bound : wp_reals.
-#[export] Hint Resolve _inf_is_largest_lower_bound : wp_reals.
-#[export] Hint Resolve _inf_is_approximated : wp_reals.
+#[export] Hint Resolve _inf_is_lower_bound : wp_definitions.
+#[export] Hint Resolve _inf_is_largest_lower_bound : wp_definitions.
+#[export] Hint Resolve _inf_is_approximated : wp_definitions.
 
 
 (** Advanced lemmas *)

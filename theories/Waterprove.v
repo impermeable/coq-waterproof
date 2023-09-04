@@ -60,7 +60,7 @@ Local Ltac2 contains_shielded_pattern (): bool :=
 Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
   waterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type).
 
-Ltac2 _risky_rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type) (must : constr list) (forbidden : constr list) : unit  :=
+Local Ltac2 _risky_rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type) (must : constr list) (forbidden : constr list) : unit  :=
   rwaterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type) must forbidden.
   
 

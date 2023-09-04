@@ -39,17 +39,17 @@ Proof.
 Qed.
 
 Goal (& 3 < 4 <= 5).
-  auto with wp_core wp_reals.
+  cbn; repeat split; auto with wp_core wp_reals.
 Qed.
 
 Goal (& 3 = 3 = 3).
-  auto with wp_core wp_reals.
+  cbn; repeat split; auto with wp_core wp_reals.
 Qed.
 
 Goal forall x : R, (& x < 5 = 2 + 3) -> (x < 5).
   intro x.
   intro H.
-  auto with wp_reals.
+  auto with wp_core wp_reals.
 Qed.
 
 (** ** Testcases to deal with Rabs Rmin Rmax *)

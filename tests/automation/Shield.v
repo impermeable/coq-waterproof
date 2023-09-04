@@ -126,7 +126,7 @@ Abort.
 (** Testing de Morgan laws. *)
 
 Require Import Waterproof.Libs.Negation.
-#[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation ()) : wp_classical_logic.
+#[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ())) : wp_negation_logic.
 
 (** Level 1 *)
 Local Parameter P1 : R -> Prop.
