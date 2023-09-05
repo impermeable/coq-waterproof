@@ -71,29 +71,25 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
   end.
 
 (**
-  1) If the goal is wrapped in [ExpandDef.Goal.Wrapper], attempt to remove the wrapper.
+  1) If the goal is wrapped in [State.Goal.Wrapper], attempt to remove it.
   
-  2) Else if the goal is wrapped in [State.Goal.Wrapper], attempt to remove it.
-  
-  3) Else, check if the type of the goal is convertible to [t], if so, it replaces the goal by t.
+  2) Else, check if the type of the goal is convertible to [t], if so, it replaces the goal by t.
 
   Arguments:
     - [t: constr]
-      1,2) type matching the wrapped goal.
-      3) any constr to be compared against the goal.
+      1) type matching the wrapped goal.
+      2) any constr to be compared against the goal.
 
   Does:
-    - 1,2) Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [ExandDef.Goal.Wrapper t] ([StateGoal.Wrapper t] resp.).
-    - 3) Prints a confirmation that the goal equals the provided type.
+    - 1) Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [StateGoal.Wrapper t].
+    - 2) Prints a confirmation that the goal equals the provided type.
     
   Raises fatal exceptions:
     - 1) If the argument [t] does not match the wrapped goal.
-    - 2) If the argument [t] does not match the wrapped goal.
-    - 3) If the goal is not convertible to [t].
+    - 2) If the goal is not convertible to [t].
 *)
 Local Ltac2 to_show (t : constr) :=
   lazy_match! goal with
-    | [|- ExpandDef.Goal.Wrapper _] => goal_as t; change $t (*[goal_as] is from unfold.v*)
     | [|- StateGoal.Wrapper _] => unwrap_state_goal t; change $t
     | [|- _] => panic_if_goal_wrapped ();  check_goal t; change $t
   end.

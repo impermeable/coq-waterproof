@@ -27,8 +27,7 @@ Require Import Automation.
 Require Import Libs.Reals.
 Require Import Notations.
 
-#[export] Hint Resolve Rabs_Rabsolu : wp_reals.
-#[export] Hint Resolve Rabs_minus_sym : wp_reals.
+
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
 #[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
@@ -91,8 +90,7 @@ Proof.
     - Case (x <= 0).
       Choose n := 1%nat.
       We claim that (INR 1 > INR 0).
-      { Expand the definition of INR.
-        That is, write the goal as ( 1 > 0 ).
+      { We need to show that ( 1 > 0 ).
         We conclude that (1 > 0).
       }
       It holds that (x <= INR 0).
@@ -189,18 +187,14 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 
 Lemma lim_d_0 : Un_cv d 0.
 Proof.
-    Expand the definition of d.
-    That is, write the goal as (Un_cv(fun n ↦ (1 / (n + 1)), 0)).
-    Expand the definition of Un_cv.
-    That is, write the goal as (for all eps : ℝ, eps > 0 
+    We need to show that (Un_cv (fun n => 1 / (n + 1)) 0).
+    We need to show that (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
     Take ε : ℝ; such that (ε > 0).
     By archimed_mod it holds that (there exists n : ℕ, n > / ε).
     Obtain such an n1. Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
-    Expand the definition of Rabs.
-    That is, write the goal as (｜1 / (n + 1) - 0｜ < ε).
     It suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
     We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
     - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
@@ -216,14 +210,10 @@ Lemma min_1_over_n_plus_1_to_0 :
 Proof.
     By lim_d_0 it holds that (Un_cv d 0).
     By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
-    Expand the definition of opp_seq in (i).
-    That is, write (i) as ( Un_cv (fun n ↦ -d(n), -0)).
-    Expand the definition of d in (i).
-    That is, write (i) as ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    It holds that ( Un_cv (fun n ↦ -d(n), -0)).
+    It holds that ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     It holds that (0 = -0).
-    (* TODO: make transport automatic *)
-    By (eq_ind_r(_, _, fun x => Un_cv (fun n ↦ -(1 / (n + 1)), x), (i))) 
-      it suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    It suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     By (i) we conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
@@ -249,21 +239,15 @@ Proof.
     We claim that (-ε < a n - l).
     { It holds that (n ≥ Na)%nat.
       It holds that (R_dist (a n) l < ε) (iii).
-      Expand the definition of Rabs in (iii).
-      That is, write (iii) as (｜a(n) - l｜ < ε).
       By Rabs_def2 it holds that (a n - l < ε /\ -ε < a n - l).
       We conclude that (-ε < a n - l).
     }
     We claim that (c n - l < ε).
     { It holds that (n ≥ Nc)%nat.
       It holds that (R_dist (c n) l < ε) (iii).
-      Expand the definition of Rabs in (iii).
-      That is, write (iii) as (｜c(n) - l｜ < ε).
       By Rabs_def2 it holds that (c n - l < ε /\ -ε < c n - l).
       We conclude that (c n - l < ε).
     }
-    Expand the definition of Rabs.
-    That is, write the goal as ((if Rcase_abs(b(n) - l) then - (b(n) - l) else b(n) - l) < ε).
     It suffices to show that (-ε < b n - l < ε).
     It holds that (a n ≤ b n ∧ b n ≤ c n).
     We show both (- ε < b n - l) and ( b n - l < ε).
@@ -289,15 +273,12 @@ Proof.
     - Case (M < L).
       Define ε := (L-M).
       It holds that (ε > 0).
-      Expand the definition of Un_cv in (i).
-      That is, write (i) as (for all eps : ℝ, eps > 0 
+      It holds that (for all eps : ℝ, eps > 0 
         ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
         ⇨ ｜ a n - L ｜ < eps).
       It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
       Obtain such an Nn.
-      It holds that (R_dist (a Nn) L < ε) (iv).
-      Expand the definition of Rabs in (iv).
-      That is, write (iv) as (｜a(Nn) - L｜ < ε).
+      It holds that (|a(Nn) - L| < ε).
       By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
       It holds that (- ε < a Nn - L).
       It holds that (a Nn ≤ M).
@@ -339,33 +320,27 @@ Proof.
     Take b : (ℕ → ℝ).
     Take m : ℝ.
     Take l : ℝ.
-    Assume that (Un_cv a m) (i) and (Un_cv b l) (ii).
+    Assume that (Un_cv a m) and (Un_cv b l).
     Assume that (∀ n : ℕ, a n ≤ b n).
     We argue by contradiction.
     Assume that (~ m <= l).
     It holds that (l < m).
     Define ε := ((m - l)/2).
     It holds that (ε > 0).
-    Expand the definition of Un_cv in (ii).
-    That is, write (ii) as (for all eps : ℝ, eps > 0 
+    It holds that (for all eps : ℝ, eps > 0 
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+      ⇨ ｜ a n - m ｜ < eps).
+    It holds that (for all eps : ℝ, eps > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
       ⇨ ｜ b n - l ｜ < eps).
-    Expand the definition of Un_cv in (i).
-    That is, write (i) as (for all eps : ℝ, eps > 0 
-      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
-      ⇨ ｜ a n - m ｜ < eps ).
-    It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (b n) l < ε).
+    It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (a n) m < ε).
     Obtain such an N1.
-    It holds that (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (a n) m < ε).
+    It holds that (∃ N2 : ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (b n) l < ε).
     Obtain such an N2.
     Define N3 := (Nat.max N1 N2).
     We claim that (b N3 < a N3).
-    { It holds that (R_dist (b N3) l < ε)  (v).
-      It holds that (R_dist (a N3) m < ε) (vi).
-      Expand the definition of Rabs in (v).
-      That is, write (v) as (｜b(N3) - l｜ < ε).
-      Expand the definition of Rabs in (vi).
-      That is, write (vi) as ( ｜ a N3 - m ｜ < ε ).
+    { It holds that (|b(N3) - l| < ε).
+      It holds that (|a(N3) - m| < ε).
       By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
       By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).
       We conclude that (& b N3 < l + ε = l + (m - l)/2 
@@ -382,10 +357,9 @@ Definition is_bounded (a : ℕ → ℝ) :=
         |a n - q| ≤ M.
 Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 20).
 Notation "a 'is' 'bounded'" := (is_bounded a) (at level 20, only parsing).
-Local Ltac2 unfold_is_bounded    ()          := unfold is_bounded.
-Local Ltac2 unfold_is_bounded_in (h : ident) := unfold is_bounded in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_is_bounded unfold_is_bounded_in cl.
+Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "in" statement(constr) := 
+  unfold_in_statement unfold_is_bounded (Some "bounded") statement.
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
   ∃ M : ℝ, M > 0 ∧ 
@@ -457,19 +431,17 @@ Definition is_bounded_above (a : ℕ → ℝ) :=
   ∃ M : ℝ, ∀ n : ℕ, a(n) ≤ M.
 Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 20).
 Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 20, only parsing).
-Local Ltac2 unfold_is_bounded_above    ()          := unfold is_bounded_above.
-Local Ltac2 unfold_is_bounded_above_in (h : ident) := unfold is_bounded_above in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_is_bounded_above unfold_is_bounded_above_in cl.
+Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" "in" statement(constr) := 
+  unfold_in_statement unfold_is_bounded_above (Some "bounded above") statement.
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m : ℝ, ∀ n : ℕ, m ≤ a(n).
 Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 20).
 Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 20, only parsing).
-Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
-Local Ltac2 unfold_is_bounded_below_in (h : ident) := unfold is_bounded_below in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
+Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" "in" statement(constr) := 
+  unfold_in_statement unfold_is_bounded_below (Some "bounded below") statement.
 
 
 (** Convergence to +∞ and -∞. *)
@@ -482,12 +454,12 @@ Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
 Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
-Local Ltac2 unfold_diverge_plus_infty ()             := unfold diverges_to_plus_infinity.
-Local Ltac2 unfold_diverge_plus_infty_in (h : ident) := unfold diverges_to_plus_infinity in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_diverge_plus_infty unfold_diverge_plus_infty_in cl.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_diverge_plus_infty unfold_diverge_plus_infty_in cl.
+Local Ltac2 unfold_diverge_plus_infty (statement : constr) := 
+  eval unfold diverges_to_plus_infinity in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" "in" statement(constr) := 
+  unfold_in_statement unfold_diverge_plus_infty (Some "⟶ ∞") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" "in" statement(constr) := 
+  unfold_in_statement unfold_diverge_plus_infty (Some "diverges to ∞") statement.
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) := 
   ∀ M : ℝ,
@@ -498,11 +470,11 @@ Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
 Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
-Local Ltac2 unfold_diverge_minus_infty ()             := unfold diverges_to_minus_infinity.
-Local Ltac2 unfold_diverge_minus_infty_in (h : ident) := unfold diverges_to_minus_infinity in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_diverge_minus_infty unfold_diverge_minus_infty_in cl.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_diverge_minus_infty unfold_diverge_minus_infty_in cl.
+Local Ltac2 unfold_diverge_minus_infty (statement : constr) := 
+  eval unfold diverges_to_minus_infinity in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" "in" statement(constr) := 
+  unfold_in_statement unfold_diverge_minus_infty (Some "⟶ -∞") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" "in" statement(constr) := 
+  unfold_in_statement unfold_diverge_minus_infty (Some "diverges to -∞") statement.
 
 Close Scope R_scope.

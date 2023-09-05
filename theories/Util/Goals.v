@@ -63,11 +63,11 @@ Module NaturalInduction.
 
 End NaturalInduction.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case,' 'namely' ( G )." := 
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case' ( G )." := 
   (NaturalInduction.Base.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  first  show  the  base  case,  namely  ( G )."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  first  show  the  base  case  ( G )."
   ).
 
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' 'the' 'induction' 'step.'" :=

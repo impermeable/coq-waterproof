@@ -141,4 +141,3 @@ tests/util/MessagesToUser.v
 
 ## Libs
 tests/libs/Negation.v
-tests/libs/Analysis/SupAndInf.v

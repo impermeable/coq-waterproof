@@ -60,8 +60,6 @@ Lemma partial_sums_pos_incr :
     Un_growing (partial_sums a).
 Proof.
     Take a : (ℕ → ℝ); such that (∀ n : ℕ, a n ≥ 0).
-    Expand the definition of Un_growing.
-    That is, write the goal as (for all n : ℕ,  partial_sums a n ≤ partial_sums a (S n)).
     We need to show that (for all n : ℕ, partial_sums a n ≤ partial_sums a (S n)).
     Take n : ℕ.
     It holds that (a (S n) ≥ 0).

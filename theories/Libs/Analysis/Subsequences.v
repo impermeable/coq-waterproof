@@ -78,8 +78,7 @@ Lemma created_seq_is_index_seq :
 Proof.
     Take g : (ℕ → ℕ → ℕ).
     Assume that (∀ (m N : ℕ), (g m N ≥ N)%nat) (i).
-    Expand the definition of is_index_seq.
-    That is, write the goal as (for all k : ℕ, (create_seq g k < create_seq g (S k))%nat).
+    We need to show that (for all k : ℕ, (create_seq g k < create_seq g (S k))%nat).
     Take k : ℕ.
     By (i) it holds that (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
     We conclude that (& create_seq g k < g (S k) (S (create_seq g k)) = create_seq g (S k))%nat.
@@ -145,9 +144,8 @@ Lemma incr_loc_to_glob :
     is_increasing g
       ⇒ (∀ k l : ℕ, (k ≤ l)%nat ⇒ (g k ≤ g l)%nat).
 Proof.
-    Take g : (ℕ → ℕ). 
-    Expand the definition of is_increasing.
-    That is, write the goal as ((for all k : ℕ, (g k ≤ g (S k))%nat) 
+    Take g : (ℕ → ℕ).
+    We need to show that ((for all k : ℕ, (g k ≤ g (S k))%nat) 
       ⇨ for all k l : ℕ, (k ≤ l)%nat ⇨ (g k ≤ g l)%nat).
     Assume that (∀ k : ℕ, (g k ≤ g (S k))%nat).
     Take k : ℕ. 
@@ -178,12 +176,10 @@ Qed.
 Lemma index_seq_strictly_incr :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ (is_increasing (fun (k : ℕ) ↦ (n k - k)%nat)).
 Proof.
-    Take n : (ℕ → ℕ); such that (is_index_seq n) (i).
-    Expand the definition of is_increasing.
-    That is, write the goal as (for all k : ℕ, (n k - k ≤ n (S k) - S k)%nat).
+    Take n : (ℕ → ℕ); such that (is_index_seq n).
+    We need to show that (for all k : ℕ, (n(k) - k ≤ n(S(k)) - S(k))%nat).
     Take k : ℕ.
-    Expand the definition of is_index_seq in (i).
-    That is, write (i) as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
+    It holds that (for all k0 : ℕ, (n k0 < n (S k0))%nat).
     It holds that (n k < n (S k))%nat.
     We conclude that (n k - k ≤ n (S k) - S k)%nat.
 Qed.
@@ -193,11 +189,10 @@ Qed.
 Lemma index_seq_grows_0 :
   ∀ n : ℕ → ℕ, is_index_seq n ⇒ ∀ k : ℕ, (n k ≥ k)%nat.
 Proof.
-    Take n : (ℕ → ℕ); such that (is_index_seq n) (i).
+    Take n : (ℕ → ℕ); such that (is_index_seq n).
     induction k as [|k IH].
     - We conclude that (n 0 >= 0)%nat.
-    - Expand the definition of is_index_seq in (i).
-      That is, write (i) as (for all k0 : ℕ, (n k0 < n (S k0))%nat).
+    - It holds that (for all k0 : ℕ, (n k0 < n (S k0))%nat).
       It holds that (n k < n (S k))%nat.
       We conclude that (n (S k) ≥ S k)%nat.
 Qed.
@@ -262,8 +257,8 @@ Lemma seq_of_max_is_increasing :
   ∀ g : ℕ → ℕ, is_increasing (seq_of_max g).
 Proof.
     Take g : (ℕ → ℕ).
-    Expand the definition of is_increasing.
-    That is, write the goal as (for all k : ℕ, (seq_of_max g k ≤ seq_of_max g (S k))%nat).
+    We need to show that
+      (for all k : ℕ, (seq_of_max g k ≤ seq_of_max g (S k))%nat).
     Take k : ℕ.
     We need to show that (seq_of_max g k ≤ Nat.max (g (S k)) (seq_of_max g k))%nat.
     We conclude that (seq_of_max g k ≤ Nat.max (g (S k)) (seq_of_max g k))%nat.
@@ -275,27 +270,21 @@ Lemma elements_le_seq_of_max_pre :
     (g n ≤ seq_of_max g n)%nat.
 Proof.
     Take g : (ℕ → ℕ).
-    induction n as [|n IH_n].
-    (** We first consider the base case $n=0$.*)
-    Expand the definition of seq_of_max.
-    That is, write the goal as ((g 0 ≤ g 0)%nat).
-    (** We need to show that $f( 0 ) \leq f( 0)$.*)
-    We conclude that (g 0 ≤ g 0)%nat.
-    (** Next we consider the general case. We need to show that $f(S(n))\leq \mathsf{seqofmax}(f, S(n))$. *)
-    Expand the definition of seq_of_max.
-    That is, write the goal as ((g (S n) ≤ Nat.max (g (S n))
-     ((fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
-         match l with
-         | 0 => f 0
-         | S k => Nat.max (f l) (seq_of_max f k)
-         end) g n))%nat).
-    (** By the definition of $\mathsf{seqofmax}(f,S(n))$ as the maximum of $f(S(n))$ and another number, this*)
-    We conclude that (g (S n) ≤ Nat.max (g (S n))
-     ((fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
-         match l with
-         | 0 => f 0
-         | S k => Nat.max (f l) (seq_of_max f k)
-         end) g n))%nat.
+    We use induction on n.
+    - We first show the base case (g(0) ≤ seq_of_max(g, 0))%nat.
+      We need to show that (g 0 ≤ g 0)%nat.
+      We conclude that (g 0 ≤ g 0)%nat.
+    - We now show the induction step.
+      Assume that (g(n) <= seq_of_max g n)%nat.
+      We need to show that (g(n + 1) ≤ 
+        (fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
+          match l with
+          | 0 => f(0)
+          | S k => Nat.max(f(l), seq_of_max(f, k))
+          end)(g, n + 1))%nat.
+      It holds that (n + 1 = S n)%nat.
+      It suffices to show that (g(n) ≤ seq_of_max(g, n))%nat.
+      We conclude that (g(n) ≤ seq_of_max(g, n))%nat.
 Qed.
 
 
@@ -329,8 +318,7 @@ Lemma built_seq_is_index_seq :
 Proof.
     Take g : (ℕ → ℕ).
     Assume that (for all k : ℕ, (g k ≥ k)%nat).
-    Expand the definition of is_index_seq.
-    That is, write the goal as (for all k : ℕ, (build_seq g k < build_seq g (S k))%nat).
+    We need to show that (for all k : ℕ, (build_seq g k < build_seq g (S k))%nat).
     Take k : ℕ.
     We need to show that (build_seq g k < g (S (seq_of_max g (build_seq g k))))%nat.
     It holds that (g( S(seq_of_max g (build_seq g k)))≥ S(seq_of_max g (build_seq g k)))%nat.

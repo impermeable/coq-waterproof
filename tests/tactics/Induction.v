@@ -28,9 +28,9 @@ Require Import Waterproof.Util.Assertions.
 Goal forall n : nat, (n = n).
 Proof.
     We use induction on n.
-    - Fail We first show the base case, namely (2 = 2).
-      We first show the base case, namely (0 = 0).
-      Fail We first show the base case, namely (1 = 1).
+    - Fail We first show the base case (2 = 2).
+      We first show the base case (0 = 0).
+      Fail We first show the base case (1 = 1).
       reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
@@ -43,9 +43,9 @@ Goal (0 = 0) -> forall n : nat, (n = n).
 Proof.
     intro n.
     We use induction on k.
-    - Fail We first show the base case, namely (2 = 2).
-      We first show the base case, namely (0 = 0).
-      Fail We first show the base case, namely (1 = 1).
+    - Fail We first show the base case (2 = 2).
+      We first show the base case  (0 = 0).
+      Fail We first show the base case (1 = 1).
       reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
