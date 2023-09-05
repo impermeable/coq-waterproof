@@ -72,25 +72,22 @@ Lemma d'_eq_0 : forall x y : ℝ,
   d_discrete_R x y = 0 -> (Reqb x y) = true.
 Proof.
 Take x, y : ℝ.
-Assume that (d_discrete_R x y = 0) (i).
+Assume that (d_discrete_R x y = 0).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   By Req_true we conclude that (Reqb x y = true).
 
 + Case (x ≠ y).
-  Expand the definition of d_discrete_R in (i).
-  That is, write (i) as ( (if Reqb x y then 0 else 3) = 0).
+  It holds that ((if Reqb(x, y) then 0 else 3) = 0) (i).
   rewrite (Req_false x y n) in i.
-  It holds that (3 ≠ 0).
   Contradiction.
 Qed.
 
 Lemma d'_eq_3 : forall x y : ℝ, d_discrete_R x y = 3 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ. 
-Assume that (d_discrete_R x y = 3) (i).
-Expand the definition of d_discrete_R in (i).
-That is, write (i) as ( (if Reqb x y then 0 else 3) = 3).
+Assume that (d_discrete_R x y = 3).
+It holds that ( (if Reqb x y then 0 else 3) = 3) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   rewrite (Req_true x y e) in i.

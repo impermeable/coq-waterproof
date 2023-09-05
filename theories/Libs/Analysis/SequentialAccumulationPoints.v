@@ -40,29 +40,24 @@ Lemma seq_bdd_seq_acc_pts_bdd :
 Proof.
   Take a : (ℕ → ℝ).
   Assume that (has_ub a) (i).
-  Expand the definition of bound.
-  That is, write the goal as 
+  We need to show that
     (there exists m : ℝ, is_upper_bound (is_seq_acc_pt a) m).
-  Expand the definition of is_upper_bound.
-  That is, write the goal as (there exists m : ℝ,
+  We need to show that (there exists m : ℝ,
     for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ m).
   By (i) it holds that (there exists M : R, is_upper_bound (EUn a) M).
-  Obtain such an M. It holds that (is_upper_bound (EUn a) M) (ii).
+  Obtain such an M. It holds that (is_upper_bound (EUn a) M).
   Choose m := M.
   Take x : ℝ.
-  Assume that (is_seq_acc_pt a x) (iii).
-  Expand the definition of is_seq_acc_pt in (iii).
-  That is, write (iii) as (there exists n : ℕ ⇨ ℕ,
+  Assume that (is_seq_acc_pt a x).
+  It holds that (there exists n : ℕ ⇨ ℕ,
     is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)).
   Obtain such an n. It holds that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) (iv).
   Because (iv) both (is_index_seq n) and (Un_cv (fun k ↦ (a(n(k))), x)) hold.
   We need to show that (x ≤ M).
   By (upp_bd_seq_is_upp_bd_lim (fun k => a (n k))) it suffices to show that (for all k : nat, (a (n k) <= M)).
   We claim that (for all k : ℕ, (a k) ≤ M) (v).
-  { Expand the definition of is_upper_bound in (ii).
-    That is, write (ii) as (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
-    Expand the definition of EUn in (ii).
-    That is, write (ii) as (for all x0 : ℝ,
+  { It holds that (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
+    It holds that (for all x0 : ℝ,
       (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
     Take k : ℕ.
     It suffices to show that (there exists k0 : nat, a k = a k0).
