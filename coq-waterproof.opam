@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "2.0.1+8.17"
+version: "2.0.1+8.17+platform"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
@@ -27,6 +27,21 @@ depends: [
   "ocaml" {>= "4.14.1"}
   "coq" {>= "8.17" & < "8.18"}
   "dune" {>= "3.6."}
+  "dune" {>= "3.6."}
+  "cmdliner"            {           >= "1.1.0"               }
+  "ocamlfind"           {           >= "1.8.0"               }
+  "sexplib"             {           >= "v0.13.0"             }
+  "sexplib0"            {           >= "v0.13.0"             }
+  "ppx_import"          { build   & >= "1.5-3" & < "2.0"     }
+  "ppx_deriving"        {           >= "4.2.1"               }
+  "ppx_sexp_conv"       {           >= "v0.13.0"             }
+  "ppx_compare"         {           >= "v0.13.0"             }
+  "ppx_hash"            {           >= "v0.13.0"             }
+  "yojson"              {           >= "1.7.0"               }
+  "ppx_deriving_yojson" {           >= "3.4"                 }
+  "uri"          { >= "4.2.0" }
+  "dune-build-info" { >= "3.2.0" }
+  "menhir"       { >= "20220210" }
 ]
 
 build: [
