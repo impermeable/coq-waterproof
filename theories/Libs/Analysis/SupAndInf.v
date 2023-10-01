@@ -37,18 +37,24 @@ Notation "M 'is' 'the' 'supremum' 'of' A" := (is_lub A M) (at level 69, only par
 Local Ltac2 unfold_is_lub (statement : constr) := eval unfold is_lub in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "supremum" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_is_lub (Some "supremum") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_lub (Some "supremum") statement.
 
 Notation "A 'is' '_bounded' 'from' 'above_'" := (bound A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69, only parsing).
 Local Ltac2 unfold_bound (statement : constr) := eval unfold bound in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_bound (Some "bounded from above") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "above" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_bound (Some "bounded from above") statement.
 
 Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := (is_upper_bound A M) (at level 69).
 Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := (is_upper_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_upper_bound (statement : constr) := eval unfold is_upper_bound in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_is_upper_bound (Some "upper bound") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "upper" "bound" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_upper_bound (Some "upper bound") statement.
 
 (** Maximum *)
 Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound for A).
@@ -58,7 +64,8 @@ Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only pars
 Local Ltac2 unfold_is_max (statement : constr) := eval unfold is_max in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "maximum" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_is_max (Some "maximum") statement.
-
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "maximum" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_max (Some "maximum") statement.
 
 
 (** ## The completeness axiom
@@ -106,6 +113,8 @@ Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only pars
 Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "infimum" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_is_inf (Some "infimum") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_inf (Some "infimum") statement.
 
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
@@ -113,13 +122,17 @@ Local Ltac2 unfold_is_bounded_below (statement : constr) :=
   eval unfold is_bounded_below in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_is_bounded_below (Some "bounded from below") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_bounded_below (Some "bounded from below") statement.
+  
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_lower_bound (statement : constr) := eval unfold is_lower_bound in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" "in" statement(constr) := 
   Unfold.unfold_in_statement unfold_is_lower_bound (Some "lower bound") statement.
-
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_lower_bound (Some "lower bound") statement.
 
 (** ## Reflection of a subset of ℝ in the origin
 

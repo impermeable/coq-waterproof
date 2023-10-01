@@ -91,7 +91,8 @@ Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at l
 Local Ltac2 unfold_acc_point (statement : constr) := eval unfold is_accumulation_point in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation" "point" "in" statement(constr) := 
   unfold_in_statement unfold_acc_point (Some "accumulation point") statement.
-
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation" "point" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_acc_point (Some "accumulation point") statement.
 
 Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 68).
 
@@ -101,6 +102,8 @@ Local Ltac2 unfold_isol_point (statement : constr) := eval unfold is_isolated_po
 
 Ltac2 Notation "Expand" "the" "definition" "of" "isolated" "point" "in" statement(constr) := 
   unfold_in_statement unfold_isol_point (Some "isolated point") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "isolated" "point" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_isol_point (Some "isolated point") statement.
 
 Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68).
 
@@ -110,6 +113,8 @@ Local Ltac2 unfold_lim_in_point (statement : constr) := eval unfold limit_in_poi
 
 Ltac2 Notation "Expand" "the" "definition" "of" "limit" "in" statement(constr) := 
   unfold_in_statement unfold_lim_in_point (Some "limit") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "limit" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_lim_in_point (Some "limit") statement.
 
 
 Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in _ f a) (at level 68).
@@ -120,6 +125,8 @@ Local Ltac2 unfold_is_cont (statement : constr) := eval unfold is_continuous_in 
 
 Ltac2 Notation "Expand" "the" "definition" "of" "continuous" "in" statement(constr) := 
   unfold_in_statement unfold_is_cont (Some "continuous") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "continuous" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_cont (Some "continuous") statement.
 
 
 Close Scope R_scope.
