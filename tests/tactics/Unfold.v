@@ -126,3 +126,32 @@ Goal False.
 Proof.
    _internal_ Expand the definition of foo2 in 0.
 Abort.
+
+(* Test 13: internal unfold term in statement and throws an error suggesting 
+    to remove line to continue. *)
+Goal False.
+Proof.
+  _internal_ Expand the definition of foo in foo.
+Abort.
+
+(* Test 14: internal unfold term in statement matching goal, and throws an error suggesting 
+  to replace line with 'We need to show that ...'. *)
+Goal foo = 1.
+Proof.
+  _internal_ Expand the definition of foo in (foo = 1).
+Abort.
+
+(* Test 15: internal unfold term in statement matching a hypothesis and throws an error suggesting 
+    to replace line with 'It holds that ...'. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  _internal_ Expand the definition of foo in (foo = 0).
+  _internal_ Expand the definition of foo in (foo = 2).
+Abort.
+
+(* Test 16: internal unfold fails to unfold term in statment without term. *)
+Goal False.
+Proof.
+  _internal_ Expand the definition of foo in 0.
+Abort.
