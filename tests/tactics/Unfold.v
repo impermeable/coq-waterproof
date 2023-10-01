@@ -92,3 +92,37 @@ Goal False.
 Proof.
   Fail Expand the definition of foo2 in 0.
 Abort.
+
+
+(** Check unfolding method that does not throw an error.
+  Meant for internal use by custom Waterproof editor. *)
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_foo (Some "foo2") statement.
+
+(* Test 9: unfold term in statement. *)
+Goal False.
+Proof.
+  _internal_ Expand the definition of foo2 in foo.
+Abort.
+
+(* Test 10: unfold term in statement matching goal, and prints a message suggesting 
+    to replace line with 'We need to show that ...'. *)
+Goal foo = 1.
+Proof.
+  _internal_ Expand the definition of foo2 in (foo = 1).
+Abort.
+
+(* Test 11: unfold term in statement matching a hypothesis and prints a message suggesting 
+    to replace line with 'It holds that ...'. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  _internal_ Expand the definition of foo2 in (foo = 0).
+  _internal_ Expand the definition of foo2 in (foo = 2).
+Abort.
+
+(* Test 12: fails to unfold term in statment without term. *)
+Goal False.
+Proof.
+   _internal_ Expand the definition of foo2 in 0.
+Abort.

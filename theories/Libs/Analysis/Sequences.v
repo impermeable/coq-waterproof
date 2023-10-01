@@ -360,6 +360,8 @@ Notation "a 'is' 'bounded'" := (is_bounded a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "in" statement(constr) := 
   unfold_in_statement unfold_is_bounded (Some "bounded") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_bounded (Some "bounded") statement.
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
   ∃ M : ℝ, M > 0 ∧ 
@@ -434,6 +436,8 @@ Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 20, only p
 Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" "in" statement(constr) := 
   unfold_in_statement unfold_is_bounded_above (Some "bounded above") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_bounded_above (Some "bounded above") statement.
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m : ℝ, ∀ n : ℕ, m ≤ a(n).
@@ -442,7 +446,8 @@ Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 20, only p
 Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" "in" statement(constr) := 
   unfold_in_statement unfold_is_bounded_below (Some "bounded below") statement.
-
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_bounded_below (Some "bounded below") statement.
 
 (** Convergence to +∞ and -∞. *)
 Definition diverges_to_plus_infinity (a : ℕ → ℝ) := 
@@ -458,8 +463,13 @@ Local Ltac2 unfold_diverge_plus_infty (statement : constr) :=
   eval unfold diverges_to_plus_infinity in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" "in" statement(constr) := 
   unfold_in_statement unfold_diverge_plus_infty (Some "⟶ ∞") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_diverge_plus_infty (Some "⟶ ∞") statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" "in" statement(constr) := 
   unfold_in_statement unfold_diverge_plus_infty (Some "diverges to ∞") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_diverge_plus_infty (Some "diverges to ∞") statement.
+  
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) := 
   ∀ M : ℝ,
@@ -474,7 +484,11 @@ Local Ltac2 unfold_diverge_minus_infty (statement : constr) :=
   eval unfold diverges_to_minus_infinity in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" "in" statement(constr) := 
   unfold_in_statement unfold_diverge_minus_infty (Some "⟶ -∞") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_diverge_minus_infty (Some "⟶ -∞") statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" "in" statement(constr) := 
   unfold_in_statement unfold_diverge_minus_infty (Some "diverges to -∞") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_diverge_minus_infty (Some "diverges to -∞") statement.
 
 Close Scope R_scope.

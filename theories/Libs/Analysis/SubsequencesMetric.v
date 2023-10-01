@@ -39,6 +39,8 @@ Local Ltac2 unfold_is_index_sequence (statement : constr) := eval unfold is_inde
 
 Ltac2 Notation "Expand" "the" "definition" "of" "index" "sequence" "in" statement(constr) := 
   unfold_in_statement unfold_is_index_sequence (Some "index sequence") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "index" "sequence" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_index_sequence (Some "index sequence") statement.
 
 
 (** The next definition captures what it means to be an index sequence.*)
@@ -230,12 +232,16 @@ Notation "b 'is' 'a' 'subsequence' 'of' a" := (is_subsequence _ b a) (at level 6
 Local Ltac2 unfold_is_subsequence (statement : constr) := eval unfold is_subsequence in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "subsequence" "in" statement(constr) := 
   unfold_in_statement unfold_is_subsequence (Some "subsequence") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "subsequence" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_subsequence (Some "subsequence") statement.
 
 Notation "p 'is' 'an' '_accumulation' 'point_' 'of' a" := (is_accumulation_point _ p a) (at level 68) : metric_scope.
 Notation "p 'is' 'an' 'accumulation' 'point' 'of' a" := (is_accumulation_point _ p a) (at level 68, only parsing) : metric_scope.
 Local Ltac2 unfold_is_accumulation_point (statement : constr) := eval unfold is_accumulation_point in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" "in" statement(constr) := 
   unfold_in_statement unfold_is_accumulation_point (Some "accumulation point") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation point" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_accumulation_point (Some "accumulation point") statement.
 
 
 #[export] Hint Resolve index_sequence_property : subsequences.

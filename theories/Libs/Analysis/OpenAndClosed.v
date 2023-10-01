@@ -48,9 +48,13 @@ Local Ltac2 unfold_open_ball (statement : constr) := eval unfold open_ball, pred
 
 Ltac2 Notation "Expand" "the" "definition" "of" "B" "in" statement(constr) := 
   unfold_in_statement unfold_open_ball (Some "B") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "B" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_open_ball (Some "B") statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "open" "ball" "in" statement(constr) := 
   unfold_in_statement unfold_open_ball (Some "open ball ") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "ball" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_open_ball (Some "open ball ") statement.
 
 Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 68).
 
@@ -60,6 +64,8 @@ Local Ltac2 unfold_is_interior_point (statement : constr) := eval unfold is_inte
 
 Ltac2 Notation "Expand" "the" "definition" "of" "interior" "point" "in" statement(constr) := 
   unfold_in_statement unfold_is_interior_point (Some "interior point") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "interior" "point" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_interior_point (Some "interior point") statement.
 
 Notation "A 'is' '_open_'" := (is_open A) (at level 68).
 
@@ -69,7 +75,8 @@ Local Ltac2 unfold_is_open (statement : constr) := eval unfold is_open in $state
 
 Ltac2 Notation "Expand" "the" "definition" "of" "open" "in" statement(constr) := 
   unfold_in_statement unfold_is_open (Some "open") statement.
-
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_open (Some "open") statement.
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
@@ -79,9 +86,13 @@ Local Ltac2 unfold_complement (statement : constr) := eval unfold complement, pr
 
 Ltac2 Notation "Expand" "the" "definition" "of" "ℝ\" "in" statement(constr) := 
   unfold_in_statement unfold_complement (Some "ℝ\") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "ℝ\" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_complement (Some "ℝ\") statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "complement" "in" statement(constr) := 
   unfold_in_statement unfold_complement (Some "complement") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "complement" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_complement (Some "complement") statement.
 
 Notation "A 'is' '_closed_'" := (is_closed A) (at level 68).
 
@@ -91,7 +102,8 @@ Local Ltac2 unfold_is_closed (statement : constr) := eval unfold is_closed in $s
 
 Ltac2 Notation "Expand" "the" "definition" "of" "closed" "in" statement(constr) :=
   unfold_in_statement unfold_is_closed (Some "closed") statement.
-
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" "in" statement(constr) :=
+  unfold_in_statement_no_error unfold_is_closed (Some "closed") statement.
 
 (** Hints *)
 Lemma zero_in_interval_closed_zero_open_one : (0 : [0,1)).
