@@ -154,3 +154,7 @@ Ltac2 unfold_in_statement_no_error (unfold_method: constr -> constr)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) "in" statement(constr) :=
   panic_if_goal_wrapped ();
   unfold_in_statement (eval_unfold targets) None statement.
+
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) "in" statement(constr) :=
+  panic_if_goal_wrapped ();
+  unfold_in_statement_no_error (eval_unfold targets) None statement.
