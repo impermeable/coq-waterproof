@@ -22,6 +22,11 @@
 val automation_shield : bool ref
 
 (**
+  Do we want to debug the automation ?   
+*)
+val automation_debug : bool ref
+
+(**
   Waterprove
 
   This function is the main automatic solver of coq-waterproof.
