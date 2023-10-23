@@ -162,6 +162,16 @@ The behavior of the automation tactics can be configured by importing specific f
   Waterproof Set Shorten Databases Foo core.
   ```
 
+* **Turn debugging of automation on**: Example:
+  ```coq
+  Waterproof Enable Debug Automation.
+  ```
+
+* **Turn debugging of automation off**: Example:
+  ```coq
+  Waterproof Disable Debug Automation.
+  ```
+
 ## Chains of (in)equalities
 In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.
 Waterproof allows you to use a similar notation in Coq.
