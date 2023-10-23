@@ -265,3 +265,21 @@ Goal (Case.Wrapper (0 = 1) (0 = 0)).
 Proof.
   Fail We conclude that (0 = 0).
 Abort.
+
+(** * Test 8
+  Test whether we conclude that can solve simple induction proof from 
+  inequality chain.
+*)
+
+Lemma test_induction :
+  forall F : nat -> nat, (forall k : nat, (F(k+1) = F(k))%nat) ->
+    forall k : nat, (F(k) = F(0))%nat.
+Proof.
+  intros F H.
+  We use induction on k.
+  * We first show the base case (F(0%nat) = F(0%nat)).
+    We conclude that (F(0) = F(0))%nat.
+  * We now show the induction step.
+    intro H1.
+    We conclude that (& F(k+1) = F(k) = F(0))%nat.
+Qed.
