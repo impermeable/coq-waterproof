@@ -49,6 +49,20 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND AutomationDebugEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Debug" "Automation" ] ->
+    {
+      automation_debug := true
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationDebugDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Debug" "Automation" ] ->
+    {
+      automation_debug := false
+    }
+END
+
 {
 
 (** Creates a name used to define the function interface *)
