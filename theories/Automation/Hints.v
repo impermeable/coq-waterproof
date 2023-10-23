@@ -36,14 +36,15 @@ Require Import Libs.Reals.
 
 Create HintDb wp_core.
 
-  #[export] Hint Extern 1 ( _ = _ ) => cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ()) : wp_core.
+  (* #[export] Hint Extern 1 ( _ = _ ) => progress(cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ())) : wp_core. *)
   (* #[export] Hint Resolve eq_sym : wp_core. *) 
   (* including [eq_sym] slows down automation significantly, and we can apparantly do without :)
     [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
-  #[export] Hint Extern 1 ( _ = _ ) => congruence : wp_core.
-  #[export] Hint Extern 2 => ltac2:(simpl_ineq_chains ()) : wp_core.
+  (* #[export] Hint Extern 2 ( _ = _ ) => congruence 20 : wp_core. *)
+  #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
+  #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
 
 (** * Definitions *)
 
@@ -331,7 +332,11 @@ Create HintDb wp_eq_exp.
 Create HintDb wp_integers.
 
   #[export] Hint Extern 3 ( _ = _ ) => ring : wp_integers.
-  (* lia not needed: already included in zarith hint database *)
+  #[export] Hint Extern 1 ( @eq nat _  _) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
+  #[export] Hint Extern 1 ( le _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
+  #[export] Hint Extern 1 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
+  #[export] Hint Extern 1 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
+  #[export] Hint Extern 1 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
 
 
 (** * Integer negation *)
@@ -352,22 +357,22 @@ Create HintDb wp_negation_nat.
 
 Create HintDb wp_reals.
 
-  #[export] Hint Extern 3 => ltac2:(simpl_member_subset ()); lra : wp_reals.
+  #[export] Hint Extern 2 => ltac2:(simpl_member_subset ()); lra : wp_reals.
 
-  #[export] Hint Extern 3 (pred R _ _) => simpl; lra : wp_reals.
+  #[export] Hint Extern 1 (pred R _ _) => simpl; lra : wp_reals.
 
   #[export] Hint Extern 3 ( @eq R _ _ ) => field : wp_reals.
 
-  #[export] Hint Extern 3 ( Rle _ _ ) => lra : wp_reals.
-  #[export] Hint Extern 3 ( Rge _ _ ) => lra : wp_reals.
-  #[export] Hint Extern 3 ( Rlt _ _ ) => lra : wp_reals.
-  #[export] Hint Extern 3 ( Rgt _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 1 ( Rle _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 1 ( Rge _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 1 ( Rlt _ _ ) => lra : wp_reals.
+  #[export] Hint Extern 1 ( Rgt _ _ ) => lra : wp_reals.
   
-  #[export] Hint Extern 3 (~ (Rle _ _) ) => lra : wp_reals.
-  #[export] Hint Extern 3 (~ (Rge _ _) ) => lra : wp_reals.
-  #[export] Hint Extern 3 (~ (Rlt _ _) ) => lra : wp_reals.
-  #[export] Hint Extern 3 (~ (Rgt _ _) ) => lra : wp_reals.
-  #[export] Hint Extern 3 (~ (@eq R _ _ ) ) => lra : wp_reals.
+  #[export] Hint Extern 1 (~ (Rle _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 1 (~ (Rge _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 1 (~ (Rlt _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 1 (~ (Rgt _ _) ) => lra : wp_reals.
+  #[export] Hint Extern 1 (~ (@eq R _ _ ) ) => lra : wp_reals.
 
   #[export] Hint Extern 2 ( @eq R _ _ ) => ltac2:(crush_R_abs_min_max ()): wp_reals.
 
