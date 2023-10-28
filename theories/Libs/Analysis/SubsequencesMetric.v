@@ -246,7 +246,7 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation point
 
 #[export] Hint Resolve index_sequence_property : subsequences.
 #[export] Hint Extern 1 => (unfold ge) : subsequences.
-#[export] Hint Resolve double_is_even : subsequences.
+#[export] Hint Resolve double_is_even : wp_integers.
 #[export] Hint Resolve index_sequence_property2 : subsequences.
 
 Close Scope metric_scope.
