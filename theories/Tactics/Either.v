@@ -18,7 +18,9 @@
 
 From Ltac2 Require Import Ltac2.
 
+Require Import Util.Constr.
 Require Import Util.Goals.
+Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
@@ -42,15 +44,25 @@ Qed.
     - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) :=
+  let objective := lazy_match! goal with
+    | [ |- ?u] => 
+      (* Check whether [u] is not a proposition. *)
+      let sort_u := get_value_of_hyp(u) in
+      if (check_constr_equal sort_u constr:(Prop))
+      then constr:($t1 \/ $t2)
+      else constr:({$t1} + {$t2})
+  end
+  in
   let h_id := Fresh.in_goal @_temp in
   let attempt () :=
-    assert ({$t1} + {$t2}) as $h_id;
+    assert $objective as $h_id;
     Control.focus 1 1 (fun () => 
-      let automation () := waterprove 3 false Decidability in
+      let automation () := waterprove 4 false Decidability in
       first 
         [ 
           automation ()
           | apply sumbool_comm; automation ()
+          | apply or_comm; automation ()
         ]
     ) in
     match Control.case attempt with

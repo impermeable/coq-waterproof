@@ -129,6 +129,8 @@ Goal forall x : R, exists n : nat, INR(n) > x.
     - Case (0 < x). (* Note that this also works although the literal case is x > 0 =) *)
 Abort.
 
+Waterproof Disable Automation RealsAndIntegers.
+
 (** Test 10: Without loading classical informative decidability, this shouldn't work *)
 Local Parameter A : Prop.
 Goal False.
@@ -143,4 +145,24 @@ Goal False.
   Either (A) or (~A).
 Abort.
 
+Goal {A} + {~A}.
+Either (A) or (~A).
+Abort.
+
+Waterproof Disable Automation Algebra.
+
 Close Scope R_scope.
+
+Section test_differences_sort_of_goal.
+
+Variable P : Prop.
+Hypothesis P_dec : P \/ ~P.
+
+(** Test 12: without loading additional databases, we should not be able to get informative excluded middle from decidability *)
+
+Goal {P} + {~P}.
+Proof.
+Fail Either (P) or (~P).
+Abort.
+
+End test_differences_sort_of_goal.

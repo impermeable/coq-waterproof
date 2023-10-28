@@ -85,6 +85,8 @@ theories/Waterprove.v
 # Coq-Waterproof libraries
 
 ## Analysis
+theories/Libs/Logic/ClassicalLogic.v
+theories/Libs/Logic/ConstructiveLogic.v
 theories/Libs/Analysis.v
 theories/Libs/Analysis/ContinuityDomainNat.v
 theories/Libs/Analysis/ContinuityDomainR.v

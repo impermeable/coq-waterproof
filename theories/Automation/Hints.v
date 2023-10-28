@@ -31,6 +31,8 @@ Require Import Sets.Ensembles.
 Require Import Chains.
 Require Import Libs.Negation.
 Require Import Libs.Reals.
+Require Import Libs.Logic.ClassicalLogic.
+Require Import Libs.Logic.ConstructiveLogic.
 
 (** * Waterproof core *)
 
@@ -75,7 +77,20 @@ Create HintDb wp_constructive_logic.
 Create HintDb wp_decidability_classical.
 
   #[export] Hint Resolve excluded_middle_informative : wp_decidability_classical.
+  #[export] Hint Resolve classic : wp_decidability_classical.
 
+(** * Constructive decidability *)
+
+Create HintDb wp_decidability_constructive.
+
+  #[export] Hint Resolve make_sumbool_uninformative_1 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumbool_uninformative_2 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_1 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_2 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_3 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_4 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_5 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_6 : wp_decidability_constructive.
 
 (** * Natural numbers decidability *)
 
