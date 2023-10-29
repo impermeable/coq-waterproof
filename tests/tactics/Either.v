@@ -50,7 +50,7 @@ Abort.
 (** Test 4: This tests to see what error is thrown if we try a nonsense case analysis. *)
 Goal forall x : R, exists n : nat, INR(n) > x.
     intro x.
-    Fail Either (x <= 1) or (0 = 0).
+    Fail Either (x <= 1) or (x > 2).
 Abort.
 
 Local Lemma sumbool_comm (A B : Prop) : {A} + {B} -> {B} + {A}.
@@ -131,7 +131,7 @@ Abort.
 
 Waterproof Disable Automation RealsAndIntegers.
 
-(** Test 10: Without loading classical informative decidability, this shouldn't work *)
+(** Test 10: Without loading classical decidability, this shouldn't work *)
 Local Parameter A : Prop.
 Goal False.
 Fail Either (A) or (~A).
@@ -139,17 +139,39 @@ Abort.
 
 (** Test 11: Now load classical informative decidability and try again *)
 
-Waterproof Enable Automation Algebra.
+Waterproof Enable Automation RealsAndIntegers.
 
 Goal False.
   Either (A) or (~A).
 Abort.
 
+Waterproof Disable Automation RealsAndIntegers.
+
+Waterproof Enable Automation ClassicalEpsilon.
+
 Goal {A} + {~A}.
 Either (A) or (~A).
+* Case (A).
+  left.
+  assumption.
+* Case (~A).
+  right.
+  assumption.
 Abort.
 
-Waterproof Disable Automation Algebra.
+Goal forall P Q : Prop, P \/ Q -> {P} + {Q}.
+Proof.
+intros P Q H.
+Either (P) or (Q).
+* Case (P).
+  left.
+  assumption.
+* Case (Q).
+  right.
+  assumption.
+Qed.
+
+Waterproof Disable Automation ClassicalEpsilon.
 
 Close Scope R_scope.
 

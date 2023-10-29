@@ -124,3 +124,10 @@ let intuition: hint_dataset = {
   decidability_databases: hint_db_name list = [];
   shorten_databases: hint_db_name list = ["wp_intuition"];
 }
+
+let classical_epsilon: hint_dataset = {
+  name = "ClassicalEpsilon";
+  main_databases: hint_db_name list = [];
+  decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_epsilon"];
+  shorten_databases: hint_db_name list = [];
+}

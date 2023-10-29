@@ -65,3 +65,4 @@ val integers : hint_dataset
 val reals_and_integers : hint_dataset
 val sets : hint_dataset
 val intuition: hint_dataset
+val classical_epsilon : hint_dataset

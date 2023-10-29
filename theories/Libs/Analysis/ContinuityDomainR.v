@@ -45,31 +45,6 @@ Definition limit_in_point (f : R → R) (a : R) (q : R) :=
 Definition is_continuous_in (f : R → R) (a : R) :=
   ((is_accumulation_point a) ∧ (limit_in_point f a (f a))) ∨ (is_isolated_point a).
 
-Goal forall P Q : Prop, P \/ Q ⇒ { P } + {Q}.
-Proof.
-intros P Q.
-Either (P) or (~P).
-* Case (P).
-  left.
-  exact p.
-* Case (~P).
-  intros H.
-  assert (~~Q).
-  {
-    destruct H.
-    + ltac1:(contradiction).
-    + intro H1.
-      destruct H1.
-      exact H.
-  }
-  Either (Q) or (~Q).
-  + Case (Q).
-    right.
-    exact q.
-  + Case (~ Q).
-    ltac1:(contradiction).
-Qed.
-
 Lemma every_point_in_R_acc_point_R (a : R) :
   is_accumulation_point a.
 Proof.
