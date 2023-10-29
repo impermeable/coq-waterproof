@@ -69,9 +69,9 @@ Proof.
         δ > 0 ∧ (for all x : ℝ,
         0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε)).
     Assume that (is_continuous_in h a).
-    It holds that (((is_accumulation_point a) ∧ (limit_in_point h a (h a))) \/ (is_isolated_point a)) (i).
-    destruct (i).
-    + Take ε : R.
+    Either ((is_accumulation_point a) ∧ (limit_in_point h a (h a))) or (is_isolated_point a).
+    + Case ((is_accumulation_point a) ∧ (limit_in_point h a (h a))).
+      Take ε : R.
       Assume that (ε > 0).
       It holds that (there exists δ1 : R, (δ1 > 0) ∧
         (for all x : R,
@@ -82,7 +82,8 @@ Proof.
       - We conclude that (δ > 0).
       -  We conclude that (for all x : ℝ,
       0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε).
-    + It holds that (there exists ε : ℝ, ε > 0 ∧ (for all x : ℝ, |x - a| = 0 ∨ ε ≤ |x - a|)).
+    + Case (is_isolated_point a).
+      It holds that (there exists ε : ℝ, ε > 0 ∧ (for all x : ℝ, |x - a| = 0 ∨ ε ≤ |x - a|)).
       Obtain such an ε.
       It holds that (ε > 0).
       Define z := (a + ε / 2).
@@ -101,6 +102,7 @@ Proof.
       δ > 0 ∧ (for all x : ℝ,
         0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε))).
     unfold is_continuous_in.
+    We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
     It suffices to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ).
     We show both statements.
     + By (every_point_in_R_acc_point_R) we conclude that (is_accumulation_point a).
