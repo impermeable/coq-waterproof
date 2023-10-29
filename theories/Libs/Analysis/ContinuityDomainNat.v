@@ -27,30 +27,6 @@ Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 
-(** Definitions *)
-Section metricspace.
-Variable X : Metric_Space.
-Coercion Base : Metric_Space >-> Sortclass.
-
-Definition is_accumulation_point (a : R) :=
-  for all ε : R, (ε > 0) ⇒
-    there exists n : nat, 0 < | n - a | < ε.
-
-Definition is_isolated_point (a : R) :=
-  there exists ε : R, (ε > 0) ∧
-    (for all n : nat, |n - a| = 0 ∨ (ε ≤ |n - a|)).
-
-Definition limit_in_point (f : ℕ → X) (a : ℕ) (L : X) :=
- for all ε : R, (ε > 0) ⇒
-   there exists δ : R, (δ > 0) ∧
-     (for all n : nat,
-       (0 < |n - a| < δ) ⇒ (dist X (f n) L < ε)).
-
-Definition is_continuous_in (f : ℕ → X) (a : ℕ) :=
-  ((is_accumulation_point a) ∧ (limit_in_point f a (f a))) ∨ (is_isolated_point a).
-
-End metricspace.
-
 (** Hints *)
 Lemma aux1 : for all n m : ℕ, (n = m) ⇒ |m - n| = |n - n|.
 Proof.
@@ -82,6 +58,85 @@ Proof.
     It holds that ((S n) - n ≤ m - n).
     We conclude that (& 1 = n + 1 - n = (S n) - n ≤ m - n = |m - n|).
 Qed.
+
+(** Definitions *)
+Section metricspace.
+Variable X : Metric_Space.
+Coercion Base : Metric_Space >-> Sortclass.
+
+Definition is_accumulation_point (a : R) :=
+  for all ε : R, (ε > 0) ⇒
+    there exists n : nat, 0 < | n - a | < ε.
+
+Definition is_isolated_point (a : R) :=
+  there exists ε : R, (ε > 0) ∧
+    (for all n : nat, |n - a| = 0 ∨ (ε ≤ |n - a|)).
+
+Definition limit_in_point (f : ℕ → X) (a : ℕ) (L : X) :=
+ for all ε : R, (ε > 0) ⇒
+   there exists δ : R, (δ > 0) ∧
+     (for all n : nat,
+       (0 < |n - a| < δ) ⇒ (dist X (f n) L < ε)).
+
+Definition is_continuous_in (f : ℕ → X) (a : ℕ) :=
+  ((is_accumulation_point a) ∧ (limit_in_point f a (f a))) ∨ (is_isolated_point a).
+
+Theorem alt_char_continuity :
+  ∀ f : ℕ → X, ∀ a : ℕ, 
+    is_continuous_in f a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : ℕ, 0 < | x - a | < δ ⇒ dist X (f(x)) (f(a)) < ε).
+Proof.
+  Take h : (ℕ → X).
+  Take a : ℕ.
+  We show both directions.
+  * We need to show that (is_continuous_in(h, a) ⇨ for all ε : ℝ,
+        ε > 0 ⇨ there exists δ : ℝ,
+          δ > 0 ∧ (for all x : ℕ,
+            0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε)).
+    Assume that (is_continuous_in h a).
+    Take ε : R.
+    Assume that (ε > 0).
+    Choose δ := (1/2).
+    We show both statements.
+    - We conclude that (δ > 0).
+    - We need to show that (for all x : nat,
+          0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
+      Take x : nat.
+      Assume that (0 < | x - a | < δ).
+      Either (x = a) or (~(x=a)).
+      + Case (x = a).
+        It holds that (| x - a | = 0).
+        Contradiction.
+      + Case (~(x = a)).
+        By useful_lemma it holds that (1 ≤ | x - a |).
+        Contradiction.
+  * We need to show that ((for all ε : ℝ,
+      ε > 0 ⇨ there exists δ : ℝ,
+        δ > 0 ∧ (for all x : ℕ,
+          0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε)) ⇨ is_continuous_in(h, a)).
+    Assume that ((for all ε : ℝ,
+      ε > 0 ⇨ there exists δ : ℝ,
+        δ > 0 ∧ (for all x : ℕ,
+          0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε))).
+    We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
+    It suffices to show that (is_isolated_point a).
+    unfold is_isolated_point.
+    We need to show that (∃ ε : ℝ, ε > 0 ∧ (for all n : ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
+    Choose ε := (1/2).
+    We show both statements.
+    - We conclude that (ε > 0).
+    - We need to show that (for all n : ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
+      Take n : nat.
+      Either (n = a) or (~(n=a)).
+      + Case (n = a).
+        It suffices to show that (|n - a| = 0).
+        We conclude that (|n - a| = 0).
+      + Case (~(n=a)).
+        It suffices to show that ((1/2) ≤ | n - a |).
+        By useful_lemma it holds that (1 ≤ | n - a |).
+        We conclude that (1/2 ≤ | n - a | ).
+Qed.
+
+End metricspace.
 
 (** Notations *)
 Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).
