@@ -108,7 +108,10 @@ Proof.
     + By (every_point_in_R_acc_point_R) we conclude that (is_accumulation_point a).
     + We conclude that (limit_in_point(h, a, h a)).
 Qed.
-      
+
+#[export] Hint Resolve -> alt_char_continuity : wp_reals.
+#[export] Hint Resolve <- alt_char_continuity : wp_reals.
+
 (** Notations *)
 Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).
 
@@ -132,9 +135,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "isolated" "point" "in" statemen
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "isolated" "point" "in" statement(constr) := 
   unfold_in_statement_no_error unfold_isol_point (Some "isolated point") statement.
 
-Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68).
+Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 68).
 
-Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68, only parsing).
+Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 68, only parsing).
 
 Local Ltac2 unfold_lim_in_point (statement : constr) := eval unfold limit_in_point in $statement.
 
@@ -144,9 +147,9 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "limit" "in" statem
   unfold_in_statement_no_error unfold_lim_in_point (Some "limit") statement.
 
 
-Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in _ f a) (at level 68).
+Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in f a) (at level 68).
 
-Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in _ f a)  (at level 68, only parsing).
+Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in f a)  (at level 68, only parsing).
 
 Local Ltac2 unfold_is_cont (statement : constr) := eval unfold is_continuous_in in $statement.
 

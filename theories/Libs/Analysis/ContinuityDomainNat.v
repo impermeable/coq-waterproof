@@ -18,16 +18,19 @@
 
 Require Import Coq.Reals.Reals.
 
+Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Negation.
 Require Import Notations.
-Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 
 (** Hints *)
+
+(** TODO: move these lemmas somewhere else *)
+
 Lemma aux1 : for all n m : ℕ, (n = m) ⇒ |m - n| = |n - n|.
 Proof.
   Take n, m : ℕ.
@@ -36,28 +39,82 @@ Proof.
 Qed.
 #[export] Hint Resolve aux1 : wp_reals.
 
-(** Useful lemma *)
-Lemma useful_lemma : for all n m : ℕ, (n ≠ m) ⇒ (1 ≤ | m - n |).
+Lemma Rabs_n_min_m : forall m n : ℕ, (m <= n)%nat -> | n - m | = n - m.
 Proof.
-  Take n, m : ℕ. Assume that (n ≠ m).
+  Take m, n : nat.
+  Assume that (m <= n)%nat.
+  It holds that (m <= n).
+  We conclude that (| n - m | = n - m).
+Qed.
+
+#[export] Hint Resolve Rabs_n_min_m : wp_reals.
+
+Lemma Rabs_m_lt_n : forall m n : ℕ, (m < n)%nat -> 1 <= | n - m |.
+Proof.
+  Take m, n : nat.
+  Assume that (m < n)%nat.
+  It holds that (m <= n).
+  It holds that ( | n - m | = n - m).
+  It holds that (m + 1 <= n)%nat.
+  It holds that (INR m + INR 1 = INR (m + 1)%nat).
+  It holds that ((m + 1)%nat <= n).
+  It holds that (& INR m + INR 1 = INR (m + 1)%nat <= n).
+  We conclude that (1 <= | n - m |).
+Qed.
+
+#[export] Hint Resolve Rabs_m_lt_n : wp_reals.
+
+Lemma nat_not_equal_dist_larger_one : for all n m : ℕ, (n ≠ m) -> (1 ≤ | m - n |).
+Proof.
+  Take n, m : ℕ.
+  Assume that (n ≠ m).
   assert (n > m ∨ n < m)%nat as i by (apply Nat.lt_gt_cases; auto).
   Because (i) either (n > m)%nat or (n < m)%nat holds.
   + Case (n > m)%nat.
-    It holds that (n ≥ S m)%nat.
-    By S_INR it holds that (m + 1 = S m).
-    It holds that (m + 1 - m = S m - m).
-    It holds that ((S m) ≤ n).
-    It holds that ((S m) - m ≤ n - m).
-    We conclude that
-        (& 1 = m + 1 - m = (S m) - m ≤ n - m = | n - m | = | m - n | ).
-  + Case (n < m)%nat.
-    It holds that (S n ≤ m)%nat.
-    By S_INR it holds that (n + 1 = S n).
-    It holds that (n + 1 - n = S n - n).
-    It holds that ((S n) ≤ m).
-    It holds that ((S n) - n ≤ m - n).
-    We conclude that (& 1 = n + 1 - n = (S n) - n ≤ m - n = |m - n|).
+    It holds that (| n - m | = | m - n | ).
+    It holds that (1 <= | n - m |).
+    We conclude that (1 <= | m - n |).      
+  + Case (m > n)%nat.
+    We conclude that (1 <= | m - n |).
 Qed.
+#[export] Hint Resolve nat_not_equal_dist_larger_one : wp_reals.
+
+Lemma nat_dist_larger_zero_not_equal :
+  forall n m : nat, 0 < | n - m | -> ~(n = m).
+Proof.
+Take n, m : nat.
+Assume that (0 <  | n - m | ).
+Either (n = m)%nat or (~(n= m))%nat.
++ Case (n = m)%nat.
+  It holds that (| m - n| = 0).
+  Contradiction.
++ Case (~(n = m)).
+  We conclude that (~(n = m)).
+Qed.
+#[export] Hint Resolve nat_dist_larger_zero_not_equal : wp_reals.
+
+Lemma nat_dist_less_than_one_iff_equal :
+  forall n m : ℕ, (n = m) <-> (| m - n | < 1).
+Proof.
+  Take n, m : nat.
+  We show both directions.
+  - We need to show that (n = m ⇨ |m - n| < 1).
+    Assume that (n = m).
+    We argue by contradiction.
+    Assume that (~ | m - n | < 1).
+    It holds that (1 <= | m - n|).
+    It holds that (~(n=m)).
+    Contradiction.
+  - We need to show that (| m - n | < 1 -> n = m).
+    Assume that (| m - n| < 1).
+    We argue by contradiction.
+    Assume that (~ (n = m)).
+    It holds that (1 <= | m - n|).
+    Contradiction.
+Qed.
+
+#[export] Hint Resolve <- nat_dist_less_than_one_iff_equal : wp_reals.
+#[export] Hint Resolve -> nat_dist_less_than_one_iff_equal : wp_reals.
 
 (** Definitions *)
 Section metricspace.
@@ -107,7 +164,7 @@ Proof.
         It holds that (| x - a | = 0).
         Contradiction.
       + Case (~(x = a)).
-        By useful_lemma it holds that (1 ≤ | x - a |).
+        It holds that (1 ≤ | x - a |).
         Contradiction.
   * We need to show that ((for all ε : ℝ,
       ε > 0 ⇨ there exists δ : ℝ,
@@ -132,11 +189,14 @@ Proof.
         We conclude that (|n - a| = 0).
       + Case (~(n=a)).
         It suffices to show that ((1/2) ≤ | n - a |).
-        By useful_lemma it holds that (1 ≤ | n - a |).
+        It holds that (1 ≤ | n - a |).
         We conclude that (1/2 ≤ | n - a | ).
 Qed.
 
 End metricspace.
+
+#[export] Hint Resolve -> alt_char_continuity : wp_reals.
+#[export] Hint Resolve <- alt_char_continuity : wp_reals.
 
 (** Notations *)
 Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).

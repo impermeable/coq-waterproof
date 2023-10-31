@@ -431,6 +431,11 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rmin_right : wp_reals.
   #[export] Hint Resolve Rmin_glb : wp_reals.
   #[export] Hint Resolve Rmin_glb_lt : wp_reals.
+  (** lemmas to relate <= with >= and < with > *)
+  #[export] Hint Resolve Rge_le : wp_reals.
+  #[export] Hint Resolve Rle_ge : wp_reals.
+  #[export] Hint Resolve Rgt_lt : wp_reals.
+  #[export] Hint Resolve Rlt_gt : wp_reals.
 
   #[export] Hint Resolve div_sign_flip : wp_reals.
   #[export] Hint Resolve div_pos : wp_reals.
