@@ -21,5 +21,61 @@ Require Import Waterproof.Automation.
 
 Goal forall P : Prop, {P} + {~P}.
 Proof.
+  auto with wp_decidability_epsilon.
+Qed.
+
+Goal forall P Q : Prop, P \/ Q -> {P} + {Q}.
+Proof.
+  auto with wp_decidability_epsilon.
+Qed.
+
+Goal forall P : Prop, P \/ ~P.
+Proof.
   auto with wp_decidability_classical.
+Qed.
+
+Goal forall P Q : Prop, {P} + {Q} -> P \/ Q.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q : Prop, {Q} + {P} -> Q \/ P.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q R: Prop, {P} + {Q} + {R} -> P \/ Q \/ R.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q R: Prop, {P} + {R} + {Q} -> P \/ Q \/ R.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q R: Prop, {Q} + {P} + {R} -> P \/ Q \/ R.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q R: Prop, {Q} + {R} + {P} -> P \/ Q \/ R.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q R: Prop, {R} + {P} + {Q} -> P \/ Q \/ R.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall P Q R: Prop, {R} + {P} + {Q} -> P \/ Q \/ R.
+  auto with wp_decidability_constructive.
+Qed.
+
+Goal forall n : nat, n < 5 \/ n > 4.
+Proof.
+  intro n.
+  auto with wp_decidability_nat.
+Qed.
+
+Require Import Reals.Reals.
+Open Scope R_scope.
+Goal forall x : R, x < 5 \/ x > 4.
+Proof.
+  intro x.
+  auto with wp_decidability_reals.
 Qed.

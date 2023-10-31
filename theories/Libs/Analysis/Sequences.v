@@ -452,9 +452,9 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" "
 (** Convergence to +∞ and -∞. *)
 Definition diverges_to_plus_infinity (a : ℕ → ℝ) := 
   ∀ M : ℝ,
-    ∃ N : ℕ,
-      ∀ n : ℕ, (n ≥ N)%nat ⇒
-        a(n) ≥ M.
+    ∃ N1 : ℕ,
+      ∀ n : ℕ, (n ≥ N1)%nat ⇒
+        a(n) > M.
 
 Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
@@ -473,9 +473,9 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "�
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) := 
   ∀ M : ℝ,
-    ∃ N : ℕ,
-      ∀ n : ℕ, (n ≥ N)%nat ⇒
-        a(n) ≤ M.
+    ∃ N1 : ℕ,
+      ∀ n : ℕ, (n ≥ N1)%nat ⇒
+        a(n) < M.
 
 Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).

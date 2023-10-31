@@ -18,7 +18,9 @@
 
 From Ltac2 Require Import Ltac2.
 
+Require Import Util.Constr.
 Require Import Util.Goals.
+Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
@@ -32,7 +34,7 @@ Proof.
 Qed.
 
 (**
-  Split the proof by case distinction.
+  Split the proof by case distinction when the goal is a prop
 
   Arguments:
     - [t1 : constr], the first case.
@@ -41,7 +43,38 @@ Qed.
   Does:
     - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
-Ltac2 either_or (t1:constr) (t2:constr) :=
+Ltac2 either_or_prop (t1:constr) (t2:constr) :=
+  let h_id := Fresh.in_goal @_temp in
+  let attempt () :=
+    assert ($t1 \/ $t2) as $h_id;
+    Control.focus 1 1 (fun () => 
+      let automation () := waterprove 4 false Decidability in
+      first 
+        [ 
+          automation ()
+          | apply or_comm; automation ()
+        ]
+    ) in
+    match Control.case attempt with
+      | Val _ =>
+        let h_val := Control.hyp h_id in
+        destruct $h_val;
+        Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+        Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
+      | Err exn => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
+    end.
+
+(**
+  Split the proof by case distinction when the goal is not a prop
+
+  Arguments:
+    - [t1 : constr], the first case.
+    - [t2 : constr], the second case.
+
+  Does:
+    - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+*)
+Ltac2 either_or_type (t1:constr) (t2:constr) :=
   let h_id := Fresh.in_goal @_temp in
   let attempt () :=
     assert ({$t1} + {$t2}) as $h_id;
@@ -61,6 +94,29 @@ Ltac2 either_or (t1:constr) (t2:constr) :=
         Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
       | Err exn => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
     end.
+
+(**
+  Split the proof by case distinction.
+
+  Arguments:
+    - [t1 : constr], the first case.
+    - [t2 : constr], the second case.
+
+  Does:
+    - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+*)
+Ltac2 either_or (t1:constr) (t2:constr) :=
+  let goal_is_prop := 
+    lazy_match! goal with
+      | [ |- ?u] => 
+        (* Check whether [u] is not a proposition. *)
+        let sort_u := get_value_of_hyp(u) in
+        check_constr_equal sort_u constr:(Prop)
+    end
+  in
+  if goal_is_prop 
+    then either_or_prop t1 t2
+    else either_or_type t1 t2. 
 
 Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
   panic_if_goal_wrapped ();
@@ -130,9 +186,8 @@ Proof.
   exact (left a).
 Qed.
 
-
 (**
-  Split the proof by case distinction.
+  Split the proof by case distinction if the goal is a prop.
 
   Arguments:
     - [t1 : constr], the first case.
@@ -142,7 +197,44 @@ Qed.
   Does:
     - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
-Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
+Ltac2 either_or_or_prop (t1:constr) (t2:constr) (t3:constr) :=
+  let h1_id := Fresh.in_goal @_temp in
+  let attempt () :=
+    assert ($t1 \/ $t2 \/ $t3) as $h1_id;
+    Control.focus 1 1 (fun () => 
+      let automation () := waterprove 4 false Decidability in
+      let g := Control.goal () in first 
+      [ 
+        automation ()
+      ]
+    )
+  in
+  match Control.case attempt with
+    | Val _ =>
+      let h2_id := Fresh.in_goal @_temp in
+      let h_val := Control.hyp h1_id in
+      destruct $h_val as [_ | $h2_id];
+      Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
+      Control.focus 2 2 (fun () => 
+        let h2_val := Control.hyp h2_id in
+        destruct $h2_val;
+        Control.focus 1 1 (fun () => apply (Case.unwrap $t2));
+        Control.focus 2 2 (fun () => apply (Case.unwrap $t3)))
+    | Err exn => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
+  end.
+
+(**
+  Split the proof by case distinction if the goal is not a prop.
+
+  Arguments:
+    - [t1 : constr], the first case.
+    - [t2 : constr], the second case.
+    - [t3 : constr], the third case.
+
+  Does:
+    - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+*)
+Ltac2 either_or_or_type (t1:constr) (t2:constr) (t3:constr) :=
   let h_id := Fresh.in_goal @_temp in
   let attempt () :=
     assert (sumtriad $t1 $t2 $t3) as $h_id;
@@ -167,6 +259,27 @@ Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
       Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
       Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
     | Err exn => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
+  end.
+
+(**
+  Split the proof by case distinction.
+
+  Arguments:
+    - [t1 : constr], the first case.
+    - [t2 : constr], the second case.
+    - [t3 : constr], the third case.
+
+  Does:
+    - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
+*)
+Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
+  lazy_match! goal with
+    | [ |- ?u] => 
+      (* Check whether [u] is not a proposition. *)
+      let sort_u := get_value_of_hyp(u) in
+      if (check_constr_equal sort_u constr:(Prop))
+      then either_or_or_prop t1 t2 t3
+      else either_or_or_type t1 t2 t3
   end.
 
 Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) := 

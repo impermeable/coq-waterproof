@@ -20,10 +20,10 @@ Require Import Coq.Reals.Reals.
 Require Import Reals.ROrderedType.
 Require Import micromega.Lra.
 
+Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Reals.
 Require Import Notations.
-Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 
@@ -63,7 +63,7 @@ Defined.
 
 End Definitions.
 
-(** ** Expample : a discrete metric on the real line *)
+(** ** Example : a discrete metric on the real line *)
 
 Definition d_discrete_R : 
   ℝ → ℝ → ℝ := fun (x y : ℝ) => if Reqb x y then 0 else 3.
@@ -79,7 +79,7 @@ Either (x = y) or (x ≠ y).
 
 + Case (x ≠ y).
   It holds that ((if Reqb(x, y) then 0 else 3) = 0) (i).
-  rewrite (Req_false x y n) in i.
+  rewrite (Req_false x y H) in i.
   Contradiction.
 Qed.
 
@@ -90,7 +90,7 @@ Assume that (d_discrete_R x y = 3).
 It holds that ( (if Reqb x y then 0 else 3) = 3) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
-  rewrite (Req_true x y e) in i.
+  rewrite (Req_true x y H) in i.
   It holds that (0 ≠ 3).
   Contradiction.
 + Case (x ≠ y).

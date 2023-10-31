@@ -31,6 +31,8 @@ Require Import Sets.Ensembles.
 Require Import Chains.
 Require Import Libs.Negation.
 Require Import Libs.Reals.
+Require Import Libs.Logic.InformativeEpsilon.
+Require Import Libs.Logic.ConstructiveLogic.
 
 (** * Waterproof core *)
 
@@ -69,20 +71,38 @@ Create HintDb wp_constructive_logic.
   #[export] Hint Resolve ex_not_not_all : wp_constructive_logic.
   #[export] Hint Resolve all_not_not_ex : wp_constructive_logic.
 
+(** * Decidability based on classical epsilon*)
+
+Create HintDb wp_decidability_epsilon.
+
+  #[export] Hint Resolve excluded_middle_informative : wp_decidability_epsilon.
+  #[export] Hint Resolve informative_or_lift : wp_decidability_epsilon.
 
 (** * Classical logic decidability *)
 
 Create HintDb wp_decidability_classical.
 
-  #[export] Hint Resolve excluded_middle_informative : wp_decidability_classical.
+  #[export] Hint Resolve classic : wp_decidability_classical.
 
+(** * Constructive decidability *)
+
+Create HintDb wp_decidability_constructive.
+
+  #[export] Hint Resolve make_sumbool_uninformative_1 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumbool_uninformative_2 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_1 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_2 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_3 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_4 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_5 : wp_decidability_constructive.
+  #[export] Hint Resolve make_sumtriad_uninformative_6 : wp_decidability_constructive.
 
 (** * Natural numbers decidability *)
 
 Create HintDb wp_decidability_nat.
 
   #[export] Hint Resolve Nat.eq_dec : wp_decidability_nat.
-
+  #[export] Hint Extern 1 => lia : wp_decidability_nat.
 
 (** * Real numbers decidability *)
 
@@ -93,6 +113,7 @@ Create HintDb wp_decidability_reals.
     We cannot do the same for >= as it is not defined as <=.
   *)
   #[export] Hint Extern 1 => unfold Rgt : wp_decidability_reals.
+  #[export] Hint Extern 1 => lra : wp_decidability_reals.
 
   #[export] Hint Resolve Req_EM_T : wp_decidability_reals.
   #[export] Hint Resolve Rlt_le_dec : wp_decidability_reals.
@@ -410,6 +431,11 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rmin_right : wp_reals.
   #[export] Hint Resolve Rmin_glb : wp_reals.
   #[export] Hint Resolve Rmin_glb_lt : wp_reals.
+  (** lemmas to relate <= with >= and < with > *)
+  #[export] Hint Resolve Rge_le : wp_reals.
+  #[export] Hint Resolve Rle_ge : wp_reals.
+  #[export] Hint Resolve Rgt_lt : wp_reals.
+  #[export] Hint Resolve Rlt_gt : wp_reals.
 
   #[export] Hint Resolve div_sign_flip : wp_reals.
   #[export] Hint Resolve div_pos : wp_reals.
