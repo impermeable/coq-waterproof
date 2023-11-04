@@ -250,9 +250,6 @@ Qed.
 
 
 Definition dep_choice := non_dep_dep_functional_choice choice.
-Check dep_choice.
-Print DependentFunctionalChoice.
-Print DependentFunctionalChoice_on.
 
 Lemma help_with_choice {A B C : Type} {D E : A -> B -> Prop} {P : A -> B -> C -> Prop} :
   (forall (a : A) (b : B), D a b -> E a b-> exists c : C, P a b c) ->
