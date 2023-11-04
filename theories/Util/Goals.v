@@ -150,6 +150,24 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' '('
   ).
 
 
+Module StrongIndIndxSeq.
+
+  Private Inductive Wrapper (G : Type) : Type :=
+    | wrap : G -> Wrapper G.
+
+  Definition unwrap (G : Type) : Wrapper G -> G :=
+    fun x => match x with wrap _ y => y end.
+
+End StrongIndIndxSeq.
+
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' ':' 'ℕ' 'and' 'assume' 'n(0),' '...,' 'n(k)' 'are' 'defined.'" :=
+  (StrongIndIndxSeq.Wrapper _) (
+    at level 99,
+    only printing,
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Take  k  :  ℕ  and  assume  n(0),  ...,  n(k)  are  defined."
+  ).
+
+
 Ltac2 raise_goal_wrapped_error () := 
   throw (of_string "You cannot do this right now, follow the advice in the goal window.").
 

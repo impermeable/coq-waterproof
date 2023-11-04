@@ -16,16 +16,41 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Libs.Analysis.ContinuityDomainNat.
-Require Export Libs.Analysis.ContinuityDomainR.
-Require Export Libs.Analysis.LimsupLiminfBolzano.
-Require Export Libs.Analysis.MetricSpaces.
-Require Export Libs.Analysis.OpenAndClosed.
-Require Export Libs.Analysis.SequencesMetric.
-Require Export Libs.Analysis.Sequences.
-Require Export Libs.Analysis.SequentialAccumulationPoints.
-Require Export Libs.Analysis.Series.
-Require Export Libs.Analysis.SubsequencesMetric.
-Require Export Libs.Analysis.StrongInductionIndexSequence.
-Require Export Libs.Analysis.Subsequences.
-Require Export Libs.Analysis.SupAndInf.
+Require Import Ltac2.Ltac2.
+Require Import Waterproof.Libs.Analysis.StrongInductionIndexSequence.
+
+Variable P : nat -> Prop.
+
+
+(* Test 1: without other Waterproof tactics. *)
+Goal (exists n : nat -> nat, is_index_seq n /\ forall k : nat, P (n k)).
+Proof.
+  Define the index sequence n inductively.
+  - pose (n0 := 0); exists n0.
+    admit.
+  - Take k : ℕ and assume n(0), ..., n(k) are defined.
+    intros H1 H2.
+    pose (n_kplus1 := 0); exists n_kplus1.
+    split.
+    + admit.
+    + admit.
+Admitted.
+
+
+(* Test 2: with other Waterproof tactics. *)
+Require Import Waterproof.Tactics.
+Goal (exists n : nat -> nat, is_index_seq n /\ forall k : nat, P (n k)).
+Proof.
+  Define the index sequence n inductively.
+  - Choose n0 := 0.
+    admit.
+  - Take k : ℕ and assume n(0), ..., n(k) are defined.
+    Assume that (forall l : nat, l <= k -> P (n l)).
+    Assume that (forall l : nat, l < k -> n l < n (l + 1)).
+    Choose n_kplus1 := 0.
+    We show both statements.
+    + We need to show that (P n_kplus1).
+      admit.
+    + We need to show that (n k < n_kplus1).
+      admit.
+Admitted.
