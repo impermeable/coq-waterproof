@@ -1,5 +1,17 @@
 # Change log for the coq-waterproof library
 
+## Version 2.1.0+8.17
+
+- Improve the `Either` tactic: now proves and destructs ordinary 'ors' when the goal is a proposition
+- Improve some mathematical definitions
+- Add vernacular for debugging automation
+
+## Version 2.0.2+8.17
+
+- Improve errors and warnings
+- Rework expanding definitions
+- Deal better with Rabs, Rmax, Rmin
+
 ## Version 2.0.1+8.17
 
 - Build the plugin with dune

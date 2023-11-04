@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "2.0.2+8.17"
+version: "2.1.0+8.17"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
@@ -40,6 +40,6 @@ install: [
 tags: [
   "keyword:mathematics education"
   "category:Mathematics/Education"
-  "date:2023-08-27"
+  "date:2023-11-04"
   "logpath:Waterproof"
 ]
