@@ -101,8 +101,6 @@ Show one of the statements, use ‘It suffices to show that (...).’ with the d
     | Case.Wrapper _ _                => create_goal_wrapped_message ()
     | NaturalInduction.Base.Wrapper _ => create_goal_wrapped_message ()
     | NaturalInduction.Step.Wrapper _ => create_goal_wrapped_message ()
-    | ExpandDef.Goal.Wrapper _        => create_goal_wrapped_message ()
-    | ExpandDef.Hyp.Wrapper _ _ _     => create_goal_wrapped_message ()
     | StateGoal.Wrapper _             => create_goal_wrapped_message ()
     | ByContradiction.Wrapper _ _     => create_goal_wrapped_message ()
     | not ?g => create_not_message g

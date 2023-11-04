@@ -76,7 +76,6 @@ theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v
 theories/Util/Since.v
-theories/Util/Lock.v
 theories/Util/MessagesToUser.v
 
 theories/Waterproof.v

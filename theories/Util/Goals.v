@@ -77,43 +77,6 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' '
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  now  show  the  induction  step."
   ).
 
-Module ExpandDef.
-
-  Module Goal.
-  
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    
-    Definition unwrap (G : Type) : Wrapper G -> G :=
-      fun x => match x with wrap _ y => y end.
-  
-  End Goal.
-
-  Module Hyp.
-  
-    Private Inductive Wrapper (G H : Type) (h : H) : Type :=
-      | wrap : G -> Wrapper G H h.
-    
-    Definition unwrap (G H : Type) (h : H) : Wrapper G H h -> G :=
-      fun x => match x with wrap _ _ _ y => y end.
-  
-  End Hyp.
-
-End ExpandDef.
-
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' 'the' 'goal' 'as' '(' G ').'" :=
-  (ExpandDef.Goal.Wrapper G) (
-    at level 99,
-    only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  the  goal  as  ( G )."
-  ).
-
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' '(' h ')' 'as' '(' H ').'" :=
-  (ExpandDef.Hyp.Wrapper _ H h) (
-    at level 99,
-    only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  ( h )  as  ( H )."
-  ).
 
 Module StateGoal.
   
@@ -182,8 +145,6 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- Case.Wrapper _ _]                => raise_goal_wrapped_error ()
     | [|- NaturalInduction.Base.Wrapper _] => raise_goal_wrapped_error ()
     | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error ()
-    | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
-    | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
     | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
     | [|- ByContradiction.Wrapper _ _]     => raise_goal_wrapped_error ()
     | [|- _] => ()
