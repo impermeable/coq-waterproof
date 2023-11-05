@@ -53,4 +53,4 @@ Proof.
       admit.
     + We need to show that (n k < n_kplus1).
       admit.
-Admitted.
+Abort.
