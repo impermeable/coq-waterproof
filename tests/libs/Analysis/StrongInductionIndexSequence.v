@@ -34,7 +34,7 @@ Proof.
     split.
     + admit.
     + admit.
-Admitted.
+Abort.
 
 
 (* Test 2: with other Waterproof tactics. *)
