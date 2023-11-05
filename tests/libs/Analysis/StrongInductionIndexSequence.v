@@ -16,21 +16,41 @@
 (*                                                                            *)
 (******************************************************************************)
 
+Require Import Ltac2.Ltac2.
+Require Import Waterproof.Libs.Analysis.StrongInductionIndexSequence.
 
-(* Code copied from Coq.ssr.ssreflect.
-  Could not just import ssreflect because we have clashing notation. *)
+Variable P : nat -> Prop.
 
 
-Lemma master_key : unit. Proof. exact tt. Qed.
+(* Test 1: without other Waterproof tactics. *)
+Goal (exists n : nat -> nat, is_index_seq n /\ forall k : nat, P (n k)).
+Proof.
+  Define the index sequence n inductively.
+  - pose (n0 := 0); exists n0.
+    admit.
+  - Take k : ℕ and assume n(0), ..., n(k) are defined.
+    intros H1 H2.
+    pose (n_kplus1 := 0); exists n_kplus1.
+    split.
+    + admit.
+    + admit.
+Abort.
 
-Definition locked {A} := let 'tt := master_key in fun x : A => x.
 
-Definition lock A (x : A) : x = locked x :=
-  (fun _evar_0_ : (fun u : unit => x = (let 'tt := u in fun x0 : A => x0) x) tt
-  =>
-  match master_key as u
-    return ((fun u0 : unit => x = (let 'tt := u0 in fun x0 : A => x0) x) u)
-  with
-  | tt => _evar_0_
-  end) eq_refl.
- 
+(* Test 2: with other Waterproof tactics. *)
+Require Import Waterproof.Tactics.
+Goal (exists n : nat -> nat, is_index_seq n /\ forall k : nat, P (n k)).
+Proof.
+  Define the index sequence n inductively.
+  - Choose n0 := 0.
+    admit.
+  - Take k : ℕ and assume n(0), ..., n(k) are defined.
+    Assume that (forall l : nat, l <= k -> P (n l)).
+    Assume that (forall l : nat, l < k -> n l < n (l + 1)).
+    Choose n_kplus1 := 0.
+    We show both statements.
+    + We need to show that (P n_kplus1).
+      admit.
+    + We need to show that (n k < n_kplus1).
+      admit.
+Abort.

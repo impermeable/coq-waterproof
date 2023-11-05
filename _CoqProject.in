@@ -76,7 +76,6 @@ theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v
 theories/Util/Since.v
-theories/Util/Lock.v
 theories/Util/MessagesToUser.v
 
 theories/Waterproof.v
@@ -97,8 +96,8 @@ theories/Libs/Analysis/SequencesMetric.v
 theories/Libs/Analysis/Sequences.v
 theories/Libs/Analysis/SequentialAccumulationPoints.v
 theories/Libs/Analysis/Series.v
-theories/Libs/Analysis/SubsequencesInduction.v
 theories/Libs/Analysis/SubsequencesMetric.v
+theories/Libs/Analysis/StrongInductionIndexSequence.v
 theories/Libs/Analysis/Subsequences.v
 theories/Libs/Analysis/SupAndInf.v
 
@@ -143,3 +142,4 @@ tests/util/MessagesToUser.v
 
 ## Libs
 tests/libs/Negation.v
+tests/libs/Analysis/StrongInductionIndexSequence.v
