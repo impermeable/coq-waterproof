@@ -37,6 +37,7 @@ src/waterproof.mlpack
 theories/Automation.v
 theories/Automation/Framework.v
 theories/Automation/Hints.v
+theories/Version.v
 
 theories/Chains.v
 theories/Chains/Manipulation.v
