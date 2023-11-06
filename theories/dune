@@ -12,5 +12,5 @@
  (action (progn
              (echo "Testing:")
              (run pwd)
-             (run python3 ../../../tests/test-exercises.py)
+             (run python3 ../../../tests/test-exercises.py ../../../../waterproof-exercises)
 )))
