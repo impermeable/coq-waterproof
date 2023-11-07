@@ -176,7 +176,7 @@ end = struct
         let a = ca.(len - 1) in
         let ca = Array.sub ca 0 (len - 1) in
         Some (DApp, [mkApp (f, ca); a])
-      | Proj (p,c) -> pat_of_constr @@ mkApp (mkConst @@ Projection.constant p, [|c|])
+      | Proj (p,_,c) -> pat_of_constr @@ mkApp (mkConst @@ Projection.constant p, [|c|])
       | Int i -> Some (DInt i, [])
       | Float f -> Some (DFloat f, [])
       | Array (_u,t,def,ty) -> Some (DArray, Array.to_list t @ [def ; ty])
@@ -281,6 +281,7 @@ let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: 
     Proofview.Goal.enter begin fun gl ->
       let sigma = Proofview.Goal.sigma gl in
       let subst, ctx' = UnivGen.fresh_universe_context_set_instance rule.rew_ctx in
+      let subst = Sorts.QVar.Map.empty, subst in
       let c' = Vars.subst_univs_level_constr subst rule.rew_lemma in
       let sigma = Evd.merge_context_set Evd.univ_flexible sigma ctx' in
       Proofview.tclTHEN (Proofview.Unsafe.tclEVARS sigma) (rewrite rule.rew_l2r c' tac)
@@ -383,7 +384,7 @@ let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.co
   let econstr, context = Constrintern.interp_constr env sigma hyp in
   let constr = EConstr.to_constr sigma econstr in
   let univ_ctx = UState.context_set context in
-  let ctx = (DeclareUctx.declare_universe_context ~poly:false univ_ctx; Univ.ContextSet.empty) in
+  let ctx = (Global.push_context_set ~strict:true univ_ctx; Univ.ContextSet.empty) in
   CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) ((constr, ctx), true, Option.map (in_gen (rawwit wit_ltac)) None)
 
 (**  
