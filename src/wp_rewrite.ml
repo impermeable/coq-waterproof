@@ -164,7 +164,7 @@ end = struct
       | Construct (c,u) -> Some (DRef (ConstructRef c), [])
       | Meta _ -> assert false
       | Evar (i,_) -> None
-      | Case (ci,u1,pms1,c1,_iv,c2,ca) -> Some (DCase(ci), [snd c1; c2] @ Array.map_to_list snd ca)
+      | Case (ci,u1,pms1,(c1,_),_iv,c2,ca) -> Some (DCase(ci), [snd c1; c2] @ Array.map_to_list snd ca)
       | Fix ((ia,i),(_,ta,ca)) -> Some (DFix(ia,i), Array.to_list ta @ Array.to_list ca)
       | CoFix (i,(_,ta,ca)) -> Some (DCoFix(i), Array.to_list ta @ Array.to_list ca)
       | Cast (c,_,_) -> pat_of_constr c
