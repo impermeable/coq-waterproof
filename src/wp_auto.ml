@@ -81,9 +81,10 @@ let exact (h: hint): unit tactic =
 (**
   Same function as {! Auto.exists_evaluable_reference}
 *)
-let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluable_global_reference): bool = match evaluable_ref with
-  | Tacred.EvalConstRef _ -> true
-  | Tacred.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
+let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Names.Evaluable.t): bool = match evaluable_ref with
+  | Evaluable.EvalConstRef _ -> true
+  | Evaluable.EvalProjectionRef _ -> true
+  | Evaluable.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
 
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 
