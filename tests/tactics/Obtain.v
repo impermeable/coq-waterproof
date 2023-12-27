@@ -27,7 +27,6 @@ Require Import Rtrigo.
 Require Import Ranalysis.
 Require Import Integration.
 Require Import micromega.Lra.
-Require Import Max.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.

@@ -26,7 +26,7 @@ Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 (** Attempts to prove that proposed goal is enough to show current goal.
   If succesful, replaces current goal by proposed goal. *)

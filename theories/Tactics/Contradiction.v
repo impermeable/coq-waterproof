@@ -20,7 +20,7 @@ Require Import Classical.
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).

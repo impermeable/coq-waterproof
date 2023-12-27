@@ -27,7 +27,7 @@ Require Import Waterprove.
 Require Import MessagesToUser.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Ltac2 warn_equivalent_goal_given () :=
   warn (of_string 
