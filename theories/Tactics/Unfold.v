@@ -17,109 +17,144 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
+Require Import Ltac2.Std.
+Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Goals.
+Require Import Util.MessagesToUser.
 
-(** * Tactics that wrap the goal such that the user needs to specify the effect of unfolding in the proof script. *)
-
-Ltac2 Type exn ::= [ ExpandDefError(string) ].
-
-Ltac2 ap_goal_unwrap () := apply ExpandDef.Goal.unwrap.
-
-Ltac2 ident_to_clause (h : ident) :=
-  {Std.on_hyps := Some [(h, Std.AllOccurrences, Std.InHyp)]; 
-  Std.on_concl := Std.NoOccurrences}.
-
-Ltac2 ap_hyp_unwrap (h : constr) := apply (fun G => ExpandDef.Hyp.unwrap G _ $h).
-
+Ltac2 Type exn ::=  [ Inner ].
 
 (**
-  Rewrite a function by its definition, in the goal or in a *single* hypothesis.
+  Attemtps to unfold definition(s) in a statement according to specified method. 
+  If succesful it also throws a fatal error suggesting the user to replace this 
+  command by an alternative, suitable tactic with the unfolded statement. 
+    E.g. if the statement corresponds with the proof goal, 
+  the user is suggested to use
+    'We need to show that ([statement with unfolded definiton])'.
 
   Arguments:
-    - [targets: constr] or [targets: constr list], the target function to unfold, or the target functions (separated by [,]) to unfold.
-    - [cl: constr], optional suffix with syntax [... in h] for some [h], where [h] is the hypothesis to rewrite the function [f] in.
-      If omitted, [f] is rewritten in the goal.
+    - [unfold method: constr -> constr], method to be used for unfolding
+        unfolding is deemed to be succesful if [unfold_method statement] =\= [statement]
+    - [def_name: string], optional string used for error message when unfolding
+        is unsuccesful
+    - [statement : constr], term in which definitions are to be unfolded.
 
-  Raises exceptions:
-    - Panics if the identifier [h] in the suffix [... in h] is not an hypothesis.
+  Raises fatal exceptions:
+    - always
  
 *)
-Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) cl(opt(seq("in", "(", ident, ")"))) :=
-  panic_if_goal_wrapped ();
-  match cl with
-    | None => 
-      Std.unfold targets (Notations.default_on_concl None);
-      ap_goal_unwrap ()
-    | Some cl => 
-      let h_constr := Control.hyp cl in
-      Std.unfold targets (ident_to_clause cl);
-      ap_hyp_unwrap h_constr
+Ltac2 unfold_in_statement (unfold_method: constr -> constr) 
+  (def_name : string option) (statement : constr) := 
+  let unfolded_statement := unfold_method statement in
+  match Constr.equal statement unfolded_statement with
+  | false =>
+    match! goal with
+    | [ |- ?g] => 
+      match Constr.equal g statement with
+      | false => Control.zero Inner
+      | true => 
+        let msg (unfolded : constr) := concat_list
+          [of_string "replace line with:
+  We need to show that "; of_constr unfolded; of_string "."] in
+        throw (msg unfolded_statement)
+      end
+    | [_ : ?hyp |- _ ] =>
+      match Constr.equal hyp statement with
+      | false => Control.zero Inner
+      | true => 
+        let msg (unfolded : constr) := concat_list
+          [of_string "replace line with:
+  It holds that "; of_constr unfolded; of_string "."] in
+        throw (msg unfolded_statement)
+      end
+    | [ |- _ ] =>
+      let msg (unfolded : constr) := concat_list
+      [of_string "result:
+  "; of_constr unfolded; of_string "
+Remove this line to continue."] in
+      throw (msg unfolded_statement)
+    end    
+  | true => 
+    match def_name with
+    | None => throw (concat_list 
+      [of_string "definition does not appear in "; of_constr statement; of_string "."])
+    | Some def_name => throw (concat_list 
+      [of_string "'"; of_string def_name; of_string "'";
+        of_string " does not appear in "; of_constr statement; of_string "."])
+    end
   end.
-
-
-Ltac2 expand_def_framework (unfold_goal : unit -> unit) (unfold_hyp : ident -> unit) (cl : ident option):=
-  panic_if_goal_wrapped ();
-  match cl with
-    | None =>
-      unfold_goal ();
-      ap_goal_unwrap ()
-    | Some cl =>
-      let h_constr := Control.hyp cl in (* throws error if ident not found in hypotheses *)
-      unfold_hyp cl;
-      ap_hyp_unwrap h_constr
-  end.
-
 
 (**
-  Removes the [ExpandDef.Goal.Wrapper] from the goal.
+  Attemtps to unfold definition(s) in a statement according to specified method. 
+  If succesful it prints a message suggesting the user to
+  use a suitable tactic with the unfolded statement. 
+    E.g. if the statement corresponds with the proof goal, 
+  the user is suggested to use
+    'We need to show that ([statement with unfolded definiton])'.
 
   Arguments:
-    - [t: constr], the rewritten goal.
-  
-  Raises exceptions:
-    - [ExpandDefError], if [t] is not syntactically the same as the goal [G] in the wrapper [ExpandDef.Goal.Wrapper G].
-    - [ExpandDefError], if the current goal is not wrapped in the [ExpandDef.Goal.Wrapper].
+    - [unfold method: constr -> constr], method to be used for unfolding
+        unfolding is deemed to be succesful if [unfold_method statement] =\= [statement]
+    - [def_name: string], optional string used for error message when unfolding
+        is unsuccesful
+    - [statement : constr], term in which definitions are to be unfolded.
+
+  Raises fatal exceptions:
+    - none
+ 
 *)
-Ltac2 goal_as (t:constr) := 
-  lazy_match! goal with
-    | [|- ExpandDef.Goal.Wrapper ?v] =>
-      match Constr.equal v t with
-        | true => apply (ExpandDef.Goal.wrap)
-        | false => Control.zero (ExpandDefError "Wrong goal specified.")
+Ltac2 unfold_in_statement_no_error (unfold_method: constr -> constr) 
+  (def_name : string option) (statement : constr) := 
+  let unfolded_statement := unfold_method statement in
+  match Constr.equal statement unfolded_statement with
+  | false =>
+    match! goal with
+    | [ |- ?g] => 
+      match Constr.equal g statement with
+      | false => Control.zero Inner
+      | true => 
+        let msg (unfolded : constr) := concat_list
+          [of_string "use:
+  We need to show that "; of_constr unfolded; of_string "."] in
+        print (msg unfolded_statement)
       end
-    | [|- ExpandDef.Hyp.Wrapper _ _ _] => Control.zero (ExpandDefError "Specify the effect of expanding definition in *hypothesis*.")
-    | [|- _] => Control.zero (ExpandDefError "No need to specify the effect of expanding definition.")
+    | [_ : ?hyp |- _ ] =>
+      match Constr.equal hyp statement with
+      | false => Control.zero Inner
+      | true => 
+        let msg (unfolded : constr) := concat_list
+          [of_string "use:
+  It holds that "; of_constr unfolded; of_string "."] in
+        print (msg unfolded_statement)
+      end
+    | [ |- _ ] =>
+      let msg (unfolded : constr) := concat_list
+      [of_string "result:
+  "; of_constr unfolded] in
+      print (msg unfolded_statement)
+    end    
+  | true => 
+    match def_name with
+    | None => print (concat_list 
+      [of_string "definition does not appear in "; of_constr statement; of_string "."])
+    | Some def_name => print (concat_list 
+      [of_string "'"; of_string def_name; of_string "'";
+        of_string " does not appear in "; of_constr statement; of_string "."])
+    end
   end.
 
-Ltac2 Notation "That" "is," "write" "the" "goal" "as" t(constr) := goal_as t.
 
+(* Tactic notation for unfolding generic Gallinea terms, not notations.
+  For an example of how to used [unfold_in_statement] to unfold notations,
+  see [tests/tactics/Unfold.v] *)
 
-(**
-  Removes the [ExpandDef.Hyp.Wrapper] from the goal.
+Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) "in" statement(constr) :=
+  panic_if_goal_wrapped ();
+  unfold_in_statement (eval_unfold targets) None statement.
 
-  Arguments:
-    - [h : ident], the hypothesis that has been rewritten.
-    - [t: constr], the type the hypotheis has been rewritten as.
-
-  Raises exceptions:
-    - [ExpandDefError], if the wrapped goal is not of the form [ExpandDef.Hyp.Wrapper _ t h], that is, h or t has been specified incorrectly.
-    - [ExpandDefError], if the current goal is not wrapped in the [ExpandDef.Hyp.Wrapper]. 
-*)
-Ltac2 hyp_as (h : ident) (t:constr) :=
-  let h_hyp := Control.hyp h in
-  lazy_match! goal with
-    | [|- ExpandDef.Hyp.Wrapper _ ?s ?g] =>
-      match Constr.equal s t with
-        | true => 
-          match Constr.equal g h_hyp with
-            | true => apply (fun G => ExpandDef.Hyp.wrap G $s $g)
-            | false => Control.zero (ExpandDefError "Wrong hypothesis specified.")
-          end
-        | false => Control.zero (ExpandDefError "Wrong rewriting specified.")
-      end
-    | [|- ExpandDef.Goal.Wrapper _] => Control.zero (ExpandDefError "Specify the effect of expanding definition in *goal*.")
-    | [|- _] => Control.zero (ExpandDefError "No need to specify the effect of expanding definition.")
-  end.
-
-Ltac2 Notation "That" "is," "write" "(" h(ident) ")" "as" t(constr) := hyp_as h t.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) "in" statement(constr) :=
+  panic_if_goal_wrapped ();
+  unfold_in_statement_no_error (eval_unfold targets) None statement.

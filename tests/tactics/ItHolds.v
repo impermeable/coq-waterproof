@@ -135,3 +135,173 @@ Proof.
     Fail It holds that (x = 2) (h).
     It holds that (x = 2) (i).
 Abort.
+
+
+(** Tests for restricted version of 'By ...' clause *)
+Variable A B : Prop.
+Variable f : A -> B.
+
+(* Test 5: regular check that assertion works. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  It holds that B.
+Abort.
+
+(* Test 6: check that assertion works with label *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  It holds that B (i).
+Abort.
+
+(* Test 7: check that assertion fails with label that is already used. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  Fail It holds that B (H).
+Abort.
+
+(* Test 7b: assertion fails if label already used, even before it is checked whether 
+    assertion is actually valid.
+ *)
+Goal A -> False.
+Proof.
+intro H.
+Fail It holds that B (H).
+Abort.
+
+(* Test 8: 'By ...' succeeds if additional lemma is needed for proof assertion. *)
+Goal A -> False.
+Proof.
+  intro H.
+  By f it holds that B.
+Abort.
+(* Test 8b: also when lemma is included in local hypotheses. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  By f it holds that B.
+Abort.
+
+(* Test 9: 'By ...' fails if additional lemma is not enough to prove assertion. *)
+Goal False.
+Proof.
+  Fail By f it holds that B.
+Abort.
+
+(* Test 10: 'By ...' fails if additional lemma is not needed for proof assertion. *)
+Variable g : B -> A.
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  Fail By g it holds that B.
+Abort.
+
+(** Tests for 'Since ...' clause. *)
+(* Test 11: 'Since ...' works if claimed cause is proven previously. *)
+(* Note that no additional hypotheses are added by the Since-tactic. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  Since (A -> B) it holds that B.
+Abort.
+
+(* Test 12: 'Since ...' fails if claimed cause is not proven previously. *)
+Goal A -> False.
+Proof.
+  intro H.
+  Fail Since (A -> B) it holds that B.
+Abort.
+
+(*
+  Test excluded, fails because check is no longer performed for
+  terms in the hypotheses, (see workaround [Wateprove._rwaterprove]).
+
+(* Test 13: 'Since ...' fails if claimed cause is not necessary to proof final claim. *)
+Goal A -> False.
+Proof.
+  intro H.
+  pose f.
+  pose g.
+  Fail Since (B -> A) it holds that B.
+Abort.
+*)
+
+(* Test 14: 'Since ...' works with proofs of causal claim provided as external hints. *)
+#[local] Hint Resolve f : core.
+Goal A -> False.
+Proof.
+  intro H.
+  Since (A -> B) it holds that B.
+Abort.
+
+
+(** Test that references to lemmas cannot be used in the 
+  'Since ...' tactic, and that statements cannot be used in the 
+  'By ...' tactic. *)
+
+(* Test 15: 'By ...' with statement fails.*)
+Goal A -> False.
+Proof.
+  intro H.
+  Fail By (A -> B) it holds that B.
+  Since (A -> B) it holds that B.
+Abort.
+
+(* Test 16: 'Since ...' with reference fails. *)
+Goal A -> False.
+Proof.
+  intro H.
+  Fail Since f it holds that B.
+Abort.
+
+
+(** Tests for workaround occuring anomalies in [_rwaterprove]. *)
+(* Test 17: impossible goal with use of lemma in hypotheses. *)
+Goal False.
+Proof.
+  assert (A -> B) as f' by admit.
+  Fail By (f') it holds that B.
+Abort.
+
+(* Test 18: possible goal with right hypothesis provided. *)
+Variable C : Prop.
+Goal A -> False.
+Proof.
+  intro H.
+  assert (A -> B) as f' by admit.
+  assert (B -> C) as g' by admit.
+  By g' it holds that C.
+Abort.
+
+(*
+  Test excluded, fails because check is no longer performed for
+  terms in the hypotheses, (see workaround [Wateprove._rwaterprove]).
+
+(* Test 19: possible goal with wrong hypothesis provided. *)
+Variable D : Prop.
+Goal A -> False.
+Proof.
+  intro H.
+  assert (A -> B) as f' by admit.
+  assert (B -> C) as g' by admit.
+  assert D as k' by admit.
+  Fail By k' it holds that C.
+Abort.
+
+*)
+
+(* Test 20: works if By-clause is a hypothesis which can be solved with 'assumption'. *)
+(* Fails without workaround in [Waterprove._rwaterprove]. *)
+Goal A -> (A -> B) -> B.
+Proof.
+  intros Ha Hf.
+  By Ha it holds that B.
+Abort.

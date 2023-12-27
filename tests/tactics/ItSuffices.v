@@ -71,3 +71,45 @@ Proof.
   (* Clearly this statement isn't helpful in proving the goal! *)
   Fail By (f_increasing) it suffices to show that (1 + 1 = 2).
 Abort.
+
+
+(* Test 5: unable to show goal is enough if it does not imply current goal *)
+Variable A B : Prop.
+Variable g : A -> B.
+Goal B.
+  Fail It suffices to show that A.
+Abort.
+
+(* Test 6: able to show that goal is enough if it implies current goal. *)
+Goal B.
+Proof.
+  pose g.
+  It suffices to show that A.
+Abort.
+
+(* Test 7: able to show goal is enough with additional lemma. *)
+Goal B.
+Proof.
+  By g it suffices to show that A.
+Abort.
+
+(* Test 8: unable to goal is enough with irrelevant lemma. *)
+Variable h : A.
+Goal B.
+Proof.
+  Fail By h it suffices to show that A.
+Abort.
+
+(* Test 9: unable to show goal if lemma is superfluous. *)
+Goal B.
+  pose g.
+  Fail By h it suffices to show that A.
+Abort.
+
+
+(* Test 10: 'Since ...' works. For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
+Goal B.
+Proof.
+  pose g.
+  Since (A -> B) it suffices to show that A.
+Abort.

@@ -17,39 +17,27 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
-
 Require Import Ltac2.Message.
 
 Require Import Chains.Inequalities.
 Require Import Util.Goals.
 Require Import Util.Init.
+Require Import Util.Since.
 Require Import Waterprove.
+Require Import MessagesToUser.
 
-Ltac2 Type exn ::= [ AutomationFailure(message) ].
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Ltac2 warn_equivalent_goal_given () :=
-  print (of_string 
-"Warning: 
-The statement you provided does not exactly correspond to what you need to show. 
-This can make your proof less readable.
-Waterproof will try to rewrite the goal..."
+  warn (of_string 
+"The statement you provided does not exactly correspond to what you need to show. 
+This can make your proof less readable."
   ).
 
-Ltac2 warn_wrong_goal_given (wrong_target: constr) :=
-  print 
-    (concat
-      (concat
-        (concat
-          (of_string "The actual goal (")
-          (of_constr (Control.goal ()))
-        )
-        (concat 
-          (of_string ") is not equivalent to the goal you gave (")
-          (of_constr wrong_target)
-        )
-      )
-      (of_string "). ")
-    ).
+Ltac2 wrong_goal_msg (wrong_goal : constr) :=
+  concat_list 
+    [of_constr wrong_goal; of_string " does not correspond to what you need to show."].
 
 (**
   Check if [target] is judgementally (i.e. by rewriting definitions) equal to the goal.
@@ -60,66 +48,94 @@ Ltac2 warn_wrong_goal_given (wrong_target: constr) :=
   Returns:
     - [bool]: indicates if [target] is judgementally equal to the goal under focus.
 *)
-Local Ltac2 target_equals_goal_judgementally (target:constr) :=
+Local Ltac2 target_equals_goal_judgementally (target : constr) :=
   let target := eval cbv in $target in
   let real_goal := Control.goal () in
-  let real_goal := eval cbv in $real_goal in
+  let real_goal := eval cbv in $real_goal in 
   Constr.equal target real_goal.
 
+
 (**
-  Check if target_goal is what needs to be proven judgementally -- using global or weak global statement for inequality chains -- and attempts to solve with optional lemma. 
+  Check if stated goal is what needs to be proven judgementally.
+  If so changes current goal into stated goal.
+  Uses global or weak global statement inequality chains of to compare
+  these to the current goal.  
 
   Arguments:
-    - [target_goal: constr], expression that should equal the goal under focus.
-    - [lemma: constr option], optional lemma to include in the automatic proof completion ([waterprove]).
+    - [sttd_goal: constr], stated goal, the expression that should equal the goal under focus.
     
-  Raises exceptions:
-    - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
-    - [AutomationFailure], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
+  Raises fatal exceptions:
+    - If [sttd_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 check_and_solve (target_goal:constr) (lemma_opt: constr option) :=
-  (* First check if the given target equals the goal directly,
-  without applying any rewrite. *)
-  match Constr.equal target_goal (Control.goal ()) with
-    | false => 
-      lazy_match! target_goal with
-      (* Do somethign special for inequality chains *)
-        | (total_statement ?u) => (* Convert inequality chain to global statement. *)
-          let new_target := constr:(global_statement $u) in
-          match target_equals_goal_judgementally new_target with
-            | false =>
-              (* If at first no match, try to use weak global statement *)
-              let new_new_target := constr:(weak_global_statement $u) in
-              match target_equals_goal_judgementally new_new_target with
-                | false =>
-                  warn_wrong_goal_given (new_target); 
-                  Control.zero (AutomationFailure (of_string "Given goal not equivalent to actual goal."))
-                | true => ()
-              end
-            | true => ()
-          end;
-          match lemma_opt with
-            | None => (enough $target_goal by (waterprove 5 false [] Main))
-            | Some lem => (enough $target_goal by (rwaterprove 5 false [fun () => lem] Main [lem] []))
-          end
-        | _ =>
-          match target_equals_goal_judgementally target_goal with
-            | false =>
-              warn_wrong_goal_given (target_goal);
-              Control.zero (AutomationFailure (of_string "Given goal not equivalent to actual goal."))
-            | true => 
-              (* User provided an equivalent goal, but written differently. 
-                 Try to rewrite the real goal to match user input.*)
-              warn_equivalent_goal_given ();
-              change $target_goal
-          end
+
+
+Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
+  (* Check if stated goal exactly matches current goal. *)
+  match Constr.equal sttd_goal (Control.goal ()) with
+  | true => ()
+  | false => 
+    (* If not, do some additional checks. *)
+    (* For inequality chains, consider the global statement. *)
+    lazy_match! sttd_goal with
+    | total_statement ?u =>
+      (* Check if global statement matches judgementally. *)
+      let glob_statement := constr:(global_statement $u) in
+      match target_equals_goal_judgementally glob_statement with
+      | true => ()
+      | false =>
+        (* If not, try weak global statement. *)
+        let weak_glob_statement := constr:(weak_global_statement $u) in
+        match target_equals_goal_judgementally weak_glob_statement with
+        | true => ()
+        | false => throw (wrong_goal_msg sttd_goal)
+        end
+      end;
+      (* Convert current goal to the given inequality chain.*)
+      enough $sttd_goal by (waterprove 5 false Main)
+    (* For the rest, just check for judgemental equality. *)
+    | _ => 
+      match target_equals_goal_judgementally sttd_goal with
+      | true => warn_equivalent_goal_given (); change $sttd_goal  
+      | false => throw (wrong_goal_msg sttd_goal)
       end
-    | true  => ()
-  end;
-  match lemma_opt with
-    | None => waterprove 5 true [] Main
-    | Some lem => rwaterprove 5 true [fun () => lem] Main [lem] []
+    end
   end.
+
+(** Attempts to solve current goal. *)
+Local Ltac2 conclude () := 
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] 
+  in
+  match Control.case (fun () => waterprove 5 true Main) with
+  | Val _ => ()
+  | Err (FailedToProve g) => throw (err_msg g)
+  | Err exn => Control.zero exn
+  end.
+
+(** Attempts to solve current goal using additional lemma which has to be used. *)
+Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] 
+  in
+  match Control.case (fun () =>
+    rwaterprove 5 true Main xtr_lemma)
+  with
+  | Val _ => ()
+  | Err (FailedToProve g) => throw (err_msg g)
+  | Err exn => Control.zero exn (* includes FailedToUse error *)
+  end.
+
+(** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors 
+  which might be thrown into user readable errors. *)
+Local Ltac2 conclude_by (xtr_lemma : constr) :=
+  wrapper_core_by_tactic core_conclude_by xtr_lemma.
+
+(** Adaptation of [core_conclude_by] that allows user to use mathematical statements themselves
+  instead of references to them as extra information for the automation system.
+  Uses the code in [Since.v]. *)
+Local Ltac2 conclude_since (xtr_claim : constr) :=
+  since_framework core_conclude_by xtr_claim.
+
 
 
 (**
@@ -142,36 +158,45 @@ Local Ltac2 unwrap_state_goal_no_check () :=
 
   Arguments:
     - [target_goal: constr], expression that should equal the goal under focus.
-    - [lemma: constr option], optional lemma to include in the automatic proof completion ([waterprove]).
 
   Raises exceptions:
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
-    - [AutomationFailure], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
+    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "We" "conclude" "that" target_goal(constr) := 
+Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) := 
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
-  check_and_solve target_goal None.
+  guarantee_stated_goal_matches target_goal;
+  conclude ().
 
 (**
   Alternative notation for [We conclude that ...].
 *)
-Ltac2 Notation "It" "follows" "that" target_goal(constr) :=      
+Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(constr) :=      
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
-  check_and_solve target_goal None.
+  guarantee_stated_goal_matches target_goal;
+  conclude ().
 
 (**
   Finish proving a goal using automation.
 
   Arguments:
     - [target_goal: constr], expression that should equal the goal under focus.
+    - [xtr_lemma: constr], lemma that can be and has to be used for proof of [target_goal].
 
   Raises exceptions:
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
-    - [AutomationFailure], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
+    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "By" lemma(constr) "we" "conclude" "that" target_goal(constr) :=
+Ltac2 Notation "By" xtr_lemma(constr) "we" "conclude" tht(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
-  check_and_solve target_goal (Some lemma).
+  guarantee_stated_goal_matches target_goal;
+  conclude_by xtr_lemma.
+
+Ltac2 Notation "Since" xtr_claim(constr) "we" "conclude" tht(opt("that")) target_goal(constr) :=
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  guarantee_stated_goal_matches target_goal;
+  conclude_since xtr_claim.

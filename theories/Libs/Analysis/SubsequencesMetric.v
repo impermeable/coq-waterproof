@@ -35,12 +35,12 @@ Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 6
 
 Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 68, only parsing) : metric_scope.
 
-Local Ltac2 unfold_is_index_sequence    ()          := unfold is_index_sequence.
+Local Ltac2 unfold_is_index_sequence (statement : constr) := eval unfold is_index_sequence in $statement.
 
-Local Ltac2 unfold_is_index_sequence_in (h : ident) := unfold is_index_sequence in $h.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "index" "sequence" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_is_index_sequence unfold_is_index_sequence_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "index" "sequence" "in" statement(constr) := 
+  unfold_in_statement unfold_is_index_sequence (Some "index sequence") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "index" "sequence" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_index_sequence (Some "index sequence") statement.
 
 
 (** The next definition captures what it means to be an index sequence.*)
@@ -117,13 +117,12 @@ Lemma incr_loc_to_glob :
 Proof.
     (* There exists already a constant called [f].*) 
     Take g : (ℕ → ℕ).
-    Expand the definition of is_increasing. (*TODO: the layout of is_increasing is confusing*)
-    That is, write the goal as 
+    We need to show that
       ((for all k : ℕ, (g k ≤ g (k + 1))%nat) ⇨ for all k l : ℕ, (k ≤ l ⇨ g k ≤ g l)%nat ).
     Assume that (∀ k : ℕ, (g k) ≤ (g (k + 1)))%nat.
     Take k : ℕ.
     We use induction on l.
-    - We first show the base case, namely ((k ≤ 0)%nat ⇨ (g k ≤ g 0)%nat).
+    - We first show the base case ((k ≤ 0)%nat ⇨ (g k ≤ g 0)%nat).
       Assume that (k ≤ 0)%nat.
       It holds that (k = 0)%nat.
       It suffices to show that (g k = g 0)%nat.
@@ -154,8 +153,7 @@ Proof.
     Take k1, k2 : ℕ; such that (k1 ≥ k2)%nat.
     We need to show that (n k1 ≥ n k2)%nat.
     By incr_loc_to_glob it suffices to show that (is_increasing n).
-    Expand the definition of is_increasing.
-    That is, write the goal as (for all k : ℕ, (n k ≤ n (k + 1))%nat).
+    We need to show that (for all k : ℕ, (n k ≤ n (k + 1))%nat).
     Take k : ℕ.
     We conclude that (n k ≤ n (k+1))%nat.
 Qed.
@@ -183,10 +181,8 @@ Assume that (is_index_sequence n).
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist _ (a (n k)) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (a k) p < ε) (i).
-Obtain K according to (i), so for K : nat it holds that
-  (∀ k : ℕ, (k ≥ K)%nat → dist _ (a k) p < ε).
-Choose N3 := K.
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (a k) p < ε).
+Obtain such a K. Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (n k ≥ n K)%nat.
 By index_sequence_property it holds that (n K ≥ K)%nat.
@@ -205,19 +201,17 @@ Take p : X.
 Assume that (x ⟶ p).
 
 We need to show that (y ⟶ p).
-It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
-Obtain m according to (i), so for m : nat -> nat it holds that 
-  (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (ii).
-Because (ii) both (is_index_sequence m) and 
+It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
+Obtain such an m. It holds that 
+  (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
+Because (i) both (is_index_sequence m) and 
   (for all k : nat, y k = x (m k)) hold.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist _ (y k) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (x k) p < ε) (iii).
-Obtain K according to (iii), so for K : nat it holds that 
-  (∀ k : ℕ, (k ≥ K)%nat → dist _ (x k) p < ε).
-Choose N3 := K.
+It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (x k) p < ε).
+Obtain such a K. Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (m k ≥ m K)%nat.
 By index_sequence_property it holds that (m K ≥ K)%nat.
@@ -235,22 +229,24 @@ End my_section.
 
 Notation "b 'is' 'a' '_subsequence_' 'of' a" := (is_subsequence _ b a) (at level 68) : metric_scope.
 Notation "b 'is' 'a' 'subsequence' 'of' a" := (is_subsequence _ b a) (at level 68, only parsing) : metric_scope.
-Local Ltac2 unfold_is_subsequence    ()          := unfold is_subsequence.
-Local Ltac2 unfold_is_subsequence_in (h : ident) := unfold is_subsequence in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "subsequence" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_is_subsequence unfold_is_subsequence_in cl.
+Local Ltac2 unfold_is_subsequence (statement : constr) := eval unfold is_subsequence in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "subsequence" "in" statement(constr) := 
+  unfold_in_statement unfold_is_subsequence (Some "subsequence") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "subsequence" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_subsequence (Some "subsequence") statement.
 
 Notation "p 'is' 'an' '_accumulation' 'point_' 'of' a" := (is_accumulation_point _ p a) (at level 68) : metric_scope.
 Notation "p 'is' 'an' 'accumulation' 'point' 'of' a" := (is_accumulation_point _ p a) (at level 68, only parsing) : metric_scope.
-Local Ltac2 unfold_is_accumulation_point    ()          := unfold is_accumulation_point.
-Local Ltac2 unfold_is_accumulation_point_in (h : ident) := unfold is_accumulation_point in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_is_accumulation_point unfold_is_accumulation_point_in cl.
+Local Ltac2 unfold_is_accumulation_point (statement : constr) := eval unfold is_accumulation_point in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" "in" statement(constr) := 
+  unfold_in_statement unfold_is_accumulation_point (Some "accumulation point") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation point" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_is_accumulation_point (Some "accumulation point") statement.
 
 
 #[export] Hint Resolve index_sequence_property : subsequences.
 #[export] Hint Extern 1 => (unfold ge) : subsequences.
-#[export] Hint Resolve double_is_even : subsequences.
+#[export] Hint Resolve double_is_even : wp_integers.
 #[export] Hint Resolve index_sequence_property2 : subsequences.
 
 Close Scope metric_scope.

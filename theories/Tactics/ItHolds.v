@@ -17,79 +17,127 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
+Require Import Util.Since.
+Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
-Local Ltac2 idtac () := ().
 
-(**
-  Introduce a new sublemma and try to prove it immediately,
-  optionally using a given lemma.
+(** Tries to make the assertion [True] with label [label].
+  Throws an error if this fails, i.e. if the label is already used
+  for another one of the hypotheses.
+  
+  This check was separated out from the 'assert'-tactics below because the 
+  '[label] is already used error' would otherwise be caught in
+  the code meant to catch [AutomationFailure] errors. *)
 
-  Arguments:
-    - [id: ident option], optional name for the new sublemma. If the proof succeeds, it will become a hypothesis (bearing [id] as name).
-    - [conclusion: constr], the actual content of the new sublemma to prove.
-    - [proving_lemma: constr], optional reference to a lemma used to prove the new sublemma (via [waterprove)]).
-
-  Raises exception:
-    - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
-*)
-Ltac2 assert_and_prove_sublemma (id: ident option) (conclusion: constr) (proving_lemma: constr option) :=
-  let by_arg () :=
-    match proving_lemma with
-      | None => waterprove 5 false [] Main
-      | Some lemma => rwaterprove 5 false [fun () => lemma] Main [lemma] []
-    end in
-  let proof_attempt () := (* Check whether identifier is given *)
-    match id with
-      | None =>
-        let h := Fresh.in_goal @__wp__h in
-        ltac2_assert_with_by h conclusion by_arg
-      | Some id => 
-        ltac2_assert_with_by id conclusion by_arg
-    end
-  in match Control.case proof_attempt with
-    | Val _ => idtac () 
-    | Err exn => Control.zero exn
+Local Ltac2 try_out_label (label : ident) :=
+  match Control.case (fun () => 
+    assert True as $label by exact I)
+  with
+  | Err exn => Control.zero exn
+  | Val _ => clear $label
   end.
 
+
+(** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
+  hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
+  identifier starting with '_H' is generated. *)
+Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] in
+  let id := 
+    match label with 
+    | None => Fresh.in_goal @_H
+    | Some label => try_out_label label; label
+    end
+  in
+  match Control.case (fun () =>
+    assert $claim as $id by 
+      (waterprove 5 true Main))
+  with
+  | Val _ => ()
+  | Err (FailedToProve g) => throw (err_msg g)
+  | Err exn => Control.zero exn
+  end.
+
+
+(** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
+  hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
+  identifier starting with '_H' is generated.
+  [xtr_lemma] has to be used in the proof that [claim] holds.
+  *)
+Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
+  let err_msg (g : constr) := concat_list
+    [of_string "Could not verify that "; of_constr g; of_string "."] in
+  let id := 
+    match label with 
+    | None => Fresh.in_goal @_H
+    | Some label => try_out_label label; label
+    end
+  in
+  match Control.case (fun () =>
+    assert $claim as $id by 
+      (rwaterprove 5 true Main xtr_lemma))
+  with
+  | Val _ => ()
+  | Err (FailedToProve g) => throw (err_msg g)
+  | Err exn => Control.zero exn (* includes FailedToUse error *)
+  end.
+
+(** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors 
+  which might be thrown into user readable errors. *)
+Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
+  wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma.
+
+(** Adaptation of [core_wp_assert_by] that allows user to use mathematical statements themselves
+  instead of references to them as extra information for the automation system.
+  Uses the code in [Since.v]. *)
+Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim : constr) :=
+  since_framework (core_wp_assert_by claim label) xtr_claim.
+
+
 (**
-  Introduce a new sublemma and try to prove it immediately using a given lemma.
+  Attempts to assert a claim and proves it automatically using a specified lemma, 
+  this lemma has to be used.
 
   Arguments:
-    - [lemma: constr], reference to a lemma used to prove the new sublemma (via [waterprove)]).
-    - [id: ident option], optional name for the new sublemma. If the proof succeeds, it will become a hypothesis (bearing [id] as name).
-    - [conclusion: constr], the actual content of the new sublemma to prove.
+    - [xtr_lemma: constr], reference to a lemma used to prove the claim (via [rwaterprove]).
+    - [label: ident option], optional name for the claim. 
+        If the proof succeeds, it will become a hypothesis (bearing [label] as name).
+    - [claim: constr], the actual content of the claim to prove.
 
     Raises exception:
-    - [AutomationFailure], if [waterprove] fails the prove the sublemma. This happens if the sublemma does not hold, but can also happen if it is simply too difficult for [waterprove].
+    - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
+    - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-Ltac2 Notation "By" lemma(constr) "it" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "By" xtr_lemma(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
-  assert_and_prove_sublemma id conclusion (Some lemma).
-    
+  wp_assert_by claim label xtr_lemma.
+
+Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+  panic_if_goal_wrapped ();
+  wp_assert_since claim label xtr_claim.
     
 (** * It holds that ... (...)
-    Introduce a new sublemma and try to prove it immediately.
-    Same as [By ... it holds that ... (...)],
-    but without using a specified lemma.
+  Attempts to assert a claim and proves it automatically.
 
-    Arguments:
-        - [id: ident option], optional name for the new sublemma.
-            If the proof succeeds, 
-            it will become a hypotheses (bearing [id] as name).
-        - [conclusion: constr], the actual content 
-            of the new sublemma to prove.
+  Arguments:
+    - [label: ident option], optional name for the claim. 
+        If the proof succeeds, it will become a hypothesis (bearing [label] as name).
+    - [claim: constr], the actual content of the claim to prove.
 
     Raises exception:
-        - [AutomationFailure], if [waterprove] fails the prove the sublemma.
-            This happens if the sublemma does not hold,
-            but can also happen if it is simply too difficult for [waterprove].
+    - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
+    - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-Ltac2 Notation "It" "holds" "that" conclusion(constr) id(opt(seq("(", ident, ")")))  :=
+Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")")))  :=
   panic_if_goal_wrapped ();
-  assert_and_prove_sublemma id conclusion None.
+  wp_assert claim label.

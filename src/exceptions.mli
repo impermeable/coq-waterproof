@@ -25,8 +25,21 @@ type wexn =
   | FailedTest of string (** Indicates that the running test has failed *)
   | NonExistingDataset of Hints.hint_db_name (** Indicates that the user tried to import a non-existing hint dataset *)
   | UnusedLemmas (** Indicates that no proof using all the given lemmas has been found *)
+  | ToUserError of Pp.t (** An error that should go directly to the user *)
 
 (**
   Throws an error with given info and message
 *)
 val throw : ?info:Exninfo.info -> wexn -> 'a
+
+(** 
+  Sends a warning
+*)
+val warn :
+  Pp.t -> unit Proofview.tactic
+
+(**
+  Throws an error
+*)
+val err :
+  Pp.t -> unit Proofview.tactic

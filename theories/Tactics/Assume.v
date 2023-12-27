@@ -18,19 +18,18 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
-
-Ltac2 Type exn ::= [ AssumeError(message) ].
+Require Import Util.MessagesToUser.
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
-  concat (concat
-    (concat (of_string "Expected assumption of ") (of_constr e))
-    (concat (of_string " instead of ") (of_constr t))) (of_string ".").
-
+  concat_list [of_string "Expected assumption of "; of_constr e;
+    of_string " instead of "; of_constr t; of_string "."].
 (**
   Attempts to assume a negated expression.
 
@@ -39,9 +38,9 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
   Does:
       - For the first pair of (expession (and name)) in [x], assume the expression.
 
-  Raises Exceptions:
-    - [AssumeError], if the current goal does not require the assumption of an expression [t] where [t] is the expression from the first pair in [x].
-    - [AssumeError], if [x] contains more than one element.
+  Raises fatal exceptions:
+    - If the current goal does not require the assumption of an expression [t] where [t] is the expression from the first pair in [x].
+    - If [x] contains more than one element.
 *)
 Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
   match x with 
@@ -51,14 +50,14 @@ Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
         lazy_match! goal with
           | [ |- not ?u ] => 
             match check_constr_equal u t with
-              | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
+              | false => throw (expected_of_type_instead_of_message u t)
               | true  => (* Check whether this was the only assumption made.*)
                 match tail with
-                  | h::t => Control.zero (AssumeError (of_string "Nothing left to assume after the negated expression."))
+                  | h::t => throw (of_string "Nothing left to assume after the negated expression.")
                   | [] => (* Assume negation : check whether a name has been given *)
                     match n with
-                      | None   => let h := Fresh.in_goal @__wp__h in intro $h
-                      | Some n => intro $n
+                      | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
+                      | Some n => intro $n; change $t in $n
                     end
                 end
             end
@@ -77,8 +76,8 @@ end.
     - For the first pair of (hypothesis (and name)) in [x], assume the hypothesis (with specified name).
       If the assumed hypothesis did not come from a negated expression, proceeds to call itself with the remaining pairs in [x] as a new list [x'].
 
-  Raises Exceptions:
-    - [AssumeError], if the current goal does not require the assumption of any more hypotheses in general or one of type [t], where [t] is the type from the first pair in [x].
+  Raises fatale xceptions:
+    - If the current goal does not require the assumption of any more hypotheses in general or one of type [t], where [t] is the type from the first pair in [x].
 *)
 Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
   match x with
@@ -94,14 +93,14 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
                   match check_constr_equal u t with
                     | true => (* Check whether a name has been given *)
                       match n with
-                        | None   => let h := Fresh.in_goal @__wp__h in intro $h
-                        | Some n => intro $n
+                        | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
+                        | Some n => intro $n; change $t in $n
                           end
-                    | false => Control.zero (AssumeError (expected_of_type_instead_of_message u t))
+                    | false => throw (expected_of_type_instead_of_message u t)
                   end
-                | false => Control.zero (AssumeError (of_string "[Assume] cannot be used to construct a map (→). Use [Take] instead."))
+                | false => throw (of_string "`Assume ...` cannot be used to construct a map (→). Use [Take] instead.")
               end
-            | [ |- _ ] => Control.zero (AssumeError (of_string "Tried to assume too many properties."))
+            | [ |- _ ] => throw (of_string "Tried to assume too many properties.")
           end
       end;
 
@@ -114,7 +113,7 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
 Local Ltac2 remove_contra_wrapper (wrapped_assumption : constr) (assumption : constr) :=
   match (check_constr_equal wrapped_assumption assumption) with
     | true  => apply (ByContradiction.wrap $wrapped_assumption)
-    | false => Control.zero (AssumeError (of_string "Wrong assumption specified."))
+    | false => throw (of_string "Wrong assumption specified.")
   end.
 
 
@@ -138,7 +137,7 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   lazy_match! goal with
     | [ |- not _ ]  => assume_negation x
     | [ |- _ -> _ ] => process_ident_type_pairs x
-    | [ |- _ ] => Control.zero (AssumeError (of_string "[Assume] can only be used to prove an implication (⇨) or a negation (¬)."))
+    | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
   end.
 
 

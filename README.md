@@ -162,6 +162,16 @@ The behavior of the automation tactics can be configured by importing specific f
   Waterproof Set Shorten Databases Foo core.
   ```
 
+* **Turn debugging of automation on**: Example:
+  ```coq
+  Waterproof Enable Debug Automation.
+  ```
+
+* **Turn debugging of automation off**: Example:
+  ```coq
+  Waterproof Disable Debug Automation.
+  ```
+
 ## Chains of (in)equalities
 In written proofs, one often uses a chain of (in)equalities to explain why more complicated (in)equalities hold.
 Waterproof allows you to use a similar notation in Coq.
@@ -183,4 +193,4 @@ The chain of inequalities is used to show that `-r < x - 1`.
 The coq-waterproof library is developed as part of the educational [Waterproof](https://github.com/impermeable/waterproof) editor for Coq.
 The tactics are designed to be used by first-year mathematics students who are unfamiliar with Coq. This is also why the tactics require the user to be explicit: the students have to learn to write readable proofs.
 
-The library was originally written by Jim Portegies in Ltac1. It was extended and ported to Ltac2 by Cosmin Manea, Lulof Pirée, Adrian Vrămuleţ and Tudor Voicu as part of the 'Waterfowl' bachelor Software Engineering Project at the [Eindhoven University of Technology](https://www.tue.nl/en/) (in May-June 2021). Since then it has been under further development by Jelle Wemmenhove and Jim Portegies.
+The library was originally written by Jim Portegies in Ltac1. It was extended and ported to Ltac2 by Cosmin Manea, Lulof Pirée, Adrian Vrămuleţ and Tudor Voicu as part of the 'Waterfowl' bachelor Software Engineering Project at the [Eindhoven University of Technology](https://www.tue.nl/en/) (in May-June 2021). Since then it has been under further development by Jelle Wemmenhove and Jim Portegies. In April-June 2023, Balthazar Patiachvili improved the automation, and converted parts of the library to an OCaml plugin.
