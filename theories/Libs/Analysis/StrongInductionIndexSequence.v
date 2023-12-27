@@ -227,7 +227,7 @@ Qed.
 
 
 Theorem strong_ind_index_seq_with_prop {Q : nat -> Prop}
-  (H0 : {n0 : nat | Q n0})
+  (H0 : {n_0 : nat | Q n_0})
   (Hstep : forall (k : nat) (n : nat -> nat),
     (forall l : nat, l <= k -> Q (n l)) -> (forall l : nat, l < k -> n l < n (l + 1)) ->
     {n_kplus1 : nat | Q n_kplus1 /\ n k < n_kplus1})
@@ -267,7 +267,7 @@ Proof.
 Qed.
 
 Theorem classic_strong_ind_index_seq_with_prop {Q : nat -> Prop}
-  (H0 : exists n0 : nat, Q n0)
+  (H0 : exists n_0 : nat, Q n_0)
   (Hstep : forall (k : nat) (n : nat -> nat),
     (forall l : nat, l <= k -> Q (n l)) -> (forall l : nat, l < k -> n l < n (l + 1)) ->
     exists n_kplus1 : nat, Q n_kplus1 /\ n k < n_kplus1)
@@ -303,15 +303,13 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Waterproof.Util.Goals.
 Require Import Util.MessagesToUser.
 
-
 Local Ltac2 inductive_def_index_seq_n () :=
   lazy_match! goal with
   | [ |- exists n : nat -> nat, is_index_seq n /\ forall k : nat, @?p n k ] => (*@?p*)
-    lazy_match! p with
-    | fun (n : nat -> nat) (k : nat) => ?q (n k) =>
-      apply (@classic_strong_ind_index_seq_with_prop $q);
-      Control.focus 2 2 (fun () => apply StrongIndIndxSeq.unwrap)
-    | _ => throw (of_string "The index sequence cannot be defined using this technique.")
+    let q := eval unfold id in (fun l : nat => $p id l) in
+    match Control.case (fun () => apply (@classic_strong_ind_index_seq_with_prop $q)) with
+    | Val _ => Control.focus 2 2 (fun () => apply StrongIndIndxSeq.unwrap)
+    | Err exn => throw (of_string "The index sequence cannot be defined using this technique.")
     end
   | [ |- _ ] => throw (of_string "The goal is not to define an index sequence.")
   end.
@@ -326,5 +324,5 @@ Local Ltac2 take_first_k () :=
   | [|- _] => throw (of_string "No need to introduce first k elements of sequence n.")
   end.
 
-Ltac2 Notation "Take" "k" ":" "ℕ" "and" "assume" "n(0)," "...," "n(k)" "are" "defined" := 
+Ltac2 Notation "Take" "k" ":" "ℕ" "and" "assume" "n(0),...,n(k)" "are" "defined" := 
   take_first_k ().
