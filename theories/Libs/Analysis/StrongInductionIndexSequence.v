@@ -298,7 +298,7 @@ End StrongInductionIndexSequence.
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
   
 Require Import Waterproof.Util.Goals.
 Require Import Util.MessagesToUser.
