@@ -43,8 +43,8 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto !automation_debug depth lems databases;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto !automation_debug depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto !automation_debug depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto !automation_debug depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_eauto !automation_debug depth lems databases
   ]
 
 (**
@@ -54,8 +54,8 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto !automation_debug depth lems databases must_use forbidden;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto !automation_debug depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto !automation_debug depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto !automation_debug depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_eauto !automation_debug depth lems databases
   ]
 
 (**
