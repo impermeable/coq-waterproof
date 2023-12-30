@@ -26,7 +26,6 @@ Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Reals.
 Require Import Notations.
-Require Import Manipulation.
 
 
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
