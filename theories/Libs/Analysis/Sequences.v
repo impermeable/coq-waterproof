@@ -26,6 +26,7 @@ Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Reals.
 Require Import Notations.
+Require Import Manipulation.
 
 
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
@@ -89,12 +90,9 @@ Proof.
     Either (x <= 0) or (0 < x).
     - Case (x <= 0).
       Choose n := 1%nat.
-      We claim that (INR 1 > INR 0).
-      { We need to show that ( 1 > 0 ).
-        We conclude that (1 > 0).
-      }
-      It holds that (x <= INR 0).
-      We conclude that (n > x).
+      It holds that (INR n > INR 0).
+      It holds that (x <= 0%nat).
+      We conclude that (INR n > x).
     - Case (0 < x).
       By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
       It holds that (IZR( up x ) > x).
@@ -213,7 +211,9 @@ Proof.
     It holds that ( Un_cv (fun n ↦ -d(n), -0)).
     It holds that ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     It holds that (0 = -0).
-    It suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    (* TODO: make transport automatic *)
+    By (eq_ind_r(_, _, fun x => Un_cv (fun n ↦ -(1 / (n + 1)), x), (i))) 
+      it suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     By (i) we conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
