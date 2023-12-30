@@ -33,7 +33,7 @@ open Exceptions
 open Hint_dataset_declarations
 open Waterprove
 
-let waterproof_version : string = "2.1.0+8.17"
+let waterproof_version : string = "2.1.0+8.19"
 }
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
