@@ -23,5 +23,6 @@
 *)
 val wp_autorewrite :
   ?print_hints:bool ->
+  bool ->
   Backtracking.trace Proofview.tactic ->
   unit Proofview.tactic
