@@ -37,14 +37,19 @@ let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
 let automation_debug : bool ref = Summary.ref ~name:"automation_debug" false
 
 (**
+  Should rewrite hints be printed ?
+*)
+let print_rewrite_hints : bool ref = Summary.ref ~name:"print_rewrite_hints" false
+
+(**
   Function that will actually call automation functions
 *)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto !automation_debug depth lems databases;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto !automation_debug depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_auto !automation_debug depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_eauto !automation_debug depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_eauto !automation_debug depth lems databases
   ]
 
 (**
@@ -54,8 +59,8 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto !automation_debug depth lems databases must_use forbidden;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto !automation_debug depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_auto !automation_debug depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite !automation_debug @@ wp_eauto !automation_debug depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_eauto !automation_debug depth lems databases
   ]
 
 (**

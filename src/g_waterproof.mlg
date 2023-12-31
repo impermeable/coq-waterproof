@@ -64,6 +64,20 @@ VERNAC COMMAND EXTEND AutomationDebugDisableSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND AutomationPrintRewriteHintsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Printing" "Rewrite" "Hints"] ->
+    {
+      print_rewrite_hints := true
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationPrintRewriteHintsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Printing" "Rewrite" "Hints" ] ->
+    {
+      print_rewrite_hints := false
+    }
+END
+
 VERNAC COMMAND EXTEND PrintVersionSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Print" "Version" ] ->
     {
