@@ -347,8 +347,7 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
       )
 
 let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
-  let env = Global.env () in
-  let ist = Genintern.empty_glob_sign ~strict:true (Global.env ()) in
+  let ist = Genintern.empty_glob_sign ~strict:true env in
   let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
   let to_rew_rule ({CAst.loc;v=((c,ctx),b,t)}: raw_rew_rule): rew_rule =
     let sigma = Evd.merge_context_set Evd.univ_rigid sigma ctx in

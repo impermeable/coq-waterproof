@@ -210,9 +210,7 @@ Proof.
     It holds that ( Un_cv (fun n ↦ -d(n), -0)).
     It holds that ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     It holds that (0 = -0).
-    (* TODO: make transport automatic *)
-    By (eq_ind_r(_, _, fun x => Un_cv (fun n ↦ -(1 / (n + 1)), x), (i))) 
-      it suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    It suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
     By (i) we conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
