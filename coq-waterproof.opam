@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "2.1.0+8.17"
+version: "2.1.1+8.18"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
@@ -25,7 +25,7 @@ bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
 
 depends: [
   "ocaml" {>= "4.09.0"}
-  "coq" {>= "8.17" & < "8.18"}
+  "coq" {>= "8.18" & < "8.19"}
   "dune" {>= "3.6."}
 ]
 

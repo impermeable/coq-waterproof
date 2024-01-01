@@ -229,8 +229,8 @@ let fresh_key: unit -> KerName.t =
 
 let decompose_applied_relation (env: Environ.env) (sigma: Evd.evar_map) (c: constr) (ctype: Evd.econstr) (left2right: bool): hypinfo option =
   let find_rel ty =
-    let sigma, ty = Clenv.make_evar_clause env sigma ty in
-    let (_, args) = Termops.decompose_app_vect sigma ty.Clenv.cl_concl in
+    let sigma, ty = EClause.make_evar_clause env sigma ty in
+    let (_, args) = EConstr.decompose_app sigma ty.EClause.cl_concl in
     let len = Array.length args in
     if 2 <= len then
       let c1 = args.(len - 2) in
@@ -346,8 +346,10 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
       )
 
 let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
-  let ist = Genintern.empty_glob_sign env in
+  let ist = Genintern.empty_glob_sign ~strict:true env in
+  (* let ist = Genintern.empty_glob_sign env in*)
   let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
+  (*let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in*)
   let to_rew_rule ({CAst.loc;v=((c,ctx),b,t)}: raw_rew_rule): rew_rule =
     let sigma = Evd.merge_context_set Evd.univ_rigid sigma ctx in
     let info = find_applied_relation ?loc env sigma c b in

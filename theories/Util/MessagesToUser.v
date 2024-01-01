@@ -22,5 +22,5 @@ Require Import Ltac2.Init.
 
 Require Import Waterproof.Waterproof.
 
-Ltac2 @ external warn: message -> unit := "coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-waterproof" "throw_external".
+Ltac2 @ external warn: message -> unit := "coq-core.plugins.coq-waterproof" "warn_external".
+Ltac2 @ external throw: message -> unit := "coq-core.plugins.coq-waterproof" "throw_external".
