@@ -33,6 +33,7 @@ open Exceptions
 open Hint_dataset_declarations
 open Waterprove
 
+let waterproof_version : string = "2.1.0+8.19"
 }
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
@@ -46,6 +47,41 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
     {
       automation_shield := false
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationDebugEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Debug" "Automation" ] ->
+    {
+      automation_debug := true
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationDebugDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Debug" "Automation" ] ->
+    {
+      automation_debug := false
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationPrintRewriteHintsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Printing" "Rewrite" "Hints"] ->
+    {
+      print_rewrite_hints := true
+    }
+END
+
+VERNAC COMMAND EXTEND AutomationPrintRewriteHintsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Printing" "Rewrite" "Hints" ] ->
+    {
+      print_rewrite_hints := false
+    }
+END
+
+VERNAC COMMAND EXTEND PrintVersionSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Print" "Version" ] ->
+    {
+      Feedback.msg_notice (Pp.str waterproof_version)
     }
 END
 
@@ -192,4 +228,13 @@ let () =
           forbidden
       end >>= fun () -> tclUNIT @@ of_unit ()
 
+let () =
+  define1 "warn_external" pp @@ 
+    fun input ->
+      warn input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "throw_external" pp @@
+    fun input ->
+      err input >>= fun () -> tclUNIT @@ of_unit ()
 }

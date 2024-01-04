@@ -20,7 +20,6 @@ open EConstr
 open Hints
 open Proofview
 
-open Exceptions
 open Hint_dataset
 open Hint_dataset_declarations
 open Wp_auto
@@ -33,14 +32,24 @@ open Wp_rewrite
 let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
 
 (**
+  Do we want to debug the automation ?   
+*)
+let automation_debug : bool ref = Summary.ref ~name:"automation_debug" false
+
+(**
+  Should rewrite hints be printed ?
+*)
+let print_rewrite_hints : bool ref = Summary.ref ~name:"print_rewrite_hints" false
+
+(**
   Function that will actually call automation functions
 *)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
   Tacticals.tclFIRST [
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto false depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto false depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto false depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto false depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_eauto !automation_debug depth lems databases
   ]
 
 (**
@@ -48,10 +57,10 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
 *)
 let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): unit tactic =
   Tacticals.tclFIRST [
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto false depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto false depth lems databases must_use forbidden;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_auto false depth lems databases;
-    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite @@ wp_eauto false depth lems databases
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto !automation_debug depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto !automation_debug depth lems databases must_use forbidden;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_auto !automation_debug depth lems databases;
+    Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_autorewrite ~print_hints:(!print_rewrite_hints) !automation_debug @@ wp_eauto !automation_debug depth lems databases
   ]
 
 (**
@@ -72,12 +81,10 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
 let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type): unit tactic =
   Proofview.Goal.enter @@ fun goal ->
     begin
-      tclORELSE
-        (automation_routine 2 lems (get_current_databases database_type))
-        begin fun _ ->
-          if shield && !automation_shield then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
-          automation_routine depth lems (get_current_databases database_type)
-        end
+      if shield && !automation_shield then 
+        automation_routine 3 lems (get_current_databases Shorten)
+      else
+        automation_routine depth lems (get_current_databases database_type)
     end
 
 (**
@@ -100,10 +107,8 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
       let sigma = Proofview.Goal.sigma goal in
       let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
       let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
-      tclORELSE
-        (restricted_automation_routine 2 lems (get_current_databases database_type) must_use_tactics forbidden_tactics)
-        begin fun _ ->
-          if shield && !automation_shield then throw (FailedAutomation "The current goal cannot be proved since it contains shielded patterns");
-          restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
-        end
-    end
+      if shield && !automation_shield then
+        restricted_automation_routine 3 lems (get_current_databases Shorten) must_use_tactics forbidden_tactics
+      else
+        restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
+      end

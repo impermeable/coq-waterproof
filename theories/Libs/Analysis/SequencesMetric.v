@@ -33,7 +33,7 @@ Definition convergence {M : Metric_Space}
                        (a : ℕ → Base M)
                        (c : Base M) :=
   ∀ ε : ℝ, ε > 0 ⇒
-    ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒
+    ∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒
       dist M (a n) c < ε.
 
 Definition bounded {X : Metric_Space} (a : ℕ → Base X) :=
@@ -43,18 +43,21 @@ Definition bounded {X : Metric_Space} (a : ℕ → Base X) :=
 
 Declare Scope metric_scope.
 Notation "a ⟶ c" := (convergence a c) (at level 20) : metric_scope.
-Local Ltac2 unfold_convergence    ()          := unfold convergence.
-Local Ltac2 unfold_convergence_in (h : ident) := unfold convergence in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_convergence unfold_convergence_in cl.
+Local Ltac2 unfold_convergence (statement : constr) := eval unfold convergence in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "in" statement(constr) := 
+  unfold_in_statement unfold_convergence (Some "⟶") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_convergence (Some "⟶") statement.
 
 (* With -->, waterproof complains, giving the following error:
     Command not supported (No proof-editing in progress)*)
 
 Notation "a '_converges' 'to_' p" := (convergence a p) (at level 68) : metric_scope.
 Notation "a 'converges' 'to' p" := (convergence a p) (at level 68, only parsing) : metric_scope.
-Ltac2 Notation "Expand" "the" "definition" "of" "converges" "to" cl(opt(seq("in", "(", ident, ")"))) := 
-  expand_def_framework unfold_convergence unfold_convergence_in cl.
+Ltac2 Notation "Expand" "the" "definition" "of" "converges" "to" "in" statement(constr) := 
+  unfold_in_statement unfold_convergence (Some "converges to") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "converges" "to" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_convergence (Some "converges to") statement.
 
 (* Index shift*)
 Lemma relation_shift {X : Metric_Space} (a : nat -> Base X) (k : nat) (n : nat) (n_ge_k : (n ≥ k)%nat) : 

@@ -36,13 +36,13 @@ Abort.
 
 (** Test 2: This should raise an error, because the type does not match*)
 Goal forall n : nat, n <= 2*n.
-    assert_raises_error (fun () => Take n : bool).
+    Fail Take n : bool.
 Abort.
 
 (** Test 3: This should raise an error, 
     because [Take] solves forall-quatifiers *)
 Goal exists n : nat, n <= 2*n.
-    assert_raises_error (fun() => Take n : nat).
+    Fail Take n : nat.
 Abort.
 
 (** Test 4: Multi argument testcase *)
@@ -83,7 +83,7 @@ Abort.
 
 (** Test 7: not allowed to introduce so many bools *)
 Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    assert_raises_error (fun () => Take a, b, c, d, e: bool).
+    Fail Take a, b, c, d, e : bool.
 Abort.
 
 (** Test 8: look how crazy many vars we can introduce*)
@@ -109,7 +109,7 @@ Abort.
     This should raise an error, as the order of introducing variables is different.
 *)
 Goal forall (n m k: nat)  (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    assert_raises_error (fun() => Take y, u: bool and a, b, c : nat).
+    Fail Take y, u : bool and a, b, c : nat.
 Abort.
 
 (** Test 11: Attempting to show an implication should be rejected. *)

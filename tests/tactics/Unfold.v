@@ -24,56 +24,134 @@ Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.Assertions.
 
-Definition some_function  (x: nat) := 2 * x.
-Definition other_function (x: nat) := 2 * x.
+Definition foo : nat := 0.
 
-(** * Test 3
-    Unfold functions IN THE GOAL to show that its definition
-    proves the goal.
-*)
-Lemma test_unfold_3: forall (x:nat), some_function (other_function x) = 2*(2*x).
-    intros x.
-    Expand the definition of some_function.
-    Fail That is, write the goal as (0 = 0).
-    That is, write the goal as (2 * other_function x = 2 * (2 * x)).
-    Expand the definition of other_function.
-    That is, write the goal as (2*(2*x) = 2*(2*x)).
-    reflexivity.
-Qed.
+(* Tests general unfolding: *)
 
-
-(** * Test 4
-    Unfold functions IN THE GOAL to show that its definition
-    proves the goal, using we_need_to_show notation.
-*)
-Lemma test_unfold_4: forall (x:nat), some_function (other_function x) = 2*(2*x).
-    intros x.
-    Expand the definition of some_function.
-    We need to show (2 * other_function x = 2 * (2 * x)).
-    reflexivity.
-Qed.
-
-
-(** * Test 5
-    Unfold functions IN A HYPOTHESIS to show that its definition
-    proves the goal.
-*)
-Lemma test_unfold_5: forall (x a:nat), some_function (other_function x) = a -> False.
-    intros x a i.
-    Fail Expand the definition of some_function, other_function in (ii).
-    Expand the definition of some_function, other_function in (i).
-    Fail That is, write (ii) as (2*(2*x) = a).
-    Fail That is, write (x) as (2*(2*x) = a).
-    Fail That is, write (i) as (0 = 0).
-    That is, write (i) as (2*(2*x) = a).
+(* Test 1: unfold term in statement and throws an error suggesting 
+    to remove line to continue. *)
+Goal False.
+Proof.
+  Fail Expand the definition of foo in foo.
 Abort.
 
-(** * Test 6
-    Unfold functions IN A HYPOTHESIS to show that its definition
-    proves the goal.
-*)
-Lemma test_unfold_6: forall (x a:nat), some_function (other_function x) = a -> False.
-    intros x a i.
-    Expand the definition of some_function, other_function in (i).
-    That is, write (i) as ( 2 * (2 * x) = a ).
+(* Test 2: unfold term in statement matching goal, and throws an error suggesting 
+  to replace line with 'We need to show that ...'. *)
+Goal foo = 1.
+Proof.
+  Fail Expand the definition of foo in (foo = 1).
+Abort.
+
+(* Test 3: unfold term in statement matching a hypothesis and throws an error suggesting 
+    to replace line with 'It holds that ...'. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  Fail Expand the definition of foo in (foo = 0).
+  Fail Expand the definition of foo in (foo = 2).
+Abort.
+
+(* Test 4: fails to unfold term in statment without term. *)
+Goal False.
+Proof.
+  Fail Expand the definition of foo in 0.
+Abort.
+
+
+
+(* Tests framework expand the definition. *)
+Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "foo2" "in" statement(constr) := 
+  unfold_in_statement unfold_foo (Some "foo2") statement.
+
+(* Test 5: unfold term in statement and throws an error suggesting 
+    to remove line to continue. *)
+Goal False.
+Proof.
+  Fail Expand the definition of foo2 in foo.
+Abort.
+
+(* Test 6: unfold term in statement matching goal, and throws an error suggesting 
+    to replace line with 'We need to show that ...'. *)
+Goal foo = 1.
+Proof.
+  Fail Expand the definition of foo2 in (foo = 1).
+Abort.
+
+(* Test 7: unfold term in statement matching a hypothesis and throws an error suggesting 
+    to replace line with 'It holds that ...'. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  Fail Expand the definition of foo2 in (foo = 0).
+  Fail Expand the definition of foo2 in (foo = 2).
+Abort.
+
+(* Test 8: fails to unfold term in statment without term. *)
+Goal False.
+Proof.
+  Fail Expand the definition of foo2 in 0.
+Abort.
+
+
+(** Check unfolding method that does not throw an error.
+  Meant for internal use by custom Waterproof editor. *)
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" "in" statement(constr) := 
+  unfold_in_statement_no_error unfold_foo (Some "foo2") statement.
+
+(* Test 9: unfold term in statement. *)
+Goal False.
+Proof.
+  _internal_ Expand the definition of foo2 in foo.
+Abort.
+
+(* Test 10: unfold term in statement matching goal, and prints a message suggesting 
+    to replace line with 'We need to show that ...'. *)
+Goal foo = 1.
+Proof.
+  _internal_ Expand the definition of foo2 in (foo = 1).
+Abort.
+
+(* Test 11: unfold term in statement matching a hypothesis and prints a message suggesting 
+    to replace line with 'It holds that ...'. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  _internal_ Expand the definition of foo2 in (foo = 0).
+  _internal_ Expand the definition of foo2 in (foo = 2).
+Abort.
+
+(* Test 12: fails to unfold term in statment without term. *)
+Goal False.
+Proof.
+   _internal_ Expand the definition of foo2 in 0.
+Abort.
+
+(* Test 13: internal unfold term in statement and throws an error suggesting 
+    to remove line to continue. *)
+Goal False.
+Proof.
+  _internal_ Expand the definition of foo in foo.
+Abort.
+
+(* Test 14: internal unfold term in statement matching goal, and throws an error suggesting 
+  to replace line with 'We need to show that ...'. *)
+Goal foo = 1.
+Proof.
+  _internal_ Expand the definition of foo in (foo = 1).
+Abort.
+
+(* Test 15: internal unfold term in statement matching a hypothesis and throws an error suggesting 
+    to replace line with 'It holds that ...'. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  _internal_ Expand the definition of foo in (foo = 0).
+  _internal_ Expand the definition of foo in (foo = 2).
+Abort.
+
+(* Test 16: internal unfold fails to unfold term in statment without term. *)
+Goal False.
+Proof.
+  _internal_ Expand the definition of foo in 0.
 Abort.

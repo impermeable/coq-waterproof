@@ -45,5 +45,5 @@ Abort.
 
 (** Test 2: This should raise an error, because the goal is not an if and only if*)
 Goal forall n : nat, n <= n.
-    assert_raises_error (fun() => We show both directions).
+    Fail We show both directions.
 Abort.

@@ -25,7 +25,7 @@ Require Export Libs.Analysis.SequencesMetric.
 Require Export Libs.Analysis.Sequences.
 Require Export Libs.Analysis.SequentialAccumulationPoints.
 Require Export Libs.Analysis.Series.
-Require Export Libs.Analysis.SubsequencesInduction.
 Require Export Libs.Analysis.SubsequencesMetric.
+Require Export Libs.Analysis.StrongInductionIndexSequence.
 Require Export Libs.Analysis.Subsequences.
 Require Export Libs.Analysis.SupAndInf.

@@ -1,5 +1,10 @@
 src/META.coq-waterproof
 -R theories/ Waterproof
+# The following three lines can be commented out
+# to make coq-lsp work while working on the library:
+# -R _build/default/theories/ Waterproof
+# -I _build/install/default/lib/coq-waterproof/plugin
+# -I _build/install/default/lib/
 -I src
 -I @LTAC2_CAML_FILES@
 
@@ -32,6 +37,7 @@ src/waterproof.mlpack
 theories/Automation.v
 theories/Automation/Framework.v
 theories/Automation/Hints.v
+theories/Version.v
 
 theories/Chains.v
 theories/Chains/Manipulation.v
@@ -52,6 +58,7 @@ theories/Tactics/BothDirections.v
 theories/Tactics/BothStatements.v
 theories/Tactics/Claims.v
 theories/Tactics/Choose.v
+theories/Tactics/Obtain.v
 theories/Tactics/Conclusion.v
 theories/Tactics/Contradiction.v
 theories/Tactics/Define.v
@@ -69,6 +76,8 @@ theories/Util/Constr.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v
+theories/Util/Since.v
+theories/Util/MessagesToUser.v
 
 theories/Waterproof.v
 theories/Waterprove.v
@@ -76,6 +85,8 @@ theories/Waterprove.v
 # Coq-Waterproof libraries
 
 ## Analysis
+theories/Libs/Logic/InformativeEpsilon.v
+theories/Libs/Logic/ConstructiveLogic.v
 theories/Libs/Analysis.v
 theories/Libs/Analysis/ContinuityDomainNat.v
 theories/Libs/Analysis/ContinuityDomainR.v
@@ -86,8 +97,8 @@ theories/Libs/Analysis/SequencesMetric.v
 theories/Libs/Analysis/Sequences.v
 theories/Libs/Analysis/SequentialAccumulationPoints.v
 theories/Libs/Analysis/Series.v
-theories/Libs/Analysis/SubsequencesInduction.v
 theories/Libs/Analysis/SubsequencesMetric.v
+theories/Libs/Analysis/StrongInductionIndexSequence.v
 theories/Libs/Analysis/Subsequences.v
 theories/Libs/Analysis/SupAndInf.v
 
@@ -101,6 +112,7 @@ tests/chains/Manipulation.v
 
 ### General  
 tests/automation/Shield.v
+tests/automation/Chains.v
 
 ### Databases
 tests/automation/databases/Core.v
@@ -116,6 +128,7 @@ tests/tactics/BothDirections.v
 tests/tactics/BothStatements.v
 tests/tactics/Claims.v
 tests/tactics/Choose.v
+tests/tactics/Obtain.v
 tests/tactics/Conclusion.v
 tests/tactics/Contradiction.v
 tests/tactics/Define.v
@@ -126,6 +139,8 @@ tests/tactics/ItSuffices.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v
+tests/util/MessagesToUser.v
 
 ## Libs
 tests/libs/Negation.v
+tests/libs/Analysis/StrongInductionIndexSequence.v

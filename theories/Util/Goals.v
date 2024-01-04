@@ -17,8 +17,10 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
 
 Require Import Util.Constr.
+Require Import Util.MessagesToUser.
 
 Module Case.
 
@@ -61,11 +63,11 @@ Module NaturalInduction.
 
 End NaturalInduction.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case,' 'namely' ( G )." := 
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case' ( G )." := 
   (NaturalInduction.Base.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  first  show  the  base  case,  namely  ( G )."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  first  show  the  base  case  ( G )."
   ).
 
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' 'the' 'induction' 'step.'" :=
@@ -75,43 +77,6 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' '
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  now  show  the  induction  step."
   ).
 
-Module ExpandDef.
-
-  Module Goal.
-  
-    Private Inductive Wrapper (G : Type) : Type :=
-      | wrap : G -> Wrapper G.
-    
-    Definition unwrap (G : Type) : Wrapper G -> G :=
-      fun x => match x with wrap _ y => y end.
-  
-  End Goal.
-
-  Module Hyp.
-  
-    Private Inductive Wrapper (G H : Type) (h : H) : Type :=
-      | wrap : G -> Wrapper G H h.
-    
-    Definition unwrap (G H : Type) (h : H) : Wrapper G H h -> G :=
-      fun x => match x with wrap _ _ _ y => y end.
-  
-  End Hyp.
-
-End ExpandDef.
-
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' 'the' 'goal' 'as' '(' G ').'" :=
-  (ExpandDef.Goal.Wrapper G) (
-    at level 99,
-    only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  the  goal  as  ( G )."
-  ).
-
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'That' 'is,' 'write' '(' h ')' 'as' '(' H ').'" :=
-  (ExpandDef.Hyp.Wrapper _ H h) (
-    at level 99,
-    only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   That  is,  write  ( h )  as  ( H )."
-  ).
 
 Module StateGoal.
   
@@ -147,12 +112,27 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' '('
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Assume  that  ( A )."
   ).
 
-Ltac2 Type exn ::= [ GoalWrappedError(string) ].
+
+Module StrongIndIndxSeq.
+
+  Private Inductive Wrapper (G : Type) : Type :=
+    | wrap : G -> Wrapper G.
+
+  Definition unwrap (G : Type) : Wrapper G -> G :=
+    fun x => match x with wrap _ y => y end.
+
+End StrongIndIndxSeq.
+
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' ':' 'ℕ' 'and' 'assume' 'n(0),...,n(k)' 'are' 'defined.'" :=
+  (StrongIndIndxSeq.Wrapper _) (
+    at level 99,
+    only printing,
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Take  k  :  ℕ  and  assume  n(0),...,n(k)  are  defined."
+  ).
+
 
 Ltac2 raise_goal_wrapped_error () := 
-  Control.zero (
-    GoalWrappedError "You cannot do this right now, follow the advice in the goal window."
-  ).
+  throw (of_string "You cannot do this right now, follow the advice in the goal window.").
 
 
 (**
@@ -165,14 +145,11 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- Case.Wrapper _ _]                => raise_goal_wrapped_error ()
     | [|- NaturalInduction.Base.Wrapper _] => raise_goal_wrapped_error ()
     | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error ()
-    | [|- ExpandDef.Goal.Wrapper _]        => raise_goal_wrapped_error ()
-    | [|- ExpandDef.Hyp.Wrapper _ _ _]     => raise_goal_wrapped_error ()
     | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
     | [|- ByContradiction.Wrapper _ _]     => raise_goal_wrapped_error ()
     | [|- _] => ()
   end.
 
-  Ltac2 Type exn ::= [ CaseError(string) | InputError(message) ].
 
 (**
   Removes the Case.Wrapper.
@@ -191,9 +168,9 @@ Ltac2 case (t:constr) :=
     | [|- Case.Wrapper ?v _] =>
       match check_constr_equal v t with
         | true => apply (Case.wrap $v)
-        | false => Control.zero (CaseError "Wrong case specified.")
+        | false => throw (of_string "Wrong case specified.")
       end
-    | [|- _] => Control.zero (CaseError "No need to specify case.")
+    | [|- _] => throw (of_string "No need to specify case.")
   end.
 
 Ltac2 Notation "Case" t(constr) := case t.

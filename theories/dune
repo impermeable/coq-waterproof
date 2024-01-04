@@ -5,3 +5,12 @@
   (plugins coq-waterproof.plugin coq-core.plugins.ltac coq-core.plugins.ltac2))
 
 (include_subdirs qualified)
+
+(rule
+ (alias runtest)
+ (deps (alias ../install))
+ (action (progn
+             (echo "Testing:")
+             (run pwd)
+             (run python3 ../../../tests/test-folder.py ../../../../waterproof-exercises)
+)))

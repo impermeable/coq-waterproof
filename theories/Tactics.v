@@ -24,6 +24,7 @@ Require Export Tactics.BothDirections.
 Require Export Tactics.BothStatements.
 Require Export Tactics.Claims.
 Require Export Tactics.Choose.
+Require Export Tactics.Obtain.
 Require Export Tactics.Conclusion.
 Require Export Tactics.Contradiction.
 Require Export Tactics.Define.

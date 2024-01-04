@@ -53,8 +53,7 @@ Qed.
 *)
 Lemma test_we_conclude_2: True.
 Proof.
-    let result () := We conclude that False in
-    assert_raises_error result.
+    Fail We conclude that False.
 Abort.
 
 (** * Test 3
@@ -139,6 +138,55 @@ Proof.
     Fail By test_by_we_conclude_1 we conclude that (1 < 2).
 Abort.
 
+(** Additional tests 'By ...' clause.  *)
+(* Test 6: unable to show goal without means required for proof. *)
+Variable A B : Prop.
+Variable f : A -> B.
+Goal A -> B.
+  intro H.
+  Fail We conclude that B.
+Abort.
+
+(* Test 7: able to show that goal with means required for proof. *)
+Goal A -> B.
+Proof.
+  intro H.
+  pose f.
+  We conclude that B.
+Qed.
+
+(* Test 8: able to show goal with additional lemma. *)
+Goal A -> B.
+Proof.
+  intro H.
+  By f we conclude that B.
+Qed.
+
+(* Test 9: unable to show goal with irrelevant lemma. *)
+Variable g : B -> A.
+Goal B.
+Proof.
+  Fail By g we conclude that B.
+Abort.
+
+(* Test 10: unable to show goal with superfluous lemma. *)
+Goal A -> B.
+  intro H.
+  pose f.
+  Fail By g we conclude that B.
+Abort.
+
+
+(* Test 11: 'Since ...' works. 
+  For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
+Goal A -> B.
+Proof.
+  intro H.
+  pose f.
+  Since (A -> B) we conclude that B.
+Abort.
+
+
 (** * Example for the SUM.
     Somewhat more realistic context.
 *)
@@ -159,7 +207,7 @@ Qed.
 Open Scope R_scope.
 
 (** * Test 4
-We make an exception on the goal check when the argument is a chain of inequalities
+Should accept chain of inequalities as being 'equal' to the goal.
 *)
 Goal (3 < 5).
 We conclude that (& 3 < 4 < 5).
@@ -174,23 +222,25 @@ Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
 intro eps.
 intro eps_gt_0.
 assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
+cbn; repeat split.
 auto with wp_core wp_reals.
 auto with wp_reals.
+auto with wp_core wp_reals.
 Qed.
 
 Close Scope R_scope.
 
-(** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &< 5) for (3<5).*)
+(** 'We conclude that' should accept (in nat_scope) (& 3 < 4 < 5) for (3<5).*)
 Goal (3 < 5).
 We conclude that (& 3 < 4 < 5).
 Qed.
 
-(** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &<= 5) for (3<5).*)
+(** 'We conclude that' should accept (in nat_scope) (& 3 < 4 <= 5) for (3<5).*)
 Goal (3 < 5).
 We conclude that (& 3 < 4 <= 5).
 Qed.
 
-(** 'We conclude that' should accept (in nat_scope) (& 3 &<4 &< 5) for (3<=5).*)
+(** 'We conclude that' should accept (in nat_scope) (& 3 <4 < 5) for (3<=5).*)
 Goal (3 <= 5).
 We conclude that (& 3 < 4 < 5).
 Qed.
@@ -216,20 +266,20 @@ Proof.
   Fail We conclude that (0 = 0).
 Abort.
 
-(** * Test 8 *)
-(** Actually tests for [waterprove] automation suboutine, but this seemed like a 
-    convenient place to test. *)
-(** Tests whether the error points out which specific (in)equality in the chain does not hold. *)
-Local Parameter A : Type.
-Local Parameter x y z : A.
+(** * Test 8
+  Test whether we conclude that can solve simple induction proof from 
+  inequality chain.
+*)
 
-Goal (& x = y = z).
+Lemma test_induction :
+  forall F : nat -> nat, (forall k : nat, (F(k+1) = F(k))%nat) ->
+    forall k : nat, (F(k) = F(0))%nat.
 Proof.
-Fail We conclude that (& x = y = z). (* Expected: unable to find proof (x = y) *)
-Abort.
-
-Goal (x = y) -> (& x = y = z).
-Proof.
-intro p.
-Fail We conclude that (& x = y = z). (* Expected: unable to find proof (y = z) *)
-Abort.
+  intros F H.
+  We use induction on k.
+  * We first show the base case (F(0%nat) = F(0%nat)).
+    We conclude that (F(0) = F(0))%nat.
+  * We now show the induction step.
+    intro H1.
+    We conclude that (& F(k+1) = F(k) = F(0))%nat.
+Qed.

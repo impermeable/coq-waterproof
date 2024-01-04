@@ -57,3 +57,35 @@ Proof.
     We argue by contradiction.
     Fail Assume that (¬ (for all n : nat, n ≠ n)).
 Abort.
+
+
+(** Test 4: fails if previous statement is not a contraditcion 
+    to some earlier statement. *)
+Variable P Q A : Prop.
+Goal P -> Q.
+    intro H.
+    Fail Contradiction.
+Abort.
+
+(** Test 5: fails to negate sets and types. *)
+Goal nat -> Q.
+    intro x.
+    Fail Contradiction.
+Abort.
+
+(* Test 6: Fail to circumvent shielding by attempting to 
+    ask automation to find proof of ~~goal. *)
+Goal P -> (P -> A) -> (A -> Q) -> P /\ Q.
+Proof.
+    intros Hp H1 H2.
+    Fail We conclude that (P /\ Q).
+    We argue by contradiction.
+    Assume that (~ (P /\ Q)).
+    Fail Contradiction.
+Abort.
+
+(** Test 7: Fails if no hypotheses.  *)
+Goal P.
+Proof.
+    Fail Contradiction.
+Abort.

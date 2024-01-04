@@ -17,6 +17,7 @@
 (******************************************************************************)
 
 Require Import Coq.Reals.Reals.
+Require Import Ltac2.Ltac2.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
@@ -29,25 +30,46 @@ Open Scope R_scope.
 
 Goal forall x y: R, forall f: R -> R, x = y -> f (x + 1) = f (y + 1).
 Proof.
-  waterprove 5 false [] Main.
+  waterprove 5 false Main.
 Qed.
 
 Goal forall x y: R, forall f: R -> R, x = y -> f x = f y /\ x = y.
 Proof.
-  waterprove 5 false [] Main.
+  waterprove 5 false Main.
 Qed.
 
 Goal (& 3 < 4 <= 5).
-  auto with wp_core wp_reals.
+  cbn; repeat split; auto with wp_core wp_reals.
 Qed.
 
 Goal (& 3 = 3 = 3).
-  auto with wp_core wp_reals.
+  cbn; repeat split; auto with wp_core wp_reals.
 Qed.
 
 Goal forall x : R, (& x < 5 = 2 + 3) -> (x < 5).
   intro x.
   intro H.
+  auto with wp_core wp_reals.
+Qed.
+
+(** ** Testcases to deal with Rabs Rmin Rmax *)
+
+Goal forall b: R, b > 0 -> - Rmax( 0, 1 - b/2) >= - 1.
+  auto with wp_reals.
+Qed.
+
+Goal forall b: R, b > 0 -> Rmin( 0, -1 + b/2) <= 1.
+  auto with wp_reals.
+Qed.
+
+Goal forall r : R, r > 0 ->
+  | Rmax 0 (1 - r/2) - 1 | = 1 - (Rmax 0 (1 - r/2)).
+  auto with wp_reals.
+Qed.
+
+Goal forall x r : R, r > 0 ->
+  x = Rmax 0 (1 - r/2) -> Rabs (x - 1) < r.
+  intros x r r_gt_0 x_eq_Rmax.
   auto with wp_reals.
 Qed.
 

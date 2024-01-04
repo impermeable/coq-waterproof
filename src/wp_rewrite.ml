@@ -347,8 +347,7 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
       )
 
 let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
-  let env = Global.env () in
-  let ist = Genintern.empty_glob_sign ~strict:true (Global.env ()) in
+  let ist = Genintern.empty_glob_sign ~strict:true env in
   let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
   let to_rew_rule ({CAst.loc;v=((c,ctx),b,t)}: raw_rew_rule): rew_rule =
     let sigma = Evd.merge_context_set Evd.univ_rigid sigma ctx in
@@ -411,12 +410,13 @@ let fill_local_rewrite_database (): rewrite_db tactic =
 
   This tactic is a rewrite of the coq-core's [autorewrite] tactic that will only consider current hypothesis as rewrite hints.
 *)
-let wp_autorewrite ?(print_hints: bool = false) (tac: trace tactic): unit tactic =
+let wp_autorewrite ?(print_hints: bool = false) (log: bool) (tac: trace tactic): unit tactic =
   let clause = {onhyps = Some []; concl_occs = Locus.AllOccurrences} in
   fill_local_rewrite_database () >>= fun rewrite_db ->
     Goal.enter @@ begin fun goal ->
     let env = Goal.env goal in
     let sigma = Goal.sigma goal in
     if print_hints then Feedback.msg_notice @@ print_rewrite_hintdb env sigma rewrite_db;
+    if log then Feedback.msg_notice @@ str "(* application of wp_autorewrite *)";
     Tacticals.tclREPEAT @@ tclPROGRESS @@ gen_auto_multi_rewrite tac clause rewrite_db
   end >>= fun _ -> tclUNIT ()

@@ -34,35 +34,38 @@ Notation is_sup := is_lub.
 (* Implement notations for these concepts. *)
 Notation "M 'is' 'the' '_supremum_' 'of' A" := (is_lub A M) (at level 69).
 Notation "M 'is' 'the' 'supremum' 'of' A" := (is_lub A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_lub    ()          := unfold is_lub.
-Local Ltac2 unfold_is_lub_in (h : ident) := unfold is_lub in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "supremum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_lub unfold_is_lub_in cl.
+Local Ltac2 unfold_is_lub (statement : constr) := eval unfold is_lub in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "supremum" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_is_lub (Some "supremum") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_lub (Some "supremum") statement.
 
 Notation "A 'is' '_bounded' 'from' 'above_'" := (bound A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69, only parsing).
-Local Ltac2 unfold_bound    ()          := unfold bound.
-Local Ltac2 unfold_bound_in (h : ident) := unfold bound in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_bound unfold_bound_in cl.
+Local Ltac2 unfold_bound (statement : constr) := eval unfold bound in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_bound (Some "bounded from above") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "above" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_bound (Some "bounded from above") statement.
 
-Notation "M 'is' 'an' '_upper' 'bound_' 'of' A" := (is_upper_bound A M) (at level 69).
-Notation "M 'is' 'an' 'upper' 'bound' 'of' A" := (is_upper_bound A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_upper_bound    ()          := unfold is_upper_bound.
-Local Ltac2 unfold_is_upper_bound_in (h : ident) := unfold is_upper_bound in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_upper_bound unfold_is_upper_bound_in cl.
+Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := (is_upper_bound A M) (at level 69).
+Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := (is_upper_bound A M) (at level 69, only parsing).
+Local Ltac2 unfold_is_upper_bound (statement : constr) := eval unfold is_upper_bound in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_is_upper_bound (Some "upper bound") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "upper" "bound" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_upper_bound (Some "upper bound") statement.
 
 (** Maximum *)
-Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound of A).
+Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound for A).
 
 Notation "M 'is' 'the' '_maximum_' 'of' A" := (is_max A M) (at level 69).
 Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_max    ()          := unfold is_max.
-Local Ltac2 unfold_is_max_in (h : ident) := unfold is_max in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "maximum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_max unfold_is_max_in cl.
-
+Local Ltac2 unfold_is_max (statement : constr) := eval unfold is_max in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "maximum" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_is_max (Some "maximum") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "maximum" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_max (Some "maximum") statement.
 
 
 (** ## The completeness axiom
@@ -76,8 +79,8 @@ Proof.
     Assume that (A is bounded from above) (i).
     We claim that (there exists x : ℝ, A x).
     { Choose (a). We conclude that (A a). }
-    By completeness it holds that ({M | M is the supremum of A}) (ii).
-    Obtain M according to (ii), so for M : ℝ it holds that (M is the supremum of A).
+    By completeness it holds that ({M | M is the supremum of A}).
+    Obtain such an M.
     Choose (M).
     We conclude that (M is the supremum of A).
 Qed.
@@ -107,25 +110,29 @@ Definition is_inf :=
 (* Implement notations for these concepts. *)
 Notation "m 'is' 'the' '_infimum_' 'of' A" := (is_inf A m) (at level 69).
 Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only parsing).
-Local Ltac2 unfold_is_inf    ()          := unfold is_inf.
-Local Ltac2 unfold_is_inf_in (h : ident) := unfold is_inf in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "infimum" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_inf unfold_is_inf_in cl.
+Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "infimum" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_is_inf (Some "infimum") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_inf (Some "infimum") statement.
 
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded_below    ()          := unfold is_bounded_below.
-Local Ltac2 unfold_is_bounded_below_in (h : ident) := unfold is_bounded_below in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_bounded_below unfold_is_bounded_below_in cl.
+Local Ltac2 unfold_is_bounded_below (statement : constr) := 
+  eval unfold is_bounded_below in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_is_bounded_below (Some "bounded from below") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_bounded_below (Some "bounded from below") statement.
+  
 
-Notation "M 'is' 'a' '_lower' 'bound_' 'of' A" := (is_lower_bound A M) (at level 69).
-Notation "M 'is' 'a' 'lower' 'bound' 'of' A" := (is_lower_bound A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_lower_bound    ()          := unfold is_lower_bound.
-Local Ltac2 unfold_is_lower_bound_in (h : ident) := unfold is_lower_bound in $h.
-Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" cl(opt(seq("in", "(", ident, ")"))) := 
-  Unfold.expand_def_framework unfold_is_lower_bound unfold_is_lower_bound_in cl.
-
+Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
+Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
+Local Ltac2 unfold_is_lower_bound (statement : constr) := eval unfold is_lower_bound in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" "in" statement(constr) := 
+  Unfold.unfold_in_statement unfold_is_lower_bound (Some "lower bound") statement.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" "in" statement(constr) := 
+  Unfold.unfold_in_statement_no_error unfold_is_lower_bound (Some "lower bound") statement.
 
 (** ## Reflection of a subset of ℝ in the origin
 
@@ -141,14 +148,12 @@ Definition set_opp (A : ℝ -> Prop) := (fun x ↦ (A (-x))).
 (** Hint Resolve neg_opp_is_original_elem : additional.*)
 Lemma upp_bd_set_to_low_bd_set_opp :
   ∀ (A : ℝ → Prop) (M : ℝ),
-    M is an upper bound of A ⇒ 
+    M is an upper bound for A ⇒ 
       is_lower_bound (set_opp A) (-M).
 Proof.
     Take A : (ℝ → Prop) and M : ℝ.
-    Assume that (M is an upper bound of A) (i).
+    Assume that (M is an upper bound for A) (i).
     We need to show that (∀ a : ℝ, (set_opp A a) ⇒ -M ≤ a).
-    Expand the definition of lower bound.
-    That is, write the goal as (for all a : ℝ, set_opp A a ⇨ -M ≤ a).
     Take b : ℝ. Assume that (set_opp A b).
     Define a := (-b).
     It holds that (A a).
@@ -159,12 +164,11 @@ Qed.
 Lemma low_bd_set_to_upp_bd_set_opp :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_lower_bound A m ⇒
-      -m is an upper bound of (set_opp A).
+      -m is an upper bound for (set_opp A).
 Proof.
     Take A : (ℝ → Prop) and m : ℝ.
     Assume that (is_lower_bound A m) (i).
-    Expand the definition of upper bound.
-    That is, write the goal as (for all b : ℝ, (set_opp A b) ⇒ b ≤ -m).
+    We need to show that (for all b : ℝ, (set_opp A b) ⇒ b ≤ -m).
     Take b : ℝ. Assume that (set_opp A b).
     Define a := (-b).
     By (i) it holds that (m ≤ a).
@@ -175,16 +179,13 @@ Qed.
 Lemma low_bd_set_opp_to_upp_bd_set :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_lower_bound (set_opp A) m ⇒ 
-      -m is an upper bound of A.
+      -m is an upper bound for A.
 Proof.
     Take A : (ℝ → Prop) and m : ℝ.
-    Assume that (is_lower_bound (set_opp A) m) (i).
+    Assume that (is_lower_bound (set_opp A) m).
     We need to show that (∀ a : ℝ, (A a) ⇒ a ≤ -m).
-    Expand the definition of upper bound.
-    That is, write the goal as (for all a : ℝ, (A a) ⇒ a ≤ -m).
     Take a : ℝ. Assume that (A a).
-    Expand the definition of lower bound in (i).
-    That is, write (i) as (for all b : ℝ, (set_opp A b) ⇒ m ≤ b).
+    It holds that (for all b : ℝ, (set_opp A b) ⇒ m ≤ b).
     We claim that (A (--a)).
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
@@ -207,8 +208,6 @@ Proof.
     Take A : (ℝ → Prop) and M : ℝ.
     Assume that (is_upper_bound (set_opp A) M) (i).
     We need to show that (∀ a : ℝ, (A a) ⇒ -M ≤ a).
-    Expand the definition of is_lower_bound.
-    That is, write the goal as (for all a : ℝ, (A a) ⇒ -M ≤ a).
     Take a : ℝ. Assume that (A a).
     We claim that (A (--a)).
     { It holds that (--a = a) (ii).
@@ -230,10 +229,8 @@ Proof.
     Take A : (ℝ → Prop).
     Assume that (is_bounded_below A) (i).
     We need to show that (∃ M : ℝ, is_upper_bound (set_opp A) M).
-    Expand the definition of is_bounded_below in (i).
-    That is, write (i) as (there exists m : ℝ, is_lower_bound A m).
-    Obtain m according to (i), so for m : R it holds that (is_lower_bound A m) (ii).
-    
+    By (i) it holds that (there exists m : ℝ, is_lower_bound A m).
+    Obtain such an m.
     Choose M := (-m).
     By low_bd_set_to_upp_bd_set_opp we conclude that (is_upper_bound (set_opp A) (M)).
 Qed.
@@ -244,24 +241,19 @@ Lemma sup_set_opp_is_inf_set :
     is_sup (set_opp A) M ⇒ is_inf A (-M).
 Proof.
     Take A : (ℝ → Prop) and M : ℝ.
-    Assume that (is_sup (set_opp A) M) (i).
-    Expand the definition of is_lub in (i).
-      That is, write (i) as (is_upper_bound (set_opp A) M 
-        ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
-      Because (i) both (is_upper_bound (set_opp A) M) (ii) and
-        (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
-    Expand the definition of is_inf.
-    That is, write the goal as
+    Assume that (is_sup (set_opp A) M).
+    It holds that (is_upper_bound (set_opp A) M 
+        ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)) (i).
+    Because (i) both (is_upper_bound (set_opp A) M) and
+      (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
+    We need to show that
       (is_lower_bound A (- M) ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ -M)).
     We show both statements.
     - We need to show that (is_lower_bound A (- M)).
       We claim that (is_upper_bound (set_opp A) M).
-      Expand the definition of is_upper_bound.
-      That is, write the goal as (for all a : ℝ, (set_opp A a) ⇒ a ≤ M).
+      We need to show that (for all a : ℝ, (set_opp A a) ⇒ a ≤ M).
       Take a : ℝ. Assume that (set_opp A a).
-      
-      Expand the definition of is_upper_bound in (ii).
-      That is, write (ii) as (for all x : ℝ, (set_opp A x) ⇒ x ≤ M).
+      It holds that (for all x : ℝ, (set_opp A x) ⇒ x ≤ M) (ii).
       By (ii) it holds that (is_upper_bound (set_opp A) M).
       We conclude that (a <= M).
 
@@ -270,12 +262,11 @@ Proof.
     - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
       Take l : ℝ.
       Assume that (is_lower_bound A l).
-      Expand the definition of is_lub in (i).
-      That is, write (i) as (is_upper_bound (set_opp A) M 
+      It holds that (is_upper_bound (set_opp A) M 
         ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
-      By (ii) it holds that (∀ b : ℝ, is_upper_bound (set_opp A) b ⇒ M ≤ b) (iii).
+      It holds that (∀ b : ℝ, is_upper_bound (set_opp A) b ⇒ M ≤ b) (ii).
       By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
-      By (iii) it holds that (M ≤ -l).
+      By (ii) it holds that (M ≤ -l).
       We conclude that (l ≤ - M).
 Qed.
 
@@ -299,8 +290,8 @@ Proof.
     }
     It holds that ((set_opp A) (-z)) (iv).
     It holds that (B (-z)).    
-    By R_complete it holds that (there exists M : ℝ, is_sup B M) (v).
-    Obtain M according to (v), so for M : R it holds that (is_sup B M).
+    By R_complete it holds that (there exists M : ℝ, is_sup B M).
+    Obtain such an M.
     Choose m := (- M).
     By sup_set_opp_is_inf_set we conclude that (is_inf A m).
 Qed.
@@ -315,10 +306,9 @@ Lemma sup_is_upp_bd :
 Proof.
     Take A : (ℝ → Prop).
     Take M : ℝ.
-    Assume that (is_sup A M) (i).
-    Expand the definition of is_lub in (i).
-    That is, write (i) as (is_upper_bound A M 
-      ∧ (for all b : ℝ, is_upper_bound A b ⇨ M ≤ b)).
+    Assume that (is_sup A M).
+    It holds that (is_upper_bound A M 
+      ∧ (for all b : ℝ, is_upper_bound A b ⇨ M ≤ b)) (i).
     Because (i) both (is_upper_bound A M) and
       (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
     It follows that (is_upper_bound A M).
@@ -421,17 +411,15 @@ Proof.
 Take A : (ℝ → Prop) and M : ℝ.
 Assume that (∀ L : ℝ, L < M ⇒ there exists a : ℝ, (A a) ∧ L < a) (i).
 Take K : ℝ.
-Assume that (is_upper_bound A K) (ii).
-Expand the definition of is_upper_bound in (ii).
-That is, write (ii) as
-  (∀ a : ℝ, (A a) ⇒ a ≤ K).
+Assume that (is_upper_bound A K).
+It holds that (∀ a : ℝ, (A a) ⇒ a ≤ K) (ii).
 We need to show that (M ≤ K).
 We argue by contradiction.
 Assume that (¬ M ≤ K).
 It holds that (M > K).
-By (i) it holds that (∃ a : ℝ, (A a) ∧ K < a) (iii).
-Obtain a according to (iii), so for a : ℝ it holds that ((A a) ∧ (K < a)) (iv).
-Because (iv) both (A a) and (K < a) hold.
+By (i) it holds that (∃ a : ℝ, (A a) ∧ K < a).
+Obtain such an a. It holds that ((A a) ∧ (K < a)) (iii).
+Because (iii) both (A a) and (K < a) hold.
 By (ii) it holds that (a ≤ K).
 It holds that (K < K).
 It holds that (¬ (K < K)).
@@ -446,18 +434,16 @@ Proof.
 Take A : (ℝ → Prop) and m : ℝ.
 Assume that (∀ L : ℝ, L > m ⇒ there exists a : ℝ, (A a) ∧ L > a) (i).
 Take K : ℝ.
-Assume that (is_lower_bound A K) (ii).
-Expand the definition of is_lower_bound in (ii).
-That is, write (ii) as
-  (∀ a : ℝ, (A a) ⇒ K ≤ a).
+Assume that (is_lower_bound A K).
+It holds that (∀ a : ℝ, (A a) ⇒ K ≤ a) (ii).
 We need to show that (K ≤ m).
 We argue by contradiction.
 Assume that (¬ K ≤ m).
 It holds that (K > m).
-By (i) it holds that (∃ a : ℝ, (A a) ∧ K > a) (iii).
-Obtain a according to (iii), so for a : ℝ it holds that ((A a) ∧ (K > a)) (iv).
-Because (iv) both (A a) and (K > a) hold.
-By ii it holds that (K ≤ a).
+By (i) it holds that (∃ a : ℝ, (A a) ∧ K > a).
+Obtain such an a. It holds that ((A a) ∧ (K > a)) (iii).
+Because (iii) both (A a) and (K > a) hold.
+By (ii) it holds that (K ≤ a).
 It holds that (K > K).
 It holds that (¬ (K > K)).
 Contradiction.
@@ -475,9 +461,9 @@ Proof.
   It holds that (M - L > 0).
   Define ε1 := (M - L).
   It holds that (ε1 > 0).
-  By (i) it holds that (there exists a : ℝ, (A a) ∧ M - ε1 < a) (ii).
-  Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (M - ε1 < a)) (iii).
-  Because (iii) both (A a) and (M - ε1 < a) hold.
+  By (i) it holds that (there exists a : ℝ, (A a) ∧ M - ε1 < a).
+  Obtain such an a. It holds that ((A a) ∧ (M - ε1 < a)) (ii).
+  Because (ii) both (A a) and (M - ε1 < a) hold.
   Choose (a).
   We show both (A a) and (L < a).
   - We conclude that (A a).
@@ -496,10 +482,10 @@ Proof.
   It holds that (L - m > 0).
   Define ε1 := (L - m).
   It holds that (ε1 > 0).
-  By (i) it holds that (there exists a : ℝ, (A a) ∧ m + ε1 > a) (ii).
-  Obtain a according to (ii), so for a : ℝ it holds that ((A a) ∧ (m + ε1 > a)) (iii).
+  By (i) it holds that (there exists a : ℝ, (A a) ∧ m + ε1 > a).
+  Obtain such an a. It holds that ((A a) ∧ (m + ε1 > a)) (ii).
   Choose (a).
-  Because (iii) both (A a) and (m + ε1 > a) hold.
+  Because (ii) both (A a) and (m + ε1 > a) hold.
   We show both (A a) and (L > a).
   - We conclude that (A a).
   - We conclude that (& a < m + ε1 = m + L - m = L).
@@ -554,20 +540,18 @@ Proof.
   Take A : (ℝ → Prop) and M : ℝ.
   We show both directions.
   - We need to show that (is_sup A M ⇨ is_sup_alt_char A M).
-    Assume that (is_sup A M) (i).
-    Expand the definition of is_sup_alt_char.
-    That is, write the goal as (
+    Assume that (is_sup A M).
+    We need to show that (
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 M - ε < a) ).
     We show both statements.
     + We need to show that (is_upper_bound A M).
-      Expand the definition of is_lub in (i).
-      That is, write (i) as (
+      It holds that (
       is_upper_bound A M
       ∧ (for all M0 : ℝ,
-        is_upper_bound A M0 ⇨ M ≤ M0) ).
+        is_upper_bound A M0 ⇨ M ≤ M0) ) (i).
       Because (i) both (is_upper_bound A M) and
         (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
       It follows that (is_upper_bound A M).
@@ -577,18 +561,16 @@ Proof.
       We conclude that (M is the supremum of A).
 
   - We need to show that (is_sup_alt_char A M ⇨ is_sup A M).
-    Assume that (is_sup_alt_char A M) (i).
-    Expand the definition of is_sup_alt_char in (i).
-    That is, write (i) as (
+    Assume that (is_sup_alt_char A M).
+    It holds that (
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                M - ε < a) ).
+                M - ε < a) ) (i).
     Because (i) both (is_upper_bound A M) (ii) and
       (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (iii) hold.
 
-    Expand the definition of is_lub.
-    That is, write the goal as (
+    We need to show that (
     is_upper_bound A M
     ∧ (for all M0 : ℝ,
       is_upper_bound A M0 ⇨ M ≤ M0) ).
@@ -609,20 +591,18 @@ Proof.
   Take A : (ℝ → Prop) and m : ℝ.
   We show both directions.
   - We need to show that (is_inf A m ⇨ is_inf_alt_char A m).
-    Assume that (is_inf A m) (i).
-    Expand the definition of is_inf_alt_char.
-    That is, write the goal as (
+    Assume that (is_inf A m).
+    We need to show that (
     is_lower_bound A m
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 m + ε > a) ).
     We show both statements.
     + We need to show that (is_lower_bound A m).
-      Expand the definition of is_inf in (i).
-      That is, write (i) as (
+      It holds that (
       is_lower_bound A m ∧ (for all l : ℝ,
                           is_lower_bound A l ⇨ l ≤ m) 
-      ).
+      ) (i).
       Because (i) both (is_lower_bound A m) and
         (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
       It follows that (is_lower_bound A m).
@@ -635,18 +615,16 @@ Proof.
               m + ε > a).
 
   - We need to show that (is_inf_alt_char A m ⇨ is_inf A m).
-    Assume that (is_inf_alt_char A m) (i).
-    Expand the definition of is_inf_alt_char in (i).
-    That is, write (i) as (
+    Assume that (is_inf_alt_char A m).
+    It holds that (
       is_lower_bound A m
       ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                m + ε > a) ).
+                m + ε > a) ) (i).
     Because (i) both (is_lower_bound A m) (ii) and
       (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
 
-    Expand the definition of is_inf.
-    That is, write the goal as (
+    We need to show that (
       is_lower_bound A m ∧ (for all l : ℝ,
                           is_lower_bound A l ⇨ l ≤ m)
     ).
@@ -724,19 +702,16 @@ Lemma seq_ex_almost_maximizer_ε :
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
-    Expand the definition of lub.
-    That is, write the goal as (for all ε : ℝ,  ε > 0 
+    We need to show that (for all ε : ℝ,  ε > 0 
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
-    Obtain l according to (lub_a_prf), so for l : R it holds that (is_sup (EUn a) l).
+    clear _defeq. Obtain such an l.
     Take ε : ℝ; such that (ε > 0).
-    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε) (iv).
-    Obtain y according to (iv), so for y : R it holds that 
-      ((EUn a) y ∧ y > l - ε) (v).
-    Because (v) both (EUn a y) (vi) and (y > l - ε) hold.
-    Expand the definition of EUn in (vi).
-    That is, write (vi) as (there exists n : ℕ , y = a n).
-    Obtain n according to (vi), so for n : nat it holds that (y = a n).
+    By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
+    Obtain such a y. It holds that ((EUn a) y ∧ y > l - ε) (iv).
+    Because (iv) both (EUn a y) and (y > l - ε) hold.
+    It holds that (there exists n : ℕ , y = a n).
+    Obtain such an n.
     Choose k := n.
     We need to show that (l - ε < a n).
     We conclude that (& l - ε < y = a n).
@@ -763,10 +738,8 @@ Proof.
     Assume that (has_ub a) (i).
     Take m, Nn : ℕ.
     By seq_ex_almost_maximizer_m it holds that
-      (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)) (ii).
-    Obtain k according to (ii), so for k : nat it holds that
-      (a (Nn + k)%nat > sequence_ub a i Nn - 1 / (m + 1)).
-    Choose l := (Nn+k)%nat.
+      (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)).
+    Obtain such a k. Choose l := (Nn+k)%nat.
     We show both statements.
     - We need to show that (l ≥ Nn)%nat.
       We conclude that (l ≥ Nn)%nat.

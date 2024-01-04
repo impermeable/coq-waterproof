@@ -19,6 +19,7 @@
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Waterprove.
+Require Import Ltac2.Ltac2.
 
 Waterproof Clear Automation.
 

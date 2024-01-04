@@ -18,85 +18,55 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat ls (of_string "").
 
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
+Require Import Util.MessagesToUser.
 
-Ltac2 Type exn ::= [ GoalHintError(string) ].
+Require Import Waterprove.
+
+Ltac2 Type exn ::= [ Inner ].
 
 Local Ltac2 create_forall_message (v_type: constr) :=
-  Message.concat
-    (Message.concat
-      (of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable of type ")
-      (Message.of_constr v_type)
-    )
-    ( of_string ".
-Use ‘Take ... : (...).’."
-    ).
+  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable of type "; of_constr v_type; of_string ".
+Use ‘Take ... : (...).’."].
 
 Local Ltac2 create_implication_message (premise: constr) :=
-  Message.concat
-    (Message.concat
-      (of_string "The goal is to show an implication (⇒).
-Assume the premise ")
-      (Message.of_constr premise)
-    )
-    (of_string ".
-Use ‘Assume that (...).’."
-    ).
+  concat_list [of_string "The goal is to show an implication (⇒).
+Assume the premise "; of_constr premise; of_string ".
+Use ‘Assume that (...).’."].
 
 Local Ltac2 create_function_message (premise: constr) :=
-  Message.concat
-    (Message.concat
-      (of_string "The goal is to construct a map (⇒).
-Introduce an arbitrary variable of type ")
-      (Message.of_constr premise)
-    )
-    ( of_string ".
-Use ‘Take ... : (...).’."
-    ).
+  concat_list [of_string "The goal is to construct a map (⇒).
+Introduce an arbitrary variable of type "; of_constr premise; of_string ".
+Use ‘Take ... : (...).’."].
 
 Local Ltac2 create_exists_message (premise: constr) :=
-    Message.concat
-      (Message.concat
-        (of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable of type ")
-        (Message.of_constr premise)
-      )
-      ( of_string ".
-Use ‘Choose ... := (...).’ or ‘Choose (...).’."
-      ).
+  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable of type "; of_constr premise; of_string ".
+Use ‘Choose ... := (...).’ or ‘Choose (...).’."].
 
 Local Ltac2 create_goal_wrapped_message () := of_string "Follow the advice in the goal window.".
 
 Local Ltac2 create_not_message (negated_type : constr) := 
-  Message.concat
-    (Message.concat
-      (Message.concat
-        (of_string "The goal is to show a negation (¬).
-Assume that the negated expression ")
-        (Message.of_constr negated_type)
-      ) 
-      (of_string " holds, then show a contradiction.")
-    )
-    (of_string "
-Use ‘Assume that (...).’ to do the first step."
-    ).
+  concat_list [of_string "The goal is to show a negation (¬).
+Assume that the negated expression "; of_constr negated_type; 
+of_string " holds, then show a contradiction.
+Use ‘Assume that (...).’ to do the first step."].
 
 (**
-  Auxilliary tactic that checks if goal can be shown with minimal automation, i.e. only with core database.
+  Auxilliary tactic that checks if goal can be shown with automation
 *)
 Local Ltac2 solvable_by_core_auto () :=
-  let assertion_id := Fresh.in_goal @assert_goal in
+  let temp_id := Fresh.in_goal @temp in
   let goal := Control.goal () in
-  assert $goal as $assertion_id;
-  Control.focus 1 1 (fun () => 
-    let hint_databases := Some ((@core)::[]) in
-    Std.auto Std.Off (Some 1) [] hint_databases
-  );
-  clear $assertion_id.
+  assert $goal as $temp_id;
+  Control.focus 1 1 (fun () => waterprove 5 true Main);
+  clear $temp_id.
 
 (**
   Give a hint indicating a potential step to proving a given proposition [g].
@@ -130,16 +100,14 @@ Show one of the statements, use ‘It suffices to show that (...).’ with the d
     | Case.Wrapper _ _                => create_goal_wrapped_message ()
     | NaturalInduction.Base.Wrapper _ => create_goal_wrapped_message ()
     | NaturalInduction.Step.Wrapper _ => create_goal_wrapped_message ()
-    | ExpandDef.Goal.Wrapper _        => create_goal_wrapped_message ()
-    | ExpandDef.Hyp.Wrapper _ _ _     => create_goal_wrapped_message ()
     | StateGoal.Wrapper _             => create_goal_wrapped_message ()
     | ByContradiction.Wrapper _ _     => create_goal_wrapped_message ()
     | not ?g => create_not_message g
     | False  => create_goal_wrapped_message ()
     | _ => 
-      match Control.case solvable_by_core_auto with
+      match Control.case (solvable_by_core_auto) with
         | Val _ => of_string "The goal can be shown immediately, use ‘We conclude that (...).’."
-        | Err exn => Control.zero (GoalHintError "No hint available for this goal.")
+        | Err exn => Control.zero Inner
       end
   end.
 

@@ -52,7 +52,7 @@ Qed.
 (** Test 2: This should raise an error, because the goal is not a  *)
 Goal forall n : nat, n <= n.
 Proof.
-    assert_raises_error (fun() => We show both statements).
+    Fail We show both statements.
 Abort.
 
 
@@ -104,5 +104,5 @@ Abort.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    assert_raises_error (fun () => We show both (n + 2 = n + 2) and (n +3 = n + 3)).
+    Fail We show both (n + 2 = n + 2) and (n +3 = n + 3).
 Abort.
