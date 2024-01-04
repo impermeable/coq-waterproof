@@ -36,3 +36,5 @@ META
 *.cache
 *.html
 *.css
+*.diags
+*.install
