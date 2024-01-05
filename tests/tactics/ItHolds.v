@@ -23,9 +23,9 @@ Require Import Lra.
 
 (* Set Default Timeout 1. *)
 
+Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.
-Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.Assertions.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -304,4 +304,12 @@ Goal A -> (A -> B) -> B.
 Proof.
   intros Ha Hf.
   By Ha it holds that B.
+Abort.
+
+(** Test 21: Test whether wrapper for specialize works *)
+Goal (forall x : nat, x >= 5 -> True) -> True.
+Proof.
+  intro H1.
+  Pick x := 6 in H1.
+  It holds that (6 >= 5 -> True).
 Abort.
