@@ -28,6 +28,7 @@ open Proofview
 open Proofview.Notations
 open Tac2expr
 open Tac2ffi
+open Ltac2_plugin.Tac2val
 
 open Exceptions
 open Hint_dataset_declarations
