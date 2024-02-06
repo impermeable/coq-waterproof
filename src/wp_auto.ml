@@ -81,7 +81,7 @@ let exact (h: hint): unit tactic =
 (**
   Same function as {! Auto.exists_evaluable_reference}
 *)
-let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Names.Evaluable.t): bool = match evaluable_ref with
+let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Evaluable.t): bool = match evaluable_ref with
   | Evaluable.EvalConstRef _ -> true
   | Evaluable.EvalProjectionRef _ -> true
   | Evaluable.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
