@@ -17,12 +17,24 @@
 (******************************************************************************)
 
 From Ltac2 Require Import Ltac2.
-From Waterproof Require Import Waterproof Util.EnsureProp.
+From Waterproof Require Import Waterproof. 
+From Waterproof Require Import Util.TypeForAssert.
+
+Section assert_tests.
+
+Parameter setS : Set.
+Parameter s : setS.
 
 Lemma test : 0 = 0.
 Proof.
-  Ltac2 Eval ensure_prop constr:(0 = 0). (* Prop *)
-  Ltac2 Eval ensure_prop constr:(true). (* bool -> gets converted to is_true true *)
-  Ltac2 Eval ensure_prop constr:(true = true). (* Prop *) 
-  Fail Ltac2 Eval ensure_prop constr:(0). (* Fail, as this is of type nat *)
+  (* Let binding gets rid of the output messages *)
+  let res := correct_type_for_assert constr:(0 = 0) in (). (* Prop *)
+  let res := correct_type_for_assert constr:(true) in (). (* bool -> gets converted to is_true true *)
+  let res := correct_type_for_assert constr:(true = true) in (). (* Prop *) 
+  let res := correct_type_for_assert constr:(setS) in ().
+  Fail Ltac2 Eval correct_type_for_assert constr:(0). (* Fail, as this is of type nat *)
+  (* Fail let test := correct_type_for_assert constr:(0) in ().  *)
+  Fail Ltac2 Eval correct_type_for_assert constr:(s). (* Fails as this term has type setS, which we do not recognise *)
 Abort.
+
+End assert_tests.

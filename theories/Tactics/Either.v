@@ -22,7 +22,7 @@ Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
-Require Import Util.EnsureProp.
+Require Import Util.TypeForAssert.
 Require Import Waterprove.
 
 (* Switch order of decidable goal. *)
@@ -46,8 +46,8 @@ Qed.
 *)
 Ltac2 either_or_prop (t1:constr) (t2:constr) :=
   let h_id := Fresh.in_goal @_temp in
-  let t1 := ensure_prop t1 in
-  let t2 := ensure_prop t2 in
+  let t1 := correct_type_for_assert t1 in
+  let t2 := correct_type_for_assert t2 in
   let attempt () :=
     assert ($t1 \/ $t2) as $h_id;
     Control.focus 1 1 (fun () => 
