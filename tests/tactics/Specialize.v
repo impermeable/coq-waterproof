@@ -16,24 +16,50 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
+Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
 
-Require Export Tactics.Assume.
-Require Export Tactics.Because.
-Require Export Tactics.BothDirections.
-Require Export Tactics.BothStatements.
-Require Export Tactics.Claims.
-Require Export Tactics.Choose.
-Require Export Tactics.Obtain.
-Require Export Tactics.Conclusion.
-Require Export Tactics.Contradiction.
-Require Export Tactics.Define.
-Require Export Tactics.Either.
-Require Export Tactics.Help.
-Require Export Tactics.Induction.
-Require Export Tactics.ItHolds.
-Require Export Tactics.ItSuffices.
-Require Export Tactics.Specialize.
-Require Export Tactics.Take.
-Require Export Tactics.ToShow.
-Require Export Tactics.Unfold.
+Require Import Waterproof.Tactics.
+Require Import Waterproof.Automation.
+
+(** Test 0: This should be the expected behavior. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Pick n := 3 in (H).
+It holds that (3 = 3).
+Abort.
+
+(** Test 1: This should fail as the wrong variable name is chosen. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Fail Pick m := (3) in (H).
+Abort.
+
+(** Test 2: This should fail because the wrong goal is specified. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Pick n := (3) in (H).
+Fail It holds that (True).
+Abort.
+
+(** Test 3: This should fail because first the wrapper needs to be resolved. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Pick n := (3) in (H).
+Fail exact I.
+Abort.
+
+(** It should be possible to use an outside lemma *)
+Local Parameter F : nat -> nat.
+Local Parameter F_identity : forall n : nat, F n = n.
+
+Goal True.
+Proof.
+Fail It holds that (F 3 = 3).
+Pick n := (5) in (F_identity).
+It holds that (F 5 = 5).
+Abort.
