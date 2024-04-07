@@ -21,6 +21,7 @@ Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
 Require Import Util.Init.
+Require Import Util.TypeForAssert.
 
 (** 
   Ltac2 function: [constr -> constr -> bool]
@@ -71,6 +72,7 @@ Ltac2 ltac2_assert_with_by (id: ident) (lemma_constent: constr) (by_arg: unit ->
     - [lemma_content: constr], new proposition to prove.
 *)
 Ltac2 ltac2_assert (id: ident) (lemma_content: constr) :=
+  let lemma_content := correct_type_for_assert lemma_content in
   Std.assert (Std.AssertType 
     (Some (Std.IntroNaming (Std.IntroIdentifier id))) 
     lemma_content None

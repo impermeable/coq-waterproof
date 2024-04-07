@@ -20,9 +20,9 @@ Require Import Classical.
 Require Import Classical_Pred_Type.
 Require Import Coq.Reals.Reals.
 
+Require Import Tactics.
 Require Import Automation.
 Require Import Notations.
-Require Import Tactics.
 
 Open Scope R_scope.
 
@@ -79,6 +79,8 @@ Proof.
     Assume that (A is bounded from above) (i).
     We claim that (there exists x : ℝ, A x).
     { Choose (a). We conclude that (A a). }
+    (* The term here is of type Type. *)
+    (* Check ({M | M is the supremum of A}). *)
     By completeness it holds that ({M | M is the supremum of A}).
     Obtain such an M.
     Choose (M).
