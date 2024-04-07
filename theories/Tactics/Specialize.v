@@ -35,20 +35,25 @@ Require Import Util.MessagesToUser.
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Local Ltac2 wp_specialize (s:ident) (choice:constr) (in_hyp:ident) :=
-  let h := Control.hyp in_hyp in
+Local Ltac2 wp_specialize (s:ident) (choice:constr) (h:constr) :=
+  (* let h := Control.hyp in_hyp in *)
+  let named_hyp := Std.NamedHyp s in
   let statement := eval unfold type_of in (type_of $h) in
   let specialized_statement := eval unfold type_of in (type_of ($h $choice)) in
   lazy_match! statement with
     | forall _ : _, _ =>
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_spec in
       (* Check whether it is really a specialization *)
-      (assert ($w : $specialized_statement) by exact ($h $choice));
-      (* Remove the hypothesis again *)
-      Control.enter (fun () => clear $w);
+      (* (assert ($w : $specialized_statement) by exact ($h $choice)); *)
+      specialize $h with ($named_hyp := $choice) as $w;
+      (* We keep the hypothesis, just to be sure the statement can really be shown by the automation later
+         However, this normally induce doubling of hypothesis.
+         Moreover, when opening a new claim, the specialized statement can already be used in the claim
+         TODO: decide if we want to do something against this*)
+      (* Control.enter (fun () => clear $w); *)
       (* Wrap the goal *)
-      (* Control.enter (fun () => apply (StateHyp.unwrap $specialized_statement)) *)apply (StateHyp.unwrap $specialized_statement)
-    | _ => throw (of_string "`Choose ... in (*)` only works if (*) starts with a for-all quantifier.")
+      apply (StateHyp.unwrap $specialized_statement)
+    | _ => throw (of_string "`Pick ... in (*)` only works if (*) starts with a for-all quantifier.")
   end.
 
 (**
@@ -62,5 +67,5 @@ Local Ltac2 wp_specialize (s:ident) (choice:constr) (in_hyp:ident) :=
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Ltac2 Notation "Pick" s(ident) ":=" choice(constr) "in" in_hyp(ident) :=
+Ltac2 Notation "Pick" s(ident) ":=" choice(constr) "in" "(" in_hyp(constr) ")" :=
   wp_specialize s choice in_hyp.

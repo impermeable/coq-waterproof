@@ -310,6 +310,6 @@ Abort.
 Goal (forall x : nat, x >= 5 -> True) -> True.
 Proof.
   intro H1.
-  Pick x := 6 in H1.
+  Pick x := 6 in (H1).
   It holds that (6 >= 5 -> True).
 Abort.
