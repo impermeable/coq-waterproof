@@ -58,7 +58,7 @@ let e_assumption: trace tactic =
       Tacticals.tclZEROMSG (str "No applicable tactic.")
     else
       let not_ground = occur_existential sigma concl in
-      let map (decl: ('a, types) Declaration.pt): trace tactic =
+      let map (decl: (_, types, _) Declaration.pt): trace tactic =
         let id = Declaration.get_id decl in
         let t = Declaration.get_type decl in
         begin
