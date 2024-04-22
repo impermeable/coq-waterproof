@@ -8,7 +8,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
 
 (** Makes sure that we only ever try to assert a term of type `prop` *)
 Ltac2 correct_type_for_assert (t: constr): constr :=
-  let type_t := eval cbv in (type_of $t) in
+  let type_t := Constr.type t in
   match! type_t with
     | Prop => t
     | Set => t
