@@ -74,8 +74,8 @@ Abort.
 
 
 (* Test 5: unable to show goal is enough if it does not imply current goal *)
-Variable A B : Prop.
-Variable g : A -> B.
+#[local] Parameter A B : Prop.
+#[local] Parameter g : A -> B.
 Goal B.
   Fail It suffices to show that A.
 Abort.
@@ -94,7 +94,7 @@ Proof.
 Abort.
 
 (* Test 8: unable to goal is enough with irrelevant lemma. *)
-Variable h : A.
+#[local] Parameter h : A.
 Goal B.
 Proof.
   Fail By h it suffices to show that A.
