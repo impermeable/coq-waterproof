@@ -1,5 +1,10 @@
 # Change log for the coq-waterproof library
 
+## Version 2.1.1+8.19
+
+- Compatibility with earlier OCaml compilers
+- Fixes for the strong induction tactic
+
 ## Version 2.1.0+8.17
 
 - Improve the `Either` tactic: now proves and destructs ordinary 'ors' when the goal is a proposition
