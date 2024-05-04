@@ -23,7 +23,7 @@ Firstly you should install [`opam`](https://opam.ocaml.org/).
 Then, you can create a new switch and install the requirements by running :
 
 ```bash
-$ opam switch create waterproof --packages coq.8.17.0
+$ opam switch create waterproof --packages coq.8.18.0
 $ eval $(opam env --switch=waterproof)
 ```
 
@@ -42,11 +42,8 @@ You can also install coq-waterproof without using opam (though it is greatly rec
 
 ```bash
 $ git clone https://github.com/impermeable/coq-waterproof.git && cd coq-waterproof
-$ autoreconf -i -s
-$ ./configure
-$ dune build
-$ make && make install # It is needed to compile and install with both `dune` and `make`
-$ dune install
+$ dune build -p coq-waterproof
+$ dune install -p coq-waterproof
 ```
 
 ## Usage
