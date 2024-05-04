@@ -89,9 +89,12 @@ Proof.
     Either (x <= 0) or (0 < x).
     - Case (x <= 0).
       Choose n := 1%nat.
-      It holds that (INR n > INR 0).
-      It holds that (x <= 0%nat).
-      We conclude that (INR n > x).
+      We claim that (INR 1 > INR 0).
+      { We need to show that ( 1 > 0 ).
+        We conclude that (1 > 0).
+      }
+      It holds that (x <= INR 0).
+      We conclude that (n > x).
     - Case (0 < x).
       By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
       It holds that (IZR( up x ) > x).

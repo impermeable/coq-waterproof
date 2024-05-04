@@ -282,7 +282,7 @@ Proof.
           | 0 => f(0)
           | S k => Nat.max(f(l), seq_of_max(f, k))
           end)(g, n + 1))%nat.
-      It holds that (n + 1 = S n)%nat (i).
+      It holds that (n + 1 = S n)%nat.
       It suffices to show that (g(n) ≤ seq_of_max(g, n))%nat.
       We conclude that (g(n) ≤ seq_of_max(g, n))%nat.
 Qed.
