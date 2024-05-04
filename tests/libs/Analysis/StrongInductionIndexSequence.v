@@ -19,7 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Waterproof.Libs.Analysis.StrongInductionIndexSequence.
 
-Variable Q : nat -> Prop.
+#[local] Parameter Q : nat -> Prop.
 
 
 (* Test 1: without other Waterproof tactics. *)
@@ -69,7 +69,7 @@ Inductive Color : Set :=
 | blue : Color
 | orange : Color.
 
-Variable P : ℕ → Color.
+#[local] Parameter P : ℕ → Color.
 Parameter infinitely_many_blues : ∀ k : ℕ, ∃ m : ℕ, (m ≥ k)%nat ∧ P(m) = blue.
 
 Lemma exercise_10_7_6 : 
