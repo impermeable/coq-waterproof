@@ -138,8 +138,13 @@ Abort.
 
 
 (** Tests for restricted version of 'By ...' clause *)
+<<<<<<< HEAD
 Variable A B : Prop.
 Variable f : A -> B.
+=======
+#[local] Parameter A B : Prop.
+#[local] Parameter f : A -> B.
+>>>>>>> coq-master
 
 (* Test 5: regular check that assertion works. *)
 Goal A -> False.
@@ -195,7 +200,11 @@ Proof.
 Abort.
 
 (* Test 10: 'By ...' fails if additional lemma is not needed for proof assertion. *)
+<<<<<<< HEAD
 Variable g : B -> A.
+=======
+#[local] Parameter g : B -> A.
+>>>>>>> coq-master
 Goal A -> False.
 Proof.
   intro H.
@@ -272,7 +281,7 @@ Proof.
 Abort.
 
 (* Test 18: possible goal with right hypothesis provided. *)
-Variable C : Prop.
+#[local] Parameter C : Prop.
 Goal A -> False.
 Proof.
   intro H.
@@ -286,7 +295,7 @@ Abort.
   terms in the hypotheses, (see workaround [Wateprove._rwaterprove]).
 
 (* Test 19: possible goal with wrong hypothesis provided. *)
-Variable D : Prop.
+#[local] Parameter D : Prop.
 Goal A -> False.
 Proof.
   intro H.

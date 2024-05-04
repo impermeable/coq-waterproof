@@ -21,7 +21,7 @@ open Pp
 (**
   Basic exception info
 *)
-let fatal_flag: 'a Exninfo.t = Exninfo.make ()
+let fatal_flag: unit Exninfo.t = Exninfo.make "waterproof_fatal_flag"
 
 (**
   Type of exceptions used in Wateproof
