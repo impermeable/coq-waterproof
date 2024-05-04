@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-DECLARE PLUGIN "coq-waterproof.databases"
+DECLARE PLUGIN "coq-waterproof.plugin"
 
 {
 
