@@ -138,13 +138,8 @@ Abort.
 
 
 (** Tests for restricted version of 'By ...' clause *)
-<<<<<<< HEAD
-Variable A B : Prop.
-Variable f : A -> B.
-=======
 #[local] Parameter A B : Prop.
 #[local] Parameter f : A -> B.
->>>>>>> coq-master
 
 (* Test 5: regular check that assertion works. *)
 Goal A -> False.
@@ -200,11 +195,7 @@ Proof.
 Abort.
 
 (* Test 10: 'By ...' fails if additional lemma is not needed for proof assertion. *)
-<<<<<<< HEAD
-Variable g : B -> A.
-=======
 #[local] Parameter g : B -> A.
->>>>>>> coq-master
 Goal A -> False.
 Proof.
   intro H.
