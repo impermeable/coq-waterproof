@@ -21,7 +21,7 @@ Require Import Ltac2.Message.
 
 Require Import Util.Constr.
 Require Import Util.MessagesToUser.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 
 Module Case.
 
@@ -167,7 +167,7 @@ Ltac2 panic_if_goal_wrapped () :=
 Ltac2 case (t:constr) :=
   lazy_match! goal with
     | [|- Case.Wrapper ?v _] =>
-      let t := correct_type_for_assert t in
+      let t := correct_type_by_wrapping t in
       match check_constr_equal v t with
         | true => apply (Case.wrap $v)
         | false => throw (of_string "Wrong case specified.")

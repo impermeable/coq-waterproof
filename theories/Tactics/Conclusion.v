@@ -25,7 +25,7 @@ Require Import Util.Init.
 Require Import Util.Since.
 Require Import Waterprove.
 Require Import MessagesToUser.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
@@ -71,7 +71,7 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 
 
 Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
-  let sttd_goal := correct_type_for_assert sttd_goal in
+  let sttd_goal := correct_type_by_wrapping sttd_goal in
   (* Check if stated goal exactly matches current goal. *)
   match Constr.equal sttd_goal (Control.goal ()) with
   | true => ()

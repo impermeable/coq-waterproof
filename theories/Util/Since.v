@@ -26,7 +26,7 @@ Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
 Require Import Util.Init.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
@@ -65,7 +65,7 @@ Try `Since "; of_constr x; of_string " ...` instead."]
 
 Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
   (* Wrap in is_true if needed *)
-  let claimed_cause := correct_type_for_assert claimed_cause in
+  let claimed_cause := correct_type_by_wrapping claimed_cause in
   (* first, check if [claimed_cause] is a statement. *)
   check_if_not_reference claimed_cause;
   

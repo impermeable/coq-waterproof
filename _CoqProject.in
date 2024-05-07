@@ -78,7 +78,7 @@ theories/Util/Hypothesis.v
 theories/Util/Init.v
 theories/Util/Since.v
 theories/Util/MessagesToUser.v
-theories/Util/TypeForAssert.v
+theories/Util/TypeCorrector.v
 
 theories/Waterproof.v
 theories/Waterprove.v

@@ -21,7 +21,7 @@ Require Import Ltac2.Ltac2.
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 Require Import Tactics.Unfold.
 Require Import Waterprove.
 
@@ -90,7 +90,7 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
     - 2) If the goal is not convertible to [t].
 *)
 Local Ltac2 to_show (t : constr) :=
-  let t := correct_type_for_assert t in
+  let t := correct_type_by_wrapping t in
   lazy_match! goal with
     | [|- StateGoal.Wrapper _] => unwrap_state_goal t; change $t
     | [|- _] => panic_if_goal_wrapped ();  check_goal t; change $t

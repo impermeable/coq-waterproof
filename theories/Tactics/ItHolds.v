@@ -27,7 +27,7 @@ Require Import Util.Hypothesis.
 Require Import Util.Init.
 Require Import Util.Since.
 Require Import Util.MessagesToUser.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 Require Import Waterprove.
 
 
@@ -60,7 +60,7 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
     | Some label => try_out_label label; label
     end
   in
-  let claim := correct_type_for_assert claim in
+  let claim := correct_type_by_wrapping claim in
   match Control.case (fun () =>
     assert $claim as $id by 
       (waterprove 5 true Main))
@@ -85,7 +85,7 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
     | Some label => try_out_label label; label
     end
   in
-  let claim := correct_type_for_assert claim in
+  let claim := correct_type_by_wrapping claim in
   match Control.case (fun () =>
     assert $claim as $id by 
       (rwaterprove 5 true Main xtr_lemma))

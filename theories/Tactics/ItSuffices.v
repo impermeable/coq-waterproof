@@ -23,7 +23,7 @@ Require Import Util.Init.
 Require Import Util.Goals.
 Require Import Util.Since.
 Require Import Util.MessagesToUser.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 Require Import Waterprove.
 
 Local Ltac2 concat_list (ls : message list) : message :=
@@ -35,7 +35,7 @@ Local Ltac2 wp_enough (new_goal : constr) :=
   let err_msg := concat_list
     [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
   match Control.case (fun () =>
-    let new_goal := correct_type_for_assert new_goal in
+    let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by (waterprove 5 true Main))
   with
   | Val _ => ()
@@ -51,7 +51,7 @@ Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
   let err_msg := concat_list
     [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
   match Control.case (fun () =>
-    let new_goal := correct_type_for_assert new_goal in
+    let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by 
       (rwaterprove 5 true Main xtr_lemma))
   with

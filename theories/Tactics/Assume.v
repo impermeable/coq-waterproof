@@ -26,7 +26,7 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
 Require Import Util.MessagesToUser.
-Require Import Util.TypeForAssert.
+Require Import Util.TypeCorrector.
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
   concat_list [of_string "Expected assumption of "; of_constr e;
@@ -50,7 +50,7 @@ Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
       | (t, n) => (* Check whether the right negated expression is assumed. *)
         lazy_match! goal with
           | [ |- not ?u ] => 
-            let t := correct_type_for_assert t in
+            let t := correct_type_by_wrapping t in
             match check_constr_equal u t with
               | false => throw (expected_of_type_instead_of_message u t)
               | true  => (* Check whether this was the only assumption made.*)
@@ -92,7 +92,7 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
               let sort_u := get_value_of_hyp u in
               match check_constr_equal sort_u constr:(Prop) with
                 | true => (* Check whether we need variabled of type t. *)
-                  let t := correct_type_for_assert t in
+                  let t := correct_type_by_wrapping t in
                   match check_constr_equal u t with
                     | true => (* Check whether a name has been given *)
                       match n with
