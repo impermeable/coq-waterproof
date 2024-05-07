@@ -32,3 +32,12 @@ Goal forall x y: nat, forall f: nat -> nat, x = y -> f (S x) = f (S y).
 Proof.
   waterprove 5 false Main.
 Qed.
+
+(**
+  * Test of wp_autorewrite
+*)
+Goal forall P : nat -> Prop, forall p q : nat, p = q -> P q -> P p.
+Proof.
+  intros.
+  waterprove 5 false Main.
+Qed.

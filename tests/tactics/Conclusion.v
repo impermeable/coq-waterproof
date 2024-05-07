@@ -140,8 +140,8 @@ Abort.
 
 (** Additional tests 'By ...' clause.  *)
 (* Test 6: unable to show goal without means required for proof. *)
-Variable A B : Prop.
-Variable f : A -> B.
+#[local] Parameter A B : Prop.
+#[local] Parameter f : A -> B.
 Goal A -> B.
   intro H.
   Fail We conclude that B.
@@ -163,7 +163,7 @@ Proof.
 Qed.
 
 (* Test 9: unable to show goal with irrelevant lemma. *)
-Variable g : B -> A.
+#[local] Parameter g : B -> A.
 Goal B.
 Proof.
   Fail By g we conclude that B.

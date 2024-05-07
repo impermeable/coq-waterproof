@@ -61,7 +61,7 @@ Abort.
 
 (** Test 4: fails if previous statement is not a contraditcion 
     to some earlier statement. *)
-Variable P Q A : Prop.
+#[local] Parameter P Q A : Prop.
 Goal P -> Q.
     intro H.
     Fail Contradiction.
