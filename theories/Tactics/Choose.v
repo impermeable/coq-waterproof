@@ -22,6 +22,9 @@ Require Import Ltac2.Message.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
+
 (* Ltac2 Type exn ::= [ ChooseError(string) ]. *)
 
 
@@ -44,9 +47,13 @@ Require Import Util.MessagesToUser.
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
   lazy_match! goal with
     | [ |- exists _ : _, _] =>
-      pose ($s := $t);
+      set ($s := $t);
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
+      match Constr.has_evar t with
+      |  true => warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string "."])
+      | _ => ()
+      end;
       exists $v;
       assert ($w : $v = $t) by reflexivity
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
@@ -68,14 +75,17 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
 *)
 Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
     lazy_match! goal with
-        | [ |- exists _ : _, _] => exists $t
+        | [ |- exists _ : _, _] =>
+          match Constr.has_evar t with
+          |  true => warn (concat_list [of_string "Please come back to this line later to make a definite choice."]); eexists $t
+          |  false => exists $t
+          end
         | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
     end.
 
-Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(constr) :=
+Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
   panic_if_goal_wrapped ();
   match s with 
     | None => choose_variable_in_exists_no_renaming t
     | Some s => choose_variable_in_exists_goal_with_renaming s t
   end.
-

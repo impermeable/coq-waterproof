@@ -59,3 +59,13 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     Fail Choose m := n.
 Abort.
+
+(** Test 5: Choose a blank *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (_).
+Abort.
+
+(** Test 6: Choose a named evar *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (?[m]).
+Abort.
