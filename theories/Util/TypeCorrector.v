@@ -33,7 +33,7 @@ Ltac2 correct_type_by_wrapping (t: constr): constr :=
     | Type => t
     | bool => constr:(is_true $t)
     | _ => throw (concat_list [
-      of_string "Expected a term with type in ['Prop', 'Set', 'Type', 'bool'], but we got a term of type '";
+      of_string "Expected a term with type in ['Prop', 'Set', 'Type', 'bool'], but got a term of type '";
       of_constr type_t; 
       of_string "' instead."]); constr:(tt)
   end.
