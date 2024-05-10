@@ -283,3 +283,11 @@ Proof.
     intro H1.
     We conclude that (& F(k+1) = F(k) = F(0))%nat.
 Qed.
+
+(** * Test 9
+  Test whether the conclude tactic can handle boolean statements 
+*)
+Goal (is_true true).
+Proof.
+  We conclude that (true).
+Qed.

@@ -113,3 +113,20 @@ Proof.
   pose g.
   Since (A -> B) it suffices to show that A.
 Abort.
+
+Parameter b : bool.
+(* Test 11: "It suffices" works with a boolean statement *)
+Goal B.
+Proof.
+  assert (is_true b -> B).
+  admit.
+  Since (is_true b -> B) it suffices to show that (b).
+Abort.
+
+(* Test 12: "It suffices" works with a boolean statement *)
+Goal B.
+Proof.
+  assert (is_true b -> B).
+  admit.
+  It suffices to show that (b).
+Abort.
