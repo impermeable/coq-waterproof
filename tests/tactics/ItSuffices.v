@@ -116,10 +116,9 @@ Abort.
 
 Parameter b : bool.
 (* Test 11: "It suffices" works with a boolean statement *)
-Goal B.
+Goal ((is_true b) -> B) -> B.
 Proof.
-  assert (is_true b -> B).
-  admit.
+  intro H.
   Since (is_true b -> B) it suffices to show that (b).
 Abort.
 
