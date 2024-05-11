@@ -128,3 +128,12 @@ Proof.
   intro H.
   It suffices to show that (b).
 Abort.
+
+(* Test 13: "It suffices" works with boolean statement and boolean "Since"
+  clause *)
+Goal ((is_true b) -> B) -> B.
+Proof.
+  intro H.
+  It holds that (true).
+  Since (true) it suffices to show that (b).
+Abort.
