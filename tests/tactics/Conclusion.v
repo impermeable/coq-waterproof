@@ -291,3 +291,13 @@ Goal (is_true true).
 Proof.
   We conclude that (true).
 Qed.
+
+(** * Test 10
+  Test whether the conclude tactic can handle a boolean statement
+  with boolean since-clause.
+*)
+Goal (is_true true).
+Proof.
+  It holds that (true).
+  Since (true) we conclude that (true).
+Qed.
