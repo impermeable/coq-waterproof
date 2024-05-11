@@ -124,9 +124,8 @@ Proof.
 Abort.
 
 (* Test 12: "It suffices" works with a boolean statement *)
-Goal B.
+Goal ((is_true b) -> B) -> B.
 Proof.
-  assert (is_true b -> B).
-  admit.
+  intro H.
   It suffices to show that (b).
 Abort.
