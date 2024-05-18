@@ -22,6 +22,7 @@ Require Import Util.Constr.
 Require Import Util.Goals.
 
 Local Ltac2 my_assert (t:constr) (id:ident option) := 
+  (* Fixed by fixing the ltac2_assert *)
   match id with
     | None =>
       let h := Fresh.in_goal @_H in
