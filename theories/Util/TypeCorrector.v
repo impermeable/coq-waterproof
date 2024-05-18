@@ -22,7 +22,7 @@ Require Import Util.MessagesToUser.
 From Ltac2 Require Import Ltac2 Message.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 (** Ensures that the type of [t] can be used in type matching or asserting. *)
 Ltac2 correct_type_by_wrapping (t: constr): constr :=
