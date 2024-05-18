@@ -106,3 +106,12 @@ Proof.
     intro n.
     Fail We show both (n + 2 = n + 2) and (n +3 = n + 3).
 Abort.
+
+Goal forall a b : bool, is_true a -> is_true b -> is_true a /\ is_true b.
+    intros a b.
+    intros Ha Hb.
+    We show both statements.
+    - We need to show that (a).
+      exact Ha.
+    - We conclude that (b).
+Qed.
