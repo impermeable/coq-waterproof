@@ -305,3 +305,17 @@ Proof.
   intros Ha Hf.
   By Ha it holds that B.
 Abort.
+
+(* Test 21: we can use "It holds that" using boolean statements *)
+Goal 1 < 2.
+Proof.
+  It holds that (true).
+Abort.
+
+(* Test 22: "Since" works with a boolean statement *)
+Goal 1 < 2.
+Proof.
+  It holds that (orb true false).
+  Since (orb true false) it holds that (1 < 2).
+  assumption.
+Qed.

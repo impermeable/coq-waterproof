@@ -142,3 +142,10 @@ Goal (0 = 0) -> nat -> nat.
   Assume that (0 = 0).
   Fail Assume that nat.
 Abort.
+
+(** * Test 17: should correctly handle boolean goal
+*)
+Goal is_true true -> (0 = 0).
+Proof.
+  Assume that (true).
+Abort.

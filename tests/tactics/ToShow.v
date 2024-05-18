@@ -57,3 +57,18 @@ Proof.
   Fail We need to show (0 = 2).
   reflexivity.
 Qed.
+
+(** Fourth test: We need to show should handle a boolean statement *)
+Goal forall a b: bool, is_true (orb a b).
+Proof.
+  intros a b.
+  We need to show (orb a b).
+  We need to show (if a then true else b).
+Abort.
+
+(** Fifth test: Test wrong goal with boolean statement *)
+Goal forall a b: bool, is_true (orb a b).
+Proof.
+  intros a b.
+  Fail We need to show that (andb a b).
+Abort.
