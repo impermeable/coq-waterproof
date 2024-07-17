@@ -23,4 +23,4 @@ Ltac2 simplify_if () :=
         try_hypotheses ()
     ].
 
-#[export] Hint Extern 1 => ltac2:(simplify_if ()) : wp_algebra.
+#[export] Hint Extern 0 => ltac2:(simplify_if ()) : wp_algebra.
