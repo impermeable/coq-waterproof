@@ -140,8 +140,8 @@ Abort.
 
 (** Additional tests 'By ...' clause.  *)
 (* Test 6: unable to show goal without means required for proof. *)
-Variable A B : Prop.
-Variable f : A -> B.
+#[local] Parameter A B : Prop.
+#[local] Parameter f : A -> B.
 Goal A -> B.
   intro H.
   Fail We conclude that B.
@@ -163,7 +163,7 @@ Proof.
 Qed.
 
 (* Test 9: unable to show goal with irrelevant lemma. *)
-Variable g : B -> A.
+#[local] Parameter g : B -> A.
 Goal B.
 Proof.
   Fail By g we conclude that B.
@@ -282,4 +282,22 @@ Proof.
   * We now show the induction step.
     intro H1.
     We conclude that (& F(k+1) = F(k) = F(0))%nat.
+Qed.
+
+(** * Test 9
+  Test whether the conclude tactic can handle boolean statements 
+*)
+Goal (is_true true).
+Proof.
+  We conclude that (true).
+Qed.
+
+(** * Test 10
+  Test whether the conclude tactic can handle a boolean statement
+  with boolean since-clause.
+*)
+Goal (is_true true).
+Proof.
+  It holds that (true).
+  Since (true) we conclude that (true).
 Qed.

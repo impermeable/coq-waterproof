@@ -26,23 +26,19 @@ Require Import Util.MessagesToUser.
 Require Import Waterprove.
 
 Require Import Util.Init.
+Require Import Util.TypeCorrector.
+
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
 Local Ltac2 check_if_not_reference (x : constr) :=
   let type_x := get_type x in
-  match check_constr_equal type_x constr:(Prop) with
-  | true => ()
-  | false => 
-    match check_constr_equal type_x constr:(Set) with
-    | true => ()
-    | false => 
-      match check_constr_equal type_x constr:(Type) with
-      | true => ()
-      | false => throw (concat_list
+  match! type_x with
+  | Prop => ()
+  | Set => ()
+  | Type => ()
+  | _ => throw (concat_list
         [of_string "Cannot use reference "; of_constr x; of_string " with `Since`.
 Try `By "; of_constr x; of_string " ...` instead."])
-      end
-    end
   end.
 
 Local Ltac2 check_if_not_statement (x : constr) :=
@@ -51,17 +47,11 @@ Local Ltac2 check_if_not_statement (x : constr) :=
 Try `Since "; of_constr x; of_string " ...` instead."]
   in
   let type_x := get_type x in
-  match check_constr_equal type_x constr:(Prop) with
-  | true => throw err_msg
-  | false => 
-    match check_constr_equal type_x constr:(Set) with
-    | true => throw err_msg
-    | false => 
-      match check_constr_equal type_x constr:(Type) with
-      | true => throw err_msg
-      | false => ()
-      end
-    end
+  match! type_x with
+  | Prop => throw err_msg
+  | Set => throw err_msg
+  | Type => throw err_msg
+  | _ => ()
   end.
 
 
@@ -74,6 +64,8 @@ Try `Since "; of_constr x; of_string " ...` instead."]
 *)
 
 Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
+  (* Wrap in is_true if needed *)
+  let claimed_cause := correct_type_by_wrapping claimed_cause in
   (* first, check if [claimed_cause] is a statement. *)
   check_if_not_reference claimed_cause;
   

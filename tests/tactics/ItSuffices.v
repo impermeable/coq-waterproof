@@ -74,8 +74,8 @@ Abort.
 
 
 (* Test 5: unable to show goal is enough if it does not imply current goal *)
-Variable A B : Prop.
-Variable g : A -> B.
+#[local] Parameter A B : Prop.
+#[local] Parameter g : A -> B.
 Goal B.
   Fail It suffices to show that A.
 Abort.
@@ -94,7 +94,7 @@ Proof.
 Abort.
 
 (* Test 8: unable to goal is enough with irrelevant lemma. *)
-Variable h : A.
+#[local] Parameter h : A.
 Goal B.
 Proof.
   Fail By h it suffices to show that A.
@@ -112,4 +112,28 @@ Goal B.
 Proof.
   pose g.
   Since (A -> B) it suffices to show that A.
+Abort.
+
+Parameter b : bool.
+(* Test 11: "It suffices" works with a boolean statement *)
+Goal ((is_true b) -> B) -> B.
+Proof.
+  intro H.
+  Since (is_true b -> B) it suffices to show that (b).
+Abort.
+
+(* Test 12: "It suffices" works with a boolean statement *)
+Goal ((is_true b) -> B) -> B.
+Proof.
+  intro H.
+  It suffices to show that (b).
+Abort.
+
+(* Test 13: "It suffices" works with boolean statement and boolean "Since"
+  clause *)
+Goal ((is_true b) -> B) -> B.
+Proof.
+  intro H.
+  It holds that (true).
+  Since (true) it suffices to show that (b).
 Abort.
