@@ -35,24 +35,27 @@ Require Import Util.MessagesToUser.
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Local Ltac2 wp_specialize (s:ident) (choice:constr) (h:constr) :=
+
+Local Ltac2 _ident_to_hyp_list (ls : (ident * constr) list) : (Std.hypothesis * constr) list 
+:= List.map (fun (i, x) => (Std.NamedHyp i, x)) ls.
+
+Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :=
   (* let h := Control.hyp in_hyp in *)
-  let named_hyp := Std.NamedHyp s in
+  (* let named_hyp := Std.NamedHyp s in *)
   let statement := eval unfold type_of in (type_of $h) in
-  let specialized_statement := eval unfold type_of in (type_of ($h $choice)) in
+  (* let specialized_statement := eval unfold type_of in (type_of ($h $choice)) in *)
   lazy_match! statement with
+    | _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
+      throw (of_string "`Pick ... in (*)` only works if (*) starts with a for-all quantifier.")
     | forall _ : _, _ =>
-      let w := Fresh.fresh (Fresh.Free.of_goal ()) @_spec in
-      (* Check whether it is really a specialization *)
-      (* (assert ($w : $specialized_statement) by exact ($h $choice)); *)
-      specialize $h with ($named_hyp := $choice) as $w;
-      (* We keep the hypothesis, just to be sure the statement can really be shown by the automation later
-         However, this normally induce doubling of hypothesis.
-         Moreover, when opening a new claim, the specialized statement can already be used in the claim
-         TODO: decide if we want to do something against this*)
-      (* Control.enter (fun () => clear $w); *)
+      let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+      Std.specialize (h, Std.ExplicitBindings (_ident_to_hyp_list var_choice_list)) 
+        (Some (Std.IntroNaming (Std.IntroIdentifier w))) ;
+      (* specialize $h with ($named_hyp := $choice) as $w; *)
       (* Wrap the goal *)
-      apply (StateHyp.unwrap $specialized_statement)
+      let constr_w := Control.hyp w in
+      let type_w := Constr.type constr_w in
+      apply (StateHyp.unwrap $type_w $constr_w)
     | _ => throw (of_string "`Pick ... in (*)` only works if (*) starts with a for-all quantifier.")
   end.
 
@@ -67,5 +70,5 @@ Local Ltac2 wp_specialize (s:ident) (choice:constr) (h:constr) :=
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Ltac2 Notation "Pick" s(ident) ":=" choice(constr) "in" "(" in_hyp(constr) ")" :=
-  wp_specialize s choice in_hyp.
+Ltac2 Notation "Use" s(list1(seq(ident, ":=", constr), ",")) "in" "(" in_hyp(constr) ")" :=
+  wp_specialize s in_hyp.

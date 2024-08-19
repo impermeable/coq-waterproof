@@ -26,7 +26,7 @@ Require Import Waterproof.Automation.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Pick n := 3 in (H).
+Use n := 3 in (H).
 It holds that (3 = 3).
 Abort.
 
@@ -34,14 +34,14 @@ Abort.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Fail Pick m := (3) in (H).
+Fail Use m := (3) in (H).
 Abort.
 
 (** Test 2: This should fail because the wrong goal is specified. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Pick n := (3) in (H).
+Use n := (3) in (H).
 Fail It holds that (True).
 Abort.
 
@@ -49,7 +49,7 @@ Abort.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Pick n := (3) in (H).
+Use n := (3) in (H).
 Fail exact I.
 Abort.
 
@@ -60,6 +60,39 @@ Local Parameter F_identity : forall n : nat, F n = n.
 Goal True.
 Proof.
 Fail It holds that (F 3 = 3).
-Pick n := (5) in (F_identity).
+Use n := (5) in (F_identity).
 It holds that (F 5 = 5).
+Abort.
+
+(** Test 4: cannot use specialize tactic for function, 
+  throw readable error message stating as much.  *)
+Definition f : nat -> nat := fun (n : nat) => n.
+Goal False.
+Proof.
+  Fail Use n := 5 in (f).
+Abort.
+
+(** Test 5: original universal quantifier hypohtesis left unchanged. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Use n := 3 in (H).
+ltac1:(rename H into HH).   (* test for hypohtesis without producing output *)
+Abort.
+
+(** Test 6: multiple variable specifications  *)
+Goal (forall n m : nat, n = m) -> False.
+Proof.
+intro H.
+Use n := 3, m := 4 in (H).
+It holds that (3 = 4).
+Abort.
+
+(** Test 7: multiple variable specifications, different order  *)
+Goal (forall n m : nat, n = m) -> False.
+Proof.
+intro H.
+Use m := 4, n := 3 in (H).
+Fail It holds that (4 = 3). (* as expected :) *)
+It holds that (3 = 4).
 Abort.
