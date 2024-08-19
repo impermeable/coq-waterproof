@@ -57,38 +57,40 @@ Abort.
 
 
 
-(* Test 3:  more complicated example from actual exercises,
-    i.e. with function notation 'n(k)' and 'P(n(k)) = blue' as property. *)
+(* Test 3:  more complicated example inspired by actual exercises,
+    i.e. with function notation 'n(k)' and 'candy_seq(n(k)) = sweet' as property. *)
 Require Import Waterproof.Notations.
 Require Import Waterproof.Automation.
 
 Waterproof Enable Automation RealsAndIntegers.
 Waterproof Enable Automation Intuition.
 
-Inductive Color : Set :=
-| blue : Color
-| orange : Color.
+Inductive Flavor : Set :=
+| sweet : Flavor
+| sour  : Flavor
+| salty : Flavor.
 
-#[local] Parameter P : ℕ → Color.
-Parameter infinitely_many_blues : ∀ k : ℕ, ∃ m : ℕ, (m ≥ k)%nat ∧ P(m) = blue.
 
-Lemma exercise_10_7_6 : 
-  ∃ n : ℕ → ℕ, (is_index_seq n) ∧ (∀ k : ℕ, P (n k) = blue).
+#[local] Parameter candy_seq : ℕ → Flavor.
+Parameter infinitely_many_sweet : ∀ k : ℕ, ∃ m : ℕ, (m ≥ k)%nat ∧ candy_seq(m) = sweet.
+
+Goal
+  ∃ n : ℕ → ℕ, (is_index_seq n) ∧ (∀ k : ℕ, candy_seq (n k) = sweet).
 Proof.
 Define the index sequence n inductively.
-- By (infinitely_many_blues) it holds that
-    (∃ m : ℕ, (m ≥ 0)%nat ∧ P(m) = blue).
+- By (infinitely_many_sweet) it holds that
+    (∃ m : ℕ, (m ≥ 0)%nat ∧ candy_seq(m) = sweet).
   Obtain such an m.
   Choose n_0 := m.
-  We conclude that (P(n_0) = blue).
+  We conclude that (candy_seq(n_0) = sweet).
 - Take k : ℕ and assume n(0),...,n(k) are defined.
-  Assume that (∀ l : ℕ, (l ≤ k)%nat ⇒ P(n(l)) = blue).
+  Assume that (∀ l : ℕ, (l ≤ k)%nat ⇒ candy_seq(n(l)) = sweet).
   Assume that (∀ l : ℕ, (l < k)%nat ⇒ (n(l) < n(l+1))%nat).
-  By (infinitely_many_blues) it holds that 
-    (∃ m : ℕ, (m ≥ (n k) + 1)%nat ∧ P(m) = blue).
+  By (infinitely_many_sweet) it holds that 
+    (∃ m : ℕ, (m ≥ (n k) + 1)%nat ∧ candy_seq(m) = sweet).
   Obtain such an m.
   Choose n_kplus1 := m.
   We show both statements.
-  * We conclude that (P(n_kplus1) = blue).
+  * We conclude that (candy_seq(n_kplus1) = sweet).
   * We conclude that (n(k) < n_kplus1)%nat.
 Qed.
