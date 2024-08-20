@@ -48,6 +48,7 @@ theories/Libs/Reals.v
 
 theories/Notations.v
 theories/Notations/Common.v
+theories/Notations/Placeholders.v
 theories/Notations/Reals.v
 theories/Notations/Sets.v
 
