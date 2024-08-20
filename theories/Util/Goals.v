@@ -96,6 +96,23 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 's
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ). '//' or  write: '//'   We  conclude  that  ( G ). '//' if  no  intermediary  proof  steps  are  required."
   ).
 
+Module StateHyp.
+
+  Private Inductive Wrapper (A : Type) (h : A) (G : Type) : Type :=
+    | wrap : G -> Wrapper A h G.
+
+  Definition unwrap (A : Type) (h : A) (G : Type) : Wrapper A h G -> G :=
+    fun x => match x with wrap _ _ _ y => y end.
+
+End StateHyp.
+
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'It' 'holds' 'that' '(' A ').'" :=
+  (StateHyp.Wrapper A _ _) (
+    at level 99,
+    only printing,
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   It  holds  that  ( A )."
+  ).
+
 Module ByContradiction.
 
   Private Inductive Wrapper (A G : Type) : Type :=
@@ -147,6 +164,7 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- NaturalInduction.Base.Wrapper _] => raise_goal_wrapped_error ()
     | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error ()
     | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
+    | [|- StateHyp.Wrapper _ _ _]              => raise_goal_wrapped_error ()
     | [|- ByContradiction.Wrapper _ _]     => raise_goal_wrapped_error ()
     | [|- _] => ()
   end.
