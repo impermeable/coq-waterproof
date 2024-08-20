@@ -28,8 +28,7 @@ Require Import Util.MessagesToUser.
   Specializes a hypothesis that starts with a for-all statement.
     
   Arguments:
-    - [s : ident], name of the variable to choose
-    - [choice : constr], choice for the variable
+    - [var_choice_list : (ident * constr) list], list of names for variables together with choices for those variables 
     - [in_hyp : ident], name of the hypothesis to specialize.
 
   Raises fatal exceptions:
@@ -40,10 +39,7 @@ Local Ltac2 _ident_to_hyp_list (ls : (ident * constr) list) : (Std.hypothesis * 
 := List.map (fun (i, x) => (Std.NamedHyp i, x)) ls.
 
 Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :=
-  (* let h := Control.hyp in_hyp in *)
-  (* let named_hyp := Std.NamedHyp s in *)
   let statement := eval unfold type_of in (type_of $h) in
-  (* let specialized_statement := eval unfold type_of in (type_of ($h $choice)) in *)
   lazy_match! statement with
     | _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
       throw (of_string "`Pick ... in (*)` only works if (*) starts with a for-all quantifier.")
@@ -63,8 +59,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
   Specializes a hypothesis that starts with a for-all statement.
     
   Arguments:
-    - [s : ident], name of the variable to choose
-    - [choice : constr], choice for the variable
+    - [var_choice_list : (ident * constr) list], list of names for variables together with choices for those variables 
     - [in_hyp : ident], name of the hypothesis to specialize.
 
   Raises fatal exceptions:

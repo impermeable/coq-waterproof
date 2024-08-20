@@ -106,25 +106,6 @@ Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : co
 Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim : constr) :=
   since_framework (core_wp_assert_by claim label) xtr_claim.
 
-(**
-  Removes a [StateHyp.Wrapper] wrapper from the goal.
-    
-  Arguments: The statement in the specified hypothesis
-    
-  Does: 
-    - Removes the wrapper [StateHyp.Wrapper A G].
-
-  Raises exception:
-    - (fatal) if the wrong hypothesis is specified.
-*)
-Local Ltac2 unwrap_state_hyp (statement : constr) :=
-  lazy_match! goal with
-    | [|- StateHyp.Wrapper ?s _] => 
-         if check_constr_equal s statement
-           then apply (StateHyp.wrap $s)
-           else throw (of_string "Wrong statement specified.")
-    | [|- _] => ()
-  end.
 
 (**
   Attempts to assert a claim and proves it automatically using a specified lemma, 
@@ -148,8 +129,10 @@ Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
     
+  
 (** * It holds that ... (...)
   Attempts to assert a claim and proves it automatically.
+  Removes [StateHyp.Wrapper] wrapper from the goal (proving claim by automation not necessary).
 
   Arguments:
     - [label: ident option], optional name for the claim. 
@@ -159,8 +142,8 @@ Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label
     Raises exception:
     - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
+    - (fatal) If goal is wrapped in [StateHyp.Wrapper] and the wrong statement is specified.
 *)
-
 Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
   (* Try out label first. 
     Code results in wrong error if done inside repeated match.. *)
