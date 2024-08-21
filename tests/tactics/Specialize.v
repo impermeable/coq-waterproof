@@ -96,3 +96,60 @@ Use m := 4, n := 3 in (H).
 Fail It holds that (4 = 3). (* as expected :) *)
 It holds that (3 = 4).
 Abort.
+
+(* -------------------------------------------------------------------------- *)
+
+(** Test 8 : use a placeholder as variable name *)
+Goal (forall a b c : nat, a + b + c = 0) -> False.
+Proof.
+intro H.
+Use b := _ in (H).
+It holds that (forall a c : nat, a + ?b + c = 0) (i).
+Abort.
+
+(** Test 8 : use multiple placeholders as variable names *)
+Goal (forall a b c : nat, a + b + c = 0) -> False.
+Proof.
+intro H.
+Use a := _, b := _, c := _ in (H).
+It holds that (?a + ?b + ?c = 0).
+Abort.
+
+(** Test 9 : use named placeholder *)
+Goal (forall a : nat, a = 0) -> False.
+Proof.
+intro H.
+Use a := ?[b] in (H).
+It holds that (?a = 0).
+Abort.
+
+(** Test 10 : use named placeholder, continue with name of placeholder *)
+Goal (forall a : nat, a = 0) -> False.
+Proof.
+intro H.
+Use a := (?[b] : nat) in (H).
+Show Existentials.
+(* TODO: it would be nice if this would pass *)
+Fail It holds that (?b = 0).
+Abort.
+
+(** Test 11 : use an already existing evar *)
+Goal (forall a b : nat, a + b = 0) -> False.
+Proof.
+intro H.
+Use a := _ in (H).
+It holds that (forall b : nat, ?a + b = 0) (i).
+Ltac2 Eval (Constr.has_evar constr:(?a)).
+Use b := ?a in (i).
+Abort.
+
+(** Test 12 : use an already existing named evar *)
+Goal (forall a b : nat, a + b = 0) -> False.
+Proof.
+intro H.
+Use a := ?[b] in (H).
+ltac1:(evar (e : nat)).
+Check ?e.
+It holds that (forall b : nat, ?a + b = 0) (i).
+Use b := ?e in (i).
+Abort.

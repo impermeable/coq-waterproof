@@ -156,15 +156,25 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     if check_constr_equal h_constr h_spec
       then ()
       else fail;
-
+    let w := match label with
+      | None => Fresh.fresh (Fresh.Free.of_goal ()) @_H
+      | Some label => label
+      end in
     if check_constr_equal s claim
-      then apply (StateHyp.wrap $s)
-      else throw (of_string "Wrong statement specified.");
+      then
+        match Control.case (fun () => assert $claim as $w by exact $h_constr) with
+        | Val _ =>  (* If claims are definitionally equal, go with the
+                  version that is supplied as argument to "It holds that ..." *)
+          apply (StateHyp.wrap $s);
+          Std.clear [h]
+        | Err exn => print (of_string "Exception occurred"); print (of_exn exn)
+        end
+      else throw (of_string "Wrong statement specified.")
     (* rename ident generated in specialize with user-specified label*)
-    match label with
+    (* match label with
     | None => ()
-    | Some label => Std.rename [(h, label)]
-    end
+    | Some label => Std.rename [(w, label)]
+    end *)
   | [|- _] => 
     panic_if_goal_wrapped ();
     wp_assert claim label
