@@ -46,15 +46,19 @@ Notation "B( p , r )" := (open_ball p r) (at level 68, format "B( p ,  r )").
 
 Local Ltac2 unfold_open_ball (statement : constr) := eval unfold open_ball, pred in $statement.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "B" "in" statement(constr) := 
-  unfold_in_statement unfold_open_ball (Some "B") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "B" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_open_ball (Some "B") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "B" :=
+  panic_if_goal_wrapped (); 
+  unfold_in_all unfold_open_ball (Some "B") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "B" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_open_ball (Some "B") false.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "open" "ball" "in" statement(constr) := 
-  unfold_in_statement unfold_open_ball (Some "open ball ") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "ball" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_open_ball (Some "open ball ") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "open" "ball" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_open_ball (Some "open ball ") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_open_ball (Some "open ball ") false.
 
 Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 68).
 
@@ -62,10 +66,12 @@ Notation "a 'is' 'an' 'interior' 'point' 'of' A" := (is_interior_point a A) (at 
 
 Local Ltac2 unfold_is_interior_point (statement : constr) := eval unfold is_interior_point in $statement.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "interior" "point" "in" statement(constr) := 
-  unfold_in_statement unfold_is_interior_point (Some "interior point") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "interior" "point" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_is_interior_point (Some "interior point") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "interior" "point" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_interior_point (Some "interior point") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_interior_point (Some "interior point") false.
 
 Notation "A 'is' '_open_'" := (is_open A) (at level 68).
 
@@ -73,10 +79,12 @@ Notation "A 'is' 'open'" := (is_open A) (at level 68, only parsing).
 
 Local Ltac2 unfold_is_open (statement : constr) := eval unfold is_open in $statement.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "open" "in" statement(constr) := 
-  unfold_in_statement unfold_is_open (Some "open") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_is_open (Some "open") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "open" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_open (Some "open") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_open (Some "open") false.
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
@@ -84,15 +92,19 @@ Notation "'ℝ' '\' A" := (complement A) (at level 20, only parsing).
 
 Local Ltac2 unfold_complement (statement : constr) := eval unfold complement, pred in $statement.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "ℝ\" "in" statement(constr) := 
-  unfold_in_statement unfold_complement (Some "ℝ\") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "ℝ\" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_complement (Some "ℝ\") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "ℝ\" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_complement (Some "ℝ\") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "ℝ\" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_complement (Some "ℝ\") false.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "complement" "in" statement(constr) := 
-  unfold_in_statement unfold_complement (Some "complement") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "complement" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_complement (Some "complement") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "complement" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_complement (Some "complement") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "complement" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_complement (Some "complement") false.
 
 Notation "A 'is' '_closed_'" := (is_closed A) (at level 68).
 
@@ -100,10 +112,12 @@ Notation "A 'is' 'closed'" := (is_closed A) (at level 68, only parsing).
 
 Local Ltac2 unfold_is_closed (statement : constr) := eval unfold is_closed in $statement.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "closed" "in" statement(constr) :=
-  unfold_in_statement unfold_is_closed (Some "closed") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" "in" statement(constr) :=
-  unfold_in_statement_no_error unfold_is_closed (Some "closed") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "closed" :=
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_closed (Some "closed") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" x(opt(seq("in", "()"))) :=
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_closed (Some "closed") false.
 
 (** Hints *)
 Lemma zero_in_interval_closed_zero_open_one : (0 : [0,1)).
