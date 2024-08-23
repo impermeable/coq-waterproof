@@ -24,8 +24,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Init.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
-
-
+Require Import Util.Evars.
 
 (**
   Convert a (ident * constr) to an (Std.hypothesis * constr) list,
@@ -41,6 +40,14 @@ Local Ltac2 _ident_to_hyp_list (ls : (ident * constr) list) : (Std.hypothesis * 
 *)
 Local Ltac2 _names_evars (ls : (ident * constr) list) : ident list
  := List.map (fun (i, x) => i) (List.filter (fun (i, x) => Constr.has_evar x) ls).
+
+(**
+  Get those names from an list of pairs of idents and choice
+  for those idents, and selects those names where the choice
+  has an evar.
+*)
+Local Ltac2 _constrs_evars (ls : (ident * constr) list) : constr list
+ := List.map (fun (i, x) => x) (List.filter (fun (i, x) => Constr.has_evar x) ls).
 
 (**
   Helper function to make a message of a list of idents,
@@ -147,6 +154,9 @@ Local Ltac2 replace_evars (h : constr) (xs : (ident * constr) list) : (ident * c
   let b_list := get_prod_binders (Constr.type h) in
   List.map (replace_evar b_list) xs.
 
+Local Ltac2 _replace_evars_aux ((i, c) : ident * constr) () :=
+  rename_blank_evars_in_term (Ident.to_string i) c.
+  
 (**
   Specializes a hypothesis that starts with a for-all statement.
     
@@ -167,10 +177,11 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
     | forall _ : _, _ =>
       (* replace the variables with holes by new evars *)
       (* TODO: check that the renaming doesn't take place if tactic fails...*)
-      let new_var_choice_list := replace_evars h var_choice_list in
+      (* let new_var_choice_list := replace_evars h var_choice_list in*)
+      let new_var_choice_list := var_choice_list in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
       (* specialize *)
-      Std.specialize (h, Std.ExplicitBindings (_ident_to_hyp_list new_var_choice_list))
+      Std.specialize (h, Std.ExplicitBindings (_ident_to_hyp_list var_choice_list))
         (Some (Std.IntroNaming (Std.IntroIdentifier w))) ;
       (* get output *)
       let constr_w := Control.hyp w in
@@ -183,6 +194,9 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
           [of_string "Please come back to this line later to make a definite choice for ";
             _of_idents evars; of_string "."]))
       end;
+      let terms_with_evars := _constrs_evars var_choice_list in
+      List.fold_right (fun (i, c) () =>
+        rename_blank_evars_in_term (Ident.to_string i) c) ()var_choice_list;
       (* Wrap the goal *)
       apply (StateHyp.unwrap $type_w $constr_w)
     | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")

@@ -23,15 +23,22 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 module Tac2ffi = Ltac2_plugin.Tac2ffi
 module Tac2env = Ltac2_plugin.Tac2env
 module Tac2expr = Ltac2_plugin.Tac2expr
+module Tac2entries = Ltac2_plugin.Tac2entries
 
 open Proofview
 open Proofview.Notations
+open Util
+open Names
+open Genarg
+open Tac2env
 open Tac2expr
+open Tac2entries.Pltac
 open Tac2ffi
 
 open Exceptions
 open Hint_dataset_declarations
 open Waterprove
+open Wp_evars
 
 let waterproof_version : string = "2.1.1+8.17"
 }
@@ -229,12 +236,9 @@ let () =
       end >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
-  define1 "warn_external" pp @@ 
-    fun input ->
-      warn input >>= fun () -> tclUNIT @@ of_unit ()
-
-let () =
   define1 "throw_external" pp @@
     fun input ->
       err input >>= fun () -> tclUNIT @@ of_unit ()
+
+
 }

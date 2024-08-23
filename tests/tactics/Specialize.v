@@ -115,12 +115,12 @@ Use a := _, b := _, c := _ in (H).
 It holds that (?a + ?b + ?c = 0).
 Abort.
 
-(** Test 9 : use named placeholder *)
+(** Test 9 : use named placeholder: then renaming shouldn't happen *)
 Goal (forall a : nat, a = 0) -> False.
 Proof.
 intro H.
 Use a := ?[b] in (H).
-It holds that (?a = 0).
+Fail It holds that (?a = 0).
 Abort.
 
 (** Test 10 : use named placeholder, continue with name of placeholder *)
@@ -128,28 +128,24 @@ Goal (forall a : nat, a = 0) -> False.
 Proof.
 intro H.
 Use a := (?[b] : nat) in (H).
-Show Existentials.
-(* TODO: it would be nice if this would pass *)
-Fail It holds that (?b = 0).
+It holds that (?b = 0).
 Abort.
 
 (** Test 11 : use an already existing evar *)
 Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
 intro H.
-Use a := _ in (H).
-It holds that (forall b : nat, ?a + b = 0) (i).
-Ltac2 Eval (Constr.has_evar constr:(?a)).
-Use b := ?a in (i).
+ltac1:(evar (e : nat)).
+Use a := (?e + _) in (H).
+It holds that (forall b : nat, ?e + ?a + b = 0) (i).
 Abort.
 
-(** Test 12 : use an already existing named evar *)
+(** Test 12 : use an earlier introduced evar *)
 Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
 intro H.
-Use a := ?[b] in (H).
-ltac1:(evar (e : nat)).
-Check ?e.
+Use a := _ in (H).
 It holds that (forall b : nat, ?a + b = 0) (i).
-Use b := ?e in (i).
+Use b := ?a in (i).
+It holds that (?a + ?a = 0).
 Abort.
