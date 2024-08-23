@@ -16,12 +16,19 @@
 (*                                                                            *)
 (******************************************************************************)
 
-val print_evars : Ltac2_plugin.Tac2ffi.valexpr Proofview.tactic
+(**
+  Checks whether a given evar is a blank in the evar_map.
+*)
+val is_blank : Evd.evar_map -> Evar.t -> bool
 
-val print_evar_info : Evar.t -> Ltac2_plugin.Tac2ffi.valexpr Proofview.tactic
+(** 
+  Refines the current goal with just a new named evar, the name of which is
+  based on the input string.
+*)
+val refine_goal_with_evar : string -> unit Proofview.tactic
 
-val find_evars_in_term : Evd.econstr -> Ltac2_plugin.Tac2ffi.valexpr Proofview.tactic
-
-val make_new_evar_tac : Evar.t -> unit Proofview.tactic
-
-val make_evar_from_constr : string -> unit Proofview.tactic
+(**
+  A tactic that resturns a list of all evars in a term (= Evd.econstr) that
+  were introduced by the user as a blank and have not been resolved yet.
+*)
+val evar_list_from_term : Evd.econstr -> Evar.t list Proofview.tactic
