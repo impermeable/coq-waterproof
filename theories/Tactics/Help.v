@@ -136,20 +136,25 @@ Local Ltac2 is_empty (ls : 'a list) :=
 
 Ltac2 print_hints () :=
   
+  (* If advice is given in proof window, suggest to follow that, nothing else. *)
   if (need_to_follow_advice ())
     then (print (of_string "Follow the advice in the goal window."))
-    
+  
     else
+      (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
       | Val _           => print (goal_directly ())
       | Err exn         =>
 
+        (* Suggest hint to solve goal *)
         print (goal_hint ());
 
+        (* Collect forall- and exists-statements *)
         let hyps := List.map (fun (i, x, t) => t) (Control.hyps ()) in
         let forall_hyps := List.filter (forall_filter) hyps in
         let exists_hyps := List.filter (exists_filter) hyps in
 
+        (* Print how to use forall-statements. *)
         if (is_empty forall_hyps)
           then ()
           else (
@@ -160,6 +165,7 @@ Ltac2 print_hints () :=
             print(of_string "    Use ... := (...) in (...).")
           );
         
+        (* Print how to use exists statements. *)
         if (is_empty exists_hyps)
           then ()
           else (
@@ -176,3 +182,61 @@ Ltac2 print_hints () :=
     Tries to give a hint how to proceed proving the current goal.
 *)
 Ltac2 Notation "Help" := print_hints ().
+
+
+
+
+
+Module HelpNewHyp.
+
+(** Given a forall- or exists-statement, prints suggestion how to use it. *)
+
+Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
+  let msg_label := 
+    match label with
+    | None   => of_string "..."
+    | Some i => of_ident i
+    end
+  in
+  lazy_match! x with
+  | ?a -> ?b => ()
+  | forall _, _ =>
+      print (concat_list [
+        of_string "To use "; of_constr x; of_string ", use"]);
+      print (concat_list [
+        of_string "    Use ... := (...) in ("; msg_label; of_string ")."])
+  | exists _, _ => 
+      print (concat_list [
+        of_string "To use "; of_constr x; of_string ", use"]);
+      print (of_string "    Obtain such a ... .")
+  | _ => ()
+  end.
+
+(** Given a forall- or exists-statement, prints suggestion how to use it,
+  after statement is proven.
+  
+  (for use in 'We claim that ...'-tactic.)
+*)
+
+Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
+let msg_label := 
+  match label with
+  | None   => of_string "..."
+  | Some i => of_ident i
+  end
+in
+lazy_match! x with
+| ?a -> ?b => ()
+| forall _, _ =>
+    print (concat_list [
+      of_string "After proving "; of_constr x; of_string ", use it with"]);
+    print (concat_list [
+      of_string "    Use ... := (...) in ("; msg_label; of_string ")."])
+| exists _, _ => 
+    print (concat_list [
+      of_string "After proving "; of_constr x; of_string ", use it with"]);
+    print (of_string "    Obtain such a ... .")
+| _ => ()
+end.
+
+End HelpNewHyp.

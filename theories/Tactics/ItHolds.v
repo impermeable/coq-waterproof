@@ -30,6 +30,8 @@ Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 Require Import Waterprove.
 
+Require Import Waterproof.Tactics.Help.
+
 
 (** Tries to make the assertion [True] with label [label].
   Throws an error if this fails, i.e. if the label is already used
@@ -68,7 +70,9 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
   | Val _ => ()
   | Err (FailedToProve g) => throw (err_msg g)
   | Err exn => Control.zero exn
-  end.
+  end;
+  (* Print suggestion on how to use new statement. *)
+  HelpNewHyp.suggest_how_to_use claim label.
 
 
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
@@ -98,13 +102,17 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
 (** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors 
   which might be thrown into user readable errors. *)
 Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
-  wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma.
+  wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma;
+  (* Print suggestion on how to use new statement. *)
+  HelpNewHyp.suggest_how_to_use claim label.
 
 (** Adaptation of [core_wp_assert_by] that allows user to use mathematical statements themselves
   instead of references to them as extra information for the automation system.
   Uses the code in [Since.v]. *)
 Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim : constr) :=
-  since_framework (core_wp_assert_by claim label) xtr_claim.
+  since_framework (core_wp_assert_by claim label) xtr_claim;
+  (* Print suggestion on how to use new statement. *)
+  HelpNewHyp.suggest_how_to_use claim label.
 
 (**
   Removes a [StateHyp.Wrapper] wrapper from the goal.

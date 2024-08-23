@@ -62,3 +62,70 @@ Goal (forall n : nat, n = n) -> (exists m : nat, m = 0) -> (0 = 1).
   intros.
   Help.
 Abort.
+
+
+
+(** Test advice how to use newly introduced statements. *)
+
+Require Import Waterproof.Tactics.ItHolds.
+
+(** Test 7: It holds that, no label. *)
+Goal False.
+Proof.
+  It holds that (forall n : nat, n = n).
+Abort.
+
+(** Test 8: It holds that, label. *)
+Goal False.
+Proof.
+  It holds that (forall n : nat, n = n) (i).
+Abort.
+
+(** Test 9: By ... it holds that, no label. *)
+Goal False.
+Proof.
+  By I it holds that (forall n : nat, True).
+Abort.
+
+(** Test 10: Since ... it holds that, no label. *)
+Goal False.
+Proof.
+  Since (True) it holds that (forall n : nat, n = n).
+Abort.
+
+
+Require Import Waterproof.Tactics.Assume.
+
+(** Test 11: Assume that, no label. *)
+Goal (forall n : nat, n = n) -> False.
+Proof.
+  Assume that (forall n : nat, n = n).
+Abort.
+
+(** Test 12: Assume that, label. *)
+Goal (forall n : nat, n = n) -> False.
+Proof.
+  Assume that (forall n : nat, n = n) (i).
+Abort.
+
+(** Test 13: Assume negation. *)
+Goal not (forall n : nat, n = n).
+Proof.
+  Assume that (forall n : nat, n = n).
+Abort.
+
+
+Require Import Waterproof.Tactics.Claims.
+
+(** Test 11: We claim that, no label. *)
+Goal False.
+Proof.
+  We claim that (forall n : nat, n = n).
+Abort.
+
+(** Test 12: Assume that, label. *)
+Goal (forall n : nat, n = n) -> False.
+Proof.
+  We claim that (forall n : nat, n = n) (i).
+Abort.
+
