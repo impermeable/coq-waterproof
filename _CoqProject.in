@@ -144,6 +144,9 @@ tests/tactics/Specialize.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v
+
+## Util
+tests/util/Evars.v
 tests/util/MessagesToUser.v
 
 ## Libs
