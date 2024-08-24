@@ -76,6 +76,7 @@ theories/Tactics/Unfold.v
 
 theories/Util/Assertions.v
 theories/Util/Constr.v
+theories/Util/Evars.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v

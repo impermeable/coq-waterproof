@@ -23,16 +23,11 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 module Tac2ffi = Ltac2_plugin.Tac2ffi
 module Tac2env = Ltac2_plugin.Tac2env
 module Tac2expr = Ltac2_plugin.Tac2expr
-module Tac2entries = Ltac2_plugin.Tac2entries
 
 open Proofview
 open Proofview.Notations
 open Util
-open Names
-open Genarg
-open Tac2env
 open Tac2expr
-open Tac2entries.Pltac
 open Tac2ffi
 
 open Exceptions
