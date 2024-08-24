@@ -69,3 +69,16 @@ Abort.
 Goal exists n : nat, n + 1 = n + 1.
     Choose n := (?[m]).
 Abort.
+
+(** Test 7: Choose a blank check tha blank was renamed *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (_).
+    assert (?n = 0).
+Abort.
+
+(** Test 8: Choose a more complicated blank and check that renaming took place, 
+    by reformulating the goal in terms of the new named evars. *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (_ + _ + _).
+    change (?n + ?n0 + ?n1 + 1 = ?n + ?n0 + ?n1 + 1).
+Abort.
