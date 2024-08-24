@@ -95,6 +95,11 @@ Local Ltac2 _get_binder_type_from_binder_list (name : ident) (b_list : binder li
 
 (**
   Specializes a hypothesis that starts with a for-all statement.
+
+  The user supplies names and choices for the bound variables in a given 
+  hypothesis. The tactic then specializes the hypothesis with the given choices. The 
+  choices are allowed to contain clanks. The unnamed holes will be filled in
+  with named evars based on the names of the bound variables.
     
   Arguments:
     - [var_choice_list : (ident * constr) list], list of names for variables together with choices for those variables 
