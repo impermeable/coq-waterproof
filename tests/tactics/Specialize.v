@@ -21,6 +21,7 @@ Require Import Ltac2.Message.
 
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
+Require Import Waterproof.Util.Assertions.
 
 (** Test 0: This should be the expected behavior. *)
 Goal (forall n : nat, n = n) -> True.
