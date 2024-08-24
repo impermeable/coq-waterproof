@@ -6,6 +6,7 @@ Hint_dataset
 Wp_rewrite
 Wp_auto
 Wp_eauto
+Wp_evars
 Waterprove
 Databases
 G_waterproof
