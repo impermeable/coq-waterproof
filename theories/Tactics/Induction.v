@@ -64,7 +64,23 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
   end.
 
 
+(* Quick fix for Wateproof editor / Coq lsp, where
+  [We use induction on 
+  
+   Qed.]
+  was interpreted [We use induction on Qed.].
+  Although in Coq [Qed] is acceptable as variable name, it is confusing.
+  Hence we throw an error in the form of a 'Syntax error'.
+
+  TODO: can probably be fixed with binders...
+*)
+Local Ltac2 panic_ident_Qed (i : ident) :=
+  if Ident.equal i @Qed
+    then throw (of_string "Syntax error: variable name expected after 'on'.")
+    else ().  
+
 Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
+  panic_ident_Qed (x);
   panic_if_goal_wrapped ();
   induction_without_hypothesis_naming x.
 
