@@ -33,7 +33,7 @@ let is_blank (ev_map : Evd.evar_map) (ev : Evar.t) : bool =
   A tactic that resturns a list of all evars in a term (= Evd.econstr) that
   were introduced by the user as a blank and have not been resolved yet.
 *)
-let evar_list_from_term (term : Evd.econstr) :
+let blank_evars_in_term (term : Evd.econstr) :
   Evar.t list tactic =
   tclEVARMAP >>= fun sigma -> tclUNIT @@
     let evars = Evarutil.undefined_evars_of_term sigma term in

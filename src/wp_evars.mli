@@ -17,13 +17,15 @@
 (******************************************************************************)
 
 (**
-  Checks whether a given evar is a blank in the evar_map.
+  Checks whether a given evar is a blank (entered by the user with the
+  `_` syntax) in the evar_map.
 *)
 val is_blank : Evd.evar_map -> Evar.t -> bool
 
 (** 
   Refines the current goal with just a new named evar, the name of which is
-  based on the input string.
+  based on the input string. The use of this is to replace unnamed evars with
+  named ones, so that the user can refer to them later.
 *)
 val refine_goal_with_evar : string -> unit Proofview.tactic
 
@@ -31,4 +33,4 @@ val refine_goal_with_evar : string -> unit Proofview.tactic
   A tactic that resturns a list of all evars in a term (= Evd.econstr) that
   were introduced by the user as a blank and have not been resolved yet.
 *)
-val evar_list_from_term : Evd.econstr -> Evar.t list Proofview.tactic
+val blank_evars_in_term : Evd.econstr -> Evar.t list Proofview.tactic

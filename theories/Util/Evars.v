@@ -20,12 +20,12 @@ Require Export Ltac2.Ltac2.
 
 Require Import Waterproof.Waterproof.
 
-Ltac2 @ external make_evar_from_constr : string -> unit := "coq-waterproof" "make_evar_from_constr_external".
+Ltac2 @ external refine_goal_with_evar : string -> unit := "coq-waterproof" "refine_goal_with_evar_external".
 
-Ltac2 @ external get_evar_list_in_term : constr -> evar list := "coq-waterproof" "evar_list_from_term_external".
+Ltac2 @ external blank_evars_in_term : constr -> evar list := "coq-waterproof" "blank_evars_in_term_external".
 
 Ltac2 rename_blank_evars_in_term (base_name : string) (x : constr) :=
-  let evars := get_evar_list_in_term x in
+  let evars := blank_evars_in_term x in
   let m := List.length evars in
   List.fold_left (fun _ ev => Control.new_goal ev) (evars) ();
-  Control.focus 2 (Int.add m 1) (fun () => make_evar_from_constr base_name; Control.shelve()).
+  Control.focus 2 (Int.add m 1) (fun () => refine_goal_with_evar base_name; Control.shelve()).

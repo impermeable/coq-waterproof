@@ -246,12 +246,12 @@ let () =
       warn input >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
-  define1 "make_evar_from_constr_external" string @@
+  define1 "refine_goal_with_evar_external" string @@
     fun input -> refine_goal_with_evar input >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
-  define1 "evar_list_from_term_external" constr @@
+  define1 "blank_evars_in_term_external" constr @@
     fun term ->
-      evar_list_from_term term >>= 
+      blank_evars_in_term term >>=
       fun evars -> tclUNIT @@ (of_list of_evar evars)
 }
