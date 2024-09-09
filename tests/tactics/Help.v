@@ -19,7 +19,10 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Option.
 
+Require Import Waterproof.Waterproof.
 Require Import Waterproof.Tactics.Help.
+
+Waterproof Enable Hypothesis Help.
 
 (** Test 0 : Suggest to follow advice in goal if goal is wrapped 
   or [False] (i.e. prove contradiction). *)
@@ -117,15 +120,16 @@ Abort.
 
 Require Import Waterproof.Tactics.Claims.
 
-(** Test 11: We claim that, no label. *)
+(** Test 14: We claim that, no label. *)
 Goal False.
 Proof.
   We claim that (forall n : nat, n = n).
 Abort.
 
-(** Test 12: Assume that, label. *)
+(** Test 15: Assume that, label. *)
 Goal (forall n : nat, n = n) -> False.
 Proof.
   We claim that (forall n : nat, n = n) (i).
 Abort.
 
+Waterproof Disable Hypothesis Help.

@@ -78,6 +78,20 @@ VERNAC COMMAND EXTEND AutomationPrintRewriteHintsDisableSideEff CLASSIFIED AS SI
     }
 END
 
+VERNAC COMMAND EXTEND PrintHypothesisHelpEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Hypothesis" "Help" ] ->
+    {
+      print_hypothesis_help := true
+    }
+  END
+
+VERNAC COMMAND EXTEND PrintHypothesisHelpDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Hypothesis" "Help" ] ->
+    {
+      print_hypothesis_help := false
+    }
+  END
+
 VERNAC COMMAND EXTEND PrintVersionSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Print" "Version" ] ->
     {
@@ -237,4 +251,8 @@ let () =
   define1 "throw_external" pp @@
     fun input ->
       err input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "get_print_hypothesis_flag_external" unit @@
+    fun input -> tclUNIT @@ of_bool !print_hypothesis_help
 }

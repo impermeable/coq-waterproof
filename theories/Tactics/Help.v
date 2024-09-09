@@ -192,6 +192,8 @@ Module HelpNewHyp.
 (** Given a forall- or exists-statement, prints suggestion how to use it. *)
 
 Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
+  if Bool.neg (get_print_hypothesis_flag ()) then ()
+  else
   let msg_label := 
     match label with
     | None   => of_string "..."
@@ -219,24 +221,26 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
 *)
 
 Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
-let msg_label := 
-  match label with
-  | None   => of_string "..."
-  | Some i => of_ident i
-  end
-in
-lazy_match! x with
-| ?a -> ?b => ()
-| forall _, _ =>
-    print (concat_list [
-      of_string "After proving "; of_constr x; of_string ", use it with"]);
-    print (concat_list [
-      of_string "    Use ... := (...) in ("; msg_label; of_string ")."])
-| exists _, _ => 
-    print (concat_list [
-      of_string "After proving "; of_constr x; of_string ", use it with"]);
-    print (of_string "    Obtain such a ... .")
-| _ => ()
-end.
+  if Bool.neg (get_print_hypothesis_flag ()) then ()
+  else
+  let msg_label := 
+    match label with
+    | None   => of_string "..."
+    | Some i => of_ident i
+    end
+  in
+  lazy_match! x with
+  | ?a -> ?b => ()
+  | forall _, _ =>
+      print (concat_list [
+        of_string "After proving "; of_constr x; of_string ", use it with"]);
+      print (concat_list [
+        of_string "    Use ... := (...) in ("; msg_label; of_string ")."])
+  | exists _, _ => 
+      print (concat_list [
+        of_string "After proving "; of_constr x; of_string ", use it with"]);
+      print (of_string "    Obtain such a ... .")
+  | _ => ()
+  end.
 
 End HelpNewHyp.
