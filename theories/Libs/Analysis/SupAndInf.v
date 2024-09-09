@@ -35,32 +35,26 @@ Notation is_sup := is_lub.
 Notation "M 'is' 'the' '_supremum_' 'of' A" := (is_lub A M) (at level 69).
 Notation "M 'is' 'the' 'supremum' 'of' A" := (is_lub A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_lub (statement : constr) := eval unfold is_lub in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "supremum" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_lub (Some "supremum") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_lub (Some "supremum") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_lub (Some "supremum") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_lub (Some "supremum") false x.
 
 Notation "A 'is' '_bounded' 'from' 'above_'" := (bound A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (bound A) (at level 69, only parsing).
 Local Ltac2 unfold_bound (statement : constr) := eval unfold bound in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_bound (Some "bounded from above") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_bound (Some "bounded from above") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_bound (Some "bounded from above") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_bound (Some "bounded from above") false x.
 
 Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := (is_upper_bound A M) (at level 69).
 Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := (is_upper_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_upper_bound (statement : constr) := eval unfold is_upper_bound in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_upper_bound (Some "upper bound") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_upper_bound (Some "upper bound") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_upper_bound (Some "upper bound") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_upper_bound (Some "upper bound") false x.
 
 (** Maximum *)
 Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound for A).
@@ -68,13 +62,10 @@ Definition is_max (A : ℝ -> Prop) (x : ℝ) := (A x) ∧ (x is an upper bound 
 Notation "M 'is' 'the' '_maximum_' 'of' A" := (is_max A M) (at level 69).
 Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_max (statement : constr) := eval unfold is_max in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "maximum" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_max (Some "maximum") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_max (Some "maximum") false.
-
+Ltac2 Notation "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_max (Some "maximum") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_max (Some "maximum") false x.
 
 (** ## The completeness axiom
 
@@ -119,34 +110,28 @@ Definition is_inf :=
 Notation "m 'is' 'the' '_infimum_' 'of' A" := (is_inf A m) (at level 69).
 Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only parsing).
 Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "infimum" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_inf (Some "infimum") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_inf (Some "infimum") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_inf (Some "infimum") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_inf (Some "infimum") false x.
 
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded_below (statement : constr) := 
+Local Ltac2 unfold_is_bounded_below (statement : constr) :=
   eval unfold is_bounded_below in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_bounded_below (Some "bounded from below") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_bounded_below (Some "bounded from below") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_bounded_below (Some "bounded from below") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_bounded_below (Some "bounded from below") false x.
   
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_lower_bound (statement : constr) := eval unfold is_lower_bound in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_lower_bound (Some "lower bound") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", "()"))) := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_is_lower_bound (Some "lower bound") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_lower_bound (Some "lower bound") true x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_lower_bound (Some "lower bound") false x.
 
 (** ## Reflection of a subset of ℝ in the origin
 

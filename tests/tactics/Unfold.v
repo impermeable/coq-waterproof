@@ -43,19 +43,19 @@ Proof.
   Fail Expand the definition of foo.
 Abort.
 
-(* Test 3: fails to unfold term if it does not occur in any statement. *)
+(* Test 3: Unfold the term in a given statement, throw error suggesting
+    to remove the line after use. *)
 Goal False.
 Proof.
-  Fail Expand the definition of foo.
+  Fail Expand the definition of foo in (foo = 4).
 Abort.
 
 
 
 (* Tests framework expand the definition. *)
 Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "foo2" := 
-  panic_if_goal_wrapped ();
-  unfold_in_all unfold_foo (Some "foo2") true.
+Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) := 
+  wp_unfold unfold_foo (Some "foo2") true x.
 
 (* Test 4: unfold term in hypotheses and goal and throws an error suggesting 
     to remove line after use. *)
@@ -94,14 +94,13 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  _internal_ Expand the definition of foo in ().
+  _internal_ Expand the definition of foo in (foo = 5).
 Abort.
     
 (** Framework version:  *)
   
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", "()"))) :=
-  panic_if_goal_wrapped (); 
-  unfold_in_all unfold_foo (Some "foo2") false.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_foo (Some "foo2") false x.
 
 (* Test 9: unfold term in hypotheses and goals. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
@@ -120,5 +119,5 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  _internal_ Expand the definition of foo2 in ().
+  _internal_ Expand the definition of foo2 in (foo = 8).
 Abort.
