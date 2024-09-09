@@ -25,6 +25,8 @@ src/wp_auto.ml
 src/wp_auto.mli
 src/wp_eauto.ml
 src/wp_eauto.mli
+src/wp_ffi.ml
+src/wp_ffi.mli
 src/wp_rewrite.ml
 src/wp_rewrite.mli
 src/databases.mlg
