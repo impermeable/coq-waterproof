@@ -81,7 +81,7 @@ Ltac2 unfold_in_statement (unfold_method: constr -> constr)
     | [ |- _ ] =>
       let msg (unfolded : constr) := concat_list
       [of_string "result:
-  "; of_constr unfolded; of_string "."] in
+  "; of_constr unfolded] in
       print (msg unfolded_statement)
     end
   | true =>

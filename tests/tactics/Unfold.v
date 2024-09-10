@@ -50,6 +50,22 @@ Proof.
   Fail Expand the definition of foo in (foo = 4).
 Abort.
 
+(* Test 4: Unfold term in given statement that matches goal,
+    throws an error suggesting to remove the line after use. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  Fail Expand the definition of foo in (foo = 1).
+Abort.
+
+(* Test 5: Unfold term in given statement that matches hypothesis,
+    throws an error suggesting to remove the line after use. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  Fail Expand the definition of foo in (foo = 0).
+Abort.
+
 
 
 (* Tests framework expand the definition. *)
@@ -57,7 +73,7 @@ Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) := 
   wp_unfold unfold_foo (Some "foo2") true x.
 
-(* Test 4: unfold term in hypotheses and goal and throws an error suggesting 
+(* Test 6: unfold term in hypotheses and goal and throws an error suggesting 
     to remove line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
@@ -65,7 +81,7 @@ Proof.
   Fail Expand the definition of foo2.
 Abort.
 
-(* Test 5: fails to unfold term in statment without term. *)
+(* Test 7: fails to unfold term in statment without term. *)
 Goal False.
 Proof.
   Fail Expand the definition of foo2.
@@ -77,20 +93,20 @@ Abort.
 
 (** Non-framework version. *)
 
-(* Test 6: unfold term in hypotheses and goal without throwing an error. *)
+(* Test 8: unfold term in hypotheses and goal without throwing an error. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 7: unfold fails to unfold term if no statement with term. *)
+(* Test 9: unfold fails to unfold term if no statement with term. *)
 Goal False.
 Proof.
   _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 8: outdated format (for format used by Waterproof editor, for now) *)
+(* Test 10: outdated format (for format used by Waterproof editor, for now) *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
@@ -102,20 +118,20 @@ Abort.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
   wp_unfold unfold_foo (Some "foo2") false x.
 
-(* Test 9: unfold term in hypotheses and goals. *)
+(* Test 11: unfold term in hypotheses and goals. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo2.
 Abort.
 
-(* Test 10: fails to unfold term if no statements with term. *)
+(* Test 12: fails to unfold term if no statements with term. *)
 Goal False.
 Proof.
    _internal_ Expand the definition of foo2.
 Abort.
 
-(* Test 11: outdated format (for format used by Waterproof editor, for now) *)
+(* Test 13: outdated format (for format used by Waterproof editor, for now) *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
