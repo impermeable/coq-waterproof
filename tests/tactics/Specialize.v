@@ -150,3 +150,11 @@ It holds that (forall b : nat, ?a + b = 0) (i).
 Use b := ?a in (i).
 It holds that (?a + ?a = 0).
 Abort.
+
+(** Test 13 : TODO: illustration of slightly strange behavior *)
+
+Goal (forall n : nat, f n = n) -> True.
+intro H.
+set (n := 2). (* This renames the binder *)
+Fail Use n0 := 5 in (H).
+Abort.

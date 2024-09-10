@@ -96,3 +96,8 @@ Proof.
   (* In this case, the blank evar should be renamed to `x` *)
   assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
 Abort.
+
+(** Test 11: Warn on different variable name *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose m := 1.
+Abort.

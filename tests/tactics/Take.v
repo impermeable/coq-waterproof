@@ -132,4 +132,9 @@ Proof.
   Fail Take n : nat and x, y : R and f : (R -> R).
   Take n : nat and x, y : R.
 Abort.
-    
+
+(** Test 14: Warn on using different variable name *)
+Goal forall n : nat, n = n.
+Proof.
+  Take m : nat.
+Abort.
