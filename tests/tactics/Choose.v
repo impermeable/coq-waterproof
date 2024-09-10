@@ -82,3 +82,17 @@ Goal exists n : nat, n + 1 = n + 1.
     Choose n := (_ + _ + _).
     change (?n + ?n0 + ?n1 + 1 = ?n + ?n0 + ?n1 + 1).
 Abort.
+
+(** Test 9: Choose a blank without specifying the name of the variable *)
+Goal exists n : nat, n + 1 = n + 1.
+  Choose (_).
+  change (?n + 1 = ?n + 1).
+Abort.
+
+(** Test 10: Choose a blank if binder has no name *)
+Goal exists _ : nat, True.
+Proof.
+  Choose (_).
+  (* In this case, the blank evar should be renamed to `x` *)
+  assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
+Abort.
