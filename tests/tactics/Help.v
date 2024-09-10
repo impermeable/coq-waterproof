@@ -133,3 +133,9 @@ Proof.
 Abort.
 
 Waterproof Disable Hypothesis Help.
+
+(** Test 16: Test if no advice is indeed given if help is disabled. *)
+Goal False.
+Proof.
+  It holds that (forall n : nat, n = n).
+Abort.
