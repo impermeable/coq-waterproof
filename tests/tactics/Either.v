@@ -201,3 +201,16 @@ Proof.
   - Case (eqb b false).
     exact I.
 Qed.
+
+(** Test 14: Check whether we can handle boolean statements in the 3-or case *)
+Goal forall b : bool, is_true (eqb b true) \/ is_true (eqb b false) \/ is_true (eqb b false) -> True.
+  intro b.
+  Assume that (is_true (eqb b true) \/ is_true (eqb b false) \/ is_true (eqb b false)).
+  Either (eqb b true), (eqb b false) or (eqb b false).
+  - Case (eqb b true).
+    exact I.
+  - Case (eqb b false).
+    exact I.
+  - Case (eqb b false).
+    exact I.
+Qed.
