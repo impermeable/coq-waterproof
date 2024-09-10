@@ -8,7 +8,6 @@ configure~
 config.status
 config.log
 
-_CoqProject
 CoqMakefile
 CoqMakefile.conf
 .CoqMakefile.d
