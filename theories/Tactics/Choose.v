@@ -53,16 +53,16 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       match Constr.has_evar t with
-      |  true => 
-        (* TODO: add to the warning the new definition of s *)
-         rename_blank_evars_in_term (Ident.to_string s) t;
-         warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string ". ";
-         of_string "For now you can use that " ;
-         of_ident s; of_string " = "; of_constr t; of_string "."])
+      | true => 
+        rename_blank_evars_in_term (Ident.to_string s) t;
+        
+        warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string ".
+For now you can use that "; of_constr constr:($v = $t); of_string "."])
       | _ => ()
       end;
       exists $v;      
       assert ($w : $v = $t) by reflexivity
+      
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end.
 
