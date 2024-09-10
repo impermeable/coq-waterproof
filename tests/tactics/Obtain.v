@@ -109,3 +109,12 @@ Proof.
     pose (H0 eps H1).
     Obtain such an N1.
 Abort.
+
+
+(** Test 9: throws error if variable name is 'Qed' 
+    (quick fix for Waterproof editor / Coq lsp)  *)
+Goal (exists n : nat, n + 1 = n)%nat -> False.
+Proof.
+  intro i.
+  Fail Obtain such Qed.
+Abort.

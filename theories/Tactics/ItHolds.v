@@ -52,8 +52,12 @@ Local Ltac2 try_out_label (label : ident) :=
 
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
-  identifier starting with '_H' is generated. *)
-Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
+  identifier starting with '_H' is generated.
+  
+  Additionally, if argument [postpone] is [true], actually proving the claim is postponed.
+  The claim is asserted and the proof is shelved using an evar.
+  *)
+Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):=
   let err_msg (g : constr) := concat_list
     [of_string "Could not verify that "; of_constr g; of_string "."] in
   let id := 
@@ -63,17 +67,32 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) :=
     end
   in
   let claim := correct_type_by_wrapping claim in
-  match Control.case (fun () =>
-    assert $claim as $id by 
-      (waterprove 5 true Main))
-  with
-  | Val _ => ()
-  | Err (FailedToProve g) => throw (err_msg g)
-  | Err exn => Control.zero exn
-  end;
+  if postpone
+    then
+      (* Assert claim and proof using shelved evar *)
+      (* (using 'admit' would have shown a confusing warning message) *)
+      assert $claim as $id;
+      Control.focus 1 1 (fun () =>
+        let evar_id := Fresh.in_goal @_Hpostpone in
+        ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr claim); 
+        let evar := Control.hyp evar_id in 
+        exact $evar
+        );
+      warn (concat_list [of_string "Please come back later to provide an actual proof of ";
+        of_constr claim; of_string "."])
+      
+    else
+      (* Assert claim and attempt to prove automatically *)
+      match Control.case (fun () =>
+        assert $claim as $id by 
+          (waterprove 5 true Main))
+      with
+      | Val _ => ()
+      | Err (FailedToProve g) => throw (err_msg g)
+      | Err exn => Control.zero exn
+      end;
   (* Print suggestion on how to use new statement. *)
   HelpNewHyp.suggest_how_to_use claim label.
-
 
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
@@ -192,8 +211,27 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     end
   | [|- _] => 
     panic_if_goal_wrapped ();
-    wp_assert claim label
+    wp_assert claim label false
   end.
 
 Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")")))  :=
   wp_assert_with_unwrap claim label.
+
+
+(** * By magic it holds that ... (...)
+  Asserts a claim and proves it using a shelved evar.
+
+  Arguments:
+    - [label: ident option], optional name for the claim. 
+    - [claim: constr], the actual content of the claim to prove.
+
+    Raises exception:
+    - [[label] is already used], if there is already another hypothesis with identifier [label].
+
+    Raises warning:
+    - [Please come back later to provide an actual proof of [claim].], always.
+*)
+
+Ltac2 Notation "By" "magic" "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) := 
+  panic_if_goal_wrapped ();
+  wp_assert claim label true.

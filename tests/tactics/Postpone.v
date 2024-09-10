@@ -16,46 +16,40 @@
 (*                                                                            *)
 (******************************************************************************)
 
+
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
-Require Import Waterproof.Util.Assertions.
 
-(** Test 0: This should work fine *)
-Goal forall n : nat, (n = n).
-Proof.
-    We use induction on n.
-    - Fail We first show the base case (2 = 2).
-      We first show the base case (0 = 0).
-      Fail We first show the base case (1 = 1).
-      reflexivity.
-    - We now show the induction step.
-      Fail We now show the induction step.
-      intro IHn.
-      reflexivity.
-Qed.
+(** By magic it holds that ....  *)
 
-(** Test 1: This should work fine *)
-Goal (0 = 0) -> forall n : nat, (n = n).
+(** Test 0: old notation still works. *)
+Goal (0 = 0).
 Proof.
-    intro n.
-    We use induction on k.
-    - Fail We first show the base case (2 = 2).
-      We first show the base case  (0 = 0).
-      Fail We first show the base case (1 = 1).
-      reflexivity.
-    - We now show the induction step.
-      Fail We now show the induction step.
-      intro IHk.
-      reflexivity.
-Qed.
+  By I it holds that (True) (H1).
+Abort.
 
-(* Test 2: throws error if variable name is 'Qed' 
-    (quick fix for Waterproof editor / Coq lsp)  *)
-Goal forall n : nat, (n = n).
+(** Test 1: postpone proof of claim. Claim added to hypotheses, warning raised. *)
+Goal (0 = 0).
 Proof.
-    Fail We use induction on Qed.
+  By magic it holds that (False) (H2).
+  By magic it holds that (0 = 1) (H3).
+Abort.
+
+
+(** By magic we conclude that ...  *)
+
+(** Test 2: old notation still works. *)
+Goal (True).
+Proof.
+  By I we conclude that (True).
+Abort.
+
+(** Test 3: postpone proof of conclusion. Raises warning. *)
+Goal (0 = 1).
+Proof.
+  By magic we conclude that (0 = 1).
 Abort.
