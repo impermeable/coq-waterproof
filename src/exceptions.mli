@@ -17,6 +17,11 @@
 (******************************************************************************)
 
 (**
+  Should hypothesis hints be printed (For instance on how you can use a forall statement)?
+*)
+val print_hypothesis_help : bool ref
+
+(**
   Type of exceptions used in Wateproof
 *)
 type wexn =
