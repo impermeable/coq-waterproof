@@ -39,7 +39,6 @@ src/waterproof.mlpack
 # Coq-Wateproof Coq theories
 
 theories/Automation.v
-theories/Automation/Framework.v
 theories/Automation/Hints.v
 theories/Version.v
 

@@ -21,7 +21,6 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 {
 open Exceptions
 open Waterprove
-open Wp_evars
 
 let waterproof_version : string = "2.1.1+8.17"
 }
