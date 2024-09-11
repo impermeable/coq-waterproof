@@ -20,6 +20,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 
 {
 
+open Exceptions
 open Waterprove
 
 let waterproof_version : string = "2.1.1+8.17"
@@ -66,6 +67,20 @@ VERNAC COMMAND EXTEND AutomationPrintRewriteHintsDisableSideEff CLASSIFIED AS SI
       print_rewrite_hints := false
     }
 END
+
+VERNAC COMMAND EXTEND PrintHypothesisHelpEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Hypothesis" "Help" ] ->
+    {
+      print_hypothesis_help := true
+    }
+  END
+
+VERNAC COMMAND EXTEND PrintHypothesisHelpDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Hypothesis" "Help" ] ->
+    {
+      print_hypothesis_help := false
+    }
+  END
 
 VERNAC COMMAND EXTEND PrintVersionSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Print" "Version" ] ->

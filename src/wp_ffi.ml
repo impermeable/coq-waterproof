@@ -31,6 +31,7 @@ open Tac2ffi
 open Exceptions
 open Hint_dataset_declarations
 open Waterprove
+open Wp_evars
 
 (** Creates a name used to define the function interface *)
 let pname (s: string): ml_tactic_name = { mltac_plugin = "coq-core.plugins.coq-waterproof"; mltac_tactic = s }
@@ -182,3 +183,17 @@ let () =
   define1 "throw_external" pp @@
     fun input ->
       err input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "refine_goal_with_evar_external" string @@
+    fun input -> refine_goal_with_evar input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "blank_evars_in_term_external" constr @@
+    fun term ->
+      blank_evars_in_term term >>=
+      fun evars -> tclUNIT @@ (of_list of_evar evars)
+
+let () =
+  define1 "get_print_hypothesis_flag_external" unit @@
+    fun input -> tclUNIT @@ of_bool !print_hypothesis_help

@@ -16,29 +16,42 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Util.MessagesToUser.
-Require Import Waterproof.Util.Assertions.
+open Proofview
+open Proofview.Notations
 
-Lemma test : 0 = 0.
-Proof.
-  warn (Message.of_string "This warning _should_ be printed.").
-  Fail throw (Message.of_string "This error _should_ be raised.").
-Abort.
-
-(** Test whether enabling the hypothesis flag works.
+(**
+  Checks whether a given evar is a blank in the evar_map.
 *)
-Waterproof Enable Hypothesis Help.
+let is_blank (ev_map : Evd.evar_map) (ev : Evar.t) : bool =
+  let ev_info = Evd.find ev_map ev in
+  let _, ev_kind = (Evd.evar_source ev_info) in
+  match ev_kind with
+  | Evar_kinds.QuestionMark _ -> true
+  | _ -> false
 
-Goal False.
-assert_is_true (get_print_hypothesis_flag ()).
-Abort.
-
-(** Test whether disabling the hypothesis flag works.
+(**
+  A tactic that resturns a list of all evars in a term (= Evd.econstr) that
+  were introduced by the user as a blank and have not been resolved yet.
 *)
-Waterproof Disable Hypothesis Help.
+let blank_evars_in_term (term : Evd.econstr) :
+  Evar.t list tactic =
+  tclEVARMAP >>= fun sigma -> tclUNIT @@
+    let evars = Evarutil.undefined_evars_of_term sigma term in
+    List.filter (is_blank sigma) (Evar.Set.elements evars)
 
-Goal False.
-assert_is_false (get_print_hypothesis_flag ()).
-Abort.
+(** 
+  Refines the current goal with just a new named evar, the name of which is
+  freshly generated based on the input string.
+*)
+let refine_goal_with_evar (input : string) : unit tactic =
+  let src = (Loc.tag Evar_kinds.GoalEvar) in
+  Proofview.Goal.enter begin fun gl ->
+    let env = Proofview.Goal.env gl in
+    let concl = Proofview.Goal.concl gl in
+    Refine.refine ~typecheck:true begin function sigma ->
+      let sigma, t = Evarutil.new_evar ~src 
+          ~naming:(Namegen.IntroFresh (Names.Id.of_string input))
+          env sigma concl in
+      (sigma, t)
+    end
+  end

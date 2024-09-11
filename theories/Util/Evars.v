@@ -16,29 +16,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Export Ltac2.Ltac2.
+
 Require Import Waterproof.Waterproof.
-Require Import Waterproof.Util.MessagesToUser.
-Require Import Waterproof.Util.Assertions.
 
-Lemma test : 0 = 0.
-Proof.
-  warn (Message.of_string "This warning _should_ be printed.").
-  Fail throw (Message.of_string "This error _should_ be raised.").
-Abort.
+Ltac2 @ external refine_goal_with_evar : string -> unit := "coq-waterproof" "refine_goal_with_evar_external".
 
-(** Test whether enabling the hypothesis flag works.
-*)
-Waterproof Enable Hypothesis Help.
+Ltac2 @ external blank_evars_in_term : constr -> evar list := "coq-waterproof" "blank_evars_in_term_external".
 
-Goal False.
-assert_is_true (get_print_hypothesis_flag ()).
-Abort.
-
-(** Test whether disabling the hypothesis flag works.
-*)
-Waterproof Disable Hypothesis Help.
-
-Goal False.
-assert_is_false (get_print_hypothesis_flag ()).
-Abort.
+Ltac2 rename_blank_evars_in_term (base_name : string) (x : constr) :=
+  let evars := blank_evars_in_term x in
+  let m := List.length evars in
+  List.fold_left (fun _ ev => Control.new_goal ev) (evars) ();
+  Control.focus 2 (Int.add m 1) (fun () => refine_goal_with_evar base_name; Control.shelve()).

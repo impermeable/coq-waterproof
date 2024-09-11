@@ -16,29 +16,21 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Util.MessagesToUser.
-Require Import Waterproof.Util.Assertions.
-
-Lemma test : 0 = 0.
-Proof.
-  warn (Message.of_string "This warning _should_ be printed.").
-  Fail throw (Message.of_string "This error _should_ be raised.").
-Abort.
-
-(** Test whether enabling the hypothesis flag works.
+(**
+  Checks whether a given evar is a blank (entered by the user with the
+  `_` syntax) in the evar_map.
 *)
-Waterproof Enable Hypothesis Help.
+val is_blank : Evd.evar_map -> Evar.t -> bool
 
-Goal False.
-assert_is_true (get_print_hypothesis_flag ()).
-Abort.
-
-(** Test whether disabling the hypothesis flag works.
+(** 
+  Refines the current goal with just a new named evar, the name of which is
+  based on the input string. The use of this is to replace unnamed evars with
+  named ones, so that the user can refer to them later.
 *)
-Waterproof Disable Hypothesis Help.
+val refine_goal_with_evar : string -> unit Proofview.tactic
 
-Goal False.
-assert_is_false (get_print_hypothesis_flag ()).
-Abort.
+(**
+  A tactic that resturns a list of all evars in a term (= Evd.econstr) that
+  were introduced by the user as a blank and have not been resolved yet.
+*)
+val blank_evars_in_term : Evd.econstr -> Evar.t list Proofview.tactic
