@@ -49,5 +49,5 @@ AC_SUBST(LTAC2_CAML_FILES)
 COQ_THEORY_FILES="$(find theories/ -type f -name "*.v" | tr '\n' ' ')"
 AC_SUBST(COQ_THEORY_FILES)
 
-AC_CONFIG_FILES([Makefile _CoqProject])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
