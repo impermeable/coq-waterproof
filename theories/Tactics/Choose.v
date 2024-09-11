@@ -21,6 +21,7 @@ Require Import Ltac2.Message.
 
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
+Require Import Util.Evars.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
@@ -32,7 +33,8 @@ Local Ltac2 concat_list (ls : message list) : message :=
 
 (**
     
-  Instantiate a variable in an [exists] [goal], according to a given [constr], and also renames the [constr].
+  Instantiate a variable in an [exists] [goal], according to a given [constr], and also renames the [constr]. The [constr] can contain blanks, which are filled in
+  with freshly named evars, so that the user can refer to them later.
 
   Arguments:
     - [s: ident], an [ident] for naming an idefined [constr]/variable.
@@ -51,18 +53,22 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       match Constr.has_evar t with
-      |  true => warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string "."])
+      | true => 
+        rename_blank_evars_in_term (Ident.to_string s) t;
+        
+        warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string ".
+For now you can use that "; of_constr constr:($v = $t); of_string "."])
       | _ => ()
       end;
-      exists $v;
+      exists $v;      
       assert ($w : $v = $t) by reflexivity
+      
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end.
 
-
-
 (**
-  Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr].
+  Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in
+  with freshly named evars, so that the user can refer to them later.
 
   Arguments:
     - [t: constr], the requirted [constr] that needs to be instantiated.
@@ -74,14 +80,28 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
-    lazy_match! goal with
-        | [ |- exists _ : _, _] =>
-          match Constr.has_evar t with
-          |  true => warn (concat_list [of_string "Please come back to this line later to make a definite choice."]); eexists $t
-          |  false => exists $t
+  lazy_match! goal with
+  | [ |- ex ?a] =>
+      (* Make a suggestion of the base name for renaming of blank evars *)
+      let name :=
+        match Constr.Unsafe.kind a with
+        | Constr.Unsafe.Lambda b _ =>
+          match Constr.Binder.name b with
+          | Some x => Ident.to_string x
+          | None => "x"
           end
-        | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
-    end.
+        | _ => "x"
+        end
+      in
+      match Constr.has_evar t with
+      |  true =>
+        rename_blank_evars_in_term name t;
+        warn (concat_list [of_string "Please come back to this line later to make a definite choice."]);
+        eexists $t
+      |  false => exists $t
+      end
+  | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
+  end.
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
   panic_if_goal_wrapped ();
