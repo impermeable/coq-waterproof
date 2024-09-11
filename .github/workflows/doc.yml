@@ -3,7 +3,7 @@ name: Documentation
 on:
 
   push:
-    branches: [ "main" ]
+    branches: [ "main", "refactor-ffi" ]
 
   workflow_dispatch:
 
@@ -68,3 +68,5 @@ jobs:
       - name: Deploy documentation to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+      - name: print deployment url
+        run: echo ${{ steps.deployment.output.page_url }}
