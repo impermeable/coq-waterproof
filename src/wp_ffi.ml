@@ -108,7 +108,7 @@ let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map):
 
 
 (**
-  Utilitary function to cast OCaml types into Ltac2-compatibles types  
+  Utility function to cast OCaml types into Ltac2-compatibles types  
   
   Comes from [coq/plugins/ltac2/tac2tactics.ml]
 *)
