@@ -27,6 +27,8 @@ src/wp_eauto.ml
 src/wp_eauto.mli
 src/wp_evars.ml
 src/wp_evars.mli
+src/wp_ffi.ml
+src/wp_ffi.mli
 src/wp_rewrite.ml
 src/wp_rewrite.mli
 src/databases.mlg
@@ -37,7 +39,6 @@ src/waterproof.mlpack
 # Coq-Wateproof Coq theories
 
 theories/Automation.v
-theories/Automation/Framework.v
 theories/Automation/Hints.v
 theories/Version.v
 
