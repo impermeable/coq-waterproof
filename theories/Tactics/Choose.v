@@ -60,9 +60,15 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
           match Constr.Binder.name b with
           | None => () (* TODO: is it true that we want to do nothing here?,
                           i.e. in the case of anonymous binders. *)
-          | Some b_name =>
-            if Bool.neg (Ident.equal b_name s) then
-              warn (concat_list [of_string "A variable name "; of_ident b_name;
+          | Some binder_name =>
+            (* If a variable already exists, the binder gets renamed visually, but 
+            the binder name internally remains the same.
+            This gives confusing behavior. To go around this,
+            we try to guess what the binder got renamed into by introducing a fresh
+            ident based on the binder name. *)
+            let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in 
+            if Bool.neg (Ident.equal fresh_binder_name s) then
+              warn (concat_list [of_string "A variable name "; of_ident fresh_binder_name;
                 of_string " was expected, but a variable name "; of_ident s;
                 of_string " was given.
 The variable has been renamed."])

@@ -133,8 +133,79 @@ Proof.
   Take n : nat and x, y : R.
 Abort.
 
-(** Test 14: Warn on using different variable name *)
+(** ** Tests about variable names *)
+
+(** Test 14: Warn on using a different variable name *)
+Goal forall n : nat, n = n.
+  Take m : nat. (* This should produce a warning *)
+Abort.
+
+(** Test 15: Warn on using different variable name, if variable has
+    visually been renamed. *)
 Goal forall n : nat, n = n.
 Proof.
-  Take m : nat.
+  set (n := 1).
+  Take m : nat. (* This should produce a warning *)
+Abort.
+
+(** Test 16: Do not warn if variable has visually been renamed (although 
+    internally, the binder name stays the same) *)
+Goal forall n : nat, n = n.
+Proof.
+  set (n := 1).
+  Take n0 : nat. (* This should produce no warning. *)
+Abort.
+
+(** Test 17: Warn on using different variable name *)
+Goal forall m n : nat, n = m.
+Proof.
+  Take n : nat. (* This should produce a warning *)
+  Take n0 : nat. (* This should produce no warning *)
+Abort.
+
+(** Test 18: Warn on using different variable name *)
+Goal forall m n : nat, n = m.
+Proof.
+  set (m := 3).
+  set (n := 4).
+  Take m0 : nat. (* This should produce no warning *)
+  Take n0 : nat. (* This should produce no warning *)
+Abort.
+
+(** Test 19: If a statement reuses a same binder name, and 
+    variable are introduced one by one, go with the
+    visually rename binder. *)
+Goal forall n : nat, forall n : nat, n = n.
+Proof.
+  Take n : nat.
+  Take n0 : nat. (* This should produce no warning *)
+Abort.
+
+(** Test 20: Fail when twice the same variable is introduced *)
+Goal forall n : nat, forall n : nat, n = n.
+Proof.
+  Fail Take n, n : nat. (* This should also produce a warning *)
+Abort.
+
+(** Test 21: It should be possible to provide fresh variable names
+    (although in the expected order) *)
+Goal forall n : nat, forall n : nat, n = n.
+Proof.
+  Take n, n0 : nat. (* This should produce no warning *)
+Abort.
+
+(** Test 22: It should be possible to provide fresh variable names
+    (although in the expected order) case with 3 variables *)
+Goal forall n : nat, forall n : nat, forall n : nat, n = n.
+Proof.
+  Take n, n0, n1 : nat. (* This should produce no warning *)
+Abort.
+
+(** Test 23: It should  be possible to provide fresh variable names
+    (although in the expected order), if also already a
+    variable has been defined with the same name. *)
+Goal forall n : nat, forall n : nat, forall n : nat, n = n.
+Proof.
+  (set (n := 1)).
+  Take n0, n1, n2 : nat. (* This should produce no warning *)
 Abort.

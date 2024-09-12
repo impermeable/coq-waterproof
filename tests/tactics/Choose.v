@@ -97,7 +97,27 @@ Proof.
   assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
 Abort.
 
+(** ** Tests about choosing different variable names *)
+
 (** Test 11: Warn on different variable name *)
 Goal exists n : nat, n + 1 = n + 1.
+Proof.
     Choose m := 1.
+Abort.
+
+(** Test 12: Warn on different variable name when binder is shielded,
+    because of an already existing definition. *)
+Goal exists n : nat, n + 1 = n + 1.
+Proof.
+    set (n := 3).
+    Choose n0 := 2.
+Abort.
+
+(** Test 12: Warn on different variable name when binder is shielded,
+    because of an already existing definition, using that already
+    defined variable *)
+Goal exists n : nat, n + 1 = n + 1.
+Proof.
+    set (n := 3).
+    Choose n0 := n.
 Abort.
