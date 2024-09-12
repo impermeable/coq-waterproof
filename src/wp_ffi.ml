@@ -48,7 +48,7 @@ let define_primitive (name: string) (arity: 'a arity) (f: 'a): unit =
 let define0 (name: string) (f: valexpr tactic): unit = define_primitive name arity_one (fun _ -> f)
 
 (** 
-  Defines a function of arity 1 (that only take one argument)
+  Defines a function of arity 1 (that only takes one argument)
 
   This function will be callable in Ltac2 with [Ltac2 @ external <ltac2_name>: <type> -> unit := "coq-waterproof" "<name>".]
 *)
