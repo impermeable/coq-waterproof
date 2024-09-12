@@ -75,7 +75,7 @@ let define4 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd rep
   fun x0 x1 x2 x3 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3)
 
 (** 
-  Defines a function of arity 5 of the same way than {! define1}
+  Defines a function of arity 5 in the same way as {! define1}
 *)
 let define5 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> valexpr tactic): unit =
   define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc arity_one)))) @@
