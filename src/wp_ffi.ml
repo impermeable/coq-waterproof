@@ -41,7 +41,7 @@ let define_primitive (name: string) (arity: 'a arity) (f: 'a): unit =
   Tac2env.define_primitive (pname name) (mk_closure arity f)
 
 (** 
-  Defines a function of arity 0 (that only take a [unit] as an argument)
+  Defines a function of arity 0 (that only takes a [unit] as an argument)
 
   This function will be callable in Ltac2 with [Ltac2 @ external <ltac2_name>: unit := "coq-waterproof" "<name>".]
 *)
