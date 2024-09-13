@@ -19,8 +19,6 @@ doc:
 uninstall:
 	$(COQ_MAKE) uninstall
 
-configure: configure.ac
-
 %.vo: %.v
 	$(COQ_MAKE) $@
 
