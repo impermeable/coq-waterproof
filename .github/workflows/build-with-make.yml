@@ -9,7 +9,7 @@ concurrency:
 jobs:
 
   build:
-    name: build
+    name: build with make
     runs-on: ubuntu-latest
     container:
       image: coqorg/coq:8.17-ocaml-4.14-flambda
@@ -24,11 +24,5 @@ jobs:
             chmod -R 777 ./
             CURRENT_DIRECTORY=$(pwd)
             echo "Current directory: $CURRENT_DIRECTORY"
-            su coq
-            su coq -c whoami
-            su - coq -c pwd
-            opam --version
-            su - coq -c "coqtop --version"
-            su - coq -c ls
             su - coq -c "cd $CURRENT_DIRECTORY && pwd && make"
             su - coq -c "cd $CURRENT_DIRECTORY && pwd && make install"
