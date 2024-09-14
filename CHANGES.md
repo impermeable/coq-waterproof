@@ -1,7 +1,8 @@
 # Change log for the coq-waterproof library
 
-## Version 2.1.1+8.19
+## Version 2.1.1+8.20
 
+- Compatibility with Coq 8.20
 - Compatibility with earlier OCaml compilers
 - Fixes for the strong induction tactic
 
