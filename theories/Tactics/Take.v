@@ -48,15 +48,30 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
           of a variable of type [type], including coercions of [type].
 *)
 Local Ltac2 intro_ident (id : ident) (type : constr) :=
-  lazy_match! goal with
-    | [ |- forall _ : ?u, _] =>
+  match Constr.Unsafe.kind (Control.goal ()) with
+  | Constr.Unsafe.Prod b a => 
       let ct := get_coerced_type type in
       (* Check whether we need a variable of type [type], including coercions of [type]. *)
-      match check_constr_equal u ct with
-        | true  => intro $id
+      match check_constr_equal (Constr.Binder.type b) ct with
+        | true  => ()
         | false => throw (too_many_of_type_message type)
-      end
-    | [ |- _] => throw (too_many_of_type_message type)
+      end;
+      match Constr.Binder.name b with
+      | None => () (* TODO: check if we really want to do nothing here *)
+      | Some binder_name =>
+          (* If a variable already exists, the binder gets renamed visually, but 
+            the binder name internally remains the same.
+            This gives confusing behavior. To go around this,
+            we try to guess what the binder got renamed into by introducing a fresh
+            ident based on the binder name. *)
+          let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in
+          if Ident.equal id fresh_binder_name then () else
+            warn (concat_list [of_string "Expected variable name "; of_ident fresh_binder_name;
+              of_string " instead of "; of_ident id; of_string "."])
+      end;
+      (* Finally introduce the variable *)
+      intro $id
+    | _ => throw (too_many_of_type_message type)
   end.
 
 

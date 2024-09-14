@@ -15,6 +15,3 @@
 (*   along with Waterproof-lib. If not, see <https://www.gnu.org/licenses/>.  *)
 (*                                                                            *)
 (******************************************************************************)
-
-From Ltac2 Require Import Init.
-Declare ML Module "waterproof:coq-waterproof.plugin".
