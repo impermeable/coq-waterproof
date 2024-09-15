@@ -17,11 +17,15 @@
 (******************************************************************************)
 
 Require Export Ltac2.Ltac2.
-Require Import Ltac2.Bool.
-Require Import Ltac2.Init.
 
 Require Import Waterproof.Waterproof.
 
-Ltac2 @ external warn: message -> unit := "coq-core.plugins.coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-core.plugins.coq-waterproof" "throw_external".
-Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-core.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+Ltac2 @ external refine_goal_with_evar : string -> unit := "coq-core.plugins.coq-waterproof" "refine_goal_with_evar_external".
+
+Ltac2 @ external blank_evars_in_term : constr -> evar list := "coq-core.plugins.coq-waterproof" "blank_evars_in_term_external".
+
+Ltac2 rename_blank_evars_in_term (base_name : string) (x : constr) :=
+  let evars := blank_evars_in_term x in
+  let m := List.length evars in
+  List.iter (fun ev => Control.new_goal ev) (evars);
+  Control.focus 2 (Int.add m 1) (fun () => refine_goal_with_evar base_name; Control.shelve()).

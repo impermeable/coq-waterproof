@@ -25,6 +25,10 @@ src/wp_auto.ml
 src/wp_auto.mli
 src/wp_eauto.ml
 src/wp_eauto.mli
+src/wp_evars.ml
+src/wp_evars.mli
+src/wp_ffi.ml
+src/wp_ffi.mli
 src/wp_rewrite.ml
 src/wp_rewrite.mli
 src/databases.mlg
@@ -35,7 +39,6 @@ src/waterproof.mlpack
 # Coq-Wateproof Coq theories
 
 theories/Automation.v
-theories/Automation/Framework.v
 theories/Automation/Hints.v
 theories/Version.v
 
@@ -67,12 +70,14 @@ theories/Tactics/Help.v
 theories/Tactics/Induction.v
 theories/Tactics/ItHolds.v
 theories/Tactics/ItSuffices.v
+theories/Tactics/Specialize.v
 theories/Tactics/Take.v
 theories/Tactics/ToShow.v
 theories/Tactics/Unfold.v
 
 theories/Util/Assertions.v
 theories/Util/Constr.v
+theories/Util/Evars.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v
@@ -137,9 +142,13 @@ tests/tactics/Either.v
 tests/tactics/Induction.v
 tests/tactics/ItHolds.v
 tests/tactics/ItSuffices.v
+tests/tactics/Specialize.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v
+
+## Util
+tests/util/Evars.v
 tests/util/MessagesToUser.v
 
 ## Libs

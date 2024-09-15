@@ -16,12 +16,40 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
-Require Import Ltac2.Bool.
-Require Import Ltac2.Init.
+
+Require Import Ltac2.Ltac2.
+Require Import Ltac2.Message.
 
 Require Import Waterproof.Waterproof.
+Require Import Waterproof.Automation.
+Require Import Waterproof.Tactics.
 
-Ltac2 @ external warn: message -> unit := "coq-core.plugins.coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-core.plugins.coq-waterproof" "throw_external".
-Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-core.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+(** By magic it holds that ....  *)
+
+(** Test 0: old notation still works. *)
+Goal (0 = 0).
+Proof.
+  By I it holds that (True) (H1).
+Abort.
+
+(** Test 1: postpone proof of claim. Claim added to hypotheses, warning raised. *)
+Goal (0 = 0).
+Proof.
+  By magic it holds that (False) (H2).
+  By magic it holds that (0 = 1) (H3).
+Abort.
+
+
+(** By magic we conclude that ...  *)
+
+(** Test 2: old notation still works. *)
+Goal (True).
+Proof.
+  By I we conclude that (True).
+Abort.
+
+(** Test 3: postpone proof of conclusion. Raises warning. *)
+Goal (0 = 1).
+Proof.
+  By magic we conclude that (0 = 1).
+Abort.
