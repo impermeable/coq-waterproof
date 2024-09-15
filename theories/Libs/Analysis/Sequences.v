@@ -89,9 +89,12 @@ Proof.
     Either (x <= 0) or (0 < x).
     - Case (x <= 0).
       Choose n := 1%nat.
-      It holds that (INR n > INR 0).
-      It holds that (x <= 0%nat).
-      We conclude that (INR n > x).
+      We claim that (INR 1 > INR 0).
+      { We need to show that ( 1 > 0 ).
+        We conclude that (1 > 0).
+      }
+      It holds that (x <= INR 0).
+      We conclude that (n > x).
     - Case (0 < x).
       By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
       It holds that (IZR( up x ) > x).
@@ -355,10 +358,12 @@ Definition is_bounded (a : ℕ → ℝ) :=
 Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 20).
 Notation "a 'is' 'bounded'" := (is_bounded a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "in" statement(constr) := 
-  unfold_in_statement unfold_is_bounded (Some "bounded") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_is_bounded (Some "bounded") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_bounded (Some "bounded") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_bounded (Some "bounded") false.
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
   ∃ M : ℝ, M > 0 ∧ 
@@ -431,20 +436,24 @@ Definition is_bounded_above (a : ℕ → ℝ) :=
 Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 20).
 Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" "in" statement(constr) := 
-  unfold_in_statement unfold_is_bounded_above (Some "bounded above") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_is_bounded_above (Some "bounded above") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_bounded_above (Some "bounded above") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_bounded_above (Some "bounded above") false.
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m : ℝ, ∀ n : ℕ, m ≤ a(n).
 Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 20).
 Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" "in" statement(constr) := 
-  unfold_in_statement unfold_is_bounded_below (Some "bounded below") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_is_bounded_below (Some "bounded below") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_bounded_below (Some "bounded below") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_is_bounded_below (Some "bounded below") false.
 
 (** Convergence to +∞ and -∞. *)
 Definition diverges_to_plus_infinity (a : ℕ → ℝ) := 
@@ -458,14 +467,18 @@ Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 
 Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
 Local Ltac2 unfold_diverge_plus_infty (statement : constr) := 
   eval unfold diverges_to_plus_infinity in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" "in" statement(constr) := 
-  unfold_in_statement unfold_diverge_plus_infty (Some "⟶ ∞") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_diverge_plus_infty (Some "⟶ ∞") statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" "in" statement(constr) := 
-  unfold_in_statement unfold_diverge_plus_infty (Some "diverges to ∞") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_diverge_plus_infty (Some "diverges to ∞") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_plus_infty (Some "⟶ ∞") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_plus_infty (Some "⟶ ∞") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_plus_infty (Some "diverges to ∞") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_plus_infty (Some "diverges to ∞") false.
   
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) := 
@@ -479,13 +492,17 @@ Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at leve
 Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
 Local Ltac2 unfold_diverge_minus_infty (statement : constr) := 
   eval unfold diverges_to_minus_infinity in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" "in" statement(constr) := 
-  unfold_in_statement unfold_diverge_minus_infty (Some "⟶ -∞") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_diverge_minus_infty (Some "⟶ -∞") statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" "in" statement(constr) := 
-  unfold_in_statement unfold_diverge_minus_infty (Some "diverges to -∞") statement.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_diverge_minus_infty (Some "diverges to -∞") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞":= 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_minus_infty (Some "⟶ -∞") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_minus_infty (Some "⟶ -∞") false.
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_minus_infty (Some "diverges to -∞") true.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", "()"))) := 
+  panic_if_goal_wrapped ();
+  unfold_in_all unfold_diverge_minus_infty (Some "diverges to -∞") false.
 
 Close Scope R_scope.

@@ -28,130 +28,112 @@ Definition foo : nat := 0.
 
 (* Tests general unfolding: *)
 
-(* Test 1: unfold term in statement and throws an error suggesting 
-    to remove line to continue. *)
-Goal False.
-Proof.
-  Fail Expand the definition of foo in foo.
-Abort.
-
-(* Test 2: unfold term in statement matching goal, and throws an error suggesting 
-  to replace line with 'We need to show that ...'. *)
+(* Test 1: unfold term in goal, and throws an error suggesting 
+  to remove the line after use. *)
 Goal foo = 1.
 Proof.
+  Fail Expand the definition of foo.
+Abort.
+
+(* Test 2: unfold term in hypothese and goal, and throws an error suggesting 
+    to remove the line after use. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  Fail Expand the definition of foo.
+Abort.
+
+(* Test 3: Unfold the term in a given statement, throw error suggesting
+    to remove the line after use. *)
+Goal False.
+Proof.
+  Fail Expand the definition of foo in (foo = 4).
+Abort.
+
+(* Test 4: Unfold term in given statement that matches goal,
+    throws an error suggesting to remove the line after use. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
   Fail Expand the definition of foo in (foo = 1).
 Abort.
 
-(* Test 3: unfold term in statement matching a hypothesis and throws an error suggesting 
-    to replace line with 'It holds that ...'. *)
+(* Test 5: Unfold term in given statement that matches hypothesis,
+    throws an error suggesting to remove the line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   Fail Expand the definition of foo in (foo = 0).
-  Fail Expand the definition of foo in (foo = 2).
-Abort.
-
-(* Test 4: fails to unfold term in statment without term. *)
-Goal False.
-Proof.
-  Fail Expand the definition of foo in 0.
 Abort.
 
 
 
 (* Tests framework expand the definition. *)
 Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "foo2" "in" statement(constr) := 
-  unfold_in_statement unfold_foo (Some "foo2") statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) := 
+  wp_unfold unfold_foo (Some "foo2") true x.
 
-(* Test 5: unfold term in statement and throws an error suggesting 
-    to remove line to continue. *)
-Goal False.
-Proof.
-  Fail Expand the definition of foo2 in foo.
-Abort.
-
-(* Test 6: unfold term in statement matching goal, and throws an error suggesting 
-    to replace line with 'We need to show that ...'. *)
-Goal foo = 1.
-Proof.
-  Fail Expand the definition of foo2 in (foo = 1).
-Abort.
-
-(* Test 7: unfold term in statement matching a hypothesis and throws an error suggesting 
-    to replace line with 'It holds that ...'. *)
+(* Test 6: unfold term in hypotheses and goal and throws an error suggesting 
+    to remove line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  Fail Expand the definition of foo2 in (foo = 0).
-  Fail Expand the definition of foo2 in (foo = 2).
+  Fail Expand the definition of foo2.
 Abort.
 
-(* Test 8: fails to unfold term in statment without term. *)
+(* Test 7: fails to unfold term in statment without term. *)
 Goal False.
 Proof.
-  Fail Expand the definition of foo2 in 0.
+  Fail Expand the definition of foo2.
 Abort.
 
 
 (** Check unfolding method that does not throw an error.
   Meant for internal use by custom Waterproof editor. *)
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" "in" statement(constr) := 
-  unfold_in_statement_no_error unfold_foo (Some "foo2") statement.
 
-(* Test 9: unfold term in statement. *)
-Goal False.
-Proof.
-  _internal_ Expand the definition of foo2 in foo.
-Abort.
+(** Non-framework version. *)
 
-(* Test 10: unfold term in statement matching goal, and prints a message suggesting 
-    to replace line with 'We need to show that ...'. *)
-Goal foo = 1.
-Proof.
-  _internal_ Expand the definition of foo2 in (foo = 1).
-Abort.
-
-(* Test 11: unfold term in statement matching a hypothesis and prints a message suggesting 
-    to replace line with 'It holds that ...'. *)
+(* Test 8: unfold term in hypotheses and goal without throwing an error. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  _internal_ Expand the definition of foo2 in (foo = 0).
-  _internal_ Expand the definition of foo2 in (foo = 2).
+  _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 12: fails to unfold term in statment without term. *)
+(* Test 9: unfold fails to unfold term if no statement with term. *)
 Goal False.
 Proof.
-   _internal_ Expand the definition of foo2 in 0.
+  _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 13: internal unfold term in statement and throws an error suggesting 
-    to remove line to continue. *)
-Goal False.
-Proof.
-  _internal_ Expand the definition of foo in foo.
-Abort.
-
-(* Test 14: internal unfold term in statement matching goal, and throws an error suggesting 
-  to replace line with 'We need to show that ...'. *)
-Goal foo = 1.
-Proof.
-  _internal_ Expand the definition of foo in (foo = 1).
-Abort.
-
-(* Test 15: internal unfold term in statement matching a hypothesis and throws an error suggesting 
-    to replace line with 'It holds that ...'. *)
+(* Test 10: outdated format (for format used by Waterproof editor, for now) *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  _internal_ Expand the definition of foo in (foo = 0).
-  _internal_ Expand the definition of foo in (foo = 2).
+  _internal_ Expand the definition of foo in (foo = 5).
+Abort.
+    
+(** Framework version:  *)
+  
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_foo (Some "foo2") false x.
+
+(* Test 11: unfold term in hypotheses and goals. *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  _internal_ Expand the definition of foo2.
 Abort.
 
-(* Test 16: internal unfold fails to unfold term in statment without term. *)
+(* Test 12: fails to unfold term if no statements with term. *)
 Goal False.
 Proof.
-  _internal_ Expand the definition of foo in 0.
+   _internal_ Expand the definition of foo2.
+Abort.
+
+(* Test 13: outdated format (for format used by Waterproof editor, for now) *)
+Goal (foo = 0) -> (foo = 2) -> (foo = 1).
+Proof.
+  intros.
+  _internal_ Expand the definition of foo2 in (foo = 8).
 Abort.

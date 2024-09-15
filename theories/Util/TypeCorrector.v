@@ -16,12 +16,24 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
-Require Import Ltac2.Bool.
-Require Import Ltac2.Init.
+Require Import Util.Init.
+Require Import Util.MessagesToUser.
 
-Require Import Waterproof.Waterproof.
+From Ltac2 Require Import Ltac2 Message.
 
-Ltac2 @ external warn: message -> unit := "coq-core.plugins.coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-core.plugins.coq-waterproof" "throw_external".
-Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-core.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat ls (of_string "").
+
+(** Ensures that the type of [t] can be used in type matching or asserting. *)
+Ltac2 correct_type_by_wrapping (t: constr): constr :=
+  let type_t := Constr.type t in
+  match! type_t with
+    | Prop => t
+    | Set => t 
+    | Type => t
+    | bool => constr:(is_true $t)
+    | _ => throw (concat_list [
+      of_string "Expected a term with type in ['Prop', 'Set', 'Type', 'bool'], but got a term of type '";
+      of_constr type_t; 
+      of_string "' instead."]); constr:(tt)
+  end.

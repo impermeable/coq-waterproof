@@ -42,8 +42,8 @@ Proof.
 Abort.
 
 (** Test restricted automation. *)
-Variable P : Prop.
-Variable h : P -> a = b.
+#[local] Parameter P : Prop.
+#[local] Parameter h : P -> a = b.
 #[local] Hint Extern 1 => symmetry : core.
 
 (* Test 3: fails without extra lemma. *)

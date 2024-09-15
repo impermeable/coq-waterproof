@@ -16,12 +16,21 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
-Require Import Ltac2.Bool.
-Require Import Ltac2.Init.
+(**
+  Checks whether a given evar is a blank (entered by the user with the
+  `_` syntax) in the evar_map.
+*)
+val is_blank : Evd.evar_map -> Evar.t -> bool
 
-Require Import Waterproof.Waterproof.
+(** 
+  Refines the current goal with just a new named evar, the name of which is
+  based on the input string. The use of this is to replace unnamed evars with
+  named ones, so that the user can refer to them later.
+*)
+val refine_goal_with_evar : string -> unit Proofview.tactic
 
-Ltac2 @ external warn: message -> unit := "coq-core.plugins.coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-core.plugins.coq-waterproof" "throw_external".
-Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-core.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+(**
+  A tactic that resturns a list of all evars in a term (= Evd.econstr) that
+  were introduced by the user as a blank and have not been resolved yet.
+*)
+val blank_evars_in_term : Evd.econstr -> Evar.t list Proofview.tactic

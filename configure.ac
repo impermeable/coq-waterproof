@@ -21,9 +21,9 @@ coq_version=$($COQC -v | grep version | sed -e 's/^.*version \([[0-9.+a-z]]*\).*
 AC_MSG_RESULT($coq_version)
 AX_VERSION_GE(
     [$coq_version],
-    8.17,
+    8.19,
     [],
-    [AC_MSG_ERROR([must be at least 8.17.])]
+    [AC_MSG_ERROR([must be at least 8.19.])]
 )
 AC_CHECK_TOOL([OCAMLFIND], [ocamlfind], [no])
 AS_IF(
@@ -41,7 +41,7 @@ AS_IF(
     ],
     [
         AC_MSG_RESULT([no])
-        AC_MSG_ERROR([ *** Unable to find Ltac2 which should be installed with Coq >= 8.17])
+        AC_MSG_ERROR([ *** Unable to find Ltac2 which should be installed with Coq >= 8.19])
     ]
 )
 AC_SUBST(LTAC2_CAML_FILES)

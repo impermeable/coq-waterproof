@@ -41,3 +41,17 @@ Proof.
     We claim that (n = n) (i).
     { reflexivity. }
 Abort.
+
+(** Test 2: This should work with a boolean statement *)
+Goal forall n : nat, exists m : nat, (n = m).
+Proof.
+  intro n.
+  We claim that (true).
+Abort.
+
+(** Test 3: This should work with a boolean statement *)
+Goal forall n : nat, exists m : nat, (n = m).
+Proof.
+  intro n.
+  We claim that (orb false true).
+Abort.

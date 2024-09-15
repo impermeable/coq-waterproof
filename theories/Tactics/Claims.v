@@ -21,7 +21,10 @@ Require Import Ltac2.Ltac2.
 Require Import Util.Constr.
 Require Import Util.Goals.
 
+Require Import Waterproof.Tactics.Help.
+
 Local Ltac2 my_assert (t:constr) (id:ident option) := 
+  (* Fixed by fixing the ltac2_assert *)
   match id with
     | None =>
       let h := Fresh.in_goal @_H in
@@ -31,4 +34,6 @@ Local Ltac2 my_assert (t:constr) (id:ident option) :=
 
 Ltac2 Notation "We" "claim" "that" t(constr) id(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
+  (* Print suggestion on how to use new statement (after it is proven). *)
+  HelpNewHyp.suggest_how_to_use_after_proof t id;
   my_assert t id.

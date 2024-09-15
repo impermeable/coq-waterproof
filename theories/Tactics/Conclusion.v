@@ -25,6 +25,7 @@ Require Import Util.Init.
 Require Import Util.Since.
 Require Import Waterprove.
 Require Import MessagesToUser.
+Require Import Util.TypeCorrector.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -70,6 +71,7 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 
 
 Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
+  let sttd_goal := correct_type_by_wrapping sttd_goal in
   (* Check if stated goal exactly matches current goal. *)
   match Constr.equal sttd_goal (Control.goal ()) with
   | true => ()
@@ -101,16 +103,33 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
     end
   end.
 
-(** Attempts to solve current goal. *)
-Local Ltac2 conclude () := 
-  let err_msg (g : constr) := concat_list
-    [of_string "Could not verify that "; of_constr g; of_string "."] 
-  in
-  match Control.case (fun () => waterprove 5 true Main) with
-  | Val _ => ()
-  | Err (FailedToProve g) => throw (err_msg g)
-  | Err exn => Control.zero exn
-  end.
+(** Attempts to solve current goal. 
+
+  If argument [postpone] is [true], actually solving the goal is postponed.
+  The goal is shelved using an evar.
+*)
+Local Ltac2 conclude (postpone : bool) := 
+  if postpone
+    then
+      (* Postpone solving current goal using evar *)
+      (* (using admit gave confusing 'warning' ) *)
+      let g := Control.goal () in
+      let evar_id := Fresh.in_goal @_Hpostpone in
+      ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr g); 
+      let evar := Control.hyp evar_id in 
+      exact $evar;
+      warn (concat_list [of_string "Please come back later to provide an actual proof of ";
+        of_constr g; of_string "."])
+    else
+      (* Attempt to solve current goal *)
+      let err_msg (g : constr) := concat_list
+        [of_string "Could not verify that "; of_constr g; of_string "."] 
+      in
+      match Control.case (fun () => waterprove 5 true Main) with
+      | Val _ => ()
+      | Err (FailedToProve g) => throw (err_msg g)
+      | Err exn => Control.zero exn
+      end.
 
 (** Attempts to solve current goal using additional lemma which has to be used. *)
 Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
@@ -167,7 +186,7 @@ Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
-  conclude ().
+  conclude false.
 
 (**
   Alternative notation for [We conclude that ...].
@@ -176,7 +195,7 @@ Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
-  conclude ().
+  conclude false.
 
 (**
   Finish proving a goal using automation.
@@ -200,3 +219,23 @@ Ltac2 Notation "Since" xtr_claim(constr) "we" "conclude" tht(opt("that")) target
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
   conclude_since xtr_claim.
+
+
+(**
+  Finish proof by postponing the goal.
+
+  Arguments:
+    - [target_goal: constr], expression that should equal the goal under focus.
+
+  Raises exceptions:
+    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, 
+        even after rewriting.
+  
+  Raises warning:
+    - [Please come back later to provide an actual proof of [target_goal].], always.
+*)
+Ltac2 Notation "By" "magic" "we" "conclude" tht(opt("that")) target_goal(constr) := 
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  guarantee_stated_goal_matches target_goal;
+  conclude true.

@@ -26,6 +26,9 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
 Require Import Util.MessagesToUser.
+Require Import Util.TypeCorrector.
+
+Require Import Waterproof.Tactics.Help.
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
   concat_list [of_string "Expected assumption of "; of_constr e;
@@ -44,27 +47,31 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
 *)
 Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
   match x with 
-    | [] => () (* Done. *)
-    | head::tail => match head with
+  | [] => () (* Done. *)
+  | head::tail => 
+      match head with
       | (t, n) => (* Check whether the right negated expression is assumed. *)
-        lazy_match! goal with
+          lazy_match! goal with
           | [ |- not ?u ] => 
-            match check_constr_equal u t with
+              let t := correct_type_by_wrapping t in
+              match check_constr_equal u t with
               | false => throw (expected_of_type_instead_of_message u t)
               | true  => (* Check whether this was the only assumption made.*)
-                match tail with
+                  match tail with
                   | h::t => throw (of_string "Nothing left to assume after the negated expression.")
                   | [] => (* Assume negation : check whether a name has been given *)
-                    match n with
+                      match n with
                       | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
                       | Some n => intro $n; change $t in $n
-                    end
-                end
-            end
+                      end;
+                      (* Print suggestion on how to use new statement. *)
+                      HelpNewHyp.suggest_how_to_use t n
+                  end
+              end
           | [ |- _ ] => Control.zero (Unreachable "")
+          end
       end
-  end
-end.
+  end.
 
 (**  
   Attempts to recursively assume a list of hypotheses.
@@ -81,26 +88,29 @@ end.
 *)
 Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
   match x with
-    | head::tail =>
+  | head::tail =>
       match head with
-        | (t, n) => (* Check whether next assumption (i.e. [t]) is that of a negated expression. *)
+      | (t, n) => (* Check whether next assumption (i.e. [t]) is that of a negated expression. *)
           lazy_match! goal with
-            | [ |- not _ ]   => assume_negation x (* If so, switch to different subroutine. *)
-            | [ |- ?u -> _ ] => (* Check whether the domain is a proposition. *)
+          | [ |- not _ ]   => assume_negation x (* If so, switch to different subroutine. *)
+          | [ |- ?u -> _ ] => (* Check whether the domain is a proposition. *)
               let sort_u := get_value_of_hyp u in
               match check_constr_equal sort_u constr:(Prop) with
-                | true => (* Check whether we need variabled of type t. *)
+              | true => (* Check whether we need variabled of type t. *)
+                  let t := correct_type_by_wrapping t in
                   match check_constr_equal u t with
-                    | true => (* Check whether a name has been given *)
+                  | true => (* Check whether a name has been given *)
                       match n with
-                        | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
-                        | Some n => intro $n; change $t in $n
-                          end
-                    | false => throw (expected_of_type_instead_of_message u t)
+                      | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
+                      | Some n => intro $n; change $t in $n
+                      end;
+                      (* Print suggestion on how to use new statement. *)
+                      HelpNewHyp.suggest_how_to_use t n
+                  | false => throw (expected_of_type_instead_of_message u t)
                   end
-                | false => throw (of_string "`Assume ...` cannot be used to construct a map (→). Use [Take] instead.")
+              | false => throw (of_string "`Assume ...` cannot be used to construct a map (→). Use [Take] instead.")
               end
-            | [ |- _ ] => throw (of_string "Tried to assume too many properties.")
+          | [ |- _ ] => throw (of_string "Tried to assume too many properties.")
           end
       end;
 
@@ -112,8 +122,8 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
 
 Local Ltac2 remove_contra_wrapper (wrapped_assumption : constr) (assumption : constr) :=
   match (check_constr_equal wrapped_assumption assumption) with
-    | true  => apply (ByContradiction.wrap $wrapped_assumption)
-    | false => throw (of_string "Wrong assumption specified.")
+  | true  => apply (ByContradiction.wrap $wrapped_assumption)
+  | false => throw (of_string "Wrong assumption specified.")
   end.
 
 
@@ -123,7 +133,7 @@ Local Ltac2 remove_contra_wrapper (wrapped_assumption : constr) (assumption : co
 Local Ltac2 assume (x : (constr * (ident option)) list) := 
   (* Handle goal wrappers *)
   lazy_match! goal with
-    | [ |- ByContradiction.Wrapper ?a _ ] => 
+  | [ |- ByContradiction.Wrapper ?a _ ] => 
       match x with 
       | head::_ => 
         match head with
@@ -131,13 +141,13 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
         end
       | [] => panic_if_goal_wrapped ()
       end
-    | [ |- _ ] => panic_if_goal_wrapped ()
-    end;
+  | [ |- _ ] => panic_if_goal_wrapped ()
+  end;
   (* Make assumption and perform checks on input *)
   lazy_match! goal with
-    | [ |- not _ ]  => assume_negation x
-    | [ |- _ -> _ ] => process_ident_type_pairs x
-    | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
+  | [ |- not _ ]  => assume_negation x
+  | [ |- _ -> _ ] => process_ident_type_pairs x
+  | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
   end.
 
 

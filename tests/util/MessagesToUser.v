@@ -19,9 +19,26 @@
 Require Import Ltac2.Ltac2.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Util.MessagesToUser.
+Require Import Waterproof.Util.Assertions.
 
 Lemma test : 0 = 0.
 Proof.
   warn (Message.of_string "This warning _should_ be printed.").
   Fail throw (Message.of_string "This error _should_ be raised.").
+Abort.
+
+(** Test whether enabling the hypothesis flag works.
+*)
+Waterproof Enable Hypothesis Help.
+
+Goal False.
+assert_is_true (get_print_hypothesis_flag ()).
+Abort.
+
+(** Test whether disabling the hypothesis flag works.
+*)
+Waterproof Disable Hypothesis Help.
+
+Goal False.
+assert_is_false (get_print_hypothesis_flag ()).
 Abort.
