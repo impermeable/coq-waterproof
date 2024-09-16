@@ -34,7 +34,8 @@ eval $(opam env)
 opam install coq-lsp.2.0.0+8.17
 opam install ocaml-lsp-server
 ```
-replacing 8.17 with the desired version of Coq
+replacing 8.17 with the desired version of Coq, or more generally, replacing 
+2.0.0+8.17 by the desired version of coq-lsp.
 
 ### Creating the desired opam environment: advanced version for supporting multiple versions of Coq
 
@@ -90,7 +91,11 @@ dune install -p coq-waterproof
 We aim to test every feature that we implement. Currently we test almost
 all functionality present in `.v` files. Note for instance that tactics
 such as `Choose`, `Assume`, both have a file that defines them, and a file
-that tests them.
+that tests them. The tests are run automatically when compiling the library, i.e.
+when running
+```
+dune build -p coq-waterproof
+```
 
 ## Running external tests
 
