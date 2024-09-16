@@ -16,12 +16,42 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
-Require Import Ltac2.Bool.
-Require Import Ltac2.Init.
+open Proofview
+open Proofview.Notations
 
-Require Import Waterproof.Waterproof.
+(**
+  Checks whether a given evar is a blank in the evar_map.
+*)
+let is_blank (ev_map : Evd.evar_map) (ev : Evar.t) : bool =
+  let EvarInfo ev_info = Evd.find ev_map ev in
+  let _, ev_kind = (Evd.evar_source ev_info) in
+  match ev_kind with
+  | Evar_kinds.QuestionMark _ -> true
+  | _ -> false
 
-Ltac2 @ external warn: message -> unit := "coq-core.plugins.coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-core.plugins.coq-waterproof" "throw_external".
-Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-core.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+(**
+  A tactic that resturns a list of all evars in a term (= Evd.econstr) that
+  were introduced by the user as a blank and have not been resolved yet.
+*)
+let blank_evars_in_term (term : Evd.econstr) :
+  Evar.t list tactic =
+  tclEVARMAP >>= fun sigma -> tclUNIT @@
+    let evars = Evarutil.undefined_evars_of_term sigma term in
+    List.filter (is_blank sigma) (Evar.Set.elements evars)
+
+(** 
+  Refines the current goal with just a new named evar, the name of which is
+  freshly generated based on the input string.
+*)
+let refine_goal_with_evar (input : string) : unit tactic =
+  let src = (Loc.tag Evar_kinds.GoalEvar) in
+  Proofview.Goal.enter begin fun gl ->
+    let env = Proofview.Goal.env gl in
+    let concl = Proofview.Goal.concl gl in
+    Refine.refine ~typecheck:true begin function sigma ->
+      let sigma, t = Evarutil.new_evar ~src 
+          ~naming:(Namegen.IntroFresh (Names.Id.of_string input))
+          env sigma concl in
+      (sigma, t)
+    end
+  end

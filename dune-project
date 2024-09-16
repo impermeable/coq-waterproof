@@ -3,6 +3,6 @@
 
 (package
  (name coq-waterproof)
- (version 2.1.1+8.19)
+ (version 2.1.1+dev)
  (synopsis "Coq proofs in a style that resembles non-mechanized mathematical proofs")
  (depends coq-core coq-stdlib))

@@ -59,3 +59,65 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     Fail Choose m := n.
 Abort.
+
+(** Test 5: Choose a blank *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (_).
+Abort.
+
+(** Test 6: Choose a named evar *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (?[m]).
+Abort.
+
+(** Test 7: Choose a blank check tha blank was renamed *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (_).
+    assert (?n = 0).
+Abort.
+
+(** Test 8: Choose a more complicated blank and check that renaming took place, 
+    by reformulating the goal in terms of the new named evars. *)
+Goal exists n : nat, n + 1 = n + 1.
+    Choose n := (_ + _ + _).
+    change (?n + ?n0 + ?n1 + 1 = ?n + ?n0 + ?n1 + 1).
+Abort.
+
+(** Test 9: Choose a blank without specifying the name of the variable *)
+Goal exists n : nat, n + 1 = n + 1.
+  Choose (_).
+  change (?n + 1 = ?n + 1).
+Abort.
+
+(** Test 10: Choose a blank if binder has no name *)
+Goal exists _ : nat, True.
+Proof.
+  Choose (_).
+  (* In this case, the blank evar should be renamed to `x` *)
+  assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
+Abort.
+
+(** ** Tests about choosing different variable names *)
+
+(** Test 11: Warn on different variable name *)
+Goal exists n : nat, n + 1 = n + 1.
+Proof.
+    Choose m := 1.
+Abort.
+
+(** Test 12: Warn on different variable name when binder is shielded,
+    because of an already existing definition. *)
+Goal exists n : nat, n + 1 = n + 1.
+Proof.
+    set (n := 3).
+    Choose n0 := 2.
+Abort.
+
+(** Test 12: Warn on different variable name when binder is shielded,
+    because of an already existing definition, using that already
+    defined variable *)
+Goal exists n : nat, n + 1 = n + 1.
+Proof.
+    set (n := 3).
+    Choose n0 := n.
+Abort.

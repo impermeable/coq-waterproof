@@ -202,6 +202,9 @@ Qed.
 *)
 Ltac2 either_or_or_prop (t1:constr) (t2:constr) (t3:constr) :=
   let h1_id := Fresh.in_goal @_temp in
+  let t1 := correct_type_by_wrapping t1 in
+  let t2 := correct_type_by_wrapping t2 in
+  let t3 := correct_type_by_wrapping t3 in
   let attempt () :=
     assert ($t1 \/ $t2 \/ $t3) as $h1_id;
     Control.focus 1 1 (fun () => 

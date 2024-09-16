@@ -24,6 +24,11 @@ open Pp
 let fatal_flag: unit Exninfo.t = Exninfo.make "waterproof_fatal_flag"
 
 (**
+  Print hypotheses help
+*)
+let print_hypothesis_help : bool ref = Summary.ref ~name:"print_hypothesis_help" false
+
+(**
   Type of exceptions used in Wateproof
 *)
 type wexn =

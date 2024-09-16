@@ -1,0 +1,16 @@
+{
+    "name": "coq-waterproof dev container for Coq dev",
+
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+
+    "onCreateCommand": "echo \"Installing coq-waterproof for the first time\" && dune build -p coq-waterproof && autoreconf -i -s && sudo env PATH=$PATH ./configure && sed -i 's/# -R/-R/' _CoqProject && sed -i 's/# -I/-I/' _CoqProject",
+
+    "customizations": {
+        "vscode": {
+            "extensions" : [ "ejgallego.coq-lsp",
+                             "ocamllabs.ocaml-platform" ]
+        }
+    }
+}

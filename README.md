@@ -23,7 +23,7 @@ Firstly you should install [`opam`](https://opam.ocaml.org/).
 Then, you can create a new switch and install the requirements by running :
 
 ```bash
-$ opam switch create waterproof --packages coq.8.19.0
+$ opam switch create waterproof --packages coq.8.20.0
 $ eval $(opam env --switch=waterproof)
 ```
 
