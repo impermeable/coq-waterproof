@@ -16,9 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Reals.ROrderedType.
-Require Import micromega.Lra.
+From Coq Require Import Reals.
+From Coq Require Import ROrderedType.
+From Coq Require Import Lra.
 
 Require Import Tactics.
 Require Import Automation.

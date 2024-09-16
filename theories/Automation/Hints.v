@@ -18,15 +18,15 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Arith.PeanoNat.
-Require Import Classical_Pred_Type.
-Require Import Lia.
-Require Import Lra.
-Require Import Logic.ClassicalEpsilon.
-Require Import Reals.Reals.
-Require Import Reals.Rdefinitions.
-Require Import Sets.Classical_sets.
-Require Import Sets.Ensembles.
+From Coq Require Import PeanoNat.
+From Coq Require Import Classical_Pred_Type.
+From Coq Require Import Lia.
+From Coq Require Import Lra.
+From Coq Require Import ClassicalEpsilon.
+From Coq Require Import Reals.
+From Coq Require Import Rdefinitions.
+From Coq Require Import Classical_sets.
+From Coq Require Import Ensembles.
 
 Require Import Chains.
 Require Import Libs.Negation.

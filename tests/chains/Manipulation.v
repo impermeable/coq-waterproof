@@ -18,8 +18,8 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Coq.Reals.Reals.
-Require Import micromega.Lra.
+From Coq Require Import Reals.
+From Coq Require Import Lra.
 
 Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.
