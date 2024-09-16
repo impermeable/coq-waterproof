@@ -26,7 +26,7 @@ port install opam
 
 ### Creating the desired opam environment: simplified version
 When we develop, we need to be aware of the version of Coq we develop for.
-Most development is done against the main branch, and then the following setup will suffice.
+Most development is done based off the main branch, and then the following setup will suffice.
 
 ```
 opam init
@@ -34,6 +34,7 @@ eval $(opam env)
 opam install coq-lsp.2.0.0+8.17
 opam install ocaml-lsp-server
 ```
+replacing 8.17 with the desired version of Coq
 
 ### Creating the desired opam environment: advanced version for supporting multiple versions of Coq
 
@@ -52,7 +53,7 @@ Next you can install the background libraries again
 opam install coq-lsp.2.0.0+8.17
 opam install ocaml-lsp-server
 ```
-replacing 8.17 with the desired version of Coq
+again replacing 8.17 with the desired version of Coq
 
 ### Caveat: locally compiling the coq-master branch
 
@@ -139,6 +140,7 @@ One needs to have the `autoconf` ocaml libary installed. One can install this wi
 sudo apt-get update
 sudo apt-get install autoconf
 ```
+or equivalent for non-Debian/Ubuntu based environments
 
 ## Making Ocaml functions available from Ltac2: Using the foreign function interface (ffi)
 
@@ -171,9 +173,9 @@ let my_f_tactic : a -> b -> c -> d tactic =
 
 ### Make a `valexpr` tactic
 
-Yet datatypes in Ocaml and in Ltac2 need to be translated to each other
+Datatypes in Ocaml and in Ltac2 need to be translated to each other
 by using an intermediate datatype: namely `valexpr`. This also means that
-not any tactic can pass the ffi, but only `valexpr`-valued tactics.
+only `valexpr`-valued tactics can pass the ffi.
 Luckily, for many types there are already conversion functions available from
 and to `valexpr`, such as `of_bool`, `to_bool` and `of_unit`, `to_unit`. 
 In general, these conversions are captured in elements of the type `'a repr`:
