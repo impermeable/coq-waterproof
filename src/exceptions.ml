@@ -78,6 +78,8 @@ let warn (input : Pp.t) : unit Proofview.tactic =
   if !redirect_warnings then Proofview.tclUNIT () else
     Proofview.tclUNIT @@ Feedback.msg_warning input
 
+let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic =
+  Proofview.tclUNIT @@ proc input
 (**
   Throws an error
 *)
