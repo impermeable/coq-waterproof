@@ -16,11 +16,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Lia.
-Require Import Arith.
-Require Import Arith.Compare.
-Require Import ClassicalChoice.
-Require Import ChoiceFacts.
+From Coq Require Import Lia.
+From Coq Require Import Arith.
+From Coq Require Import Compare.
+From Coq Require Import ClassicalChoice.
+From Coq Require Import ChoiceFacts.
 
 Require Export Libs.Analysis.SubsequencesMetric.
 
