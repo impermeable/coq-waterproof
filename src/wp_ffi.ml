@@ -197,3 +197,15 @@ let () =
 let () =
   define1 "get_print_hypothesis_flag_external" unit @@
     fun input -> tclUNIT @@ of_bool !print_hypothesis_help
+
+let () =
+  define1 "get_last_warning_external" unit @@
+    fun input -> get_last_warning input >>=
+      fun pp_option -> tclUNIT @@ of_option of_pp pp_option
+
+let my_thaw f = Tac2ffi.apply f [of_unit ()]
+
+let () =
+  define1 "catch_error_return_message_external" closure @@
+    fun tac -> catch_error_return_message (my_thaw tac) >>=
+      fun pp_option -> tclUNIT @@ of_option of_pp pp_option

@@ -22,6 +22,16 @@
 val print_hypothesis_help : bool ref
 
 (**
+  The last thrown warning
+*)
+val last_thrown_warning : Pp.t option ref
+
+(**
+  Redirect warnings: this is useful when testing the plugin
+*)
+val redirect_warnings : bool ref
+
+(**
   Type of exceptions used in Wateproof
 *)
 type wexn =
@@ -48,3 +58,14 @@ val warn :
 *)
 val err :
   Pp.t -> unit Proofview.tactic
+
+(**
+  Check the last warning against a string
+*)
+val get_last_warning : unit -> Pp.t option Proofview.tactic
+
+(**
+  Catch an error and return the message
+*)
+val catch_error_return_message : 'a Proofview.tactic ->
+    Pp.t option Proofview.tactic

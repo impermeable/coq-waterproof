@@ -17,11 +17,23 @@
 (******************************************************************************)
 
 open Pp
+open Proofview
+open Proofview.Notations
 
 (**
   Basic exception info
 *)
 let fatal_flag: 'a Exninfo.t = Exninfo.make ()
+
+(**
+  The last thrown warning
+*)
+let last_thrown_warning : Pp.t option ref = Summary.ref ~name:"last_thrown_warning" None
+
+(**
+  Redirect warnings: this is useful when testing the plugin
+*)
+let redirect_warnings : bool ref = Summary.ref ~name:"redirect_warnings" false
 
 (**
   Print hypotheses help
@@ -61,11 +73,31 @@ let throw ?(info: Exninfo.info = Exninfo.null) (exn: wexn): 'a =
 (** 
   Sends a warning and returns the message as a string
 *)
-let warn (input : Pp.t) : unit Proofview.tactic = 
-  Proofview.tclUNIT @@ Feedback.msg_warning input
+let warn (input : Pp.t) : unit Proofview.tactic =
+  last_thrown_warning := Some input;
+  if !redirect_warnings then Proofview.tclUNIT () else
+    Proofview.tclUNIT @@ Feedback.msg_warning input
 
 (**
   Throws an error
 *)
 let err (input : Pp.t) : unit Proofview.tactic =
   Proofview.tclUNIT @@ throw (ToUserError input)
+
+(**
+  Check the last warning against a string
+*)
+let get_last_warning () : Pp.t option Proofview.tactic =
+  Proofview.tclUNIT @@ !last_thrown_warning
+
+(**
+  Catch an error and return the message
+*)
+let catch_error_return_message (tac : 'a Proofview.tactic) :
+    Pp.t option Proofview.tactic =
+  try
+    tac >>= fun input -> Proofview.tclUNIT @@ None
+  with
+  | e ->
+    let _, info as exn = Exninfo.capture e in
+    tclUNIT @@ Some (CErrors.iprint exn)

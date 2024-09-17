@@ -87,3 +87,17 @@ VERNAC COMMAND EXTEND PrintVersionSideEff CLASSIFIED AS SIDEFF
       Feedback.msg_notice (Pp.str waterproof_version)
     }
 END
+
+VERNAC COMMAND EXTEND RedirectWarningsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Redirect" "Warnings" ] ->
+    {
+      redirect_warnings := true
+    }
+END
+
+VERNAC COMMAND EXTEND RedirectWarningsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Redirect" "Warnings" ] ->
+    {
+      redirect_warnings := false
+    }
+END

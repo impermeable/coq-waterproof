@@ -21,9 +21,12 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
+Waterproof Enable Redirect Warnings.
+
 Lemma test : 0 = 0.
 Proof.
-  warn (Message.of_string "This warning _should_ be printed.").
+  warn (Message.of_string "Send a warning.");
+  assert_warning_equals_string "Send a warning.".
   Fail throw (Message.of_string "This error _should_ be raised.").
 Abort.
 
@@ -41,4 +44,15 @@ Waterproof Disable Hypothesis Help.
 
 Goal False.
 assert_is_false (get_print_hypothesis_flag ()).
+Abort.
+
+Waterproof Disable Redirect Warnings.
+
+Goal False.
+  (* TODO: this should work instead: *)
+  Fail match catch_error_message (fun () =>
+    throw (Message.of_string "error message")) with
+  | None => ()
+  | Some exn => Message.print (exn)
+  end.
 Abort.
