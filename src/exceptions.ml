@@ -19,6 +19,41 @@
 open Pp
 open Proofview
 open Proofview.Notations
+open Feedback
+
+(**
+  A rudimentary feedback log
+*)
+let feedback_log : Pp.t list ref = Summary.ref ~name:"feedback_log" []
+
+(**
+  The id that we obtained when registering wp_feedback_logger as a feeder in Feedback.mli
+*)
+let wp_feedback_logger_id = Summary.ref ~name: "wp_feedback_logger_id" None
+
+(**
+  A custom feedback logger for waterproof
+*)
+let wp_feedback_logger (fb : feedback) : unit =
+  match fb.contents with
+  | Message (_, _, msg) ->
+    feedback_log := msg :: !feedback_log
+  | _ -> ()
+
+(** 
+  Print the full log
+*)
+let print_feedback_log () : unit Proofview.tactic =
+  tclUNIT @@ List.iter (fun msg -> msg_notice msg) !feedback_log
+
+(**
+  Adds wp_feedback_logger to Coq's feedback mechanism
+*)
+let add_wp_feedback_logger () : unit =
+  match !wp_feedback_logger_id with
+  | Some _ -> msg_warning (str "The waterproof feedback logger was already added")
+  | None -> let id = Feedback.add_feeder wp_feedback_logger in
+            wp_feedback_logger_id := Some id
 
 (**
   Basic exception info
@@ -34,6 +69,11 @@ let last_thrown_warning : Pp.t option ref = Summary.ref ~name:"last_thrown_warni
   Redirect warnings: this is useful when testing the plugin
 *)
 let redirect_warnings : bool ref = Summary.ref ~name:"redirect_warnings" false
+
+(**
+  Redirect errors: this is useful when testing the plugin
+*)
+let redirect_errors : bool ref = Summary.ref ~name:"redirect_errors" false
 
 (**
   Print hypotheses help
@@ -74,9 +114,12 @@ let throw ?(info: Exninfo.info = Exninfo.null) (exn: wexn): 'a =
   Sends a warning and returns the message as a string
 *)
 let warn (input : Pp.t) : unit Proofview.tactic =
-  last_thrown_warning := Some input;
-  if !redirect_warnings then Proofview.tclUNIT () else
-    Proofview.tclUNIT @@ Feedback.msg_warning input
+  if !redirect_warnings then 
+    Proofview.tclUNIT @@ (feedback_log := input :: !feedback_log)
+  else
+    Proofview.tclUNIT @@ msg_warning input
+
+exception RedirectedToUserException of Pp.t
 
 let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic =
   Proofview.tclUNIT @@ proc input
@@ -84,22 +127,17 @@ let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic 
   Throws an error
 *)
 let err (input : Pp.t) : unit Proofview.tactic =
-  Proofview.tclUNIT @@ throw (ToUserError input)
+  (* Route the message to our own logger. Note that we need to follow
+     the feedback mechanism otherwise the message does not arrive in the log *)
+  if !redirect_errors then
+    tclZERO (RedirectedToUserException input)
+  else throw (ToUserError input)
 
 (**
-  Check the last warning against a string
+  Return the last warning
 *)
 let get_last_warning () : Pp.t option Proofview.tactic =
-  Proofview.tclUNIT @@ !last_thrown_warning
-
-(**
-  Catch an error and return the message
-*)
-let catch_error_return_message (tac : 'a Proofview.tactic) :
-    Pp.t option Proofview.tactic =
-  try
-    tac >>= fun input -> Proofview.tclUNIT @@ None
-  with
-  | e ->
-    let _, info as exn = Exninfo.capture e in
-    tclUNIT @@ Some (CErrors.iprint exn)
+  Proofview.tclUNIT @@
+    match !feedback_log with
+    | [] -> None
+    | hd :: tl -> Some hd

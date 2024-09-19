@@ -82,9 +82,8 @@ The variable has been renamed."])
       match Constr.has_evar t with
       | true => 
         rename_blank_evars_in_term (Ident.to_string s) t;
-        
-        warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string ".
-For now you can use that "; of_constr constr:($v = $t); of_string "."])
+        warn (concat_list [of_string "Please come back to this line to make a definitive choice for "; of_ident s; of_string "."; fnl ();
+        of_string "For now you can use that "; of_constr constr:($v = $t)])
       | _ => ()
       end;
       exists $v;      
@@ -92,6 +91,10 @@ For now you can use that "; of_constr constr:($v = $t); of_string "."])
       
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end.
+
+Ltac2 Eval String.equal ("Please come back to this line to make a definitive choice for n.
+For now you can use that n = ?m") "Please come back to this line to make a definitive choice for n.
+For now you can use that n = ?m".
 
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in

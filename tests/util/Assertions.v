@@ -12,7 +12,7 @@
 (*               GNU General Public License for more details.                 *)
 (*                                                                            *)
 (*     You should have received a copy of the GNU General Public License      *)
-(*   along with Waterproof-lib. If not, see < https://www.gnu.org/licenses/>.  *)
+(*   along with Waterproof-lib. If not, see <https://www.gnu.org/licenses/>.  *)
 (*                                                                            *)
 (******************************************************************************)
 
@@ -26,28 +26,46 @@ Require Import Waterproof.Util.Assertions.
 Waterproof Enable Redirect Warnings.
 Waterproof Enable Redirect Errors.
 
+(** * Tests of the test framework *)
+
+(** ** Test for a warning *)
 Goal True.
-Proof.
-  assert_warns_with_string (fun () => warn (Message.of_string "Send a warning.")) "Send a warning.".
+assert_warns_with_string (fun () => warn (Message.of_string "Send a first warning.")) "Send a first warning.".
+Abort.
+
+(** ** Test if a warning is really thrown (and not just the last item in the log is compared) *)
+Goal True.
+warn (Message.of_string "Send a warning.").
+Fail assert_warns_with_string (fun () => ()) "Send a warning.".
+Abort.
+
+(** ** Test asserting for a failure with a given string *)
+Goal True.
+assert_fails_with_string (fun () => throw (Message.of_string "This error _should_ be raised.")) "This error _should_ be raised.".
+Abort.
+
+(** ** Test of the error message of the assert_fails_with_string tactic itself *)
+Goal True.
+assert_fails_with_string
+  (fun () => assert_fails_with_string (fun () => throw (Message.of_string "foo")) "bar")
+"The tactic failed, but with an unexpected error message. Expected:
+bar
+Got:
+foo".
+Abort.
+
+(** ** Test of the error message of the assert_warns_with_string tactic *)
+Goal True.
+assert_fails_with_string
+  (fun () => assert_warns_with_string (fun () => warn (Message.of_string "foo")) "bar")
+"The tactic warned, but with an unexpected error message. Expected:
+bar
+Got:
+foo".
 Abort.
 
 Goal True.
-Proof.
-  assert_fails_with_string (fun () => throw (Message.of_string "This error _should_ be raised.")) "This error _should_ be raised.".
-Abort.
-
-(** Test whether enabling the hypothesis flag works.
-*)
-Waterproof Enable Hypothesis Help.
-
-Goal False.
-assert_is_true (get_print_hypothesis_flag ()).
-Abort.
-
-(** Test whether disabling the hypothesis flag works.
-*)
-Waterproof Disable Hypothesis Help.
-
-Goal False.
-assert_is_false (get_print_hypothesis_flag ()).
+assert_warns_with_string (fun () => warn (Message.of_string "warning
+with line break")) "warning
+with line break".
 Abort.

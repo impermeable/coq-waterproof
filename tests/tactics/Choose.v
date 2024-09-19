@@ -60,19 +60,30 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     Fail Choose m := n.
 Abort.
 
+Waterproof Enable Redirect Warnings.
+
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (_).
+    assert_warns_with_string (fun () => Choose n := (_))
+"Please come back to this line to make a definitive choice for n.
+For now you can use that 
+(n = ?n)".
 Abort.
 
 (** Test 6: Choose a named evar *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (?[m]).
+    assert_warns_with_string (fun () => Choose n := (?[m]))
+"Please come back to this line to make a definitive choice for n.
+For now you can use that 
+(n = ?m)".
 Abort.
 
-(** Test 7: Choose a blank check tha blank was renamed *)
+(** Test 7: Choose a blank check that blank was renamed *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (_).
+    assert_warns_with_string (fun () => Choose n := (_))
+"Please come back to this line to make a definitive choice for n.
+For now you can use that 
+(n = ?n)".
     assert (?n = 0).
 Abort.
 

@@ -101,3 +101,25 @@ VERNAC COMMAND EXTEND RedirectWarningsDisableSideEff CLASSIFIED AS SIDEFF
       redirect_warnings := false
     }
 END
+
+
+VERNAC COMMAND EXTEND RedirectErrorsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Redirect" "Errors" ] ->
+    {
+      redirect_errors := true
+    }
+END
+
+VERNAC COMMAND EXTEND RedirectErrorsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Redirect" "Errors" ] ->
+    {
+      redirect_errors := false
+    }
+END
+
+VERNAC COMMAND EXTEND AddWpLoggerSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Logging" ] ->
+    {
+      add_wp_feedback_logger ()
+    }
+END

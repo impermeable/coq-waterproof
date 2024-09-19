@@ -22,16 +22,20 @@ Require Import Ltac2.Init.
 Require Import Ltac2.String.
 
 Require Import Waterproof.Waterproof.
-Require Import Waterproof.Util.Assertions.
+
+(** TODO: in later versions of Coq this can be replaced by a native function *)
+Ltac2 fnl () := Message.of_string "
+".
 
 Ltac2 @ external warn: message -> unit := "coq-waterproof" "warn_external".
-Ltac2 @ external throw: message -> unit := "coq-waterproof" "throw_external".
+Ltac2 @ external throw_external: message -> unit := "coq-waterproof" "throw_external".
 Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-waterproof" "get_print_hypothesis_flag_external".
-Ltac2 @ external get_last_warning : unit -> message option := "coq-waterproof" "get_last_warning_external".
-Ltac2 @ external catch_error_message : (unit -> 'a) -> message option := "coq-waterproof" "catch_error_return_message_external".
+Ltac2 @ external get_redirect_errors_flag : unit -> bool := "coq-waterproof" "get_redirect_errors_flag_external".
 
-Ltac2 assert_warning_equals_string (str : string) :=
-  match get_last_warning () with
-  | Some msg => assert_is_true (String.equal (Message.to_string msg) str)
-  | None => throw (Message.of_string "No warning was raised.")
-  end.
+Ltac2 Type exn ::= [RedirectedToUserError (message)].
+
+Ltac2 throw (msg : message) :=
+  if (get_redirect_errors_flag ()) then
+    Control.zero (RedirectedToUserError msg)
+  (** We use an OCaml error here, because it gets rendered much nicer in the editor *)
+  else throw_external msg.

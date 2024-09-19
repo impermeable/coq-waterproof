@@ -100,11 +100,14 @@ Abort.
 
 (* -------------------------------------------------------------------------- *)
 
+Waterproof Enable Redirect Warnings.
+
 (** Test 8 : use a placeholder as variable name *)
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 intro H.
-Use b := _ in (H).
+assert_warns_with_string (fun () => Use b := _ in (H))
+"Please come back to this line later to make a definite choice for b.".
 It holds that (forall a c : nat, a + ?b + c = 0) (i).
 Abort.
 
@@ -112,7 +115,8 @@ Abort.
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 intro H.
-Use a := _, b := _, c := _ in (H).
+assert_warns_with_string (fun () => Use a := _, b := _, c := _ in (H))
+"Please come back to this line later to make a definite choice for a, b, c.".
 It holds that (?a + ?b + ?c = 0).
 Abort.
 

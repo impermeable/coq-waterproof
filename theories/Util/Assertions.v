@@ -19,8 +19,13 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Int.
 Require Import Ltac2.Message.
+Require Import Waterproof.Waterproof.
+Require Import Waterproof.Util.MessagesToUser.
 
 Require Import Util.Init.
+
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 (**   Introduce global test verbosity. *)
 Ltac2 mutable test_verbosity () := 0.
@@ -60,6 +65,88 @@ Ltac2 assert_raises_error f :=
       (of_string "Test passed, got error:") 
       (of_exn exn))
   end.
+
+(**
+  Checks if a tactic fails with error message corresponding to a specific string
+
+  Arguments:
+    - tac, the tactic to execute
+    - expected_string, the expected error message
+
+  Raises Exceptions:
+    - TestFailedError, if the tactic does not fail or if it fails with the wrong error message
+*)
+Ltac2 assert_fails_with_string (tac : unit -> 'a) (expected_string : string) :=
+  match Control.case tac with
+  | Val _ => fail_test (of_string ("The tactic was expected to fail but it didn't"))
+  | Err exn =>
+    let inner_msg_equal := fun msg =>
+      String.equal (Message.to_string msg) expected_string in
+    let inner_msg_test := fun msg =>
+      if inner_msg_equal msg then
+        print_success (of_string ("The tactic failed with the expected error message"))
+      else
+        fail_test (concat_list [of_string "The tactic failed, but with an unexpected error message. Expected:"; fnl ();
+        of_string expected_string; fnl (); of_string "Got:"; fnl (); msg]) in
+    match exn with
+    | RedirectedToUserError msg => inner_msg_test msg
+    | TestFailedError msg => inner_msg_test msg
+    (** TODO: add more possible errors here *)
+    | e => 
+      let msg := Message.of_exn e in
+      inner_msg_test msg
+    end
+  end.
+
+Ltac2 @ external get_last_warning : unit -> message option :=
+  "coq-waterproof" "get_last_warning_external".
+Ltac2 @ external get_feedback_log : unit -> message list :=
+  "coq-waterproof" "get_feedback_log_external".
+
+(**
+  Checks if a tactic warns with warning corresponding to a specific string
+
+  Arguments:
+    - tac, the tactic to execute
+    - expected_string, the expected warning message
+
+  Raises exceptions:
+    - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
+*)
+Ltac2 assert_warns_with_string (tac : unit -> 'a) (expected_string : string) :=
+  let length_before := List.length (get_feedback_log ()) in
+  tac ();
+  let length_after := List.length (get_feedback_log ()) in
+  if Int.equal length_after length_before then
+    fail_test (of_string ("The tactic was expected to warn but it didn't"))
+  else
+  match get_last_warning () with
+  | Some msg =>
+    if String.equal (Message.to_string msg) expected_string then
+      print_success (of_string ("The tactic warned with the expected message"))
+    else
+      fail_test (concat_list [of_string "The tactic warned, but with an unexpected error message. Expected:"; fnl (); of_string expected_string; fnl ();
+      of_string "Got:"; fnl (); of_string (to_string msg)])
+  | None => fail_test (of_string ("No warning was registered"))
+  end.
+
+(**
+  Checks if a tactic warns
+
+  Arguments:
+    - tac, the tactic to execute
+
+  Raises exceptions:
+    - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
+*)
+Ltac2 assert_warns (tac : unit -> 'a) :=
+  let length_before := List.length (get_feedback_log ()) in
+  tac ();
+  let length_after := List.length (get_feedback_log ()) in
+  if Int.equal length_after length_before then
+    fail_test (of_string ("The tactic was expected to warn but it didn't"))
+  else
+    print_success (of_string ("The tactic warned")).
 
 (**
   Checks if two lists (of arbitrary type) are equal. 
