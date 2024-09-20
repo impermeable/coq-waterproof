@@ -122,13 +122,14 @@ Proof.
     - We need to show that (is_index_seq n).
       We need to show that (is_index_seq (create_seq g)).
       By created_seq_is_index_seq it suffices to show that 
-        (for all m N : ℕ, (g m N ≥ N)%nat).
+        (for all m M : ℕ, (g m M ≥ M)%nat).
       Take m, M : nat.
       By (i) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))).
       We conclude that (g m M >= M)%nat.
     - We need to show that (for all k : ℕ, P k (a (n k))).
       We need to show that (for all k : ℕ, P k (a ((create_seq g) k))).
-      Fail By subseq_sat_rel it suffices to show that (for all m N : ℕ, P m (a (g m N))). (*TODO: fix*)
+      Fail By subseq_sat_rel it suffices to show that
+        (for all m M : ℕ, P m (a (g m M))). (*TODO: fix*)
       apply subseq_sat_rel.
       Take m : ℕ.
       Take M : ℕ.
@@ -150,6 +151,7 @@ Proof.
     Assume that (∀ k : ℕ, (g k ≤ g (S k))%nat).
     Take k : ℕ. 
     induction l as [|l IH_l].
+    Check k.
 
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
     Assume that (k ≤ 0)%nat.

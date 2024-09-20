@@ -58,8 +58,8 @@ Proof.
 Qed.
 
 Theorem alt_char_continuity :
-  ∀ f : R → R, ∀ a : R, 
-    is_continuous_in f a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : R, 0 < | x - a | < δ ⇒ | f(x) - f(a) | < ε).
+  ∀ h : R → R, ∀ a : R, 
+    is_continuous_in h a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : R, 0 < | x - a | < δ ⇒ | h(x) - h(a) | < ε).
 Proof.
   Take h : (R → R).
   Take a : R.

@@ -139,8 +139,8 @@ Definition is_continuous_in (f : ℕ → X) (a : ℕ) :=
   ((is_accumulation_point a) ∧ (limit_in_point f a (f a))) ∨ (is_isolated_point a).
 
 Theorem alt_char_continuity :
-  ∀ f : ℕ → X, ∀ a : ℕ, 
-    is_continuous_in f a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : ℕ, 0 < | x - a | < δ ⇒ dist X (f(x)) (f(a)) < ε).
+  ∀ h : ℕ → X, ∀ a : ℕ, 
+    is_continuous_in h a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : ℕ, 0 < | x - a | < δ ⇒ dist X (h(x)) (h(a)) < ε).
 Proof.
   Take h : (ℕ → X).
   Take a : ℕ.

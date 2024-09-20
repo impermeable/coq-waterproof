@@ -123,8 +123,8 @@ Lemma conv_evt_eq_seq :
 Proof.
     Take a, b : (ℕ → ℝ) and l : ℝ.
     Assume that (evt_eq_sequences a b) (i) and (a ⟶ l).
-    We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists N : ℕ,
-      for all n : ℕ, (n ≥ N)%nat ⇨ |b n - l| < ε ).
+    We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists M : ℕ,
+      for all n : ℕ, (n ≥ M)%nat ⇨ |b n - l| < ε ).
     Take ε : ℝ; such that (ε > 0).
     It holds that
       (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε).
@@ -166,7 +166,7 @@ Lemma lim_const_seq :
 Proof.
     Take c : ℝ.
     Define s := (constant_sequence c).
-    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |(s n) - c| < ε).
+    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ Nn : ℕ, ∀ n : ℕ, (n ≥ Nn)%nat ⇒ |(s n) - c| < ε).
     Take ε : ℝ; such that (ε > 0).
     Choose Nn := O.
     Take n : ℕ; such that (n ≥ Nn)%nat.
@@ -188,9 +188,9 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 Lemma lim_d_0 : Un_cv d 0.
 Proof.
     We need to show that (Un_cv (fun n => 1 / (n + 1)) 0).
-    We need to show that (for all eps : ℝ, eps > 0 
+    We need to show that (for all ε : ℝ, ε > 0 
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
-      ⇨ ｜ 1 / (n + 1) - 0 ｜ < eps ).
+      ⇨ ｜ 1 / (n + 1) - 0 ｜ < ε ).
     Take ε : ℝ; such that (ε > 0).
     By archimed_mod it holds that (there exists n : ℕ, n > / ε).
     Obtain such an n1. Choose N := n1.
@@ -203,7 +203,6 @@ Proof.
       { We conclude that (& / ε < n1 <= n <= n + 1). }
       We conclude that (& 1 / (n + 1) - 0 = / (n + 1) < / / ε = ε).
 Qed.
-
 
 Lemma min_1_over_n_plus_1_to_0 :
   Un_cv (fun (n : ℕ) ↦ - (1 / (INR(n) + 1))) 0.
@@ -228,7 +227,7 @@ Proof.
     Take a, b, c : (ℕ ⇨ ℝ) and l : ℝ.
     Assume that (∀ n : ℕ, a n ≤ b n ∧ b n ≤ c n) and (a ⟶ l).
     Assume that (c ⟶ l).
-    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |b n - l| < ε).
+    To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ Nn : ℕ, ∀ n : ℕ, (n ≥ Nn)%nat ⇒ |b n - l| < ε).
     Take ε : ℝ; such that (ε > 0).
     It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε).
     Obtain such an Na.
