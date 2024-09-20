@@ -111,7 +111,7 @@ let throw ?(info: Exninfo.info = Exninfo.null) (exn: wexn): 'a =
   CErrors.user_err ?info:(Some fatal) (pr_wexn exn)
 
 (** 
-  Sends a warning and returns the message as a string
+  Sends a warning
 *)
 let warn (input : Pp.t) : unit Proofview.tactic =
   if !redirect_warnings then 
@@ -119,7 +119,17 @@ let warn (input : Pp.t) : unit Proofview.tactic =
   else
     Proofview.tclUNIT @@ msg_warning input
 
-exception RedirectedToUserException of Pp.t
+(** 
+  Sends a notice
+*)
+let notice (input : Pp.t) : unit Proofview.tactic =
+  Proofview.tclUNIT @@ msg_notice input
+
+(**
+  Send an info message
+*)
+let inform (input : Pp.t) : unit Proofview.tactic =
+  Proofview.tclUNIT @@ msg_info input
 
 let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic =
   Proofview.tclUNIT @@ proc input
@@ -129,9 +139,7 @@ let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic 
 let err (input : Pp.t) : unit Proofview.tactic =
   (* Route the message to our own logger. Note that we need to follow
      the feedback mechanism otherwise the message does not arrive in the log *)
-  if !redirect_errors then
-    tclZERO (RedirectedToUserException input)
-  else throw (ToUserError input)
+  throw (ToUserError input)
 
 (**
   Return the last warning

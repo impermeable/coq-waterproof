@@ -81,6 +81,18 @@ val warn :
   Pp.t -> unit Proofview.tactic
 
 (**
+  Sends a notice
+*)
+val notice :
+  Pp.t -> unit Proofview.tactic
+
+(**
+  Send an info message
+*)
+val inform :
+  Pp.t -> unit Proofview.tactic
+
+(**
   Throws an error
 *)
 val err :

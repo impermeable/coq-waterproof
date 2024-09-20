@@ -29,6 +29,8 @@ Ltac2 fnl () := Message.of_string "
 
 Ltac2 @ external warn: message -> unit := "coq-waterproof" "warn_external".
 Ltac2 @ external throw_external: message -> unit := "coq-waterproof" "throw_external".
+Ltac2 @ external notice : message -> unit := "coq-waterproof" "notice_external".
+Ltac2 @ external inform : message -> unit := "coq-waterproof" "inform_external".
 Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-waterproof" "get_print_hypothesis_flag_external".
 Ltac2 @ external get_redirect_errors_flag : unit -> bool := "coq-waterproof" "get_redirect_errors_flag_external".
 

@@ -69,3 +69,10 @@ assert_warns_with_string (fun () => warn (Message.of_string "warning
 with line break")) "warning
 with line break".
 Abort.
+
+Goal True.
+assert_warns_with_strings (fun () =>
+  warn (Message.of_string "first warning");
+  warn (Message.of_string "second warning"))
+["first warning"; "second warning"].
+Abort.

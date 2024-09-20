@@ -130,6 +130,45 @@ Ltac2 assert_warns_with_string (tac : unit -> 'a) (expected_string : string) :=
   | None => fail_test (of_string ("No warning was registered"))
   end.
 
+Ltac2 assert_warns_n (tac : unit -> 'a) (n : int) :=
+  let length_before := List.length (get_feedback_log ()) in
+  tac ();
+  let length_after := List.length (get_feedback_log ()) in
+  if Int.equal (Int.sub length_after length_before) n then
+    print_success (concat_list [of_string "The tactic warned "; 
+    of_int n; of_string " times"])
+  else
+    fail_test (concat_list [of_string "The tactic was expected to warn ";
+    of_int n; of_string " times, but it warned ";
+    of_int (Int.sub length_after length_before); of_string " times."]).
+
+(**
+  Assert that the execution of the tactic does not produce a warning
+
+  Arguments:
+  - tac, the tactic to execute
+
+  Raises Fatal Exceptions:
+  - TestFailedError, if the tactic produces a warning.
+*)
+Ltac2 assert_no_warning (tac : unit -> 'a) :=
+  assert_warns_n tac 0.
+
+Ltac2 assert_warning_string_equals (expected_string : string) (msg : message) :=
+  if String.equal (Message.to_string msg) expected_string then
+    print_success (of_string ("The warning message is as expected"))
+  else
+    fail_test (concat_list [of_string "The warning message is not as expected. Expected:"; fnl (); of_string expected_string; fnl ();
+    of_string "Got:"; fnl (); msg]).
+
+Ltac2 assert_warns_with_strings (tac : unit -> 'a)
+    (expected_strings : string list) :=
+  assert_warns_n (tac) (List.length expected_strings);
+  let short_list := List.firstn (List.length expected_strings)
+    (get_feedback_log ()) in
+  List.iter (fun (x, y) => assert_warning_string_equals x y)
+    (List.combine expected_strings (List.rev short_list)).
+
 (**
   Checks if a tactic warns
 

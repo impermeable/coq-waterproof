@@ -180,9 +180,19 @@ let () =
       warn input >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
+  define1 "notice_external" pp @@
+    fun input ->
+      notice input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
   define1 "throw_external" pp @@
     fun input ->
       err input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "inform_external" pp @@
+    fun input ->
+      inform input >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
   define1 "refine_goal_with_evar_external" string @@
