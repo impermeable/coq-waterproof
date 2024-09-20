@@ -21,8 +21,10 @@ Require Import Ltac2.Option.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Tactics.Help.
+Require Import Waterproof.Util.MessagesToUser.
 
 Waterproof Enable Hypothesis Help.
+Waterproof Enable Logging.
 
 (** Test 0 : Suggest to follow advice in goal if goal is wrapped 
   or [False] (i.e. prove contradiction). *)
@@ -139,3 +141,5 @@ Goal False.
 Proof.
   It holds that (forall n : nat, n = n).
 Abort.
+
+Ltac2 Eval (get_feedback_log Info).

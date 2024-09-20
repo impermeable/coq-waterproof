@@ -26,6 +26,7 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -55,7 +56,7 @@ Lemma test_we_conclude_2: True.
 Proof.
     Fail We conclude that False.
 Abort.
-Waterproof Enable Redirect Warnings.
+Waterproof Enable Redirect Feedback.
 Waterproof Enable Redirect Errors.
 (** * Test 3
     Warning case: provided goal is equivalent, 
@@ -63,7 +64,7 @@ Waterproof Enable Redirect Errors.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
-    assert_warns_with_string (fun () => We conclude that (1+1 = 2))
+    assert_feedback_with_string (fun () => We conclude that (1+1 = 2)) Warning
 "The statement you provided does not exactly correspond to what you need to show. 
 This can make your proof less readable.".
 Qed.
@@ -123,7 +124,7 @@ Qed.
 *)
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
-    assert_warns_with_string (fun () => We conclude that (2 = 2))
+    assert_feedback_with_string (fun () => We conclude that (2 = 2)) Warning
 "The statement you provided does not exactly correspond to what you need to show. 
 This can make your proof less readable.".
 Qed.

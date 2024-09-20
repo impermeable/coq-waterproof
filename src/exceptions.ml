@@ -21,10 +21,22 @@ open Proofview
 open Proofview.Notations
 open Feedback
 
+let wp_debug_log = Summary.ref ~name:"wp_debug_log" []
+let wp_info_log = Summary.ref ~name:"wp_info_log" []
+let wp_notice_log = Summary.ref ~name:"wp_notice_log" []
+let wp_warning_log = Summary.ref ~name:"wp_warning_log" []
+let wp_error_log = Summary.ref ~name:"wp_error_log" []
+
 (**
   A rudimentary feedback log
 *)
-let feedback_log : Pp.t list ref = Summary.ref ~name:"feedback_log" []
+let feedback_log (lvl : level) : Pp.t list ref =
+  match lvl with
+  | Debug -> wp_debug_log
+  | Info -> wp_info_log
+  | Notice -> wp_notice_log
+  | Warning -> wp_warning_log
+  | Error -> wp_error_log
 
 (**
   The id that we obtained when registering wp_feedback_logger as a feeder in Feedback.mli
@@ -36,15 +48,9 @@ let wp_feedback_logger_id = Summary.ref ~name: "wp_feedback_logger_id" None
 *)
 let wp_feedback_logger (fb : feedback) : unit =
   match fb.contents with
-  | Message (_, _, msg) ->
-    feedback_log := msg :: !feedback_log
+  | Message (lvl, _, msg) ->
+    feedback_log lvl := msg :: !(feedback_log lvl)
   | _ -> ()
-
-(** 
-  Print the full log
-*)
-let print_feedback_log () : unit Proofview.tactic =
-  tclUNIT @@ List.iter (fun msg -> msg_notice msg) !feedback_log
 
 (**
   Adds wp_feedback_logger to Coq's feedback mechanism
@@ -68,7 +74,7 @@ let last_thrown_warning : Pp.t option ref = Summary.ref ~name:"last_thrown_warni
 (**
   Redirect warnings: this is useful when testing the plugin
 *)
-let redirect_warnings : bool ref = Summary.ref ~name:"redirect_warnings" false
+let redirect_feedback : bool ref = Summary.ref ~name:"redirect_feedback" false
 
 (**
   Redirect errors: this is useful when testing the plugin
@@ -111,34 +117,38 @@ let throw ?(info: Exninfo.info = Exninfo.null) (exn: wexn): 'a =
   CErrors.user_err ?info:(Some fatal) (pr_wexn exn)
 
 (** 
-  Sends a warning
+  Send a message
 *)
-let warn (input : Pp.t) : unit Proofview.tactic =
-  if !redirect_warnings then 
-    Proofview.tclUNIT @@ (feedback_log := input :: !feedback_log)
+let message (lvl : Feedback.level) (input : Pp.t) : unit Proofview.tactic =
+  if !redirect_feedback then
+    Proofview.tclUNIT @@ (feedback_log lvl := input :: !(feedback_log lvl))
   else
-    Proofview.tclUNIT @@ msg_warning input
+    Proofview.tclUNIT @@ feedback (Message (lvl, None, input))
 
 (** 
-  Sends a notice
+  Send a warning
+*)
+let warn (input : Pp.t) : unit Proofview.tactic =
+  message Warning input
+
+(** 
+  Send a notice
 *)
 let notice (input : Pp.t) : unit Proofview.tactic =
-  Proofview.tclUNIT @@ msg_notice input
+  message Notice input
 
 (**
   Send an info message
 *)
 let inform (input : Pp.t) : unit Proofview.tactic =
-  Proofview.tclUNIT @@ msg_info input
+  message Info input
 
 let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic =
   Proofview.tclUNIT @@ proc input
 (**
-  Throws an error
+  Throw an error
 *)
 let err (input : Pp.t) : unit Proofview.tactic =
-  (* Route the message to our own logger. Note that we need to follow
-     the feedback mechanism otherwise the message does not arrive in the log *)
   throw (ToUserError input)
 
 (**
@@ -146,6 +156,6 @@ let err (input : Pp.t) : unit Proofview.tactic =
 *)
 let get_last_warning () : Pp.t option Proofview.tactic =
   Proofview.tclUNIT @@
-    match !feedback_log with
+    match !(feedback_log Warning) with
     | [] -> None
     | hd :: tl -> Some hd

@@ -98,47 +98,38 @@ Ltac2 assert_fails_with_string (tac : unit -> 'a) (expected_string : string) :=
     end
   end.
 
-Ltac2 @ external get_last_warning : unit -> message option :=
-  "coq-waterproof" "get_last_warning_external".
-Ltac2 @ external get_feedback_log : unit -> message list :=
-  "coq-waterproof" "get_feedback_log_external".
 
-(**
-  Checks if a tactic warns with warning corresponding to a specific string
 
-  Arguments:
-    - tac, the tactic to execute
-    - expected_string, the expected warning message
 
-  Raises exceptions:
-    - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
-*)
-Ltac2 assert_warns_with_string (tac : unit -> 'a) (expected_string : string) :=
-  let length_before := List.length (get_feedback_log ()) in
-  tac ();
-  let length_after := List.length (get_feedback_log ()) in
-  if Int.equal length_after length_before then
-    fail_test (of_string ("The tactic was expected to warn but it didn't"))
-  else
-  match get_last_warning () with
-  | Some msg =>
-    if String.equal (Message.to_string msg) expected_string then
-      print_success (of_string ("The tactic warned with the expected message"))
-    else
-      fail_test (concat_list [of_string "The tactic warned, but with an unexpected error message. Expected:"; fnl (); of_string expected_string; fnl ();
-      of_string "Got:"; fnl (); of_string (to_string msg)])
-  | None => fail_test (of_string ("No warning was registered"))
+
+Ltac2 feedback_verb_infinitive (lvl : FeedbackLevel) :=
+  match lvl with
+  | Debug => "send a debug message"
+  | Info => "inform"
+  | Notice => "notice"
+  | Warning => "warn"
+  | Error => "send an error message"
   end.
 
-Ltac2 assert_warns_n (tac : unit -> 'a) (n : int) :=
-  let length_before := List.length (get_feedback_log ()) in
+Ltac2 feedback_verb_past_tense (lvl : FeedbackLevel) :=
+  match lvl with
+  | Debug => "sent a debug message"
+  | Info => "informed"
+  | Notice => "noticed"
+  | Warning => "warned"
+  | Error => "sent an error message"
+  end.
+
+Ltac2 assert_feedback_n (tac : unit -> 'a) (lvl : FeedbackLevel) (n : int) :=
+  let length_before := List.length (get_feedback_log lvl) in
   tac ();
-  let length_after := List.length (get_feedback_log ()) in
+  let length_after := List.length (get_feedback_log lvl) in
   if Int.equal (Int.sub length_after length_before) n then
-    print_success (concat_list [of_string "The tactic warned "; 
-    of_int n; of_string " times"])
+    print_success (concat_list [of_string "The tactic "; of_string (feedback_verb_past_tense lvl);
+        of_string " "; of_int n; of_string " times"])
   else
-    fail_test (concat_list [of_string "The tactic was expected to warn ";
+    fail_test (concat_list [of_string "The tactic was expected to ";
+    of_string (feedback_verb_infinitive lvl) ; of_string " ";
     of_int n; of_string " times, but it warned ";
     of_int (Int.sub length_after length_before); of_string " times."]).
 
@@ -151,23 +142,36 @@ Ltac2 assert_warns_n (tac : unit -> 'a) (n : int) :=
   Raises Fatal Exceptions:
   - TestFailedError, if the tactic produces a warning.
 *)
-Ltac2 assert_no_warning (tac : unit -> 'a) :=
-  assert_warns_n tac 0.
+Ltac2 assert_no_feedback (tac : unit -> 'a) (lvl : FeedbackLevel) :=
+  assert_feedback_n tac lvl 0.
 
-Ltac2 assert_warning_string_equals (expected_string : string) (msg : message) :=
+Ltac2 assert_feedback_string_equals (expected_string : string) (msg : message) :=
   if String.equal (Message.to_string msg) expected_string then
-    print_success (of_string ("The warning message is as expected"))
+    print_success (of_string ("The feedback message is as expected"))
   else
-    fail_test (concat_list [of_string "The warning message is not as expected. Expected:"; fnl (); of_string expected_string; fnl ();
+    fail_test (concat_list [of_string "The feedback message is not as expected. Expected:"; fnl (); of_string expected_string; fnl ();
     of_string "Got:"; fnl (); msg]).
 
-Ltac2 assert_warns_with_strings (tac : unit -> 'a)
+Ltac2 assert_feedback_with_strings (tac : unit -> 'a) (lvl : FeedbackLevel)
     (expected_strings : string list) :=
-  assert_warns_n (tac) (List.length expected_strings);
+  assert_feedback_n (tac) lvl (List.length expected_strings);
   let short_list := List.firstn (List.length expected_strings)
-    (get_feedback_log ()) in
-  List.iter (fun (x, y) => assert_warning_string_equals x y)
+    (get_feedback_log lvl) in
+  List.iter (fun (x, y) => assert_feedback_string_equals x y)
     (List.combine expected_strings (List.rev short_list)).
+
+(**
+  Checks if a tactic warns with warning corresponding to a specific string
+
+  Arguments:
+    - tac, the tactic to execute
+    - expected_string, the expected warning message
+
+  Raises exceptions:
+    - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
+*)
+Ltac2 assert_feedback_with_string (tac : unit -> 'a) (lvl : FeedbackLevel) (expected_string : string) :=
+  assert_feedback_with_strings tac lvl [expected_string].
 
 (**
   Checks if a tactic warns
@@ -178,14 +182,14 @@ Ltac2 assert_warns_with_strings (tac : unit -> 'a)
   Raises exceptions:
     - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
 *)
-Ltac2 assert_warns (tac : unit -> 'a) :=
-  let length_before := List.length (get_feedback_log ()) in
+Ltac2 assert_feedback (tac : unit -> 'a) (lvl : FeedbackLevel) :=
+  let length_before := List.length (get_feedback_log lvl) in
   tac ();
-  let length_after := List.length (get_feedback_log ()) in
+  let length_after := List.length (get_feedback_log lvl) in
   if Int.equal length_after length_before then
-    fail_test (of_string ("The tactic was expected to warn but it didn't"))
+    fail_test (concat_list [of_string "The tactic was expected to " ; of_string (feedback_verb_infinitive lvl) ; of_string " but it didn't"])
   else
-    print_success (of_string ("The tactic warned")).
+    print_success (concat_list [of_string ("The tactic "); of_string (feedback_verb_past_tense lvl)]).
 
 (**
   Checks if two lists (of arbitrary type) are equal. 

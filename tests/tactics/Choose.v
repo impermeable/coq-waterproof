@@ -22,6 +22,7 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 (** Test 0: This should choose m equal to n *)
@@ -60,11 +61,11 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     Fail Choose m := n.
 Abort.
 
-Waterproof Enable Redirect Warnings.
+Waterproof Enable Redirect Feedback.
 
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_warns_with_string (fun () => Choose n := (_))
+    assert_feedback_with_string (fun () => Choose n := (_)) Warning
 "Please come back to this line to make a definitive choice for n.
 For now you can use that 
 (n = ?n)".
@@ -72,7 +73,7 @@ Abort.
 
 (** Test 6: Choose a named evar *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_warns_with_string (fun () => Choose n := (?[m]))
+    assert_feedback_with_string (fun () => Choose n := (?[m])) Warning
 "Please come back to this line to make a definitive choice for n.
 For now you can use that 
 (n = ?m)".
@@ -80,7 +81,7 @@ Abort.
 
 (** Test 7: Choose a blank check that blank was renamed *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_warns_with_string (fun () => Choose n := (_))
+    assert_feedback_with_string (fun () => Choose n := (_)) Warning
 "Please come back to this line to make a definitive choice for n.
 For now you can use that 
 (n = ?n)".

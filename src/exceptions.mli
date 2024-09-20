@@ -19,7 +19,7 @@
 (**
   A rudimentary feedback log
 *)
-val feedback_log : Pp.t list ref
+val feedback_log : Feedback.level -> Pp.t list ref
 
 (**
   The id that we obtained when registering wp_feedback_logger as a feeder in Feedback.mli
@@ -50,7 +50,7 @@ val last_thrown_warning : Pp.t option ref
   Redirect warnings: this is useful when testing the plugin: meant to redirect Waterproof
   errors directly to the log
 *)
-val redirect_warnings : bool ref
+val redirect_feedback : bool ref
 
 (**
   Redirect errors: this is useful when testing the plugin: meant to redirect errors
@@ -97,6 +97,12 @@ val inform :
 *)
 val err :
   Pp.t -> unit Proofview.tactic
+
+(**
+  A general function for sending feedback
+*)
+val message :
+  Feedback.level -> Pp.t -> unit Proofview.tactic
 
 (**
   Check the last warning against a string

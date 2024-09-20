@@ -27,15 +27,55 @@ Require Import Waterproof.Waterproof.
 Ltac2 fnl () := Message.of_string "
 ".
 
-Ltac2 @ external warn: message -> unit := "coq-waterproof" "warn_external".
+Local Ltac2 Type feedback_lvl_ffi.
+
+Ltac2 @ external feedback_lvl_debug_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_debug".
+Ltac2 @ external feedback_lvl_info_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_info".
+Ltac2 @ external feedback_lvl_notice_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_notice".
+Ltac2 @ external feedback_lvl_warning_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_warning".
+Ltac2 @ external feedback_lvl_error_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_error".
+
+Ltac2 @ external send_message_external: feedback_lvl_ffi -> message -> unit := "coq-waterproof" "message_external".
 Ltac2 @ external throw_external: message -> unit := "coq-waterproof" "throw_external".
-Ltac2 @ external notice : message -> unit := "coq-waterproof" "notice_external".
-Ltac2 @ external inform : message -> unit := "coq-waterproof" "inform_external".
 Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-waterproof" "get_print_hypothesis_flag_external".
 Ltac2 @ external get_redirect_errors_flag : unit -> bool := "coq-waterproof" "get_redirect_errors_flag_external".
 
+Ltac2 @ external get_last_warning : unit -> message option :=
+  "coq-waterproof" "get_last_warning_external".
+Ltac2 @ external get_feedback_log_external : feedback_lvl_ffi -> message list :=
+  "coq-waterproof" "get_feedback_log_external".
+
+Ltac2 Type FeedbackLevel := [ Debug | Info | Notice | Warning | Error ].
+
+Ltac2 feedback_lvl_to_ffi (lvl : FeedbackLevel) :=
+  match lvl with
+  | Debug => feedback_lvl_debug_ffi ()
+  | Info => feedback_lvl_info_ffi ()
+  | Notice => feedback_lvl_notice_ffi ()
+  | Warning => feedback_lvl_warning_ffi ()
+  | Error => feedback_lvl_error_ffi ()
+  end.
+
 Ltac2 Type exn ::= [RedirectedToUserError (message)].
 
+Ltac2 send_message (lvl : FeedbackLevel) (msg : message) :=
+  send_message_external (feedback_lvl_to_ffi lvl) msg.
+
+Ltac2 inform (msg : message) :=
+  send_message Info msg.
+
+Ltac2 notice (msg : message) :=
+  send_message Notice msg.
+
+Ltac2 warn (msg : message) :=
+  send_message Warning msg.
+
+Ltac2 get_feedback_log (lvl : FeedbackLevel) :=
+  get_feedback_log_external (feedback_lvl_to_ffi lvl).
+
+(* Note, there could arise a use case for sending an error on the feedback channel without
+  actually raising an error, but it could also be confusing. For now, errors are therefore
+  handled through a different channel *)
 Ltac2 throw (msg : message) :=
   if (get_redirect_errors_flag ()) then
     Control.zero (RedirectedToUserError msg)

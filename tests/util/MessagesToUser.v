@@ -23,12 +23,12 @@ Require Import Waterproof.Util.Assertions.
 
 (* Waterproof Enable Redirect Warnings. *)
 
-Waterproof Enable Redirect Warnings.
+Waterproof Enable Redirect Feedback.
 Waterproof Enable Redirect Errors.
 
 Goal True.
 Proof.
-  assert_warns_with_string (fun () => warn (Message.of_string "Send a warning.")) "Send a warning.".
+  assert_feedback_with_string (fun () => warn (Message.of_string "Send a warning.")) Warning "Send a warning.".
 Abort.
 
 Goal True.

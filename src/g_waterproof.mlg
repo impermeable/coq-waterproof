@@ -89,16 +89,16 @@ VERNAC COMMAND EXTEND PrintVersionSideEff CLASSIFIED AS SIDEFF
 END
 
 VERNAC COMMAND EXTEND RedirectWarningsEnableSideEff CLASSIFIED AS SIDEFF
-  | [ "Waterproof" "Enable" "Redirect" "Warnings" ] ->
+  | [ "Waterproof" "Enable" "Redirect" "Feedback" ] ->
     {
-      redirect_warnings := true
+      redirect_feedback := true
     }
 END
 
 VERNAC COMMAND EXTEND RedirectWarningsDisableSideEff CLASSIFIED AS SIDEFF
-  | [ "Waterproof" "Disable" "Redirect" "Warnings" ] ->
+  | [ "Waterproof" "Disable" "Redirect" "Feedback" ] ->
     {
-      redirect_warnings := false
+      redirect_feedback := false
     }
 END
 
