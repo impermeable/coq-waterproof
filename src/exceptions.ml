@@ -120,7 +120,7 @@ let throw ?(info: Exninfo.info = Exninfo.null) (exn: wexn): 'a =
   let fatal = Exninfo.add info fatal_flag () in
   CErrors.user_err ?info:(Some fatal) (pr_wexn exn)
 
-(** 
+(**
   Send a message
 *)
 let message (lvl : Feedback.level) (input : Pp.t) : unit Proofview.tactic =
@@ -129,13 +129,13 @@ let message (lvl : Feedback.level) (input : Pp.t) : unit Proofview.tactic =
   else
     Proofview.tclUNIT @@ feedback (Message (lvl, None, input))
 
-(** 
+(**
   Send a warning
 *)
 let warn (input : Pp.t) : unit Proofview.tactic =
   message Warning input
 
-(** 
+(**
   Send a notice
 *)
 let notice (input : Pp.t) : unit Proofview.tactic =
@@ -147,8 +147,6 @@ let notice (input : Pp.t) : unit Proofview.tactic =
 let inform (input : Pp.t) : unit Proofview.tactic =
   message Info input
 
-let warn' (input : Pp.t) ?(proc = Feedback.msg_warning) : unit Proofview.tactic =
-  Proofview.tclUNIT @@ proc input
 (**
   Throw an error
 *)
