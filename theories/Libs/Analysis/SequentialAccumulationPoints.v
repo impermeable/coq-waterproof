@@ -62,11 +62,11 @@ Proof.
     Take k : ℕ.
     It suffices to show that (there exists k0 : nat, a k = a k0).
     Choose k0 := k.
-    We conclude that (a k = a k0).
+    We conclude that (a k0 = a k0).
   }
-  Take n0 : ℕ.
-  By (v) it holds that (a(n n0) ≤ M).
-  It follows that (a(n n0) ≤ M).
+  Take k : ℕ.
+  By (v) it holds that (a(n k) ≤ M).
+  It follows that (a(n k) ≤ M).
 Qed.
 
 Close Scope R_scope.

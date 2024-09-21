@@ -107,7 +107,7 @@ Qed.
 
 Lemma exists_good_subseq :
   ∀ (a : ℕ → ℝ) (P : ℕ → ℝ → Prop),
-    (∀ (m : ℕ) (N : ℕ), ∃ k : ℕ, (N ≤ k)%nat ∧ (P m (a k))) ⇒
+    (∀ (m : ℕ) (N₀ : ℕ), ∃ k : ℕ, (N₀ ≤ k)%nat ∧ (P m (a k))) ⇒
       ∃ n : ℕ → ℕ, is_index_seq n ∧ ∀ k : ℕ, P k (a (n k)).
 Proof.
     Take a : (ℕ → ℝ).
@@ -132,6 +132,7 @@ Proof.
         (for all m M : ℕ, P m (a (g m M))). (*TODO: fix*)
       apply subseq_sat_rel.
       Take m : ℕ.
+      We need to show that (for all M : ℕ, P(m, a (g(m, M)))).
       Take M : ℕ.
       By (i) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (ii).
       Because (ii) both (M ≤ g m M)%nat and (P m (a (g m M))) hold.
@@ -151,8 +152,6 @@ Proof.
     Assume that (∀ k : ℕ, (g k ≤ g (S k))%nat).
     Take k : ℕ. 
     induction l as [|l IH_l].
-    Check k.
-
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
     Assume that (k ≤ 0)%nat.
     It holds that (k = 0)%nat.
