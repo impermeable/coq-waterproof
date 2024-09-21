@@ -92,10 +92,6 @@ The variable has been renamed."])
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end.
 
-Ltac2 Eval String.equal ("Please come back to this line to make a definitive choice for n.
-For now you can use that n = ?m") "Please come back to this line to make a definitive choice for n.
-For now you can use that n = ?m".
-
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in
   with freshly named evars, so that the user can refer to them later.

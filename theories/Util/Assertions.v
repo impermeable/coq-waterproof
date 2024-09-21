@@ -130,7 +130,8 @@ Ltac2 assert_feedback_n (tac : unit -> 'a) (lvl : FeedbackLevel) (n : int) :=
   else
     fail_test (concat_list [of_string "The tactic was expected to ";
     of_string (feedback_verb_infinitive lvl) ; of_string " ";
-    of_int n; of_string " times, but it warned ";
+    of_int n; of_string " times, but it ";
+    of_string (feedback_verb_past_tense lvl); of_string " ";
     of_int (Int.sub length_after length_before); of_string " times."]).
 
 (**

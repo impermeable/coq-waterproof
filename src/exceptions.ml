@@ -43,13 +43,17 @@ let feedback_log (lvl : level) : Pp.t list ref =
 *)
 let wp_feedback_logger_id = Summary.ref ~name: "wp_feedback_logger_id" None
 
+let info_counter = Summary.ref ~name:"info_counter" 0
+
 (**
   A custom feedback logger for waterproof
 *)
 let wp_feedback_logger (fb : feedback) : unit =
   match fb.contents with
   | Message (lvl, _, msg) ->
-    feedback_log lvl := msg :: !(feedback_log lvl)
+    (feedback_log lvl :=
+      (msg) :: !(feedback_log lvl);
+    info_counter := !info_counter + 1)
   | _ -> ()
 
 (**
