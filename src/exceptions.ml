@@ -17,8 +17,6 @@
 (******************************************************************************)
 
 open Pp
-open Proofview
-open Proofview.Notations
 open Feedback
 
 let wp_debug_log = Summary.ref ~name:"wp_debug_log" []
