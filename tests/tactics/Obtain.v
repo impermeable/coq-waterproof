@@ -70,7 +70,7 @@ Proof.
 Abort.
 
 
-(** Test 5: whether original hypothesis is destructed, so if the goal depends on the 
+(** Test 5: whether original hypothesis is destructed, so if the goal depends on the
       specific term of the sigma type, the goal changes as well.
       As one would expect when using 'destruct .. as [.. ..]'. *)
 Goal forall p : {n : nat | (n + 1 = n)%nat}, (proj1_sig p = 0)%nat.
@@ -111,10 +111,24 @@ Proof.
 Abort.
 
 
-(** Test 9: throws error if variable name is 'Qed' 
+(** Test 9: throws error if variable name is 'Qed'
     (quick fix for Waterproof editor / Coq lsp)  *)
 Goal (exists n : nat, n + 1 = n)%nat -> False.
 Proof.
   intro i.
   Fail Obtain such Qed.
+Abort.
+
+(** Test 10: obtain multiple variables *)
+Goal (exists n m : nat, n + 1 = m)%nat -> True.
+Proof.
+  intro H.
+  Obtain n, m according to (H).
+Abort.
+
+(** Test 11: obtain multiple variables *)
+Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
+Proof.
+  intro H.
+  Obtain such n, m, k, l.
 Abort.
