@@ -215,3 +215,43 @@ Goal (forall n : nat, n = 0)%nat -> True.
   assert_fails_with_string (fun () => Obtain n according to (H))
 "Can only obtain variables from 'there exists...' statements.".
 Abort.
+
+(** TODO: we should actually test for warnings below,
+    once the branch on testing warnings and errors is merged. *)
+
+(** Test 12 : obtain but with a wrong variable name *)
+Goal (exists n : nat, n = 0)%nat -> True.
+Proof.
+  intro H.
+  Obtain such an m.
+Abort.
+
+(** Test 13: obtain with multiple wrong variable names *)
+Goal (exists n m: nat, n = m)%nat -> True.
+Proof.
+  intro H.
+  Obtain such k, l.
+Abort.
+
+(** Test 14 : obtain but with a wrong variabl ename, later
+  in the string *)
+Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
+Proof.
+  intro H.
+  Obtain such an n, k.
+Abort.
+
+(** Test 15 : obtain when the variable has been visibly renamed *)
+Goal (exists n : nat, n = 0)%nat -> True.
+Proof.
+  intro H.
+  set (n := 3).
+  Obtain n0 according to (H).
+Abort.
+
+(** Test 16: obtain when wrongly using a previous variable *)
+Goal (exists n m : nat, n = m)%nat -> True.
+Proof.
+  intro H.
+  Obtain such m, m0.
+Abort.
