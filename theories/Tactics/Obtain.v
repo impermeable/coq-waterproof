@@ -43,6 +43,30 @@ Local Ltac2 try_out_label (label : ident) :=
   | Val _ => clear $label
   end.
 
+Local Ltac2 check_binder_name (expr : constr)
+    (candidate_name : ident) :=
+  match Constr.Unsafe.kind expr with
+  | Constr.Unsafe.Lambda b _ =>
+    match Constr.Binder.name b with
+    | None => () (* TODO: is it true that we want to do nothing here?,
+                    i.e. in the case of anonymous binders. *)
+    | Some binder_name =>
+      (* If a variable already exists, the binder gets renamed visually, but
+      the binder name internally remains the same.
+      This gives confusing behavior. To go around this,
+      we try to guess what the binder got renamed into by introducing a fresh
+      ident based on the binder name. *)
+      let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in
+      if Bool.neg (Ident.equal fresh_binder_name candidate_name) then
+        warn (concat_list [of_string "A variable name "; of_ident fresh_binder_name;
+          of_string " was expected, but a variable name "; of_ident candidate_name;
+          of_string " was given.
+The variable has been renamed."])
+      else ()
+    end
+  | _ => ()
+  end.
+
 (** Destructs the statement with label [og_label] into the variable named [var_label]
   and the corresponding property. Copies statement [og_label] such that the statement
   is preserved despite its destruction.
@@ -61,8 +85,6 @@ Local Ltac2 copy_and_destruct (og_label : ident) (var_label : ident) :=
   destruct $og_term as [$var_label $og_label];
   Std.rename [(og_label, prop_label); (prop_label, og_label)];
   prop_label.
-
-
 
 (** *
   Attempts to obtain a variable from a user-specified statement.
@@ -86,12 +108,14 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   let h := Control.hyp hyp in
   let type_h := get_type h in
   lazy_match! type_h with
-  | ex  ?pred => copy_and_destruct hyp var
-  | sig ?pred => copy_and_destruct hyp var
+  | ex  ?pred =>
+    check_binder_name pred var
+  | sig ?pred =>
+    check_binder_name pred var
   | _ => throw (concat_list
-    [of_string "Statement "; of_constr h; of_string " is not of the form 'there exists ...'."]);
-    @__doesnt_reach_here__
-  end.
+    [of_string "Statement "; of_constr h; of_string " is not of the form 'there exists ...'."])
+  end;
+  copy_and_destruct hyp var.
 
 (* Quick fix for Wateproof editor / Coq lsp, where
   [Obtain such an
