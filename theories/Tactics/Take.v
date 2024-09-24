@@ -21,16 +21,17 @@ Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
+Require Import Util.Binders.
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
-Local Ltac2 too_many_of_type_message (t : constr) := 
+Local Ltac2 too_many_of_type_message (t : constr) :=
   concat_list [of_string "Tried to introduce too many variables of type ";
     of_constr t; of_string "."].
 
-Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) := 
+Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
   concat_list [of_string "Expected variable of type "; of_constr e;
     of_string " instead of "; of_constr t; of_string "."].
 
@@ -48,27 +49,17 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
           of a variable of type [type], including coercions of [type].
 *)
 Local Ltac2 intro_ident (id : ident) (type : constr) :=
-  match Constr.Unsafe.kind (Control.goal ()) with
-  | Constr.Unsafe.Prod b a => 
+  let current_goal := Control.goal () in
+  match Constr.Unsafe.kind current_goal with
+  | Constr.Unsafe.Prod b a =>
       let ct := get_coerced_type type in
       (* Check whether we need a variable of type [type], including coercions of [type]. *)
       match check_constr_equal (Constr.Binder.type b) ct with
         | true  => ()
         | false => throw (too_many_of_type_message type)
       end;
-      match Constr.Binder.name b with
-      | None => () (* TODO: check if we really want to do nothing here *)
-      | Some binder_name =>
-          (* If a variable already exists, the binder gets renamed visually, but 
-            the binder name internally remains the same.
-            This gives confusing behavior. To go around this,
-            we try to guess what the binder got renamed into by introducing a fresh
-            ident based on the binder name. *)
-          let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in
-          if Ident.equal id fresh_binder_name then () else
-            warn (concat_list [of_string "Expected variable name "; of_ident fresh_binder_name;
-              of_string " instead of "; of_ident id; of_string "."])
-      end;
+      (* Check whether the expected binder name was provided. *)
+      check_binder_name current_goal id;
       (* Finally introduce the variable *)
       intro $id
     | _ => throw (too_many_of_type_message type)
@@ -83,14 +74,14 @@ Local Ltac2 intro_ident (id : ident) (type : constr) :=
 
   Does:
     - Introduces the variables in [pair].
-    
+
   Raises fatal exceptions:
     - If the current goal does not require the introduction of a variable of type [type], including coercions of [type].
 *)
 Local Ltac2 intro_per_type (pair : ident list * constr) :=
-  let (ids, type) := pair in 
+  let (ids, type) := pair in
   lazy_match! goal with
-    | [ |- forall _ : ?u, _] => 
+    | [ |- forall _ : ?u, _] =>
       (* Check whether [u] is not a proposition. *)
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
@@ -110,9 +101,9 @@ Local Ltac2 intro_per_type (pair : ident list * constr) :=
 (**
   Checks whether variables need to be introduced, attempts to introduce a list of variables of certain types.
 *)
-Local Ltac2 take (x : (ident list * constr) list) := 
+Local Ltac2 take (x : (ident list * constr) list) :=
   lazy_match! goal with
-    | [ |- forall _ : ?u, _] => 
+    | [ |- forall _ : ?u, _] =>
       (* Check whether [u] is not a proposition. *)
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
@@ -122,6 +113,6 @@ Local Ltac2 take (x : (ident list * constr) list) :=
     | [ |- _ ] => throw (of_string "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→).")
   end.
 
-Ltac2 Notation "Take" x(list1(seq(list1(ident, ","), ":", constr), "and")) := 
+Ltac2 Notation "Take" x(list1(seq(list1(ident, ","), ":", constr), "and")) :=
   panic_if_goal_wrapped ();
   take x.

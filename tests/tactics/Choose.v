@@ -66,29 +66,29 @@ Waterproof Enable Redirect Feedback.
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_)) Warning
-"Please come back to this line to make a definitive choice for n.
-For now you can use that 
-(n = ?n)".
+(String.concat "" ["Please come back to this line to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n)."]).
 Abort.
 
 (** Test 6: Choose a named evar *)
 Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (?[m])) Warning
-"Please come back to this line to make a definitive choice for n.
-For now you can use that 
-(n = ?m)".
+(String.concat "" ["Please come back to this line to make a definitive choice for n.
+For now you can use that "; "
+(n = ?m)."]).
 Abort.
 
 (** Test 7: Choose a blank check that blank was renamed *)
 Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_)) Warning
-"Please come back to this line to make a definitive choice for n.
-For now you can use that 
-(n = ?n)".
+(String.concat "" ["Please come back to this line to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n)."]).
     assert (?n = 0).
 Abort.
 
-(** Test 8: Choose a more complicated blank and check that renaming took place, 
+(** Test 8: Choose a more complicated blank and check that renaming took place,
     by reformulating the goal in terms of the new named evars. *)
 Goal exists n : nat, n + 1 = n + 1.
     Choose n := (_ + _ + _).

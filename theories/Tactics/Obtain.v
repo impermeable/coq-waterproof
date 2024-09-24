@@ -24,6 +24,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
+Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 
@@ -43,29 +44,7 @@ Local Ltac2 try_out_label (label : ident) :=
   | Val _ => clear $label
   end.
 
-Local Ltac2 check_binder_name (expr : constr)
-    (candidate_name : ident) :=
-  match Constr.Unsafe.kind expr with
-  | Constr.Unsafe.Lambda b _ =>
-    match Constr.Binder.name b with
-    | None => () (* TODO: is it true that we want to do nothing here?,
-                    i.e. in the case of anonymous binders. *)
-    | Some binder_name =>
-      (* If a variable already exists, the binder gets renamed visually, but
-      the binder name internally remains the same.
-      This gives confusing behavior. To go around this,
-      we try to guess what the binder got renamed into by introducing a fresh
-      ident based on the binder name. *)
-      let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in
-      if Bool.neg (Ident.equal fresh_binder_name candidate_name) then
-        warn (concat_list [of_string "A variable name "; of_ident fresh_binder_name;
-          of_string " was expected, but a variable name "; of_ident candidate_name;
-          of_string " was given.
-The variable has been renamed."])
-      else ()
-    end
-  | _ => ()
-  end.
+
 
 (** Destructs the statement with label [og_label] into the variable named [var_label]
   and the corresponding property. Copies statement [og_label] such that the statement
