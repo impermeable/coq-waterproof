@@ -16,18 +16,43 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**
+* Waterproof test framework
+
+This file contains the Waterproof test framework.
+
+To use the framework, import it with
+[Require Import Waterproof.Util.Assertions].
+
+Note that for writing tests for the output of Waterproof tactics,
+it can be useful to first write on the top of the file:
+[
+Waterproof Enable Logging.
+]
+After writing all the tests, this line should be replaced by
+[
+Waterproof Enable Redirect Feedback.
+]
+otherwise feedback shows up during compilation of the library.
+*)
+
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Int.
 Require Import Ltac2.Message.
+Require Import Waterproof.Waterproof.
+Require Import Waterproof.Util.MessagesToUser.
 
 Require Import Util.Init.
+
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 (**   Introduce global test verbosity. *)
 Ltac2 mutable test_verbosity () := 0.
 
 Ltac2 Type exn ::= [ TestFailedError(message) ].
 
-Ltac2 fail_test (msg:message) := 
+Ltac2 fail_test (msg:message) :=
   Control.zero (TestFailedError msg).
 
 Definition type_of_test_aux {T : Type} (x : T) := T.
@@ -38,8 +63,8 @@ Definition type_of_test_aux {T : Type} (x : T) := T.
   Arguments:
     - [msg : message] The message to print on success.
 *)
-Ltac2 print_success (msg : message) := 
-  match (ge (test_verbosity ()) 1) with 
+Ltac2 print_success (msg : message) :=
+  match (ge (test_verbosity ()) 1) with
     |  false => ()
     |  _ => print msg
   end.
@@ -49,21 +74,178 @@ Ltac2 print_success (msg : message) :=
 
   Arguments:
     - f, function without arguments.
-    
+
   Raises Exceptions:
     - TestFailedError, if the execution of "f" does **not** raise a catchable exception.
 *)
 Ltac2 assert_raises_error f :=
   match Control.case f with
     | Val _ => fail_test (of_string "Should raise an error")
-    | Err exn => print_success (concat 
-      (of_string "Test passed, got error:") 
+    | Err exn => print_success (concat
+      (of_string "Test passed, got error:")
       (of_exn exn))
   end.
 
 (**
-  Checks if two lists (of arbitrary type) are equal. 
-  
+  Checks if a tactic fails with error message corresponding to a specific string
+
+  Arguments:
+    - tac, the tactic to execute
+    - expected_string, the expected error message
+
+  Raises Exceptions:
+    - TestFailedError, if the tactic does not fail or if it fails with the wrong error message
+*)
+Ltac2 assert_fails_with_string (tac : unit -> 'a) (expected_string : string) :=
+  match Control.case tac with
+  | Val _ => fail_test (of_string ("The tactic was expected to fail but it didn't"))
+  | Err exn =>
+    let inner_msg_equal := fun msg =>
+      String.equal (Message.to_string msg) expected_string in
+    let inner_msg_test := fun msg =>
+      if inner_msg_equal msg then
+        print_success (of_string ("The tactic failed with the expected error message"))
+      else
+        fail_test (concat_list [of_string "The tactic failed, but with an unexpected error message. Expected:"; fnl ();
+        of_string expected_string; fnl (); of_string "Got:"; fnl (); msg]) in
+    match exn with
+    | RedirectedToUserError msg => inner_msg_test msg
+    | TestFailedError msg => inner_msg_test msg
+    (** TODO: add more possible errors here *)
+    | e =>
+      let msg := Message.of_exn e in
+      inner_msg_test msg
+    end
+  end.
+
+Ltac2 feedback_verb_infinitive (lvl : FeedbackLevel) :=
+  match lvl with
+  | Debug => "send a debug message"
+  | Info => "inform"
+  | Notice => "notice"
+  | Warning => "warn"
+  | Error => "send an error message"
+  end.
+
+Ltac2 feedback_verb_past_tense (lvl : FeedbackLevel) :=
+  match lvl with
+  | Debug => "sent a debug message"
+  | Info => "informed"
+  | Notice => "noticed"
+  | Warning => "warned"
+  | Error => "sent an error message"
+  end.
+
+(**
+  Asserts that [n] feedback messages are produced at feedback level [lvl]
+  by executing the tactic [tac]
+
+  Arguments:
+  - tac, the tactic to execute
+  - lvl, the feedback level
+  - n, the number of feedback messages expected
+
+  Raises Fatal Exceptions:
+  - TestFailedError, if the tactic produces a different number of feedback messages than expected.
+*)
+Ltac2 assert_feedback_n (tac : unit -> 'a) (lvl : FeedbackLevel) (n : int) :=
+  let length_before := List.length (get_feedback_log lvl) in
+  tac ();
+  let length_after := List.length (get_feedback_log lvl) in
+  if Int.equal (Int.sub length_after length_before) n then
+    print_success (concat_list [of_string "The tactic "; of_string (feedback_verb_past_tense lvl);
+        of_string " "; of_int n; of_string " times"])
+  else
+    fail_test (concat_list [of_string "The tactic was expected to ";
+    of_string (feedback_verb_infinitive lvl) ; of_string " ";
+    of_int n; of_string " times, but it ";
+    of_string (feedback_verb_past_tense lvl); of_string " ";
+    of_int (Int.sub length_after length_before); of_string " times."]).
+
+(**
+  Assert that the execution of the tactic does not produce a warning
+
+  Arguments:
+    - tac, the tactic to execute
+
+  Raises Fatal Exceptions:
+    - TestFailedError, if the tactic produces a warning.
+*)
+Ltac2 assert_no_feedback (tac : unit -> 'a) (lvl : FeedbackLevel) :=
+  assert_feedback_n tac lvl 0.
+
+(**
+  Asserts that a feedback message [msg] after converting to a string
+  is as expected.
+
+  Arguments:
+    - expected_string, the expected feedback message
+    - msg, the feedback message
+
+  Raises Fatal Exceptions:
+    - TestFailedError, if the feedback message is not as expected.
+*)
+Ltac2 assert_feedback_string_equals (expected_string : string) (msg : message) :=
+  if String.equal (Message.to_string msg) expected_string then
+    print_success (of_string ("The feedback message is as expected"))
+  else
+    fail_test (concat_list [of_string "The feedback message is not as expected. Expected:"; fnl (); of_string expected_string; fnl ();
+    of_string "Got:"; fnl (); msg]).
+
+(**
+  Asserts that the feedback messages produced by the tactic at a
+  given feedback level are as expected.
+
+  Arguments:
+    - tac, the tactic to execute
+    - lvl, the feedback level
+    - expected_strings, the expected feedback messages
+
+  Raises Fatal Exceptions:
+    - TestFailedError, if the feedback messages are not as expected.
+*)
+Ltac2 assert_feedback_with_strings (tac : unit -> 'a) (lvl : FeedbackLevel)
+    (expected_strings : string list) :=
+  assert_feedback_n (tac) lvl (List.length expected_strings);
+  let short_list := List.firstn (List.length expected_strings)
+    (get_feedback_log lvl) in
+  List.iter (fun (x, y) => assert_feedback_string_equals x y)
+    (List.combine expected_strings (List.rev short_list)).
+
+(**
+  Checks if a tactic warns with warning corresponding to a specific string
+
+  Arguments:
+    - tac, the tactic to execute
+    - expected_string, the expected warning message
+
+  Raises exceptions:
+    - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
+*)
+Ltac2 assert_feedback_with_string (tac : unit -> 'a) (lvl : FeedbackLevel) (expected_string : string) :=
+  assert_feedback_with_strings tac lvl [expected_string].
+
+(**
+  Checks if a tactic warns
+
+  Arguments:
+    - tac, the tactic to execute
+
+  Raises exceptions:
+    - TestFailedError, if the tactic does not warn or if it warns with the wrong warning message
+*)
+Ltac2 assert_feedback (tac : unit -> 'a) (lvl : FeedbackLevel) :=
+  let length_before := List.length (get_feedback_log lvl) in
+  tac ();
+  let length_after := List.length (get_feedback_log lvl) in
+  if Int.equal length_after length_before then
+    fail_test (concat_list [of_string "The tactic was expected to " ; of_string (feedback_verb_infinitive lvl) ; of_string " but it didn't"])
+  else
+    print_success (concat_list [of_string ("The tactic "); of_string (feedback_verb_past_tense lvl)]).
+
+(**
+  Checks if two lists (of arbitrary type) are equal.
+
   Raises an error if they have different lengths, or that there exists an index such that their value at that index differs.
 
   Arguments:
@@ -73,7 +255,7 @@ Ltac2 assert_raises_error f :=
     - TestFailedError, if x and y have a different length.
     - TestFailedError, if there exists an i such that x[i] ≠ y[i].
 *)
-Ltac2 rec assert_list_equal (f : 'a -> 'a -> bool) (of_a : 'a -> message) (x:'a list) (y: 'a list) :=    
+Ltac2 rec assert_list_equal (f : 'a -> 'a -> bool) (of_a : 'a -> message) (x:'a list) (y: 'a list) :=
   match x with
     | x_head::x_tail =>
       match y with
@@ -81,15 +263,15 @@ Ltac2 rec assert_list_equal (f : 'a -> 'a -> bool) (of_a : 'a -> message) (x:'a 
           match (f x_head y_head) with
             | true => assert_list_equal f of_a x_tail y_tail
             | false =>
-              fail_test 
-                (concat 
-                  (of_string "Unequal elements:") 
+              fail_test
+                (concat
+                  (of_string "Unequal elements:")
                   (concat (of_a x_head) (of_a y_head))
                 )
           end
         | [] => fail_test (of_string "First list has more elements")
       end
-    | [] => 
+    | [] =>
       match y with
         | [] => print_success (of_string "Test passed: lists indeed equal")
         | y_head::y_tai => fail_test (of_string "Second list has more elements")
@@ -133,15 +315,15 @@ Ltac2 assert_hyp_has_type (h: ident) (t: constr) :=
         (concat (of_string "Hypothesis '") (of_ident h))
         (concat (of_string "' indeed has type: ") (of_constr t))
       )
-  
+
     | false =>
       fail_test (concat
         (concat
-          (of_string "Hypothesis has wrong type. Expected type: ") 
+          (of_string "Hypothesis has wrong type. Expected type: ")
           (of_constr t)
         )
         (concat
-          (of_string ", actual type: ") 
+          (of_string ", actual type: ")
           (of_constr (eval cbv in (type_of_test_aux $h_val)))
         )
       )
@@ -196,13 +378,13 @@ Ltac2 assert_is_false (b:bool) :=
   end.
 
 Local Ltac2 rec string_equal_rec (idx) (s1:string) (s2:string) :=
-  (* If the strings are of unequal length, 
+  (* If the strings are of unequal length,
       then they are never equal*)
   let len1 := (String.length s1) in
   let len2 := (String.length s2) in
   match Int.equal len1 len2 with
     | false => false
-    | true => 
+    | true =>
       (* If we are past the last index of the strings,
       then stop and return "true".
       Otherwise, compare the integer representation
@@ -266,7 +448,7 @@ Ltac2 assert_goal_is (target:constr) :=
 
 (**
   Checks if the type of a term corresponds to an expected type.
-    
+
   Arguments:
     - [term : constr] the term to determine the type of
     - [expected_type : constr] the expected type
@@ -278,7 +460,7 @@ Ltac2 assert_type_equal (term:constr) (expected_type:constr) :=
   match (Constr.equal (eval cbv in (type_of $term)) (eval cbv in $expected_type)) with
     | true => print_success (of_string "Type is as expected")
     | false =>
-      fail_test (concat 
+      fail_test (concat
         (concat
           (of_string "Type not as expected, got: ")
           (of_constr (eval cbv in (type_of $term)))

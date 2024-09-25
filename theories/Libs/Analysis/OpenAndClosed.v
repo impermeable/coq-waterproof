@@ -118,7 +118,7 @@ Qed.
 Lemma one_in_complement_interval_closed_zero_open_one : (1 : ℝ \ [0,1)).
 Proof.
   We need to show that (~ ((0 <= 1) /\ (1 < 1))).
-  We conclude that (~ (& 0 <= 1 < 1)).
+  We conclude that (¬ 0 <= 1 < 1).
 Qed.
 
 #[export] Hint Resolve one_in_complement_interval_closed_zero_open_one : wp_reals.

@@ -22,6 +22,7 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 (** Test 0: This should work fine *)
@@ -29,9 +30,12 @@ Goal forall n : nat, n <= 2*n.
     Take n : nat.
 Abort.
 
-(** Test 1: Also this should work fine *)
+Waterproof Enable Redirect Feedback.
+
+(** Test 1: Also this should work fine, but with a warning *)
 Goal forall n : nat, n <= 2*n.
-    Take x : nat.
+    assert_feedback_with_string (fun () => Take x : nat) Warning
+"Expected variable name n instead of x.".
 Abort.
 
 (** Test 2: This should raise an error, because the type does not match*)
@@ -78,7 +82,14 @@ Abort.
 (** Test 6: Two sets of multiple variables of the same type,
     but with different names *)
 Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    Take a, b, c : nat and d, e: bool.
+    assert_feedback_with_strings
+    (fun () => Take a, b, c : nat and d, e: bool) Warning
+[
+"Expected variable name n instead of a.";
+"Expected variable name m instead of b.";
+"Expected variable name k instead of c.";
+"Expected variable name b1 instead of d.";
+"Expected variable name b2 instead of e."].
 Abort.
 
 (** Test 7: not allowed to introduce so many bools *)
@@ -100,7 +111,8 @@ Abort.
     *)
 Goal forall (a b c d e f g: nat) (b1 b2: bool), 
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
-    assert_raises_error (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool).
+    assert_fails_with_string (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool)
+"Internal (err:(a is already used.))".
 Abort.
 
 (** Test 10: Two sets of multiple variables of the same type.
@@ -137,7 +149,8 @@ Abort.
 
 (** Test 14: Warn on using a different variable name *)
 Goal forall n : nat, n = n.
-  Take m : nat. (* This should produce a warning *)
+  assert_feedback_with_string (fun () => Take m : nat) Warning
+"Expected variable name n instead of m.".
 Abort.
 
 (** Test 15: Warn on using different variable name, if variable has
@@ -145,7 +158,8 @@ Abort.
 Goal forall n : nat, n = n.
 Proof.
   set (n := 1).
-  Take m : nat. (* This should produce a warning *)
+  assert_feedback_with_string (fun () => Take m : nat) Warning
+"Expected variable name n0 instead of m.".
 Abort.
 
 (** Test 16: Do not warn if variable has visually been renamed (although 
@@ -159,8 +173,9 @@ Abort.
 (** Test 17: Warn on using different variable name *)
 Goal forall m n : nat, n = m.
 Proof.
-  Take n : nat. (* This should produce a warning *)
-  Take n0 : nat. (* This should produce no warning *)
+  assert_feedback_with_string (fun () => Take n : nat) Warning
+"Expected variable name m instead of n.".
+  assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
 (** Test 18: Warn on using different variable name *)
@@ -168,8 +183,8 @@ Goal forall m n : nat, n = m.
 Proof.
   set (m := 3).
   set (n := 4).
-  Take m0 : nat. (* This should produce no warning *)
-  Take n0 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take m0 : nat) Warning.
+  assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
 (** Test 19: If a statement reuses a same binder name, and 
@@ -178,27 +193,30 @@ Abort.
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
   Take n : nat.
-  Take n0 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
 (** Test 20: Fail when twice the same variable is introduced *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
-  Fail Take n, n : nat. (* This should also produce a warning *)
+  assert_feedback_with_string (fun () => assert_fails_with_string (fun () => Take n, n : nat)
+"Internal (err:(n is already used.))") (*This should produce an error ... *)
+Warning
+"Expected variable name n0 instead of n.". (* ... and also produce a warning *)
 Abort.
 
 (** Test 21: It should be possible to provide fresh variable names
     (although in the expected order) *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
-  Take n, n0 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n, n0 : nat) Warning.
 Abort.
 
 (** Test 22: It should be possible to provide fresh variable names
     (although in the expected order) case with 3 variables *)
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
-  Take n, n0, n1 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n, n0, n1 : nat) Warning.
 Abort.
 
 (** Test 23: It should  be possible to provide fresh variable names
@@ -207,5 +225,5 @@ Abort.
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
   (set (n := 1)).
-  Take n0, n1, n2 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n0, n1, n2 : nat) Warning.
 Abort.

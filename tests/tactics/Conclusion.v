@@ -26,6 +26,7 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -55,15 +56,17 @@ Lemma test_we_conclude_2: True.
 Proof.
     Fail We conclude that False.
 Abort.
-
+Waterproof Enable Redirect Feedback.
+Waterproof Enable Redirect Errors.
 (** * Test 3
     Warning case: provided goal is equivalent, 
         but uses an alternative notation.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
-    print (of_string "Should raise warning:").
-    We conclude that (1+1 = 2).
+    assert_feedback_with_string (fun () => We conclude that (1+1 = 2)) Warning
+"The statement you provided does not exactly correspond to what you need to show. 
+This can make your proof less readable.".
 Qed.
 
 (** * Test 4
@@ -121,8 +124,9 @@ Qed.
 *)
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
-    print (of_string "Should raise warning:").
-    We conclude that (2 = 2).
+    assert_feedback_with_string (fun () => We conclude that (2 = 2)) Warning
+"The statement you provided does not exactly correspond to what you need to show. 
+This can make your proof less readable.".
 Qed.
 
 (** * Test 5
@@ -135,7 +139,9 @@ Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
     assert (useless: 1 = 1).
     reflexivity.
-    Fail By test_by_we_conclude_1 we conclude that (1 < 2).
+    assert_fails_with_string 
+    (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
+"Could not verify this follows from test_by_we_conclude_1.".
 Abort.
 
 (** Additional tests 'By ...' clause.  *)

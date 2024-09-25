@@ -28,7 +28,6 @@ Require Import Util.MessagesToUser.
 
 Require Import Waterprove.
 
-
 Local Ltac2 goal_impl_msg (premise: constr) :=
   concat_list [of_string "The goal is to show an implication (⇒).
 Assume the premise "; of_constr premise; of_string ", use

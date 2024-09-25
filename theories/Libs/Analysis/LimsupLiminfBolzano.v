@@ -57,35 +57,38 @@ Take x : ℝ.
 Qed.
 
 Lemma exists_almost_lim_sup : 
-  ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))) (m : ℕ) (N : ℕ),
-    ∃ k : ℕ, (N ≤ k)%nat ∧ a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1).
+  ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))) (m : ℕ) (N₀ : ℕ),
+    ∃ k : ℕ, (N₀ ≤ k)%nat ∧ a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1).
 Proof.
+    To show : (
+      ∀ (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))) (m : ℕ) (N₀ : ℕ),
+    ∃ k : ℕ, (N₀ ≤ k)%nat ∧ a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1)).
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
     Assume that (has_lb (sequence_ub a (i))) (ii).
-    Take m, Nn : ℕ.
+    Take m, N₀: ℕ.
     By exists_almost_lim_sup_aux it holds that 
-      (∃ n : ℕ, (n ≥ Nn)%nat ∧ a n > sequence_ub a (i) Nn - 1 / (INR(m) + 1)).
+      (∃ n : ℕ, (n ≥ N₀)%nat ∧ a n > sequence_ub a (i) N₀ - 1 / (INR(m) + 1)).
     Obtain such an n. It holds that
-      ((n ≥ Nn)%nat ∧ a n > sequence_ub a (i) Nn - 1 / (INR(m) + 1)) (iii).
+      ((n ≥ N₀)%nat ∧ a n > sequence_ub a (i) N₀ - 1 / (INR(m) + 1)) (iii).
     Choose k := n.
     We show both statements.
-    - We need to show that (Nn ≤ k)%nat.
-      We conclude that (Nn <= k)%nat.
+    - We need to show that (N₀ ≤ k)%nat.
+      We conclude that (N₀ <= k)%nat.
     - We need to show that (a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
-      We claim that (proj1_sig(_,_,lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) Nn).
+      We claim that (proj1_sig(_,_,lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) N₀).
       { We need to show that
           (proj1_sig(_, _, decreasing_cv (sequence_ub a (i), (Wn_decreasing a (i)), (ii))) 
-            ≤ sequence_ub a (i) Nn).
+            ≤ sequence_ub a (i) N₀).
         Define v := (decreasing_cv (sequence_ub a (i)) (Wn_decreasing a (i)) (ii)).
         clear _defeq0.
         Obtain such an l.
-        We need to show that (l ≤ sequence_ub a (i) Nn).
+        We need to show that (l ≤ sequence_ub a (i) N₀).
         By Wn_decreasing it holds that (Un_decreasing (sequence_ub a (i))).
-        By decreasing_ineq we conclude that (l <= sequence_ub a (i) Nn).
+        By decreasing_ineq we conclude that (l <= sequence_ub a (i) N₀).
       }
-      Because (iii) both (n ≥ Nn)%nat and 
-        (a n > sequence_ub a i Nn - 1 / (m + 1)) hold.
+      Because (iii) both (n ≥ N₀)%nat and 
+        (a n > sequence_ub a i N₀ - 1 / (m + 1)) hold.
       It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n) (v).
       We need to show that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
       We conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a n = a k).
@@ -101,38 +104,38 @@ Proof.
     Assume that (has_lb (sequence_ub a (i))) (ii).
     (* TODO: notation for apply with parameters *)
     apply exists_good_subseq with (P := fun (m : ℕ) (y :ℝ) ↦ y > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1) ).
-    Take m, N1 : nat.
-    By exists_almost_lim_sup we conclude that (there exists k : ℕ, (N1 ≤ k)%nat
+    Take m, N₀ : nat.
+    By exists_almost_lim_sup we conclude that (there exists k : ℕ, (N₀ ≤ k)%nat
       ∧ a k > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
 Qed.
 
 
 
 Lemma sequence_ub_bds :
-  ∀ (a : ℕ → ℝ) (i : has_ub a) (N : ℕ) (n : ℕ),
-    (n ≥ N)%nat ⇒ a n ≤ sequence_ub a (i) N.
+  ∀ (a : ℕ → ℝ) (i : has_ub a) (N₀ : ℕ) (n : ℕ),
+    (n ≥ N₀)%nat ⇒ a n ≤ sequence_ub a (i) N₀.
 Proof.
     Take a : (ℕ → ℝ). 
     Assume that (has_ub a) (i).
-    Take Nn, n : ℕ; such that (n ≥ Nn)%nat.
-    We need to show that (a n ≤ lub (fun k ↦ (a (Nn + k)%nat), maj_ss a Nn (i))).
+    Take N₀, n : ℕ; such that (n ≥ N₀)%nat.
+    We need to show that (a n ≤ lub (fun k ↦ (a (N₀ + k)%nat), maj_ss a N₀ (i))).
     We need to show that
-      (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (Nn + k)%nat), maj_ss a Nn (i)) in a0)).
-    Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (Nn +k)%nat) (maj_ss a Nn (i))).
+      (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (N₀ + k)%nat), maj_ss a N₀ (i)) in a0)).
+    Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (N₀ +k)%nat) (maj_ss a N₀ (i))).
     clear _defeq.
     Obtain such an M. It holds that 
-      (is_lub (EUn (fun (k : ℕ) ↦ a (Nn +k)%nat)) M).
-    It holds that (Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M)
-      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b)) (iii).
-    Because (iii) both (Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), M))
-      and (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (Nn + k)%nat)), b) ⇨ M ≤ b) hold.
-    It holds that (for all x : ℝ, EUn (fun k ↦ (a (Nn + k)%nat), x) ⇨ x ≤ M).
-    It holds that (Nn + (n-Nn) = n)%nat.
-    It suffices to show that (EUn (fun (k : ℕ) ↦ (a (Nn + k)%nat)) (a n)).
-    We need to show that (there exists i : ℕ, a n = a (Nn + i)%nat).
-    We need to show that (∃ i : ℕ, a n = a (Nn + i)%nat).
-    Choose k := (n - Nn)%nat.
-    We conclude that (& a n = a (Nn + n - Nn)%nat = a (Nn + k)%nat).
+      (is_lub (EUn (fun (k : ℕ) ↦ a (N₀ +k)%nat)) M).
+    It holds that (Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), M)
+      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ M ≤ b)) (iii).
+    Because (iii) both (Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), M))
+      and (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ M ≤ b) hold.
+    It holds that (for all x : ℝ, EUn (fun k ↦ (a (N₀ + k)%nat), x) ⇨ x ≤ M).
+    It holds that (N₀ + (n-N₀) = n)%nat.
+    It suffices to show that (EUn (fun (k : ℕ) ↦ (a (N₀ + k)%nat)) (a n)).
+    We need to show that (there exists k : ℕ, a n = a (N₀ + k)%nat).
+    We need to show that (∃ k : ℕ, a n = a (N₀ + k)%nat).
+    Choose k := (n - N₀)%nat.
+    We conclude that (& a n = a (N₀ + n - N₀)%nat = a (N₀ + k)%nat).
 Qed.
 
 
@@ -182,6 +185,8 @@ Proof.
         (sequence_ub a (i))).
       + (* apply squeeze_theorem with (c := sequence_ub a (i))
         (a := fun (k : ℕ) ↦ L - 1 / (INR k + 1)).*)
+        To show : (for all k : ℕ,
+          L - 1 / (k + 1) <= a(n(k)) <= sequence_ub(a, i, k)).
         Take k : ℕ.
         We show both statements.
         * We need to show that (L - 1 / (k + 1) ≤ a (n k)).
@@ -239,14 +244,14 @@ Proof.
     Define ε := (x - L).
     It holds that (ε > 0).
     It holds that (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε).
-    Obtain such a K. Define Nn := (Nat.max K m).
-    It holds that (R_dist (a (n Nn)) x < ε).
-    By Rabs_def2 it holds that (a (n Nn) - x < ε ∧ - ε < a (n Nn) - x) (v).
-    Because (v) both (a (n Nn) - x < ε) and (- ε < a (n Nn) - x) hold.
-    It holds that (x - a (n Nn) < x - L).
-    It holds that (a (n Nn) > L).
-    By index_seq_grows_0 it holds that (n Nn ≥ Nn)%nat.
-    By sequence_ub_bds it holds that (a (n Nn) ≤ L).
+    Obtain such a K. Define N₀ := (Nat.max K m).
+    It holds that (R_dist (a (n N₀)) x < ε).
+    By Rabs_def2 it holds that (a (n N₀) - x < ε ∧ - ε < a (n N₀) - x) (v).
+    Because (v) both (a (n N₀) - x < ε) and (- ε < a (n N₀) - x) hold.
+    It holds that (x - a (n N₀) < x - L).
+    It holds that (a (n N₀) > L).
+    By index_seq_grows_0 it holds that (n N₀ ≥ N₀)%nat.
+    By sequence_ub_bds it holds that (a (n N₀) ≤ L).
     Contradiction.
 Qed.
 

@@ -152,7 +152,7 @@ Lemma upp_bd_set_to_low_bd_set_opp :
 Proof.
     Take A : (ℝ → Prop) and M : ℝ.
     Assume that (M is an upper bound for A) (i).
-    We need to show that (∀ a : ℝ, (set_opp A a) ⇒ -M ≤ a).
+    We need to show that (∀ b : ℝ, (set_opp A b) ⇒ -M ≤ b).
     Take b : ℝ. Assume that (set_opp A b).
     Define a := (-b).
     It holds that (A a).
@@ -274,6 +274,9 @@ Lemma exists_inf :
     exists (m : ℝ), is_inf A m.
 Proof.
     Take A : (ℝ → Prop).
+    To show : (for all z : ℝ,
+      A(z) ⇨ A is _bounded from below_ ⇨ there exists m : ℝ,
+      m is the _infimum_ of A).
     Take z : ℝ. Assume that (A z).
     Assume that (is_bounded_below A) (vi).
     Define B := (set_opp A).
@@ -734,16 +737,20 @@ Lemma exists_almost_lim_sup_aux :
     ∃ k : ℕ, (k ≥ N)%nat ∧ a k > sequence_ub a pr N - 1 / (INR(m) + 1).
 Proof.
     Take a : (ℕ → ℝ).
+    To show :
+      (forall (pr : has_ub(a)) (m Nn : ℕ),
+      there exists k : ℕ,
+      (k ≥ Nn)%nat ∧ a(k) > sequence_ub(a, pr, Nn) - 1 / (m + 1)).
     Assume that (has_ub a) (i).
     Take m, Nn : ℕ.
     By seq_ex_almost_maximizer_m it holds that
       (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (i) Nn - 1 / (INR m + 1)).
-    Obtain such a k. Choose l := (Nn+k)%nat.
+    Obtain such a k. Choose k0 := (Nn+k)%nat.
     We show both statements.
-    - We need to show that (l ≥ Nn)%nat.
-      We conclude that (l ≥ Nn)%nat.
-    - We need to show that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
-      We conclude that ( a l > sequence_ub a (i) Nn - 1 / (m + 1) ).
+    - We need to show that (k0 ≥ Nn)%nat.
+      We conclude that (k0 ≥ Nn)%nat.
+    - We need to show that ( a k0 > sequence_ub a (i) Nn - 1 / (m + 1) ).
+      We conclude that ( a k0 > sequence_ub a (i) Nn - 1 / (m + 1) ).
 Qed.
 
 #[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.

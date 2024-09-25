@@ -16,7 +16,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Libs.Analysis.ContinuityDomainNat.
 Require Export Libs.Analysis.ContinuityDomainR.
 Require Export Libs.Analysis.LimsupLiminfBolzano.
 Require Export Libs.Analysis.MetricSpaces.

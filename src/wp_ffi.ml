@@ -148,6 +148,38 @@ let () =
   define0 "database_type_decidability" @@ tclUNIT @@ database_type_to_valexp Decidability;
   define0 "database_type_shorten" @@ tclUNIT @@ database_type_to_valexp Shorten
 
+(** Converts a {! Feedback.level} into a [valexpr] *)
+let feedback_lvl_to_valexpr (feedback_lvl: Feedback.level): valexpr = match feedback_lvl with
+  | Debug -> ValInt (-1)
+  | Info -> ValInt 0
+  | Notice -> ValInt 1
+  | Warning -> ValInt 2
+  | Error -> ValInt 3
+
+(** Converts a [valexpr] into a {! Feedback.level} *)
+let feedback_lvl_from_valexpr (value : valexpr): Feedback.level = match value with
+  | ValInt n ->
+    let feedback_lvl = match n with
+      | -1 -> Feedback.Debug
+      | 0 -> Info
+      | 1 -> Notice
+      | 2 -> Warning
+      | 3 -> Error
+      | _ -> throw (CastError "cannot cast an [int] outside {-1, 0, 1, 2, 3} into a [Feedback.level]")
+    in feedback_lvl
+  | _ -> throw (CastError "cannot cast something different from an [int] into a [Feedback.level]")
+
+(** Pack the conversion functions for feedback levels into a representation *)
+let feedback_lvl_repr = make_repr feedback_lvl_to_valexpr feedback_lvl_from_valexpr
+
+(** Exports {! Feedback.level} to Ltac2 *)
+let () =
+  define0 "feedback_lvl_debug" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Debug;
+  define0 "feedback_lvl_info" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Info;
+  define0 "feedback_lvl_notice" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Notice;
+  define0 "feedback_lvl_warning" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Warning;
+  define0 "feedback_lvl_error" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Error
+
 (* Exports {! Waterprove.waterprove} to Ltac2 *)
 let () =
   define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
@@ -180,9 +212,24 @@ let () =
       warn input >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
+  define1 "notice_external" pp @@
+    fun input ->
+      notice input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
   define1 "throw_external" pp @@
     fun input ->
       err input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define1 "inform_external" pp @@
+    fun input ->
+      inform input >>= fun () -> tclUNIT @@ of_unit ()
+
+let () =
+  define2 "message_external" feedback_lvl_repr pp @@
+    fun lvl input ->
+      message lvl input >>= fun () -> tclUNIT @@ of_unit ()
 
 let () =
   define1 "refine_goal_with_evar_external" string @@
@@ -197,3 +244,16 @@ let () =
 let () =
   define1 "get_print_hypothesis_flag_external" unit @@
     fun input -> tclUNIT @@ of_bool !print_hypothesis_help
+
+let () =
+  define1 "get_redirect_errors_flag_external" unit @@
+    fun input -> tclUNIT @@ of_bool !redirect_errors
+
+let () =
+  define1 "get_last_warning_external" unit @@
+    fun input -> get_last_warning input >>=
+      fun pp_option -> tclUNIT @@ of_option of_pp pp_option
+
+let () =
+  define1 "get_feedback_log_external" feedback_lvl_repr @@
+    fun input -> tclUNIT @@ of_list of_pp !(feedback_log input)

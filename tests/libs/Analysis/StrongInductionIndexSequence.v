@@ -42,7 +42,7 @@ Require Import Waterproof.Tactics.
 Goal (exists n : nat -> nat, is_index_seq n /\ forall k : nat, Q (n k)).
 Proof.
   Define the index sequence n inductively.
-  - Choose n0 := 0.
+  - Choose n_0 := 0.
     admit.
   - Take k : ℕ and assume n(0),...,n(k) are defined.
     Assume that (forall l : nat, l <= k -> Q (n l)).

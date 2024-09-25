@@ -37,19 +37,19 @@ Waterproof Enable Automation RealsAndIntegers.
 Open Scope R_scope.
 
 Lemma sigma_split_v2 :
-  ∀ (a : ℕ → ℝ) (k l N : ℕ),
-    (k < l)%nat ⇒ (l ≤ N)%nat 
-      ⇒ sigma a k N = sigma a k (l - 1)%nat + sigma a l N.
+  ∀ (a : ℕ → ℝ) (k l M : ℕ),
+    (k < l)%nat ⇒ (l ≤ M)%nat 
+      ⇒ sigma a k M = sigma a k (l - 1)%nat + sigma a l M.
 Proof.
-    Take a : (ℕ → ℝ) and k, l, Nn : ℕ; such that
-      (k < l)%nat and (l ≤ Nn)%nat.
+    Take a : (ℕ → ℝ) and k, l, M : ℕ; such that
+      (k < l)%nat and (l ≤ M)%nat.
     It holds that (l = S (l - 1)%nat) (i).
     (* TODO: It suffices to show that (sigma a k Nn = sigma a k (l - 1) + sigma a (S (l - 1)) Nn).*)
     rewrite (i) at 2.
-    By sigma_split it suffices to show that (k <= l - 1 < Nn)%nat.
-    We show both (k <= l - 1)%nat and (l - 1 < Nn)%nat.
+    By sigma_split it suffices to show that (k <= l - 1 < M)%nat.
+    We show both (k <= l - 1)%nat and (l - 1 < M)%nat.
     - We conclude that (k ≤ l - 1)%nat.
-    - We conclude that (l - 1 < Nn)%nat.
+    - We conclude that (l - 1 < M)%nat.
 Qed.
 
 

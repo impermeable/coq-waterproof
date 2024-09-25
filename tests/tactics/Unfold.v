@@ -22,7 +22,11 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
+
+Waterproof Enable Redirect Feedback.
+Waterproof Enable Redirect Errors.
 
 Definition foo : nat := 0.
 
@@ -32,7 +36,16 @@ Definition foo : nat := 0.
   to remove the line after use. *)
 Goal foo = 1.
 Proof.
-  Fail Expand the definition of foo.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"To include these statements, use (one of):";
+"";
+"  We need to show that (0 = 1)."].
 Abort.
 
 (* Test 2: unfold term in hypothese and goal, and throws an error suggesting 
@@ -40,14 +53,33 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  Fail Expand the definition of foo.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"To include these statements, use (one of):";
+"";
+"  We need to show that (0 = 1).";
+"";
+"  It holds that (0 = 0).";
+"  It holds that (0 = 2)."].
 Abort.
 
 (* Test 3: Unfold the term in a given statement, throw error suggesting
     to remove the line after use. *)
 Goal False.
 Proof.
-  Fail Expand the definition of foo in (foo = 4).
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo in (foo = 4))
+"Remove this line in the final version of your proof.")
+  Info
+["result:
+  (0 = 4)"].
 Abort.
 
 (* Test 4: Unfold term in given statement that matches goal,
@@ -55,7 +87,14 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  Fail Expand the definition of foo in (foo = 1).
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo in (foo = 1))
+"Remove this line in the final version of your proof.")
+  Info
+["replace line with:
+  We need to show that (0 = 1)."].
 Abort.
 
 (* Test 5: Unfold term in given statement that matches hypothesis,
@@ -63,7 +102,14 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  Fail Expand the definition of foo in (foo = 0).
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo in (foo = 0))
+"Remove this line in the final version of your proof.")
+  Info
+["replace line with:
+  It holds that (0 = 0)."].
 Abort.
 
 
@@ -78,13 +124,31 @@ Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr)))
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  Fail Expand the definition of foo2.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"To include these statements, use (one of):";
+"";
+"  We need to show that (0 = 1).";
+"";
+"  It holds that (0 = 0).";
+"  It holds that (0 = 2)."].
 Abort.
 
 (* Test 7: fails to unfold term in statment without term. *)
 Goal False.
 Proof.
-  Fail Expand the definition of foo2.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo)
+"Remove this line in the final version of your proof.")
+  Info
+["Definition does not appear in any statement."].
 Abort.
 
 

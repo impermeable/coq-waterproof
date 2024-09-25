@@ -110,7 +110,7 @@ tests/chains/Manipulation.v
 
 ## Automation
 
-### General  
+### General
 tests/automation/Shield.v
 tests/automation/Chains.v
 
@@ -140,10 +140,13 @@ tests/tactics/Specialize.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v
+tests/tactics/Help.v
 
 ## Util
 tests/util/Evars.v
 tests/util/MessagesToUser.v
+tests/util/Assertions.v
+tests/util/TypeCorrector.v
 
 ## Libs
 tests/libs/Negation.v

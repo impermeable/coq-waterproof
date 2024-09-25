@@ -22,6 +22,7 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Util.MessagesToUser.
 
 (** Test 0: This should be the expected behavior. *)
 Goal (forall n : nat, n = n) -> True.
@@ -100,11 +101,14 @@ Abort.
 
 (* -------------------------------------------------------------------------- *)
 
+Waterproof Enable Redirect Feedback.
+
 (** Test 8 : use a placeholder as variable name *)
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 intro H.
-Use b := _ in (H).
+assert_feedback_with_string (fun () => Use b := _ in (H)) Warning
+"Please come back to this line later to make a definite choice for b.".
 It holds that (forall a c : nat, a + ?b + c = 0) (i).
 Abort.
 
@@ -112,7 +116,8 @@ Abort.
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 intro H.
-Use a := _, b := _, c := _ in (H).
+assert_feedback_with_string (fun () => Use a := _, b := _, c := _ in (H)) Warning
+"Please come back to this line later to make a definite choice for a, b, c.".
 It holds that (?a + ?b + ?c = 0).
 Abort.
 
