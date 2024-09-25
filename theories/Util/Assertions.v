@@ -190,7 +190,7 @@ Ltac2 assert_feedback_string_equals (expected_string : string) (msg : message) :
     print_success (of_string ("The feedback message is as expected"))
   else
     fail_test (concat_list [of_string "The feedback message is not as expected. Expected:"; fnl (); of_string expected_string; fnl ();
-    of_string "Got:"; fnl (); msg]).
+    of_string "Got:"; fnl (); of_string (Message.to_string msg)]).
 
 (**
   Asserts that the feedback messages produced by the tactic at a

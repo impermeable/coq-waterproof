@@ -62,7 +62,7 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       match Constr.has_evar t with
       | true =>
         rename_blank_evars_in_term (Ident.to_string s) t;
-        warn (concat_list [of_string "Please come back to this line to make a definitive choice for "; of_ident s; of_string "."; fnl ();
+        warn (concat_list [of_string "Please come back later to make a definitive choice for "; of_ident s; of_string "."; fnl ();
         of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."])
       | _ => ()
       end;
@@ -102,7 +102,7 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       match Constr.has_evar t with
       |  true =>
         rename_blank_evars_in_term name t;
-        warn (concat_list [of_string "Please come back to this line later to make a definite choice."]);
+        warn (concat_list [of_string "Please come back later to make a definite choice."]);
         eexists $t
       |  false => exists $t
       end
