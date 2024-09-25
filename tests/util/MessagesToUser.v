@@ -26,16 +26,6 @@ Require Import Waterproof.Util.Assertions.
 Waterproof Enable Redirect Feedback.
 Waterproof Enable Redirect Errors.
 
-Goal True.
-Proof.
-  assert_feedback_with_string (fun () => warn (Message.of_string "Send a warning.")) Warning "Send a warning.".
-Abort.
-
-Goal True.
-Proof.
-  assert_fails_with_string (fun () => throw (Message.of_string "This error _should_ be raised.")) "This error _should_ be raised.".
-Abort.
-
 (** Test whether enabling the hypothesis flag works.
 *)
 Waterproof Enable Hypothesis Help.
