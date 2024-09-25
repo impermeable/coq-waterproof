@@ -41,7 +41,7 @@ A sequence of real numbers is a function from the natural numbers to the real nu
 
 (** *** Examples of sequences
 
-Let us give a few examples of sequences of real numbers. The first example is the sequence $a_seq : ℕ → ℝ$ defined by 
+Let us give a few examples of sequences of real numbers. The first example is the sequence $a_seq : ℕ → ℝ$ defined by
 
 $$a_seq := \mathsf{fun} \   n \mapsto \mathsf{INR}(n) + 2.$$
 
@@ -49,7 +49,7 @@ In Waterproof, we can write this as*)
 
 Definition a_seq : ℕ → ℝ := fun n ↦ INR(n) + 2.
 (** We could also have written that $a_seq: \mathbb{N} → ℝ$ is defined by $(a_seq)_n := \mathsf{INR} (n) + 2$, and usually we just leave out the function $\mathsf{INR}$ and would write $(a_seq)_n := n + 2$.*)
-(** 
+(**
 Another example is the sequence $y_seq: ℕ → ℝ$ defined by $(y_seq)_n := 3$. The sequence $y_seq$ is just constant! Within Waterproof, we could define the sequence $y_seq$ by
 ```
 Definition y_seq : ℕ → ℝ := 3.
@@ -60,7 +60,7 @@ However, let us also give an alternative way, which looks a  bit closer to the d
 Definition y_seq (n : ℕ) := 3.
 (** ** Terminology about sequences
 
-We call the function values $a(0)$, $a(1)$, $a(2)$, $\dots$ the **elements** of the sequence. Instead of $a(n)$, in mathematics we often write $a_n$. Moreover, instead of writing *let $a : \mathbb{N} \to \mathbb{R}$ be a sequence*, one often writes *let $(a_n)_{n \in \mathbb{N}}$ be a sequence*, or even shorter *let $(a_n)$ be a sequence*. 
+We call the function values $a(0)$, $a(1)$, $a(2)$, $\dots$ the **elements** of the sequence. Instead of $a(n)$, in mathematics we often write $a_n$. Moreover, instead of writing *let $a : \mathbb{N} \to \mathbb{R}$ be a sequence*, one often writes *let $(a_n)_{n \in \mathbb{N}}$ be a sequence*, or even shorter *let $(a_n)$ be a sequence*.
 
 The reason for the name *sequence* becomes clearer by writing the elements in a row, i.e. in a sequence,
 $$
@@ -127,9 +127,9 @@ Proof.
       for all n : ℕ, (n ≥ M)%nat ⇨ |b n - l| < ε ).
     Take ε : ℝ; such that (ε > 0).
     It holds that
-      (there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat ⇨ |a n - l| < ε).
+      (there exists N1 : ℕ, for all n : ℕ, (n ≥ N1)%nat ⇨ |a n - l| < ε).
     Obtain such an N1.
-    By (i) it holds that 
+    By (i) it holds that
       (there exists K : nat, for all n : ℕ, (n ≥ K)%nat ⇨ a n = b n).
     Obtain such a K.
     Choose M := (Nat.max N1 K).
@@ -188,18 +188,18 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 Lemma lim_d_0 : Un_cv d 0.
 Proof.
     We need to show that (Un_cv (fun n => 1 / (n + 1)) 0).
-    We need to show that (for all ε : ℝ, ε > 0 
-      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+    We need to show that (for all ε : ℝ, ε > 0
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
       ⇨ ｜ 1 / (n + 1) - 0 ｜ < ε ).
     Take ε : ℝ; such that (ε > 0).
-    By archimed_mod it holds that (there exists n : ℕ, n > / ε).
+    By archimed_mod it holds that (there exists n1 : ℕ, n1 > / ε).
     Obtain such an n1. Choose N := n1.
     Take n : ℕ; such that (n ≥ n1)%nat.
     It suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
     We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
     - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
       We conclude that (& -ε < 0 < / (n + 1) = 1 / (n + 1) - 0).
-    - We claim that (/ ε < n + 1). 
+    - We claim that (/ ε < n + 1).
       { We conclude that (& / ε < n1 <= n <= n + 1). }
       We conclude that (& 1 / (n + 1) - 0 = / (n + 1) < / / ε = ε).
 Qed.
@@ -229,9 +229,9 @@ Proof.
     Assume that (c ⟶ l).
     To show: (∀ ε : ℝ, ε > 0 ⇒ ∃ Nn : ℕ, ∀ n : ℕ, (n ≥ Nn)%nat ⇒ |b n - l| < ε).
     Take ε : ℝ; such that (ε > 0).
-    It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |a n - l| < ε).
+    It holds that (∃ Na : ℕ, ∀ n : ℕ, (n ≥ Na)%nat ⇒ |a n - l| < ε).
     Obtain such an Na.
-    It holds that (∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒ |c n - l| < ε).
+    It holds that (∃ Nc : ℕ, ∀ n : ℕ, (n ≥ Nc)%nat ⇒ |c n - l| < ε).
     Obtain such an Nc.
     Choose Nn := (Nat.max Na Nc).
     Take n : ℕ; such that (n ≥ Nn)%nat.
@@ -257,7 +257,7 @@ Qed.
 
 Lemma upp_bd_seq_is_upp_bd_lim :
   ∀ (a : ℕ → ℝ) (L M: ℝ),
-    (∀ n : ℕ, a n ≤ M) ⇒ 
+    (∀ n : ℕ, a n ≤ M) ⇒
       (Un_cv a L) ⇒ L ≤ M.
 Proof.
     Take a : (ℕ → ℝ).
@@ -272,10 +272,10 @@ Proof.
     - Case (M < L).
       Define ε := (L-M).
       It holds that (ε > 0).
-      It holds that (for all eps : ℝ, eps > 0 
-        ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+      It holds that (for all eps : ℝ, eps > 0
+        ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
         ⇨ ｜ a n - L ｜ < eps).
-      It holds that (∃ N : ℕ, ∀n : ℕ, (n ≥ N)%nat ⇒ R_dist (a n) L < ε).
+      It holds that (∃ Nn : ℕ, ∀n : ℕ, (n ≥ Nn)%nat ⇒ R_dist (a n) L < ε).
       Obtain such an Nn.
       It holds that (|a(Nn) - L| < ε).
       By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
@@ -288,7 +288,7 @@ Qed.
 
 Lemma low_bd_seq_is_low_bd_lim :
   ∀ (a : ℕ → ℝ) (L M: ℝ),
-    (∀ n : ℕ, a n ≥ M) ⇒ 
+    (∀ n : ℕ, a n ≥ M) ⇒
       (Un_cv a L) ⇒ L ≥ M.
 Proof.
     Take a : (ℕ → ℝ).
@@ -326,10 +326,10 @@ Proof.
     It holds that (l < m).
     Define ε := ((m - l)/2).
     It holds that (ε > 0).
-    It holds that (for all eps : ℝ, eps > 0 
-      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat 
+    It holds that (for all eps : ℝ, eps > 0
+      ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
       ⇨ ｜ a n - m ｜ < eps).
-    It holds that (for all eps : ℝ, eps > 0 
+    It holds that (for all eps : ℝ, eps > 0
       ⇨ there exists N : ℕ, for all n : ℕ, (n ≥ N)%nat
       ⇨ ｜ b n - l ｜ < eps).
     It holds that (∃ N1 : ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (a n) m < ε).
@@ -342,48 +342,48 @@ Proof.
       It holds that (|a(N3) - m| < ε).
       By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
       By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).
-      We conclude that (& b N3 < l + ε = l + (m - l)/2 
+      We conclude that (& b N3 < l + ε = l + (m - l)/2
                             = m - (m - l)/2 = m - ε < a N3).
     }
     It holds that (a N3 <= b N3).
     Contradiction.
 Qed.
 
-Definition is_bounded (a : ℕ → ℝ) := 
+Definition is_bounded (a : ℕ → ℝ) :=
   ∃ q : ℝ,
     ∃ M : ℝ, M > 0 ∧
-      ∀ n : ℕ, 
+      ∀ n : ℕ,
         |a n - q| ≤ M.
 Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 20).
 Notation "a 'is' 'bounded'" := (is_bounded a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" := 
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_is_bounded (Some "bounded") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_is_bounded (Some "bounded") false.
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
-  ∃ M : ℝ, M > 0 ∧ 
+  ∃ M : ℝ, M > 0 ∧
     ∀ n : ℕ, |a n| ≤ M.
-    
-Lemma is_bounded_equivalence : 
+
+Lemma is_bounded_equivalence :
   ∀ (a : ℕ → ℝ),
-    is_bounded a ⇔ 
+    is_bounded a ⇔
       is_bounded_equivalent a.
 Proof.
 Take a : (ℕ → ℝ).
 We show both directions.
 - We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
   Assume that (is_bounded a).
-  It holds that (there exists q : R, 
+  It holds that (there exists q : R,
     there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)).
   Obtain such a q.
   It holds that (there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)).
   Obtain such an M1.
   It holds that (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (i).
-  Because (i) both (M1 > 0) and 
+  Because (i) both (M1 > 0) and
     (for all n : ℕ, | a n - q | ≤ M1).
   We need to show that (
     there exists M : ℝ ,
@@ -401,13 +401,13 @@ We show both directions.
         | a n | ≤ M ).
     Take n : ℕ.
     By Rabs_triang it holds that (|a n - q + q| ≤ |a n - q| + |q|).
-    We conclude that (& |a n| = |a n - q + q| 
+    We conclude that (& |a n| = |a n - q + q|
                               <= (|a n - q| + |q|) <= (M1 + |q|) = M).
 
 - We need to show that (
     is_bounded_equivalent a ⇨ is_bounded a).
   Assume that (there exists M1 : ℝ, M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1).
-  Obtain such an M1. It holds that 
+  Obtain such an M1. It holds that
     (M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1) (i).
   Because (i) both (M1 > 0) and
   (for all n : ℕ, | a n | ≤ M1) hold.
@@ -430,15 +430,15 @@ for all n : ℕ,
 Qed.
 
 (** Definitions sequence bounded from above and below *)
-Definition is_bounded_above (a : ℕ → ℝ) := 
+Definition is_bounded_above (a : ℕ → ℝ) :=
   ∃ M : ℝ, ∀ n : ℕ, a(n) ≤ M.
 Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 20).
 Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" := 
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_is_bounded_above (Some "bounded above") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_is_bounded_above (Some "bounded above") false.
 
@@ -447,15 +447,15 @@ Definition is_bounded_below (a : ℕ → ℝ) :=
 Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 20).
 Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 20, only parsing).
 Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" := 
+Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_is_bounded_below (Some "bounded below") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_is_bounded_below (Some "bounded below") false.
 
 (** Convergence to +∞ and -∞. *)
-Definition diverges_to_plus_infinity (a : ℕ → ℝ) := 
+Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
   ∀ M : ℝ,
     ∃ N1 : ℕ,
       ∀ n : ℕ, (n ≥ N1)%nat ⇒
@@ -464,23 +464,23 @@ Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
 Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
-Local Ltac2 unfold_diverge_plus_infty (statement : constr) := 
+Local Ltac2 unfold_diverge_plus_infty (statement : constr) :=
   eval unfold diverges_to_plus_infinity in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" := 
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_plus_infty (Some "⟶ ∞") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_plus_infty (Some "⟶ ∞") false.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" := 
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_plus_infty (Some "diverges to ∞") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_plus_infty (Some "diverges to ∞") false.
-  
 
-Definition diverges_to_minus_infinity (a : ℕ → ℝ) := 
+
+Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
   ∀ M : ℝ,
     ∃ N1 : ℕ,
       ∀ n : ℕ, (n ≥ N1)%nat ⇒
@@ -489,18 +489,18 @@ Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
 Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
-Local Ltac2 unfold_diverge_minus_infty (statement : constr) := 
+Local Ltac2 unfold_diverge_minus_infty (statement : constr) :=
   eval unfold diverges_to_minus_infinity in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞":= 
+Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞":=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_minus_infty (Some "⟶ -∞") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_minus_infty (Some "⟶ -∞") false.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" := 
+Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_minus_infty (Some "diverges to -∞") true.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", "()"))) := 
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", "()"))) :=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_diverge_minus_infty (Some "diverges to -∞") false.
 

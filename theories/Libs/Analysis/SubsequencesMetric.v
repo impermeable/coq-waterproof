@@ -28,7 +28,7 @@ Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
 Open Scope metric_scope.
-Definition is_index_sequence (n : ℕ → ℕ) := 
+Definition is_index_sequence (n : ℕ → ℕ) :=
   ∀ k : ℕ, (n k < n (k + 1))%nat.
 
 Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 68) : metric_scope.
@@ -56,7 +56,7 @@ Section my_section.
 Variable X : Metric_Space.
 
 
-Definition is_subsequence (b : ℕ → X) (a : ℕ → X) := 
+Definition is_subsequence (b : ℕ → X) (a : ℕ → X) :=
     ∃ m : (ℕ → ℕ),
         is_index_sequence m ∧ ∀ k : ℕ,
             b k = (a ◦ m) k.
@@ -67,40 +67,40 @@ Definition is_accumulation_point (p : X) (a : ℕ → X) :=
 
 
 Lemma index_sequence_property (n : ℕ → ℕ) :
-    is_index_sequence n ⇒ 
+    is_index_sequence n ⇒
         ∀ k : ℕ,
             (n k ≥ k)%nat.
 Proof.
-  intros. 
+  intros.
   unfold is_index_sequence in H.
   induction k.
-  specialize (H 0%nat). 
+  specialize (H 0%nat).
   unfold ge.
   apply Nat.le_0_l.
-  specialize (H k). 
-  unfold ge. 
-  apply Nat.le_succ_l. 
+  specialize (H k).
+  unfold ge.
+  apply Nat.le_succ_l.
   rewrite Nat.add_1_r in H.
-  apply (Nat.le_lt_trans k (n k)). 
-  apply IHk. 
+  apply (Nat.le_lt_trans k (n k)).
+  apply IHk.
   apply H.
 Qed.
 
 
 
 Lemma index_seq_equiv (n : ℕ → ℕ) : is_index_seq n ⇔ is_index_sequence n.
-Proof. 
+Proof.
   We show both directions.
   - We need to show that (is_index_seq n ⇨ is_index_sequence n).
     intro.
-    unfold is_index_sequence. 
-    Take k : ℕ. 
+    unfold is_index_sequence.
+    Take k : ℕ.
     unfold is_index_seq in H.
     We conclude that ((n k < n (k + 1))%nat).
   - We need to show that (is_index_sequence n ⇨ is_index_seq n).
     intro.
-    unfold is_index_seq. 
-    Take k : ℕ. 
+    unfold is_index_seq.
+    Take k : ℕ.
     unfold is_index_sequence in H.
     We conclude that ((n k < n (k + 1))%nat).
 Qed.
@@ -115,7 +115,7 @@ Lemma incr_loc_to_glob :
     is_increasing g
       ⇒ (∀ k l : ℕ, (k ≤ l)%nat ⇒ (g k ≤ g l)%nat).
 Proof.
-    (* There exists already a constant called [f].*) 
+    (* There exists already a constant called [f].*)
     Take g : (ℕ → ℕ).
     We need to show that
       ((for all k : ℕ, (g k ≤ g (k + 1))%nat) ⇨ for all k l : ℕ, (k ≤ l ⇨ g k ≤ g l)%nat ).
@@ -138,15 +138,15 @@ Proof.
         It suffices to show that (g k = g (l + 1))%nat.
         We conclude that (g k = g (l + 1))%nat.
       + (** Finally we consider the case $k > S(l)$. However, this case is in contradiction with $k \leq S(l)$. *)
-        It holds that (¬(l + 1 < k)%nat). 
+        It holds that (¬(l + 1 < k)%nat).
         Contradiction.
 Qed.
 
 
-Lemma index_sequence_property2 (n : ℕ → ℕ) : 
-    is_index_sequence n ⇒ 
-        ∀ k1 k2 : ℕ, 
-            (k1 ≥ k2)%nat ⇒ 
+Lemma index_sequence_property2 (n : ℕ → ℕ) :
+    is_index_sequence n ⇒
+        ∀ k1 k2 : ℕ,
+            (k1 ≥ k2)%nat ⇒
                 (n k1 ≥ n k2)%nat.
 Proof.
     Assume that (is_index_sequence n).
@@ -178,20 +178,20 @@ Take a : (ℕ → X). Take p : X.
 Assume that (a ⟶ p).
 Take n : (ℕ → ℕ).
 Assume that (is_index_sequence n).
-It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist _ (a (n k)) p < ε).
+It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N0 : ℕ, ∀ k : ℕ, (k ≥ N0)%nat ⇒ dist _ (a (n k)) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (a k) p < ε).
-Obtain such a K. Choose N3 := K.
-Take k : ℕ; such that (k ≥ N3)%nat.
-By index_sequence_property2 it holds that (n k ≥ n K)%nat.
-By index_sequence_property it holds that (n K ≥ K)%nat.
-assert (H3 : (n k ≥ K)%nat) by auto with zarith.
+It holds that (∃ N1 : ℕ, ∀ k : ℕ, (k ≥ N1)%nat → dist _ (a k) p < ε).
+Obtain such an N1. Choose N0 := N1.
+Take k : ℕ; such that (k ≥ N1)%nat.
+By index_sequence_property2 it holds that (n k ≥ n N1)%nat.
+By index_sequence_property it holds that (n N1 ≥ N1)%nat.
+assert (H3 : (n k ≥ N1)%nat) by auto with zarith.
 We conclude that (dist _ (a (n k)) p < ε).
 Qed.
 
-Lemma equivalent_subsequence_convergence : 
-  ∀ (x y : ℕ → X), is_subsequence y x ⇒ 
+Lemma equivalent_subsequence_convergence :
+  ∀ (x y : ℕ → X), is_subsequence y x ⇒
     ∀ p : X, x ⟶ p ⇒
       y ⟶ p.
 Proof.
@@ -202,15 +202,15 @@ Assume that (x ⟶ p).
 
 We need to show that (y ⟶ p).
 It holds that (∃ m : ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
-Obtain such an m. It holds that 
+Obtain such an m. It holds that
   (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
-Because (i) both (is_index_sequence m) and 
+Because (i) both (is_index_sequence m) and
   (for all k : nat, y k = x (m k)) hold.
 
 It suffices to show that (∀ ε : ℝ, ε > 0 ⇒ ∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat ⇒ dist _ (y k) p < ε).
 
 Take ε : ℝ; such that (ε > 0).
-It holds that (∃ N3 : ℕ, ∀ k : ℕ, (k ≥ N3)%nat → dist _ (x k) p < ε).
+It holds that (∃ K : ℕ, ∀ k : ℕ, (k ≥ K)%nat → dist _ (x k) p < ε).
 Obtain such a K. Choose N3 := K.
 Take k : ℕ; such that (k ≥ N3)%nat.
 By index_sequence_property2 it holds that (m k ≥ m K)%nat.
