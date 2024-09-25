@@ -44,27 +44,6 @@ Local Ltac2 try_out_label (label : ident) :=
   | Val _ => clear $label
   end.
 
-
-
-(** Destructs the statement with label [og_label] into the variable named [var_label]
-  and the corresponding property. Copies statement [og_label] such that the statement
-  is preserved despite its destruction.
-
-  The original, not the copy, is destructed because with sigma types the goal
-  or other hypotheses can depend on the specific instance of the original.
-
-  Returns:
-    - the name of the new hypothesis. *)
-Local Ltac2 copy_and_destruct (og_label : ident) (var_label : ident) :=
-  let prop_label := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-  let og_term := Control.hyp og_label in
-  let og_type := get_type og_term in
-  assert $og_type as $prop_label;
-  Control.focus 1 1 (fun () => exact $og_term);
-  destruct $og_term as [$var_label $og_label];
-  Std.rename [(og_label, prop_label); (prop_label, og_label)];
-  prop_label.
-
 (** *
   Attempts to obtain a variable from a user-specified statement.
 
@@ -92,9 +71,10 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   | sig ?pred =>
     check_binder_name pred var
   | _ => throw (concat_list
-    [of_string "Statement "; of_constr h; of_string " is not of the form 'there exists ...'."])
+    [of_string "Couldn't obtain "; of_ident var; of_string "."; fnl ();
+     of_string "There aren't enough variables to obtain."])
   end;
-  copy_and_destruct hyp var.
+  destruct $h as [$var $hyp].
 
 (* Quick fix for Wateproof editor / Coq lsp, where
   [Obtain such an
@@ -128,13 +108,25 @@ Local Ltac2 panic_ident_Qed (i : ident) :=
       existence statement or a sigma type.
 *)
 Ltac2 obtain_seq_according_to (vars : ident list) (hyp) :=
-  let start_label := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-  let _ := List.fold_left (
-    fun old_label var => panic_ident_Qed (var);
-    try_out_label var;
-    obtain_according_to var old_label)
-    vars hyp in
-  ().
+  (* make a copy of the original proposition *)
+  let prop_label := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+  let og_term := Control.hyp hyp in
+  let og_type := get_type og_term in
+  lazy_match! og_type with
+  | ex  ?pred => ()
+  | sig ?pred => ()
+  | _ => throw (concat_list
+    [of_string "Can only obtain variables from 'there exists...' statements."])
+  end;
+  assert $og_type as $prop_label;
+  Control.focus 1 1 (fun () => exact $og_term);
+  let h := Control.hyp hyp in
+  List.iter
+    (fun var =>
+      panic_ident_Qed var;
+      try_out_label var;
+      obtain_according_to var hyp) vars;
+  Std.rename [(prop_label, hyp); (hyp, prop_label)].
 
 (** *
   Attempts to obtain variables from the previous statement.

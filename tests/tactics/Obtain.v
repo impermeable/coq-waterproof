@@ -133,7 +133,7 @@ Abort.
 Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
 Proof.
   intro H.
-  Obtain such n, m, k, l.
+  Obtain such n, m, m0, l.
 Abort.
 
 (** TODO: we should actually test for warnings below,
@@ -179,4 +179,39 @@ Proof.
   intro H.
   assert_feedback_with_strings (fun () => Obtain such m, m0) Warning
 ["Expected variable name n instead of m."].
+Abort.
+
+(** Test 17 : Check that intermediate hypotheses are deleted *)
+Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
+Proof.
+  intro H.
+  Obtain such n, m, k, l.
+  Fail Check _H0.
+Abort.
+
+Waterproof Enable Redirect Errors.
+
+(** Test 19: Try to obtain too many variables *)
+Goal (exists n m : nat, n = m)%nat -> True.
+Proof.
+  intro H.
+  assert_fails_with_string (fun () => Obtain such n, m, k)
+"Couldn't obtain k.
+There aren't enough variables to obtain.".
+Abort.
+
+(** Test 20: Test that the correct variable has been renamed *)
+Goal (exists n : nat, n = 0)%nat -> True.
+Proof.
+  intro H.
+  Obtain such an n.
+  assert (n = 0)%nat by exact _H.
+  assert (exists n0 : nat, n0 = 0)%nat by exact H.
+Abort.
+
+(** Test 21: The indicated statement is not a "there exists..." statement*)
+Goal (forall n : nat, n = 0)%nat -> True.
+  intro H.
+  assert_fails_with_string (fun () => Obtain n according to (H))
+"Can only obtain variables from 'there exists...' statements.".
 Abort.
