@@ -223,14 +223,17 @@ Abort.
 Goal (exists n : nat, n = 0)%nat -> True.
 Proof.
   intro H.
-  Obtain such an m.
+  assert_feedback_with_string (fun () => Obtain such an m) Warning
+"Expected variable name n instead of m.".
 Abort.
 
 (** Test 13: obtain with multiple wrong variable names *)
 Goal (exists n m: nat, n = m)%nat -> True.
 Proof.
   intro H.
-  Obtain such k, l.
+  assert_feedback_with_strings (fun () => Obtain such k, l) Warning
+["Expected variable name n instead of k.";
+"Expected variable name m instead of l."].
 Abort.
 
 (** Test 14 : obtain but with a wrong variabl ename, later
@@ -238,7 +241,8 @@ Abort.
 Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
 Proof.
   intro H.
-  Obtain such an n, k.
+  assert_feedback_with_strings (fun () => Obtain such an n, k) Warning
+["Expected variable name m instead of k."].
 Abort.
 
 (** Test 15 : obtain when the variable has been visibly renamed *)
@@ -246,12 +250,13 @@ Goal (exists n : nat, n = 0)%nat -> True.
 Proof.
   intro H.
   set (n := 3).
-  Obtain n0 according to (H).
+  assert_no_feedback (fun () => Obtain n0 according to (H)) Warning.
 Abort.
 
 (** Test 16: obtain when wrongly using a previous variable *)
 Goal (exists n m : nat, n = m)%nat -> True.
 Proof.
   intro H.
-  Obtain such m, m0.
+  assert_feedback_with_strings (fun () => Obtain such m, m0) Warning
+["Expected variable name n instead of m."].
 Abort.
