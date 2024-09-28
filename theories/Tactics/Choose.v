@@ -19,6 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 Require Import Util.Evars.
@@ -37,7 +38,7 @@ Local Ltac2 _binder_name_equal (name : ident) (b : binder) :=
 (** * Choose *)
 
 (**
-    
+
   Instantiate a variable in an [exists] [goal], according to a given [constr], and also renames the [constr]. The [constr] can contain blanks, which are filled in
   with freshly named evars, so that the user can refer to them later.
 
@@ -54,41 +55,20 @@ Local Ltac2 _binder_name_equal (name : ident) (b : binder) :=
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
   lazy_match! goal with
     | [ |- ex ?a] =>
-      (* Check for correct binder name *)
-      match Constr.Unsafe.kind a with
-      | Constr.Unsafe.Lambda b _ =>
-          match Constr.Binder.name b with
-          | None => () (* TODO: is it true that we want to do nothing here?,
-                          i.e. in the case of anonymous binders. *)
-          | Some binder_name =>
-            (* If a variable already exists, the binder gets renamed visually, but 
-            the binder name internally remains the same.
-            This gives confusing behavior. To go around this,
-            we try to guess what the binder got renamed into by introducing a fresh
-            ident based on the binder name. *)
-            let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in 
-            if Bool.neg (Ident.equal fresh_binder_name s) then
-              warn (concat_list [of_string "A variable name "; of_ident fresh_binder_name;
-                of_string " was expected, but a variable name "; of_ident s;
-                of_string " was given.
-The variable has been renamed."])
-            else ()
-          end
-      | _ => ()
-      end;
+      check_binder_name a s;
       set ($s := $t);
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       match Constr.has_evar t with
-      | true => 
+      | true =>
         rename_blank_evars_in_term (Ident.to_string s) t;
-        warn (concat_list [of_string "Please come back to this line to make a definitive choice for "; of_ident s; of_string "."; fnl ();
-        of_string "For now you can use that "; of_constr constr:($v = $t)])
+        warn (concat_list [of_string "Please come back later to make a definitive choice for "; of_ident s; of_string "."; fnl ();
+        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."])
       | _ => ()
       end;
-      exists $v;      
+      exists $v;
       assert ($w : $v = $t) by reflexivity
-      
+
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end.
 
@@ -122,7 +102,7 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       match Constr.has_evar t with
       |  true =>
         rename_blank_evars_in_term name t;
-        warn (concat_list [of_string "Please come back to this line later to make a definite choice."]);
+        warn (concat_list [of_string "Please come back later to make a definite choice."]);
         eexists $t
       |  false => exists $t
       end
@@ -131,7 +111,7 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
   panic_if_goal_wrapped ();
-  match s with 
+  match s with
     | None => choose_variable_in_exists_no_renaming t
     | Some s => choose_variable_in_exists_goal_with_renaming s t
   end.

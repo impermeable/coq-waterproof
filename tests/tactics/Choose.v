@@ -25,6 +25,8 @@ Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
+Waterproof Enable Redirect Feedback.
+
 (** Test 0: This should choose m equal to n *)
 Goal forall n : nat, exists m : nat, n = m.
 Proof.
@@ -61,50 +63,53 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     Fail Choose m := n.
 Abort.
 
-Waterproof Enable Redirect Feedback.
-
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_)) Warning
-"Please come back to this line to make a definitive choice for n.
-For now you can use that 
-(n = ?n)".
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n)."]).
 Abort.
 
 (** Test 6: Choose a named evar *)
 Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (?[m])) Warning
-"Please come back to this line to make a definitive choice for n.
-For now you can use that 
-(n = ?m)".
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?m)."]).
 Abort.
 
 (** Test 7: Choose a blank check that blank was renamed *)
 Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_)) Warning
-"Please come back to this line to make a definitive choice for n.
-For now you can use that 
-(n = ?n)".
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n)."]).
     assert (?n = 0).
 Abort.
 
-(** Test 8: Choose a more complicated blank and check that renaming took place, 
+(** Test 8: Choose a more complicated blank and check that renaming took place,
     by reformulating the goal in terms of the new named evars. *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (_ + _ + _).
+    assert_feedback_with_string (fun () => Choose n := (_ + _ + _)) Warning
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n + ?n0 + ?n1)."]).
     change (?n + ?n0 + ?n1 + 1 = ?n + ?n0 + ?n1 + 1).
 Abort.
 
 (** Test 9: Choose a blank without specifying the name of the variable *)
 Goal exists n : nat, n + 1 = n + 1.
-  Choose (_).
+  assert_feedback_with_string (fun () => Choose (_)) Warning
+"Please come back later to make a definite choice.".
   change (?n + 1 = ?n + 1).
 Abort.
 
 (** Test 10: Choose a blank if binder has no name *)
 Goal exists _ : nat, True.
 Proof.
-  Choose (_).
+  assert_feedback_with_string (fun () => Choose (_)) Warning
+"Please come back later to make a definite choice.".
   (* In this case, the blank evar should be renamed to `x` *)
   assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
 Abort.
@@ -114,22 +119,14 @@ Abort.
 (** Test 11: Warn on different variable name *)
 Goal exists n : nat, n + 1 = n + 1.
 Proof.
-    Choose m := 1.
+    assert_feedback_with_strings (fun () => Choose m := 1) Warning
+["Expected variable name n instead of m."].
 Abort.
 
-(** Test 12: Warn on different variable name when binder is shielded,
+(** Test 12: Do not warn on different variable name when binder is shielded,
     because of an already existing definition. *)
 Goal exists n : nat, n + 1 = n + 1.
 Proof.
     set (n := 3).
-    Choose n0 := 2.
-Abort.
-
-(** Test 12: Warn on different variable name when binder is shielded,
-    because of an already existing definition, using that already
-    defined variable *)
-Goal exists n : nat, n + 1 = n + 1.
-Proof.
-    set (n := 3).
-    Choose n0 := n.
+    assert_no_feedback (fun () => Choose n0 := 2) Warning.
 Abort.

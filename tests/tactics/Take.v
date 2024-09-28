@@ -43,7 +43,7 @@ Goal forall n : nat, n <= 2*n.
     Fail Take n : bool.
 Abort.
 
-(** Test 3: This should raise an error, 
+(** Test 3: This should raise an error,
     because [Take] solves forall-quatifiers *)
 Goal exists n : nat, n <= 2*n.
     Fail Take n : nat.
@@ -98,7 +98,7 @@ Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
 Abort.
 
 (** Test 8: look how crazy many vars we can introduce*)
-Goal forall (a b c d e f g: nat) (b1 b2: bool), 
+Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
     Take a, b, c, d, e, f, g : nat and b1, b2: bool.
 Abort.
@@ -109,7 +109,7 @@ Abort.
     Currently it raises "Internal (err:(a is already used.))"
     which seems clear enough :)
     *)
-Goal forall (a b c d e f g: nat) (b1 b2: bool), 
+Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
     assert_fails_with_string (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool)
 "Internal (err:(a is already used.))".
@@ -135,7 +135,7 @@ Goal not (0 = 1).
 Abort.
 
 Require Import Coq.Reals.Reals.
-(** Test 13: Introducing too many variables when 
+(** Test 13: Introducing too many variables when
     the for all statement is followed by an implication.
 *)
 Goal forall (n : nat) (x y : R), (0 < x < y)%R -> (x^n < y^n)%R.
@@ -162,7 +162,7 @@ Proof.
 "Expected variable name n0 instead of m.".
 Abort.
 
-(** Test 16: Do not warn if variable has visually been renamed (although 
+(** Test 16: Do not warn if variable has visually been renamed (although
     internally, the binder name stays the same) *)
 Goal forall n : nat, n = n.
 Proof.
@@ -187,7 +187,7 @@ Proof.
   assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
-(** Test 19: If a statement reuses a same binder name, and 
+(** Test 19: If a statement reuses a same binder name, and
     variable are introduced one by one, go with the
     visually rename binder. *)
 Goal forall n : nat, forall n : nat, n = n.
