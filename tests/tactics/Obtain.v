@@ -295,3 +295,30 @@ Goal (forall n : nat, n = 0)%nat -> True.
   assert_fails_with_string (fun () => Obtain n according to (H))
 "Can only obtain variables from 'there exists...' statements.".
 Abort.
+
+Require Import Waterproof.Notations.Sets.
+
+(** Test 22 : Use existence statements in sets *)
+Close Scope R_scope.
+Open Scope nat_scope.
+Local Parameter A : nat -> Prop.
+Definition B := as_subset _ A.
+
+Goal (exists n : nat, n ∈ B /\ n = 0) -> True.
+Proof.
+  intro H.
+  Obtain such an n.
+  assert (n ∈ B) by assumption.
+  assert (n = 0) by assumption.
+Abort.
+
+(** Test 23 : Use multiple existence statements in sets *)
+
+Goal (exists n : nat, n ∈ B /\ exists m : nat, m ∈ B /\ n = m) -> True.
+Proof.
+  intro H.
+  Obtain such an n, m.
+  assert (n ∈ B) by assumption.
+  assert (m ∈ B) by assumption.
+  assert (n = m) by assumption.
+Abort.

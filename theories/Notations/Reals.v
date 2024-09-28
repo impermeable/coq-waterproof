@@ -47,8 +47,8 @@ Coercion Q2R: Q >-> R.
 
 (** ** Sequences *)
 Definition converges_to (a : ℕ → ℝ) (c : ℝ) :=
-  ∀ ε : ℝ, ε > 0 ⇒
-    ∃ N : ℕ, ∀ n : ℕ, (n ≥ N)%nat ⇒
+  forall ε : ℝ, ε > 0 ⇒
+    exists N : ℕ, forall n : ℕ, (n ≥ N)%nat ⇒
       R_dist (a n) c < ε.
 
 Notation "a ⟶ c" := (converges_to a c) (at level 20).

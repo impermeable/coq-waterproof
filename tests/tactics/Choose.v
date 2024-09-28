@@ -24,6 +24,7 @@ Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Notations.Sets.
 
 Waterproof Enable Redirect Feedback.
 
@@ -130,3 +131,10 @@ Proof.
     set (n := 3).
     assert_no_feedback (fun () => Choose n0 := 2) Warning.
 Abort.
+
+Goal exists n : nat, (as_subset _ (fun x => x > 0)) n /\ True.
+Proof.
+  Choose n := 3.
+  * We conclude that (n > 0). (* TODO: syntax with "indeed"? *)
+  * We conclude that True.
+Qed.

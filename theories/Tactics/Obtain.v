@@ -24,6 +24,8 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
+Require Import Notations.Sets.
+
 Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
@@ -74,7 +76,17 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
     [of_string "Couldn't obtain "; of_ident var; of_string "."; fnl ();
      of_string "There aren't enough variables to obtain."])
   end;
-  destruct $h as [$var $hyp].
+  destruct $h as [$var $hyp];
+  let h := Control.hyp hyp in
+  match! Constr.type h with
+  | ((pred _ _) ?a) /\ _ =>
+    let var_constr := Control.hyp var in
+    let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+    if Constr.equal var_constr a then
+      destruct $h as [$w $hyp]
+    else ()
+  | _ => ()
+  end.
 
 (* Quick fix for Wateproof editor / Coq lsp, where
   [Obtain such an

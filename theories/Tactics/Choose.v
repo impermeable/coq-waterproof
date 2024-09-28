@@ -24,6 +24,10 @@ Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 Require Import Util.Evars.
 
+Require Import Tactics.BothStatements.
+
+Require Import Notations.Sets.
+
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
@@ -70,6 +74,16 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       assert ($w : $v = $t) by reflexivity
 
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
+  end;
+  let v := Control.hyp s in
+  lazy_match! goal with
+  | [ |- (pred _ _) ?c /\ _] =>
+    if Constr.equal c v then
+      split;
+      (* TODO: attempt to prove first statement automatically *)
+      Control.enter (fun () => apply StateGoal.unwrap)
+      else ()
+  | [ |- _ ] => ()
   end.
 
 (**

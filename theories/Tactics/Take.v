@@ -27,6 +27,8 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
+Require Import Notations.Sets.
+
 Local Ltac2 too_many_of_type_message (t : constr) :=
   concat_list [of_string "Tried to introduce too many variables of type ";
     of_constr t; of_string "."].
@@ -34,7 +36,6 @@ Local Ltac2 too_many_of_type_message (t : constr) :=
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
   concat_list [of_string "Expected variable of type "; of_constr e;
     of_string " instead of "; of_constr t; of_string "."].
-
 
 (**
   Introduces a variable.
@@ -52,19 +53,32 @@ Local Ltac2 intro_ident (id : ident) (type : constr) :=
   let current_goal := Control.goal () in
   match Constr.Unsafe.kind current_goal with
   | Constr.Unsafe.Prod b a =>
-      let ct := get_coerced_type type in
-      (* Check whether we need a variable of type [type], including coercions of [type]. *)
-      match check_constr_equal (Constr.Binder.type b) ct with
-        | true  => ()
-        | false => throw (too_many_of_type_message type)
-      end;
       (* Check whether the expected binder name was provided. *)
       check_binder_name current_goal id;
-      (* Finally introduce the variable *)
-      intro $id
+      let binder_type := Constr.Binder.type b in
+      lazy_match! (Constr.type type) with
+      | subset ?b_type =>
+        if check_constr_equal binder_type b_type then
+          intro $id;
+          lazy_match! goal with
+          | [|- (pred ?t ?b) ?var -> _] =>
+            let id_constr := Control.hyp id in
+            if Bool.and (Constr.equal (eval cbn in ($b)) type)
+                        (Constr.equal id_constr var) then
+              (* introduce the assumption *)
+              let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+              intro $w
+            else throw (too_many_of_type_message type)
+          | [|- _] => throw (too_many_of_type_message type)
+          end
+        else throw (too_many_of_type_message type)
+      | _ =>
+        if check_constr_equal binder_type (get_coerced_type type) then
+          intro $id
+        else throw (too_many_of_type_message type)
+      end
     | _ => throw (too_many_of_type_message type)
-  end.
-
+    end.
 
 (**
   Introduces a list of variables of single type.
@@ -87,16 +101,25 @@ Local Ltac2 intro_per_type (pair : ident list * constr) :=
       match check_constr_equal sort_u constr:(Prop) with
         | false =>
           (* Check whether we need variables of type [type], including coercions of [type]. *)
-          let ct := get_coerced_type type in
+          (* let ct := get_coerced_type type in
           match check_constr_equal u ct with
-            | true  => List.iter (fun id => intro_ident id type) ids
-            | false => throw (expected_of_type_instead_of_message u type)
-          end
+          | true  => ()
+          | false =>
+            match! v with
+            | ((pred ?t ?b) ?var -> _) =>
+              if Constr.equal (eval cbn in (pred $t $b)) ct then ()
+              else throw (expected_of_type_instead_of_message u type)
+            | _ => throw (expected_of_type_instead_of_message u type)
+            end
+          end;*)
+          List.iter (fun id => intro_ident id type) ids
         | true  => throw (of_string "Tried to introduce too many variables.")
       end
     | [ |- _ ] => throw (of_string "Tried to introduce too many variables.")
   end.
-
+Goal forall n : nat, n <= 2*n.
+  intro_per_type ([ident:(n)], constr:(nat)).
+Abort.
 
 (**
   Checks whether variables need to be introduced, attempts to introduce a list of variables of certain types.
