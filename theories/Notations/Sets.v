@@ -61,75 +61,61 @@ Notation "｛ x : T | P ｝" :=
 Declare Scope subset_scope.
 Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.
 
-(* Definition conv (T : Type) : (T -> Prop) := as_subset _ (fun x => True).
-Coercion conv : Sortclass >-> Funclass.*)
+Definition conv (T : Type) : (T -> Prop) := as_subset _ (fun x => True).
+Coercion conv : Sortclass >-> Funclass.
 
 Notation "x ∈ A" := ((pred _ A) x) (at level 70, no associativity) : type_scope.
 
-(* Notation "∃ x .. y ∈ A , P " :=
-  (exists x, (x ∈ A) /\ .. (exists y, (y ∈ A) /\ P) ..)
-  (at level 200, x binder, y binder, right associativity,
-  format "'[ ' '[ ' ∃  x .. y  ∈  A ']' , '//'  P ']'") : type_scope.
-
-Notation "∀ x .. y ∈ A , P" :=
-  (forall x, (x ∈ A) -> .. (forall y, (y ∈ A) -> P) .. )
-  (at level 200, x binder, y binder, A at level 20, right associativity,
-  format "'[ ' '[ ' ∀  x .. y  ∈  A ']' , '//'  P ']'") : type_scope.*)
-
-(* Local Parameter A : nat -> Prop.
-Definition B := as_subset _ A.
-
-Goal forall x : nat, forall y : nat, B x -> y = 0.
-Abort. *)
-
 Notation "∃ x , P" := (exists x, P)
-  (at level 200, x binder, right associativity,
-  only parsing) : type_scope.
+  (at level 200, x binder, right associativity) : type_scope.
 
 Notation "∀ x , P" := (forall x, P)
-  (at level 200, x binder, right associativity,
-  only parsing) : type_scope.
+  (at level 200, x binder, right associativity) : type_scope.
 
 Notation "∃ x ∈ A , P " :=
-  (exists x, (x ∈ A) /\ P)
+  ((fun B => (exists x, (x ∈ B) /\ P)) A)
   (at level 200, x binder, right associativity,
   format "'[ ' '[ ' ∃  x  ∈  A ']' , '//'  P ']'") : subset_scope.
 
 Notation "∀ x ∈ A , P" :=
-  (forall x, (x ∈ A) -> P )
+  ((fun B => forall x, (x ∈ B) -> P ) A)
   (at level 200, x binder, right associativity,
   format "'[ ' '[ ' ∀  x  ∈  A ']' , '//'  P ']'") : subset_scope.
 
-(* Notation "∀ x .. y ∈ , P" :=
-  (forall x, x = 0 -> .. (forall y, y = 0 -> P) .. )
-  (at level 200, x binder, y binder, right associativity,
-  format "'[ ' '[ ' ∀  x .. y  ∈  ']' , '//'  P ']'") : type_scope. *)
+Notation "∃ x '>' y , P" :=
+  ((fun z => exists x, x > z /\ P) y)
+  (at level 200, x binder, right associativity) : nat_scope.
 
-(* Goal forall x : nat, forall y : nat, y = 0 -> True.
-Abort.*)
+Notation "∀ x '>' y , P" :=
+  ((fun z => forall x, x > z -> P) y)
+  (at level 200, x binder, right associativity) : nat_scope.
 
-(* Notation "'mf' x .. y , P" :=
-  (forall x, x = 0 ∧ .. (forall y, y = 0 ∧ P) .. )
-  (at level 200, x binder, y binder, right associativity).
+Notation "∃ x '≥' y , P" :=
+  ((fun z => exists x, x >= z /\ P) y)
+  (at level 200, x binder, right associativity) : nat_scope.
 
-Notation "'mf2' x , P" :=
-  (forall x, x = 0 -> P )
-  (at level 200, x binder,right associativity).
+Notation "∀ x '≥' y , P" :=
+  ((fun z => forall x, x >= z -> P) y)
+  (at level 200, x binder, right associativity) : nat_scope.
 
-Goal forall x : nat, 3 = 0 ∧ x = 0.
+Require Import Coq.Reals.Reals.
 
-Local Parameter A : nat -> Prop.
-Definition B := as_subset _ A.
+Open Scope R_scope.
 
-Goal forall k : nat, forall l : nat, k ∈ B -> l = 0.
-Abort.
+Notation "∃ x '>' y , P" :=
+  ((fun z => exists x, x > z /\ P) y)
+  (at level 200, x binder, right associativity) : R_scope.
 
-Notation "'myfor' x , P" :=
-  (forall x, x ∈ B /\ P) (at level 200, x binder).
+Notation "∀ x '>' y , P" :=
+  ((fun z => forall x, x > z -> P) y)
+  (at level 200, x binder, right associativity) : R_scope.
 
-Goal forall x : nat, 0 ∈ B /\ x = 0.
+Notation "∃ x '≥' y , P" :=
+  ((fun z => exists x, x >= z /\ P) y)
+  (at level 200, x binder, right associativity) : R_scope.
 
-Goal forall k : nat, 3 ∈ B -> k = 0.
+Notation "∀ x '≥' y , P" :=
+  ((fun z => forall x, x >= z -> P) y)
+  (at level 200, x binder, right associativity) : R_scope.
 
-Goal ∃ k : nat, 3 ∈ B ∧ k = 0.
-Unset Printing Notations.*)
+Close Scope R_scope.
