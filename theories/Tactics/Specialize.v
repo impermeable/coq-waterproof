@@ -21,6 +21,7 @@ Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
+Require Import Util.Constr.
 Require Import Util.Init.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
@@ -115,14 +116,17 @@ Local Ltac2 _get_binder_type_from_binder_list (name : ident) (b_list : binder li
 *)
 Ltac2 rec get_binders_with_implication_from_goal_aux () :
   ((binder * constr * ident * int) list) * int :=
+  let add_binder_cond_and_name (b : binder) (cond : constr) (w : ident) :=
+    (let wH := Fresh.fresh (Fresh.Free.of_goal ()) @___aux_H in
+                  intro $wH;
+                  let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
+                  ((b, cond, w, ct) :: b_list, Int.add ct 1) ) in
   lazy_match! goal with
   | [ |- _ -> ?x] =>
     let w := Fresh.fresh (Fresh.Free.of_goal ()) @___aux in
     intro $w;
     let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
     (b_list, Int.add ct 1)
-    (* let (b_list, ct) := get_binders_with_implication_from_goal () in
-    (b_list, Int.add ct 1) *)
   | [ |- forall _ : _, _ ] =>
     match Constr.Unsafe.kind (Control.goal ()) with
     | Constr.Unsafe.Prod b a =>
@@ -139,27 +143,24 @@ Ltac2 rec get_binders_with_implication_from_goal_aux () :
             | Some w_id => Fresh.fresh (Fresh.Free.of_goal ()) w_id
             end in
           intro $w;
-          (* Now check the next term! *)
+          (* Now check whether the next term satisfies the conditions to be immediately added as a goal... *)
           lazy_match! (Control.goal ()) with
           | (?cond -> _) =>
             match! cond  with
-            | (pred _ ?set) ?var =>
+            | ?predicate ?var =>
               (* Check variable *)
-              match Constr.Unsafe.kind var with
-              | Constr.Unsafe.Var id =>
-                if Ident.equal id w then
-                  let wH := Fresh.fresh (Fresh.Free.of_goal ()) @___aux_H in
-                  intro $wH;
-                  let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
-                  ((b, set, w, ct) :: b_list, Int.add ct 1)
-                else
-                  (* case forall, but the variable in the set has
-                     a different name *)
-                  get_binders_with_implication_from_goal_aux ()
-              | _ =>
-                (* case forall, but the set membership is
-                   not formulated for a specific variable*)
-                get_binders_with_implication_from_goal_aux ()
+              if Bool.and (constr_is_ident var w) (constr_does_not_contain_ident predicate w) then
+                add_binder_cond_and_name b cond w
+              else
+                match! cond with
+                | ?other_pred ?var_1 ?other_arg =>
+                    if Bool.and (constr_is_ident var_1 w)
+                      (Bool.and (constr_does_not_contain_ident other_pred w)
+                                (constr_does_not_contain_ident other_arg w)) then
+                      add_binder_cond_and_name b cond w
+                    else
+                      get_binders_with_implication_from_goal_aux ()
+                | _ => get_binders_with_implication_from_goal_aux ()
               end
             | _ =>
               (* case forall but not followed by implication
@@ -313,7 +314,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
               let fresh_of_id := Fresh.fresh (Fresh.Free.of_goal ()) id in
               let id_c := Control.hyp aux_x in
               (* add the subgoal *)
-              enough ($id_c ∈ $con) as $aux_id;
+              enough ($con) as $aux_id;
               (nr, aux_id) :: prev_id_list)
           end) binder_types [] in
         Control.focus 1 1 (fun () =>

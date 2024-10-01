@@ -19,6 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Util.Constr.
 Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
@@ -76,14 +77,32 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end;
   let v := Control.hyp s in
-  lazy_match! goal with
-  | [ |- (pred _ _) ?c /\ _] =>
-    if Constr.equal c v then
-      split;
-      (* TODO: attempt to prove first statement automatically *)
-      Control.enter (fun () => apply StateGoal.unwrap)
-      else ()
-  | [ |- _ ] => ()
+  lazy_match! (Control.goal ()) with
+  | (?cond /\ _) =>
+    match! cond  with
+    | ?predicate ?var =>
+      (* Check variable *)
+      if Bool.and (constr_is_ident var s) (constr_does_not_contain_ident predicate s) then
+        split; Control.enter (fun () => apply StateGoal.unwrap)
+      else
+        match! cond with
+        | ?other_pred ?var_1 ?other_arg =>
+            if Bool.and (constr_is_ident var_1 s)
+              (Bool.and (constr_does_not_contain_ident other_pred s)
+                        (constr_does_not_contain_ident other_arg s)) then
+              split; Control.enter (fun () => apply StateGoal.unwrap)
+            else
+              ()
+        | _ => ()
+      end
+    | _ =>
+      (* case forall but not followed by implication
+          from a membership of a set*)
+      ()
+    end
+  | _ =>
+    (* case forall but not followed by implication *)
+    ()
   end.
 
 (**
