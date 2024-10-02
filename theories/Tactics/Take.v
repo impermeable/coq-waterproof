@@ -88,7 +88,7 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
   match Constr.Unsafe.kind (current_goal) with
   | Constr.Unsafe.Prod b a =>
       (* Check whether the expected binder name was provided. *)
-      check_binder_name current_goal id
+      check_binder_warn current_goal id true
   | _ => throw (too_many_of_type_message type)
   end;
   match tk with

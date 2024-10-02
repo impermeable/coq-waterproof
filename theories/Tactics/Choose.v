@@ -64,7 +64,7 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     end in
   lazy_match! goal with
     | [ |- ex ?a] =>
-      check_binder_name a s;
+      check_binder_warn a s true;
       set ($s := $t);
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in

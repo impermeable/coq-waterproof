@@ -80,9 +80,9 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   let type_h := get_type h in
   lazy_match! type_h with
   | ex  ?pred =>
-    check_binder_name pred var
+    check_binder_warn pred var true
   | sig ?pred =>
-    check_binder_name pred var
+    check_binder_warn pred var true
   | _ => throw (concat_list
     [of_string "Couldn't obtain "; of_ident var; of_string "."; fnl ();
      of_string "There aren't enough variables to obtain."])

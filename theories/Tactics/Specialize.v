@@ -21,6 +21,7 @@ Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
+Require Import Util.Binders.
 Require Import Util.Constr.
 Require Import Util.Init.
 Require Import Util.Goals.
@@ -346,6 +347,125 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
     | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
   end.
 
+Ltac2 wp_specialize_one (var_choice : ident * ident) (id : ident) :=
+  let h := Control.hyp id in
+  let type_of_h := Constr.type h in
+  let (var, choice) := var_choice in
+  let is_sealed :=
+    lazy_match! (Constr.type h) with
+    | seal _ _ => true
+    | _ => false
+    end in
+  let statement :=
+    if is_sealed then
+      (eval unfold seal at 1 in $type_of_h)
+    else type_of_h in
+  match check_binder_name statement var false with
+  | None => ()
+  | Some first_guessed_name =>
+    match check_binder_name statement var true with
+    | None => ()
+    | Some second_guessed_name =>
+      if Ident.equal first_guessed_name second_guessed_name then
+        warn (concat_list [of_string "Expected variable name ";  of_ident first_guessed_name;
+          of_string " instead of "; of_ident var; of_string "."])
+      else
+        warn (concat_list [of_string "Expected variable name "; of_ident first_guessed_name;
+          of_string " or " ;
+          of_ident second_guessed_name; of_string " instead of " ; of_ident var;
+          of_string "."])
+    end
+  end;
+  let aux_id := Fresh.fresh (Fresh.Free.of_goal ()) @_aux in
+  assert $statement as $aux_id;
+  Control.focus 1 1 (fun () => exact $h);
+  let aux_c := Control.hyp aux_id in
+  let choice_c := Control.hyp choice in
+  specialize ($aux_c $choice_c);
+  if is_sealed then
+    let aux_c := Control.hyp aux_id in
+    lazy_match! (Constr.type aux_c) with
+    | ?con -> _ =>
+        let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+        enough ($con) as $w;
+        Control.focus 2 2 (fun () =>
+          apply StateGoal.unwrap);
+        Control.focus 1 1 (fun () =>
+          let w_c := Control.hyp w in
+          specialize ($aux_c $w_c))
+    | _ => () (* TODO: should we throw an error here? one should never arrive in this case ... *)
+    end
+  else ();
+  Std.rename [(id, aux_id); (aux_id, id)];
+  Std.clear [aux_id].
+
+(**
+  Specializes a hypothesis that starts with a for-all statement.
+
+  The user supplies names and choices for the bound variables in a given
+  hypothesis. The tactic then specializes the hypothesis with the given choices. The
+  choices are allowed to contain clanks. The unnamed holes will be filled in
+  with named evars based on the names of the bound variables.
+
+  Arguments:
+    - [var_choice_list : (ident * constr) list], list of names for variables together with choices for those variables
+    - [in_hyp : ident], name of the hypothesis to specialize.
+
+  Raises fatal exceptions:
+    - If the hypothesis [in_hyp] does not start with a for-all statement.
+*)
+Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) :=
+  let possibly_sealed_statement :=
+     eval unfold type_of in (type_of $h) in
+  let statement :=
+    match! possibly_sealed_statement with
+    | seal _ _ => eval unfold seal at 1 in $possibly_sealed_statement
+    | _ => possibly_sealed_statement
+    end in
+  let aux_id := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+  assert $possibly_sealed_statement as $aux_id;
+  Control.focus 1 1 (fun () => exact $h);
+  (* The introduction of helper definitions was added for Coq v8.18 since otherwise
+    one would get an error saying that one cannot instantiate the evar.
+    We build variable names for the helper variables from the
+    binder name, in the hope to avoid naming conflicts. *)
+  let def_list :=
+    List.map (fun (i, c) =>
+      (* this is our guess for what binders get renamed to *)
+      let id_opt :=
+          Ident.of_string (String.concat "" ["_temp_sp_"; Ident.to_string i]) in
+      let aux_x := match id_opt with
+      | None => Fresh.fresh (Fresh.Free.of_goal ()) @_aux_sp_
+      | Some temp_id => Fresh.fresh (Fresh.Free.of_goal ()) temp_id
+      end in
+      set ($aux_x := $c);
+      (i, aux_x)) var_choice_list in
+  let evars := _names_evars var_choice_list in
+  match is_empty evars with
+  | true => ()
+  | false => warn (concat_list (
+      [of_string "Please come back to this line later to make a definite choice for ";
+        _of_idents evars; of_string "."]))
+  end;
+  lazy_match! statement with
+    | _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
+      throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
+    | forall _ : _, _ =>
+      (* Create new hypotheses *)
+      List.iter (fun x => Control.focus 1 1 (fun () => wp_specialize_one x aux_id)) def_list;
+      Control.focus 1 1 (fun () =>
+        let new_w_c := Control.hyp aux_id in
+        let new_w_t := Constr.type new_w_c in
+      List.iter (fun (i, c) =>
+        rename_blank_evars_in_term (Ident.to_string i) c) var_choice_list;
+      apply (StateHyp.unwrap $new_w_t $new_w_c));
+      List.iter (fun (i, c) => subst $c) def_list;
+      ltac1:(revgoals)
+      (* still need to restate the goal *)
+    | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
+  end.
+
+
 (**
   Specializes a hypothesis that starts with a for-all statement.
 
@@ -360,4 +480,17 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
 Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_constr), ","))
     "in" "(" in_hyp(constr) ")" :=
   panic_if_goal_wrapped ();
-  wp_specialize var_choice_list in_hyp.
+  wp_specialize' var_choice_list in_hyp.
+
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+
+Use n := _ in (H).
+Abort.
+
+Goal (∀ n > 3, n = 4) -> True.
+Proof.
+intro H.
+Use n := 2 in (H).
+Abort.

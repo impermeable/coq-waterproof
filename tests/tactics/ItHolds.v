@@ -25,7 +25,7 @@ Require Import Lra.
 
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
-Require Import Waterproof.Notations.
+Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Util.Assertions.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -325,11 +325,11 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 (** Test 23: Test whether wrapper for specialize works *)
-Goal (forall x : nat, x >= 5 -> True) -> True.
+Goal (∀ x ≥ 5, True) -> True.
 Proof.
   intro H1.
   Use x := 6 in (H1).
-  * We need to show that (6 ≥ 5).
+  * We need to show that (6 >= 5).
     Control.shelve ().
   * It holds that (True) (i).
 Abort.

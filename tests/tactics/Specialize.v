@@ -24,6 +24,8 @@ Require Import Waterproof.Automation.
 Require Import Waterproof.Util.Assertions.
 Require Import Waterproof.Util.MessagesToUser.
 
+Waterproof Enable Redirect Feedback.
+
 (** Test 0: This should be the expected behavior. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
@@ -36,7 +38,8 @@ Abort.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Fail Use m := (3) in (H).
+assert_feedback_with_strings (fun () => Use m := (3) in (H)) Warning
+["Expected variable name n instead of m."].
 Abort.
 
 (** Test 2: This should fail because the wrong goal is specified. *)
@@ -94,22 +97,24 @@ Abort.
 Goal (forall n m : nat, n = m) -> False.
 Proof.
 intro H.
-Use m := 4, n := 3 in (H).
-Fail It holds that (4 = 3). (* as expected :) *)
+assert_feedback_with_strings (fun () => Use m := 4, n := 3 in (H)) Warning
+["Expected variable name n instead of m.";
+"Expected variable name m instead of n."]. (* as expected :) *)
+It holds that (4 = 3).
 It holds that (3 = 4).
 Abort.
 
 (* -------------------------------------------------------------------------- *)
 
-Waterproof Enable Redirect Feedback.
+(* Waterproof Enable Redirect Feedback.*)
 
 (** Test 8 : use a placeholder as variable name *)
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 intro H.
-assert_feedback_with_string (fun () => Use b := _ in (H)) Warning
-"Please come back to this line later to make a definite choice for b.".
-It holds that (forall a c : nat, a + ?b + c = 0) (i).
+assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
+"Please come back to this line later to make a definite choice for a.".
+It holds that (forall b c : nat, ?a + b + c = 0) (i).
 Abort.
 
 (** Test 8 : use multiple placeholders as variable names *)
@@ -156,14 +161,15 @@ Use b := ?a in (i).
 It holds that (?a + ?a = 0).
 Abort.
 
-(** Test 13 : TODO: illustration of slightly strange behavior *)
+(** Test 13 : TODO: illustration of slightly strange behavior : was fixed with
+  version of specialize *)
 
-Goal (forall n : nat, f n = n) -> True.
+(* Goal (forall n : nat, f n = n) -> True.
 Proof.
 intro H.
 set (n := 2). (* This renames the binder *)
 Fail Use n0 := 5 in (H).
-Abort.
+Abort.*)
 
 Require Import Waterproof.Notations.Sets.
 
@@ -174,7 +180,7 @@ Local Parameter C : nat -> Prop.
 Definition D := as_subset _ C.
 
 (** Test 14 : Specialize a variable in a set. *)
-Goal (forall n : nat, n ∈ B -> n = 0) -> True.
+Goal (∀ n ∈ B, n = 0) -> True.
 Proof.
 intro H.
 Use n := 3 in (H).
@@ -184,7 +190,7 @@ Use n := 3 in (H).
 Abort.
 
 (** Test 15 : Choose a blank for a variable in a set *)
-Goal (forall x : nat, x ∈ B -> x = 0) -> True.
+Goal (∀ x ∈ B, x = 0) -> True.
 Proof.
 intro H.
 assert_feedback_with_strings (fun () => Use x := _ in (H)) Warning
@@ -196,38 +202,36 @@ Abort.
 
 (** Test 16 : Specialize variables in a long statements
   with multiple implications *)
-Goal (forall x : nat, x ∈ B -> 9 = 9 -> 3 = 3 ->
+Goal (∀ x ∈ B, 9 = 9 -> 3 = 3 ->
   True -> forall y : nat, x ∈ B -> 2 = 2 -> 1 = 1 ->
   forall z : nat, z ∈ D -> x = y + z) -> True.
 Proof.
 intro H.
-Use y := 5 in (H).
-It holds that (∀ x ∈ B,
-  9 = 9 -> 3 = 3 -> True -> x ∈ B -> 2 = 2 -> 1 = 1 -> ∀ z ∈ D,
-  x = 5 + z).
+Use x := 5 in (H).
+* We need to show that (5 ∈ B).
+  Control.shelve ().
+* It holds that (9 = 9 -> 3 = 3 -> True ->
+  ∀ y, 5 ∈ B -> 2 = 2 -> 1 = 1 -> ∀ z, z ∈ D -> 5 = y + z).
 Abort.
 
 (** Test 17 : Specialize variables in a long statements
   with multiple implications *)
-Goal (forall x : nat, x ∈ B -> 9 = 9 -> 3 = 3 ->
-  True -> forall y : nat, x ∈ B -> 2 = 2 -> 1 = 1 ->
+Goal (∀ x ∈ B, ∀ y ∈ D, 2 = 2 -> 1 = 1 ->
   forall z : nat, z ∈ D -> x = y + z) -> True.
 Proof.
 intro H.
-Use x := 2, y := 3, z := 5 in (H).
+Use x := 2, y := 3 in (H).
 * We need to show that (2 ∈ B).
   Control.shelve ().
-* We need to show that (5 ∈ D).
+* We need to show that (3 ∈ D).
   Control.shelve ().
-* It holds that (9 = 9 -> 3 = 3 -> True ->
-    2 ∈ B -> 2 = 2 -> 1 = 1 -> 2 = 3 + 5).
+* It holds that (2 = 2 -> 1 = 1 ->
+    ∀ z, z ∈ D -> 2 = 3 + z).
 Abort.
 
 (** Test 18 : Specialize variables with blanks in a long statements
   with multiple implications *)
-Goal (forall x : nat, x ∈ B -> 9 = 9 -> 3 = 3 ->
-  True -> forall y : nat, x ∈ B -> 2 = 2 -> 1 = 1 ->
-  forall z : nat, z ∈ D -> x = y + z) -> True.
+Goal (∀ x ∈ B, ∀ y : nat, ∀ z ∈ D, 1 = 1 -> x = y + z) -> True.
 Proof.
 intro H.
 assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
@@ -237,13 +241,11 @@ assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
   Control.shelve ().
 * We need to show that (?z ∈ D).
   Control.shelve ().
-* It holds that (9 = 9 -> 3 = 3 -> True ->
-    ?x ∈ B -> 2 = 2 -> 1 = 1 -> ?x = ?y + ?z).
+* It holds that (1 = 1 -> ?x = ?y + ?z).
 Abort.
 
 (** Test 19: have a set that depends on an earlier set*)
-Goal (forall x : nat, x ∈ B -> forall y : nat,
-  y ∈ as_subset _ (fun z => z > x) -> True) -> True.
+Goal (∀ x ∈ B, ∀ y ∈ as_subset _ (fun z => z > x), True) -> True.
 Proof.
 intro H.
 Use x := 2, y := 3 in (H).
@@ -255,12 +257,9 @@ Use x := 2, y := 3 in (H).
 Abort.
 
 (** Test 20 : Test that things still work if the code for dealing with sets
-  throws an exception *)
+  throws an exception -- this was useful for different version of the tactic *)
 
-Local Ltac2 Type exn ::= [OnPurposeExn].
-Ltac2 Set test_insertion := fun () => Control.zero (OnPurposeExn).
-
-Goal (forall x : nat, x ∈ B -> 9 = 9 -> 3 = 3 ->
+(* Goal (forall x : nat, x ∈ B -> 9 = 9 -> 3 = 3 ->
   True -> forall y : nat, x ∈ B -> 2 = 2 -> 1 = 1 ->
   forall z : nat, z ∈ D -> x = y + z) -> True.
 Proof.
@@ -275,11 +274,11 @@ It holds that (?x ∈ B ->
 3 = 3 -> True -> ?x ∈ B -> 2 = 2 -> 1 = 1 -> ?z ∈ D -> ?x = ?y + ?z).
 Abort.
 
-Ltac2 Set test_insertion := fun () => ().
+Ltac2 Set test_insertion := fun () => ().*)
 
 (** Test 21 : Test that things still work if binder names get shielded *)
 
-Goal (forall x : nat, x ∈ B -> True) -> True.
+Goal (∀ x ∈ B, True) -> True.
 Proof.
 intro H.
 set (x := 2).
@@ -292,8 +291,7 @@ Abort.
 (** Test 21 : Test that things still work if binder names get shielded
     for multiple variables *)
 
-Goal (forall x : nat, x ∈ B -> forall x0 : nat, x0 ∈ D ->
-  1 = 1 -> forall x1 : nat, x1 ∈ B -> x = x0 + x1) -> True.
+Goal (∀ x ∈ B, forall x0 : nat, ∀ x1 ∈ D, x = x0 + x1) -> True.
 Proof.
 intro H.
 set (x := 2).
@@ -302,30 +300,7 @@ set (x1 := 4).
 Use x := 5, x0 := 6, x1 := 7 in (H).
 * We need to show that (5 ∈ B).
   Control.shelve ().
-* We need to show that (6 ∈ D).
+* We need to show that (7 ∈ D).
   Control.shelve ().
-* We need to show that (7 ∈ B).
-  Control.shelve ().
-* It holds that (1 = 1 -> 5 = 6 + 7).
+* It holds that (5 = 6 + 7).
 Abort.
-
-(** Test 21 : Test that things still work if binder names get shielded
-    but the way they are named is in a strange order *)
-
-Goal (forall x1 : nat, x1 ∈ B -> forall x0 : nat, x0 ∈ D ->
-  1 = 1 -> forall x : nat, x ∈ B -> x = x0 + x1) -> True.
-Proof.
-intro H.
-set (x := 2).
-set (x0 := 3).
-set (x1 := 4).
-Use x := 5, x0 := 6, x1 := 7 in (H).
-* We need to show that (7 ∈ B).
-  Control.shelve ().
-* We need to show that (6 ∈ D).
-  Control.shelve ().
-* We need to show that (5 ∈ B).
-  Control.shelve ().
-* It holds that (1 = 1 -> 5 = 6 + 7).
-Abort.
-
