@@ -86,9 +86,9 @@ Qed.
 
 
 
-(** 
+(**
 Axiom completeness : ∀ A : ℝ → Prop,
-      is_bounded_above A ⇒ 
+      is_bounded_above A ⇒
         ((∃ x : ℝ, x ∈ A) ⇒ { M : ℝ | is_sup A M }).
 ```*)
 (** ## Lower bounds
@@ -103,7 +103,7 @@ Definition is_bounded_below (A : ℝ → Prop) :=
 
 A real number $m : ℝ$ is called the **infimum** of a subset $A : ℝ → \mathsf{Prop}$ if it is the largest lower bound.*)
 Definition is_inf :=
-  fun (A : ℝ → Prop) m 
+  fun (A : ℝ → Prop) m
     => (is_lower_bound A m) ∧ (∀ l : R, is_lower_bound A l ⇒ l ≤ m).
 
 (* Implement notations for these concepts. *)
@@ -123,7 +123,7 @@ Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(s
   wp_unfold unfold_is_bounded_below (Some "bounded from below") true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_bounded_below (Some "bounded from below") false x.
-  
+
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
@@ -135,11 +135,11 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" x(o
 
 (** ## Reflection of a subset of ℝ in the origin
 
-Before we continue showing properties of the infimum, 
-we first introduce the reflection of subsets of $\mathbb{R}$ 
-in the origin. 
-Given a subset $A : ℝ → \mathsf{Prop}$, 
-we consider the set $-A$ 
+Before we continue showing properties of the infimum,
+we first introduce the reflection of subsets of $\mathbb{R}$
+in the origin.
+Given a subset $A : ℝ → \mathsf{Prop}$,
+we consider the set $-A$
 (which we write as $\mathsf{set\_opp} A$), defined by*)
 Definition set_opp (A : ℝ -> Prop) := (fun x ↦ (A (-x))).
 
@@ -147,7 +147,7 @@ Definition set_opp (A : ℝ -> Prop) := (fun x ↦ (A (-x))).
 (** Hint Resolve neg_opp_is_original_elem : additional.*)
 Lemma upp_bd_set_to_low_bd_set_opp :
   ∀ (A : ℝ → Prop) (M : ℝ),
-    M is an upper bound for A ⇒ 
+    M is an upper bound for A ⇒
       is_lower_bound (set_opp A) (-M).
 Proof.
     Take A : (ℝ → Prop) and M : ℝ.
@@ -177,7 +177,7 @@ Qed.
 
 Lemma low_bd_set_opp_to_upp_bd_set :
   ∀ (A : ℝ → Prop) (m : ℝ),
-    is_lower_bound (set_opp A) m ⇒ 
+    is_lower_bound (set_opp A) m ⇒
       -m is an upper bound for A.
 Proof.
     Take A : (ℝ → Prop) and m : ℝ.
@@ -241,7 +241,7 @@ Lemma sup_set_opp_is_inf_set :
 Proof.
     Take A : (ℝ → Prop) and M : ℝ.
     Assume that (is_sup (set_opp A) M).
-    It holds that (is_upper_bound (set_opp A) M 
+    It holds that (is_upper_bound (set_opp A) M
         ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)) (i).
     Because (i) both (is_upper_bound (set_opp A) M) and
       (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
@@ -261,7 +261,7 @@ Proof.
     - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
       Take l : ℝ.
       Assume that (is_lower_bound A l).
-      It holds that (is_upper_bound (set_opp A) M 
+      It holds that (is_upper_bound (set_opp A) M
         ∧ (for all M0 : ℝ, is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
       It holds that (∀ b : ℝ, is_upper_bound (set_opp A) b ⇒ M ≤ b) (ii).
       By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
@@ -291,7 +291,7 @@ Proof.
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-z)) (iv).
-    It holds that (B (-z)).    
+    It holds that (B (-z)).
     By R_complete it holds that (there exists M : ℝ, is_sup B M).
     Obtain such an M.
     Choose m := (- M).
@@ -309,7 +309,7 @@ Proof.
     Take A : (ℝ → Prop).
     Take M : ℝ.
     Assume that (is_sup A M).
-    It holds that (is_upper_bound A M 
+    It holds that (is_upper_bound A M
       ∧ (for all b : ℝ, is_upper_bound A b ⇨ M ≤ b)) (i).
     Because (i) both (is_upper_bound A M) and
       (for all M0 : ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
@@ -366,7 +366,7 @@ Qed.
 Lemma exists_almost_maximizer :
   ∀ (A : ℝ → Prop) (M : ℝ),
     is_sup A M ⇒
-      ∀ (L : ℝ), L < M ⇒ 
+      ∀ (L : ℝ), L < M ⇒
         ∃ a : ℝ, (A a) ∧ L < a.
 Proof.
     Take A : (ℝ → Prop).
@@ -375,7 +375,7 @@ Proof.
     Take L : ℝ.
     Assume that (L < M).
     We argue by contradiction.
-    Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) (i). 
+    Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) (i).
     It holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
     By (ii) it holds that (is_upper_bound A L).
     (** TODO: why can't this be done automatically? *)
@@ -387,7 +387,7 @@ Qed.
 Lemma exists_almost_minimizer :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_inf A m ⇒
-      ∀ (L : ℝ), L > m ⇒ 
+      ∀ (L : ℝ), L > m ⇒
         ∃ a : ℝ, (A a) ∧ L > a.
 Proof.
     Take A : (ℝ → Prop).
@@ -496,7 +496,7 @@ Qed.
 Lemma exists_almost_maximizer_ε :
   ∀ (A : ℝ → Prop) (M : ℝ),
     is_sup A M ⇒
-      ∀ (ε : ℝ), ε > 0 ⇒ 
+      ∀ (ε : ℝ), ε > 0 ⇒
         ∃ a : R, (A a) ∧ M - ε < a.
 Proof.
     Take A : (ℝ → Prop).
@@ -513,7 +513,7 @@ Qed.
 Lemma exists_almost_minimizer_ε :
   ∀ (A : ℝ → Prop) (m : ℝ),
     is_inf A m ⇒
-      ∀ (ε : ℝ), ε > 0 ⇒ 
+      ∀ (ε : ℝ), ε > 0 ⇒
         ∃ a : ℝ, (A a) ∧ m + ε > a.
 Proof.
     Take A : (ℝ → Prop).
@@ -528,11 +528,11 @@ Proof.
 Qed.
 
 Definition is_sup_alt_char (A : ℝ → Prop) (M : ℝ):=
-  is_upper_bound A M ∧ (∀ (ε : ℝ), ε > 0 ⇒ 
+  is_upper_bound A M ∧ (∀ (ε : ℝ), ε > 0 ⇒
         ∃ a : ℝ, (A a) ∧ M - ε < a).
 
 Definition is_inf_alt_char (A : ℝ → Prop) (m : ℝ):=
-  is_lower_bound A m ∧ (∀ (ε : ℝ), ε > 0 ⇒ 
+  is_lower_bound A m ∧ (∀ (ε : ℝ), ε > 0 ⇒
         ∃ a : ℝ, (A a) ∧ m +  ε > a).
 
 Theorem alt_char_sup :
@@ -603,14 +603,14 @@ Proof.
     + We need to show that (is_lower_bound A m).
       It holds that (
       is_lower_bound A m ∧ (for all l : ℝ,
-                          is_lower_bound A l ⇨ l ≤ m) 
+                          is_lower_bound A l ⇨ l ≤ m)
       ) (i).
       Because (i) both (is_lower_bound A m) and
         (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
       It follows that (is_lower_bound A m).
 
     + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).
-        
+
       By exists_almost_minimizer_ε we conclude that
       (for all ε : ℝ,
         ε > 0 ⇨ there exists a : ℝ, (A a) ∧
@@ -642,7 +642,7 @@ Qed.
 
 Lemma max_or_strict :
   ∀ (A : ℝ → Prop) (M : ℝ),
-    is_sup A M ⇒ 
+    is_sup A M ⇒
       (A M) ∨ (∀ a : ℝ, (A a) ⇒ a < M).
 Proof.
     Take A : (ℝ → Prop).
@@ -650,11 +650,11 @@ Proof.
     Assume that (is_sup A M).
     We argue by contradiction.
     Assume that (¬ (A M ∨ (for all a : ℝ, (A a) ⇒ a < M))).
-    It holds that ((¬ (A M)) ∧ 
+    It holds that ((¬ (A M)) ∧
       ¬(∀ a : ℝ, (A a) ⇒ a < M)) (i).
     Because (i) both(¬ (A M)) and (¬(∀ a : ℝ, (A a) ⇒ a < M)) hold.
     We claim that (for all a : ℝ, (A a) ⇒ a < M).
-    { 
+    {
       Take a : ℝ. Assume that (A a).
       By sup_is_upp_bd it holds that (is_upper_bound A M).
       It holds that (a ≤ M).
@@ -699,12 +699,12 @@ Proof.
 Qed.
 
 Lemma seq_ex_almost_maximizer_ε :
-  ∀ (a : ℕ → ℝ) (pr : has_ub a) (ε : ℝ), 
+  ∀ (a : ℕ → ℝ) (pr : has_ub a) (ε : ℝ),
     ε > 0 ⇒ ∃ k : ℕ, a k > lub a pr - ε.
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
-    We need to show that (for all ε : ℝ,  ε > 0 
+    We need to show that (for all ε : ℝ,  ε > 0
       ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
     clear _defeq. Obtain such an l.
@@ -720,7 +720,7 @@ Proof.
 Qed.
 
 Lemma seq_ex_almost_maximizer_m :
-  ∀ (a : ℕ → ℝ) (pr : has_ub a) (m : ℕ), 
+  ∀ (a : ℕ → ℝ) (pr : has_ub a) (m : ℕ),
     ∃ k : ℕ, a k > lub a pr - 1 / (INR(m) + 1).
 Proof.
     Take a : (ℕ → ℝ).

@@ -58,6 +58,10 @@ Local Ltac2 _binder_name_equal (name : ident) (b : binder) :=
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
+  let sealed := lazy_match! (Control.goal ()) with
+    | seal _ _ => unfold seal at 1; true
+    | _ => false
+    end in
   lazy_match! goal with
     | [ |- ex ?a] =>
       check_binder_name a s;
@@ -76,7 +80,10 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
 
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end;
-  let v := Control.hyp s in
+  if sealed then
+    split; Control.enter (fun () => apply StateGoal.unwrap)
+  else ().
+  (* let v := Control.hyp s in
   lazy_match! (Control.goal ()) with
   | (?cond /\ _) =>
     match! cond  with
@@ -103,7 +110,7 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
   | _ =>
     (* case forall but not followed by implication *)
     ()
-  end.
+  end.*)
 
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in
@@ -119,6 +126,10 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
+  let sealed := lazy_match! (Control.goal ()) with
+  | seal _ _ => unfold seal at 1; true
+  | _ => false
+  end in
   lazy_match! goal with
   | [ |- ex ?a] =>
       (* Make a suggestion of the base name for renaming of blank evars *)
@@ -140,7 +151,10 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       |  false => exists $t
       end
   | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
-  end.
+  end;
+  if sealed then
+    split; Control.enter (fun () => apply StateGoal.unwrap)
+  else ().
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
   panic_if_goal_wrapped ();

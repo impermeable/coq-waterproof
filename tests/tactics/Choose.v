@@ -132,7 +132,7 @@ Proof.
     assert_no_feedback (fun () => Choose n0 := 2) Warning.
 Abort.
 
-Goal exists n : nat, (as_subset _ (fun x => x > 0)) n /\ True.
+Goal ∃ n > 0, True.
 Proof.
   Choose n := 3.
   * We conclude that (n > 0). (* TODO: syntax with "indeed"? *)

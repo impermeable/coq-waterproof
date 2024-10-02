@@ -86,7 +86,7 @@ Define the index sequence n inductively.
 - Take k : ℕ and assume n(0),...,n(k) are defined.
   Assume that (∀ l : ℕ, (l ≤ k)%nat ⇒ candy_seq(n(l)) = sweet).
   Assume that (∀ l : ℕ, (l < k)%nat ⇒ (n(l) < n(l+1))%nat).
-  By (infinitely_many_sweet) it holds that 
+  By (infinitely_many_sweet) it holds that
     (∃ m : ℕ, (m ≥ (n k) + 1)%nat ∧ candy_seq(m) = sweet).
   Obtain such an m.
   Choose n_kplus1 := m.

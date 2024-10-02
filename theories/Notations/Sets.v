@@ -64,6 +64,8 @@ Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scop
 Definition conv (T : Type) : (T -> Prop) := as_subset _ (fun x => True).
 Coercion conv : Sortclass >-> Funclass.
 
+Definition seal {T : Type} (Q : T -> Prop) (y : T) := Q y.
+
 Notation "x ∈ A" := ((pred _ A) x) (at level 70, no associativity) : type_scope.
 
 Notation "∃ x , P" := (exists x, P)
@@ -73,29 +75,29 @@ Notation "∀ x , P" := (forall x, P)
   (at level 200, x binder, right associativity) : type_scope.
 
 Notation "∃ x ∈ A , P " :=
-  ((fun B => (exists x, (x ∈ B) /\ P)) A)
+  (seal (fun B => (exists x, (x ∈ B) /\ P)) A)
   (at level 200, x binder, right associativity,
   format "'[ ' '[ ' ∃  x  ∈  A ']' , '//'  P ']'") : subset_scope.
 
 Notation "∀ x ∈ A , P" :=
-  ((fun B => forall x, (x ∈ B) -> P ) A)
+  (seal (fun B => forall x, (x ∈ B) -> P ) A)
   (at level 200, x binder, right associativity,
   format "'[ ' '[ ' ∀  x  ∈  A ']' , '//'  P ']'") : subset_scope.
 
 Notation "∃ x '>' y , P" :=
-  ((fun z => exists x, x > z /\ P) y)
+  (seal (fun z => exists x, x > z /\ P) y)
   (at level 200, x binder, right associativity) : nat_scope.
 
 Notation "∀ x '>' y , P" :=
-  ((fun z => forall x, x > z -> P) y)
+  (seal (fun z => forall x, x > z -> P) y)
   (at level 200, x binder, right associativity) : nat_scope.
 
 Notation "∃ x '≥' y , P" :=
-  ((fun z => exists x, x >= z /\ P) y)
+  (seal (fun z => exists x, x >= z /\ P) y)
   (at level 200, x binder, right associativity) : nat_scope.
 
 Notation "∀ x '≥' y , P" :=
-  ((fun z => forall x, x >= z -> P) y)
+  (seal (fun z => forall x, x >= z -> P) y)
   (at level 200, x binder, right associativity) : nat_scope.
 
 Require Import Coq.Reals.Reals.
@@ -103,19 +105,19 @@ Require Import Coq.Reals.Reals.
 Open Scope R_scope.
 
 Notation "∃ x '>' y , P" :=
-  ((fun z => exists x, x > z /\ P) y)
+  (seal (fun z => exists x, x > z /\ P) y)
   (at level 200, x binder, right associativity) : R_scope.
 
 Notation "∀ x '>' y , P" :=
-  ((fun z => forall x, x > z -> P) y)
+  (seal (fun z => forall x, x > z -> P) y)
   (at level 200, x binder, right associativity) : R_scope.
 
 Notation "∃ x '≥' y , P" :=
-  ((fun z => exists x, x >= z /\ P) y)
+  (seal (fun z => exists x, x >= z /\ P) y)
   (at level 200, x binder, right associativity) : R_scope.
 
 Notation "∀ x '≥' y , P" :=
-  ((fun z => forall x, x >= z -> P) y)
+  (seal (fun z => forall x, x >= z -> P) y)
   (at level 200, x binder, right associativity) : R_scope.
 
 Close Scope R_scope.

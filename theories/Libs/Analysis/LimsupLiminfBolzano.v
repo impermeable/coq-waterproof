@@ -173,7 +173,6 @@ Proof.
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
     Choose n := m.
-    We need to show that (is_index_seq m ∧ Un_cv (fun k ↦ a(m(k)), L)).
     We show both statements.
     - We need to show that (is_index_seq m).
       It suffices to show that (is_index_seq n).

@@ -234,27 +234,34 @@ Local Parameter A : nat -> Prop.
 Definition B := as_subset _ A.
 
 (** ** Tests for taking from sets *)
-
+Open Scope subset_scope.
 (** Test 24: Take from a set *)
-Goal forall n : nat, B n -> n = 0.
-  Take n : B.
+Goal ∀ n ∈ B, n = 0.
+  Take n ∈ B.
   assert (n ∈ B) by assumption.
 Abort.
 
-Open Scope subset_scope.
-
 (** Test 25, Take multiple variables from a set *)
 Goal ∀ k ∈ B, ∀ l ∈ B, ∀ m ∈ B, ∀ n ∈ B, k + l + m + n = 0.
-  Take k, l, m, n : B.
+  Take k, l, m, n ∈ B.
   assert (k ∈ B) by assumption.
   assert (l ∈ B) by assumption.
   assert (m ∈ B) by assumption.
   assert (n ∈ B) by assumption.
 Abort.
 
-(** Test 26, *)
-Goal forall k : nat, 0 ∈ B -> k = 0.
+
+Close Scope subset_scope.
+
+(** Test 26, Take from a set of real numbers *)
+
+Require Import Waterproof.Notations.Reals.
+Open Scope R_scope.
+Open Scope subset_scope.
+
+Local Parameter a b : R.
+
+Goal ∀ x ∈ [a, b], True.
 Proof.
-  Take k : nat.
-  Unset Printing Notations.
+We need to show that (∀ x ∈ [a, b], True).
 Abort.
