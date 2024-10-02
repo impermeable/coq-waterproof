@@ -33,9 +33,20 @@ Local Ltac2 too_many_of_type_message (t : constr) :=
   concat_list [of_string "Tried to introduce too many variables of type ";
     of_constr t; of_string "."].
 
+Local Ltac2 could_not_introduce_no_forall_message (id : ident) :=
+  concat_list [of_string "Could not introduce "; of_ident id;
+    of_string ". There is no variable to introduce at this point."].
+
+Local Ltac2 expected_implication_message (id : ident) :=
+  concat_list [of_string "Expected an implication after introducing ";
+    of_ident id; of_string "."].
+
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
   concat_list [of_string "Expected variable of type "; of_constr e;
     of_string " instead of "; of_constr t; of_string "."].
+
+Local Ltac2 expected_different_condition_message (e : constr) :=
+  concat_list [of_string "The condition " ; of_constr e; of_string " does not correspond to what was expected"].
 
 Ltac2 Type TakeKind :=
   [TakeCol | TakeEl | TakeGt | TakeGe ].
@@ -89,57 +100,53 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
   | Constr.Unsafe.Prod b a =>
       (* Check whether the expected binder name was provided. *)
       check_binder_warn current_goal id true
-  | _ => throw (too_many_of_type_message type)
+  | _ => throw (could_not_introduce_no_forall_message id)
   end;
   match tk with
   | TakeCol =>
     lazy_match! (Control.goal ()) with
-    | (forall _ : ?u, _) =>
-      if check_constr_equal u (get_coerced_type type) then
-        intro $id
-      else throw (too_many_of_type_message type)
-    | _ => throw (too_many_of_type_message type)
-    end
-  | TakeEl =>
-    (* TODO this first check is probably no longer necessary *)
-    lazy_match! (Control.goal ()) with
-    | (forall _ : _, _) =>
-      intro $id;
-      let id_c := Control.hyp id in
-      lazy_match! (Control.goal ()) with
-      | (?v ∈ ?u -> _) =>
-        if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
-          let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-          intro $w (* TODO: could remove when this is trivial... *)
-        else
-          throw (too_many_of_type_message type)
-      | _ => () (* FIXME: error messages *)
+      | (forall _ : ?u, _) =>
+        if check_constr_equal u (get_coerced_type type) then
+          intro $id
+        else throw (too_many_of_type_message type)
+      | _ => throw (could_not_introduce_no_forall_message id)
       end
-    | _ => throw (too_many_of_type_message type)
+    | TakeEl =>
+    (* TODO this first check is probably no longer necessary *)
+    intro $id;
+    let id_c := Control.hyp id in
+    lazy_match! (Control.goal ()) with
+    | (?v ∈ ?u -> _) =>
+      if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
+        let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+        intro $w (* TODO: could remove when this is trivial... *)
+      else
+        throw (expected_different_condition_message constr:($v ∈ $u))
+    | _ => throw (expected_implication_message id)
     end
   | TakeGt =>
     intro $id;
     let id_c := Control.hyp id in
     lazy_match! (Control.goal ()) with
-    | (_ ?v ?u -> _) => (* FIXME: this test should be more strict *)
+    | (?f ?v ?u -> _) => (* FIXME: this check should be more strict *)
       if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
         intro $w
       else
-        throw (too_many_of_type_message type)
-    | _ => () (* FIXME: error messages *)
+        throw (expected_different_condition_message constr:($f $v $u))
+    | _ => throw (expected_implication_message id)
     end
   | TakeGe =>
     intro $id;
     let id_c := Control.hyp id in
     lazy_match! (Control.goal ()) with
-    | (_ ?v ?u -> _) => (* FIXME: this test should be more strict *)
+    | (?f ?v ?u -> _) => (* FIXME: this check should be more strict *)
       if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
         intro $w
       else
-        throw (too_many_of_type_message type)
-    | _ => () (* FIXME: error messages *)
+        throw (expected_different_condition_message constr:($f $v $u))
+    | _ => throw (expected_implication_message id)
     end
   end.
 
@@ -163,18 +170,6 @@ Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b op
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
         | false =>
-          (* Check whether we need variables of type [type], including coercions of [type]. *)
-          (* let ct := get_coerced_type type in
-          match check_constr_equal u ct with
-          | true  => ()
-          | false =>
-            match! v with
-            | ((pred ?t ?b) ?var -> _) =>
-              if Constr.equal (eval cbn in (pred $t $b)) ct then ()
-              else throw (expected_of_type_instead_of_message u type)
-            | _ => throw (expected_of_type_instead_of_message u type)
-            end
-          end;*)
           List.iter (fun id => intro_ident id type take_kind) ids
         | true  => throw (of_string "Tried to introduce too many variables.")
       end
@@ -183,18 +178,6 @@ Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b op
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
         | false =>
-          (* Check whether we need variables of type [type], including coercions of [type]. *)
-          (* let ct := get_coerced_type type in
-          match check_constr_equal u ct with
-          | true  => ()
-          | false =>
-            match! v with
-            | ((pred ?t ?b) ?var -> _) =>
-              if Constr.equal (eval cbn in (pred $t $b)) ct then ()
-              else throw (expected_of_type_instead_of_message u type)
-            | _ => throw (expected_of_type_instead_of_message u type)
-            end
-          end;*)
           List.iter (fun id => intro_ident id type take_kind) ids
         | true  => throw (of_string "Tried to introduce too many variables.")
       end
@@ -223,37 +206,7 @@ Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c opt
     | [ |- _ ] => throw (of_string "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→).")
   end.
 
-
-
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
   opt (":"), opt("∈"), opt(">"), opt("≥"), constr), "and")) :=
   panic_if_goal_wrapped ();
   take x.
-
-Ltac2 test_opts (x :unit option * 'a option) :=
-  let (le, ri) := x in
-    match le with
-    | Some _ => Message.print (Message.of_string "le")
-    | None => ()
-    end;
-    match ri with
-    | Some _ => Message.print (Message.of_string "ri")
-    | None => ()
-    end.
-
-Ltac2 Notation "TestOpts" x(seq(opt(":"), opt(">"))) :=
-  test_opts x.
-
-Goal False.
-TestOpts : >.
-Abort.
-
-Open Scope subset_scope.
-Local Parameter B : subset nat.
-Goal ∀ n ∈ B, n = 0.
-Take n ∈ B.
-Abort.
-
-Goal ∀ n ≥ 3, n = 0.
-Take n > 3.
-Abort.
