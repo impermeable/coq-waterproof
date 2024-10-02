@@ -389,7 +389,7 @@ Ltac2 wp_specialize_one (var_choice : ident * ident) (id : ident) :=
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
         enough ($con) as $w;
         Control.focus 2 2 (fun () =>
-          apply StateGoal.unwrap);
+          apply VerifyGoal.unwrap);
         Control.focus 1 1 (fun () =>
           let w_c := Control.hyp w in
           specialize ($aux_c $w_c))

@@ -184,7 +184,7 @@ Goal (∀ n ∈ B, n = 0) -> True.
 Proof.
 intro H.
 Use n := 3 in (H).
-* We need to show that (3 ∈ B).
+* We need to verify that (3 ∈ B).
   Control.shelve ().
 * It holds that (3 = 0).
 Abort.
@@ -195,7 +195,7 @@ Proof.
 intro H.
 assert_feedback_with_strings (fun () => Use x := _ in (H)) Warning
 ["Please come back to this line later to make a definite choice for x."].
-* We need to show that (?x ∈ B).
+* We need to verify that (?x ∈ B).
   Control.shelve ().
 * It holds that (?x = 0).
 Abort.
@@ -208,7 +208,7 @@ Goal (∀ x ∈ B, 9 = 9 -> 3 = 3 ->
 Proof.
 intro H.
 Use x := 5 in (H).
-* We need to show that (5 ∈ B).
+* We need to verify that (5 ∈ B).
   Control.shelve ().
 * It holds that (9 = 9 -> 3 = 3 -> True ->
   ∀ y, 5 ∈ B -> 2 = 2 -> 1 = 1 -> ∀ z, z ∈ D -> 5 = y + z).
@@ -221,9 +221,9 @@ Goal (∀ x ∈ B, ∀ y ∈ D, 2 = 2 -> 1 = 1 ->
 Proof.
 intro H.
 Use x := 2, y := 3 in (H).
-* We need to show that (2 ∈ B).
+* We need to verify that (2 ∈ B).
   Control.shelve ().
-* We need to show that (3 ∈ D).
+* We need to verify that (3 ∈ D).
   Control.shelve ().
 * It holds that (2 = 2 -> 1 = 1 ->
     ∀ z, z ∈ D -> 2 = 3 + z).
@@ -237,9 +237,9 @@ intro H.
 assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
   Warning
 ["Please come back to this line later to make a definite choice for x, y, z."].
-* We need to show that (?x ∈ B).
+* We need to verify that (?x ∈ B).
   Control.shelve ().
-* We need to show that (?z ∈ D).
+* We need to verify that (?z ∈ D).
   Control.shelve ().
 * It holds that (1 = 1 -> ?x = ?y + ?z).
 Abort.
@@ -249,9 +249,9 @@ Goal (∀ x ∈ B, ∀ y ∈ as_subset _ (fun z => z > x), True) -> True.
 Proof.
 intro H.
 Use x := 2, y := 3 in (H).
-* We need to show that (2 ∈ B).
+* We need to verify that (2 ∈ B).
   Control.shelve ().
-* We need to show that (3 ∈ as_subset _ (fun z => z > 2) ).
+* We need to verify that (3 ∈ as_subset _ (fun z => z > 2) ).
   Control.shelve ().
 * It holds that (True).
 Abort.
@@ -283,7 +283,7 @@ Proof.
 intro H.
 set (x := 2).
 Use x := 4 in (H).
-* We need to show that (4 ∈ B).
+* We need to verify that (4 ∈ B).
   Control.shelve ().
 * It holds that (True).
 Abort.
@@ -298,9 +298,21 @@ set (x := 2).
 set (x0 := 3).
 set (x1 := 4).
 Use x := 5, x0 := 6, x1 := 7 in (H).
-* We need to show that (5 ∈ B).
+* We need to verify that (5 ∈ B).
   Control.shelve ().
-* We need to show that (7 ∈ D).
+* We need to verify that (7 ∈ D).
   Control.shelve ().
 * It holds that (5 = 6 + 7).
 Abort.
+
+(** Test 22 : immediate verification *)
+Goal ∀ y ∈ B, (∀ x ∈ B, x = 0) -> y = 0.
+Proof.
+Take y ∈ B.
+Assume that (∀ x ∈ B, x = 0) (i).
+Use x := y in (i).
+* Indeed, (y ∈ B).
+* Fail We conclude that (y = 0). (* TODO: fix this? *)
+  It holds that (y = 0).
+  We conclude that (y = 0).
+Qed.
