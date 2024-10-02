@@ -265,3 +265,8 @@ Goal ∀ x ∈ [a, b], True.
 Proof.
 We need to show that (∀ x ∈ [a, b], True).
 Abort.
+
+(** Test 27, Take from a full set *)
+Goal ∀ x ∈ ℝ, x > 0.
+Take x ∈ ℝ.
+Abort.

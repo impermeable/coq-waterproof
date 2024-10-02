@@ -61,8 +61,8 @@ Notation "｛ x : T | P ｝" :=
 Declare Scope subset_scope.
 Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.
 
-Definition conv (T : Type) : (T -> Prop) := as_subset _ (fun x => True).
-Coercion conv : Sortclass >-> Funclass.
+Definition conv (T : Type) : subset T := as_subset _ (fun x => True).
+Coercion conv : Sortclass >-> subset.
 
 Definition seal {T : Type} (Q : T -> Prop) (y : T) := Q y.
 

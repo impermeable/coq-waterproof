@@ -107,7 +107,7 @@ Module VerifyGoal.
 End VerifyGoal.
 
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'verify' 'that' '(' G ').' 'or' 'write:' 'Indeed,' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'" :=
-  (StateGoal.Wrapper G) (
+  (VerifyGoal.Wrapper G) (
     at level 99,
     only printing,
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  verify  that  ( G ). '//' or  write: '//'   Indeed, ( G ). '//' if  no  intermediary  proof  steps  are  required."

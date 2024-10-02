@@ -112,16 +112,20 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
       | _ => throw (could_not_introduce_no_forall_message id)
       end
     | TakeEl =>
-    (* TODO this first check is probably no longer necessary *)
     intro $id;
     let id_c := Control.hyp id in
     lazy_match! (Control.goal ()) with
-    | (?v ∈ ?u -> _) =>
-      if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
+    | (?v ∈ ?set_in_cond -> _) =>
+      let possibly_coerced_type :=
+        match Control.case (fun () => constr:(as_subset $type (fun z => True))) with
+        | Val (x, y) => x
+        | Err exn => type
+        end in
+      if Bool.and (Constr.equal v id_c) (check_constr_equal set_in_cond possibly_coerced_type) then
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
         intro $w (* TODO: could remove when this is trivial... *)
       else
-        throw (expected_different_condition_message constr:($v ∈ $u))
+        throw (expected_different_condition_message constr:($v ∈ $set_in_cond))
     | _ => throw (expected_implication_message id)
     end
   | TakeGt =>
