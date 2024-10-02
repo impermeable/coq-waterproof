@@ -304,7 +304,9 @@ Open Scope nat_scope.
 Local Parameter A : nat -> Prop.
 Definition B := as_subset _ A.
 
-Goal (exists n : nat, n ∈ B /\ n = 0) -> True.
+Open Scope subset_scope.
+
+Goal (∃ n ∈ B, n = 0) -> True.
 Proof.
   intro H.
   Obtain such an n.
@@ -321,4 +323,26 @@ Proof.
   assert (n ∈ B) by assumption.
   assert (m ∈ B) by assumption.
   assert (n = m) by assumption.
+Abort.
+
+(** Test 24 : Obtain from a full set *)
+Goal (∃ n ∈ nat, n = 0) -> True.
+Proof.
+  intro H.
+  Obtain such an n.
+Abort.
+
+(** Test 25 : Obtain from a set by reference *)
+Goal (∃ n ∈ B, n = 0) -> True.
+Proof.
+  intro H.
+  Obtain n according to (H).
+  assert (n ∈ B) by assumption.
+Abort.
+
+(** Test 26 : Obtain from a full set by reference *)
+Goal (∃ n ∈ nat, n = 0) -> True.
+Proof.
+  intro H.
+  Obtain n according to (H).
 Abort.

@@ -78,6 +78,12 @@ Local Ltac2 rec destruct_and (hyp : ident) :=
 Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   let h := Control.hyp hyp in
   let type_h := get_type h in
+  match! type_h with
+  | seal _ _ => unfold seal at 1 in $hyp
+  | _ => ()
+  end;
+  let h := Control.hyp hyp in
+  let type_h := get_type h in
   lazy_match! type_h with
   | ex  ?pred =>
     check_binder_warn pred var true
@@ -138,7 +144,12 @@ Ltac2 obtain_seq_according_to (vars : ident list) (hyp) :=
   (* make a copy of the original proposition *)
   let prop_label := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
   let og_term := Control.hyp hyp in
-  let og_type := get_type og_term in
+  let pre_og_type := get_type og_term in
+  let og_type :=
+    match! pre_og_type with
+    | seal _ _ => eval unfold seal at 1 in $pre_og_type
+    | _ => pre_og_type
+    end in
   lazy_match! og_type with
   | ex  ?pred => ()
   | sig ?pred => ()
@@ -174,7 +185,12 @@ Ltac2 obtain_according_to_last (vars : ident list) :=
   lazy_match! goal with
   | [id_h : _ |- _ ] =>
     let h := Control.hyp id_h in
-    let type_h := get_type h in
+    let pre_type_h := get_type h in
+    let type_h :=
+      match! pre_type_h with
+      | seal _ _ => eval unfold seal at 1 in $pre_type_h
+      | _ => pre_type_h
+      end in
     lazy_match! type_h with
     | ex  ?pred =>
       obtain_seq_according_to vars id_h

@@ -21,7 +21,13 @@ Require Import Sets.Ensembles.
 Require Import Notations.Common.
 
 Set Auto Template Polymorphism.
-Record subset (X : Type) := as_subset { pred :> X -> Prop }.
+
+(* Record subset (X : Type) := as_subset { pred :> X -> Prop }.*)
+
+Definition subset (X : Type) := X -> Prop.
+Definition as_subset (X : Type) (Q : X -> Prop) := Q.
+
+Definition subset_in {X : Type} (A : subset X) (x : X) := A x.
 
 Notation "'set_of_subsets' U" :=
   (Ensemble (Ensemble U)) (at level 50).
@@ -59,19 +65,25 @@ Notation "｛ x : T | P ｝" :=
   (fun (x : T) ↦ P) (x at level 99).
 
 Declare Scope subset_scope.
-Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope.
+(* Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope. *)
 
 Definition conv (T : Type) : subset T := as_subset _ (fun x => True).
 Coercion conv : Sortclass >-> subset.
 
 Definition seal {T : Type} (Q : T -> Prop) (y : T) := Q y.
 
-Notation "x ∈ A" := ((pred _ A) x) (at level 70, no associativity) : type_scope.
+Notation "x ∈ A" := (subset_in A x) (at level 70, no associativity) : type_scope.
 
 Notation "∃ x , P" := (exists x, P)
   (at level 200, x binder, right associativity) : type_scope.
 
+Notation "'there' 'exists' x , P" := (exists x, P)
+  (at level 200, x binder, right associativity) : type_scope.
+
 Notation "∀ x , P" := (forall x, P)
+  (at level 200, x binder, right associativity) : type_scope.
+
+Notation "'for' 'all' x , P" := (forall x, P)
   (at level 200, x binder, right associativity) : type_scope.
 
 Notation "∃ x ∈ A , P " :=
