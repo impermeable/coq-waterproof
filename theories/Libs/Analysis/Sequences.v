@@ -27,7 +27,6 @@ Require Import Automation.
 Require Import Libs.Reals.
 Require Import Notations.
 
-
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
 #[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
@@ -216,8 +215,6 @@ Proof.
     By (i) we conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
 Qed.
 
-
-
 (** ** The squeeze theorem*)
 Theorem squeeze_theorem :
   ∀ (a : ℕ → ℝ) (b : ℕ → ℝ) (c : ℕ → ℝ) (l : ℝ),
@@ -253,7 +250,6 @@ Proof.
     - We conclude that (& - ε < a n - l <= b n - l).
     - We conclude that (& b n - l <= c n - l < ε).
 Qed.
-
 
 Lemma upp_bd_seq_is_upp_bd_lim :
   ∀ (a : ℕ → ℝ) (L M: ℝ),

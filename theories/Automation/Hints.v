@@ -49,8 +49,8 @@ Create HintDb wp_core.
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
   (* TODO: maybe tune this better *)
-  #[export] Hint Extern 4 => unfold seal in * : wp_core.
-  #[export] Hint Extern 4 => unfold subset_in, as_subset in * : wp_core.
+  #[export] Hint Extern 4 => progress (unfold seal in * ): wp_core.
+  #[export] Hint Extern 4 => progress (unfold subset_in, as_subset in * ) : wp_core.
 (** * Definitions *)
 
 Create HintDb wp_definitions.
@@ -380,7 +380,7 @@ Create HintDb wp_negation_nat.
 (** * Real numbers *)
 
 Create HintDb wp_reals.
-
+   (* TODO : at the moment we don't use this version of subsets... *)
   #[export] Hint Extern 2 => ltac2:(simpl_member_subset ()); lra : wp_reals.
 
   #[export] Hint Extern 1 (pred R _ _) => simpl; lra : wp_reals.
