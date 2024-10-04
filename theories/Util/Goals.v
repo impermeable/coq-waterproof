@@ -110,7 +110,7 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'v
   (VerifyGoal.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  verify  that  ( G ). '//' or  write: '//'   Indeed, ( G ). '//' if  no  intermediary  proof  steps  are  required."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  verify  that  ( G ). '//' or  write: '//'   Indeed,  ( G ). '//' if  no  intermediary  proof  steps  are  required."
   ).
 
 Module StateHyp.

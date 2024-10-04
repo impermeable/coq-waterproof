@@ -117,7 +117,6 @@ Ltac2 wrapper_core_by_tactic (by_tactic : constr -> unit) (xtr_lemma : constr) :
     hypothesis if we need to unseal, this interferes with our
     capability to check whether a lemma is used... *)
   (* TODO: does this need to move away from here? *)
-  unfold seal in *;
   let xtr_lemma_contains_seal :=
     match! (Constr.type xtr_lemma) with
     | context [seal _ _ ] => true

@@ -179,6 +179,8 @@ Definition B := as_subset _ A.
 Local Parameter C : nat -> Prop.
 Definition D := as_subset _ C.
 
+Open Scope subset_scope.
+
 (** Test 14 : Specialize a variable in a set. *)
 Goal (∀ n ∈ B, n = 0) -> True.
 Proof.
@@ -316,3 +318,5 @@ Use x := y in (i).
   It holds that (y = 0).
   We conclude that (y = 0).
 Qed.
+
+Close Scope subset_scope.

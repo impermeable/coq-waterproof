@@ -117,11 +117,18 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
     lazy_match! (Control.goal ()) with
     | (?v ∈ ?set_in_cond -> _) =>
       let possibly_coerced_type :=
-        match Control.case (fun () => constr:(as_subset $type (fun z => True))) with
-        | Val (x, y) => x
-        | Err exn => type
+        lazy_match! Constr.type type with
+        | subset _ => type
+        | _ -> Prop => type
+        | _ => get_coerced_type type
         end in
-      if Bool.and (Constr.equal v id_c) (check_constr_equal set_in_cond possibly_coerced_type) then
+      let possibly_coerced_set :=
+        lazy_match! set_in_cond with
+        | conv ?typ => typ
+        | _ => set_in_cond
+        end in
+      if Bool.and (Constr.equal v id_c)
+        (check_constr_equal possibly_coerced_set possibly_coerced_type) then
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
         intro $w (* TODO: could remove when this is trivial... *)
       else

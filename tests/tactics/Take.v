@@ -264,9 +264,22 @@ Local Parameter a b : R.
 Goal ∀ x ∈ [a, b], True.
 Proof.
 We need to show that (∀ x ∈ [a, b], True).
+Take x ∈ [a, b].
 Abort.
 
 (** Test 27, Take from a full set *)
 Goal ∀ x ∈ ℝ, x > 0.
 Take x ∈ ℝ.
+Abort.
+
+(** Test 28, Take with double coercion *)
+
+Structure test_structure  := BuildTestStructure { test_carrier :> Type }.
+Local Definition V := BuildTestStructure R.
+
+Goal ∀ x ∈ V, x = 0.
+Proof.
+Take x ∈ V. (* V first gets coerced to Type, then to subset *)
+(* To see this, for instance use *)
+(* Set Printing Coercions. *)
 Abort.

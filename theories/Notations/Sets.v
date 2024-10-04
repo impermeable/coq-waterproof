@@ -133,3 +133,30 @@ Notation "∀ x '≥' y , P" :=
   (at level 200, x binder, right associativity) : R_scope.
 
 Close Scope R_scope.
+
+Lemma mem_subset_full_set {T : Type} (x : T) : (x ∈ T).
+Proof.
+unfold subset_in, conv, as_subset; exact I.
+Qed.
+
+Open Scope subset_scope.
+
+Lemma forall_forall_in_iff (T : Type) (Q : T -> Prop) :
+  (∀ x ∈ T, Q x) <-> ∀ x, Q x.
+Proof.
+  unfold seal, subset_in, conv, as_subset.
+  split; auto.
+Qed.
+
+Lemma exists_exists_in_iff (T : Type) (Q : T -> Prop) :
+  (∃ x ∈ T, Q x) <-> ∃ x, Q x.
+Proof.
+  unfold seal, subset_in, conv, as_subset.
+  split.
+  * intro H. destruct H as [x [wx1 wx2]].
+    exists x. exact wx2.
+  * intro H. destruct H as [x wx].
+    exists x. auto.
+Qed.
+
+Close Scope subset_scope.

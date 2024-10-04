@@ -49,8 +49,10 @@ Create HintDb wp_core.
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
   (* TODO: maybe tune this better *)
-  #[export] Hint Extern 4 => progress (unfold seal in * ): wp_core.
-  #[export] Hint Extern 4 => progress (unfold subset_in, as_subset in * ) : wp_core.
+  #[export] Hint Extern 2 => progress (unfold seal in * ): wp_core.
+  #[export] Hint Extern 2 => progress (unfold subset_in, conv, as_subset in * ) : wp_core.
+  #[export] Hint Resolve mem_subset_full_set : wp_core.
+  #[export] Hint Extern 3 => ltac2:(split_conjunctions ()) : wp_core.
 (** * Definitions *)
 
 Create HintDb wp_definitions.
@@ -435,9 +437,9 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rmin_glb : wp_reals.
   #[export] Hint Resolve Rmin_glb_lt : wp_reals.
   (** lemmas to relate <= with >= and < with > *)
-  #[export] Hint Resolve Rge_le : wp_reals.
+  (* #[export] Hint Resolve Rge_le : wp_reals.*) (* This was really hampering performance *)
   #[export] Hint Resolve Rle_ge : wp_reals.
-  #[export] Hint Resolve Rgt_lt : wp_reals.
+  (* #[export] Hint Resolve Rgt_lt : wp_reals.*)
   #[export] Hint Resolve Rlt_gt : wp_reals.
 
   #[export] Hint Resolve div_sign_flip : wp_reals.

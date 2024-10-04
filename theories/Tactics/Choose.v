@@ -81,7 +81,9 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end;
   if sealed then
-    split; Control.enter (fun () => apply VerifyGoal.unwrap)
+    split;
+    Control.focus 1 1 (fun () => apply VerifyGoal.unwrap);
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
   (* let v := Control.hyp s in
   lazy_match! (Control.goal ()) with
@@ -153,7 +155,9 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
   | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end;
   if sealed then
-    split; Control.enter (fun () => apply StateGoal.unwrap)
+    split;
+    Control.focus 1 1  (fun () => apply VerifyGoal.unwrap);
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
