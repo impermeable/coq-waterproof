@@ -36,7 +36,7 @@ Definition const_seq_from {A : Type} (a : A) (k : nat) (seq : nat -> A) :=
 
 
 Context {A : Type} {P : nat -> (nat -> A) -> Prop} (HypP : dep_only_on_start P).
-Context (a0 : A) (H0 : P 0 (const_seq a0)) 
+Context (a0 : A) (H0 : P 0 (const_seq a0))
   (Hstep : forall (k : nat) (prev : nat -> A),
     P k prev -> {a : A | P (S k) (const_seq_from a (S k) prev)}).
 
@@ -44,7 +44,7 @@ Context (a0 : A) (H0 : P 0 (const_seq a0))
 Fixpoint ind_seq_of_seq_and_prop (k : nat) : {seq : nat -> A | P k seq} :=
   match k with
   | O   => exist _ (const_seq a0) H0
-  | S k => exist _ (const_seq_from 
+  | S k => exist _ (const_seq_from
                      (proj1_sig (Hstep _ _ (proj2_sig (ind_seq_of_seq_and_prop k))))
                      (S k) (proj1_sig (ind_seq_of_seq_and_prop k)))
                    (proj2_sig (Hstep _ _ (proj2_sig (ind_seq_of_seq_and_prop k))))
@@ -81,7 +81,7 @@ End Construction.
 
 Section StrongInduction.
 
-Lemma quant_over_start_dep_only_on_start {A : Type} {P : nat -> (nat -> A) -> Prop} : 
+Lemma quant_over_start_dep_only_on_start {A : Type} {P : nat -> (nat -> A) -> Prop} :
   dep_only_on_start P -> dep_only_on_start (fun (k : nat) (seq : nat -> A) => forall l : nat, l <= k -> P l seq).
 Proof.
   intros HypP k b c start_b_eq_c Hb l l_le_k.
@@ -131,8 +131,8 @@ Section StrongInductionIndexSequence.
 
 (* Definition is_index_seq (n : nat -> nat) := forall k : nat, n (k + 1) > n k. *)
 
-Definition index_seq_prop_family (Q : nat -> Prop) (k : nat) (n : nat -> nat) := 
-  match k with 
+Definition index_seq_prop_family (Q : nat -> Prop) (k : nat) (n : nat -> nat) :=
+  match k with
   | O   => Q (n 0)
   | S k => Q (n (k + 1)) /\ n k < n (k + 1)
   end.
@@ -169,7 +169,7 @@ Lemma reformulate_final_prop_index {Q : nat -> Prop} {n : nat -> nat} :
 Proof.
   intro H.
   split.
-  - intro k.
+  - intros k Hk.
     exact (proj2 (H (S k))).
   - induction k.
     + exact (H O).
@@ -178,12 +178,12 @@ Proof.
 Qed.
 
 Lemma reformulate_step_prop_index {Q : nat -> Prop} :
-  (forall (k : nat) (n : nat -> nat), 
+  (forall (k : nat) (n : nat -> nat),
     (forall l : nat, l <= k -> Q (n l)) -> (forall l : nat, l < k -> n l < n (l + 1)) ->
     {n_kplus1 : nat | Q n_kplus1 /\ n k < n_kplus1})
     ->
   (forall (k : nat) (n : nat -> nat),
-    (forall l : nat, l <= k -> index_seq_prop_family Q l n) -> 
+    (forall l : nat, l <= k -> index_seq_prop_family Q l n) ->
     {n_kplus1 : nat | forall l : nat, l <= k + 1 -> index_seq_prop_family Q l (const_seq_from n_kplus1 (k + 1) n)}).
 Proof.
   intros Hstep k n H.
@@ -299,7 +299,7 @@ Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
-  
+
 Require Import Waterproof.Util.Goals.
 Require Import Util.MessagesToUser.
 
@@ -314,7 +314,7 @@ Local Ltac2 inductive_def_index_seq_n () :=
   | [ |- _ ] => throw (of_string "The goal is not to define an index sequence.")
   end.
 
-Ltac2 Notation "Define" "the" "index" "sequence" "n" "inductively" := 
+Ltac2 Notation "Define" "the" "index" "sequence" "n" "inductively" :=
   panic_if_goal_wrapped ();
   inductive_def_index_seq_n ().
 
@@ -324,5 +324,5 @@ Local Ltac2 take_first_k () :=
   | [|- _] => throw (of_string "No need to introduce first k elements of sequence n.")
   end.
 
-Ltac2 Notation "Take" "k" ":" "ℕ" "and" "assume" "n(0),...,n(k)" "are" "defined" := 
+Ltac2 Notation "Take" "k" ":" "ℕ" "and" "assume" "n(0),...,n(k)" "are" "defined" :=
   take_first_k ().

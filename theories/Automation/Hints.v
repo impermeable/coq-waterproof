@@ -52,7 +52,7 @@ Create HintDb wp_core.
   #[export] Hint Extern 2 => progress (unfold seal in * ): wp_core.
   #[export] Hint Extern 2 => progress (unfold subset_in, conv, as_subset in * ) : wp_core.
   #[export] Hint Resolve mem_subset_full_set : wp_core.
-  #[export] Hint Extern 3 => ltac2:(split_conjunctions ()) : wp_core.
+  #[export] Hint Extern 3 => progress ltac2:(split_conjunctions ()) : wp_core.
 (** * Definitions *)
 
 Create HintDb wp_definitions.
