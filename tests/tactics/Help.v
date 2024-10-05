@@ -27,14 +27,14 @@ Require Import Waterproof.Util.Assertions.
 Waterproof Enable Hypothesis Help.
 Waterproof Enable Redirect Feedback.
 
-(** Test 0 : Suggest to follow advice in goal if goal is wrapped 
+(** Test 0 : Suggest to follow advice in goal if goal is wrapped
   or [False] (i.e. prove contradiction). *)
 Goal False.
   assert_feedback_with_string (fun () => Help) Info
 "Follow the advice in the goal window.".
 Abort.
 
-(** Test 1 : Only suggest to follow advice in goal if goal is wrapped 
+(** Test 1 : Only suggest to follow advice in goal if goal is wrapped
   or [False] (i.e. prove contradiction). *)
 Goal (forall n : nat, n = n) -> False.
   intros.
@@ -63,7 +63,6 @@ Goal (forall n : nat, n = n) -> (forall m : nat, m + 1 = m + 1) -> (0 = 1).
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
-"";
 "To use one of the ‘for all’-statements (∀)";
 "    (forall n : nat, n = n)";
 "    (forall m : nat, m + 1 = m + 1)";
@@ -77,7 +76,6 @@ Goal (exists n : nat, n = n) -> (exists m : nat, m + 1 = m + 1) -> (0 = 1).
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
-"";
 "To use one of the ‘there exists’-statements (∃)";
 "    (exists n : nat, n = n)";
 "    (exists m : nat, m + 1 = m + 1)";
@@ -91,12 +89,10 @@ Goal (forall n : nat, n = n) -> (exists m : nat, m = 0) -> (0 = 1).
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
-"";
 "To use one of the ‘for all’-statements (∀)";
 "    (forall n : nat, n = n)";
 "use";
 "    Use ... := (...) in (...).";
-"";
 "To use one of the ‘there exists’-statements (∃)";
 "    (exists m : nat, m = 0)";
 "use";
@@ -130,7 +126,7 @@ Abort.
 (** Test 9: By ... it holds that, no label. *)
 Goal False.
 Proof.
-  (** TODO: is this consistent with the statement 
+  (** TODO: is this consistent with the statement
       without the by clause and with the since clause? *)
   By I it holds that (forall n : nat, True).
 Abort.
