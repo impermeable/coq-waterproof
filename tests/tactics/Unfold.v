@@ -32,7 +32,7 @@ Definition foo : nat := 0.
 
 (* Tests general unfolding: *)
 
-(* Test 1: unfold term in goal, and throws an error suggesting 
+(* Test 1: unfold term in goal, and throws an error suggesting
   to remove the line after use. *)
 Goal foo = 1.
 Proof.
@@ -44,11 +44,10 @@ Proof.
   Info
 ["Expanded definition in statements where applicable.";
 "To include these statements, use (one of):";
-"";
 "  We need to show that (0 = 1)."].
 Abort.
 
-(* Test 2: unfold term in hypothese and goal, and throws an error suggesting 
+(* Test 2: unfold term in hypothese and goal, and throws an error suggesting
     to remove the line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
@@ -61,9 +60,7 @@ Proof.
   Info
 ["Expanded definition in statements where applicable.";
 "To include these statements, use (one of):";
-"";
 "  We need to show that (0 = 1).";
-"";
 "  It holds that (0 = 0).";
 "  It holds that (0 = 2)."].
 Abort.
@@ -116,10 +113,10 @@ Abort.
 
 (* Tests framework expand the definition. *)
 Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) := 
+Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
   wp_unfold unfold_foo (Some "foo2") true x.
 
-(* Test 6: unfold term in hypotheses and goal and throws an error suggesting 
+(* Test 6: unfold term in hypotheses and goal and throws an error suggesting
     to remove line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
@@ -132,9 +129,7 @@ Proof.
   Info
 ["Expanded definition in statements where applicable.";
 "To include these statements, use (one of):";
-"";
 "  We need to show that (0 = 1).";
-"";
 "  It holds that (0 = 0).";
 "  It holds that (0 = 2)."].
 Abort.
@@ -176,9 +171,9 @@ Proof.
   intros.
   _internal_ Expand the definition of foo in (foo = 5).
 Abort.
-    
+
 (** Framework version:  *)
-  
+
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
   wp_unfold unfold_foo (Some "foo2") false x.
 

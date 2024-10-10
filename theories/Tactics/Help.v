@@ -58,7 +58,7 @@ Local Ltac2 goal_or_msg () := of_string
 It suffices to show one of the statements, use
     It suffices to show that (...).".
 
-Local Ltac2 goal_neg_msg (negated_type : constr) := 
+Local Ltac2 goal_neg_msg (negated_type : constr) :=
   concat_list [of_string "The goal is to show a negation (¬).
 Assume that the negated expression "; of_constr negated_type; of_string ", use
     Assume that (...)."].
@@ -83,9 +83,9 @@ Local Ltac2 solvable_by_core_auto () :=
   clear $temp_id.
 
 
-Local Ltac2 need_to_follow_advice () : bool := 
+Local Ltac2 need_to_follow_advice () : bool :=
   let gl := Control.goal () in
-  lazy_match! gl with 
+  lazy_match! gl with
   | Case.Wrapper _ _                => true
   | NaturalInduction.Base.Wrapper _ => true
   | NaturalInduction.Step.Wrapper _ => true
@@ -99,7 +99,7 @@ Local Ltac2 need_to_follow_advice () : bool :=
 Local Ltac2 goal_hint () : message :=
   let gl := Control.goal () in
   lazy_match! gl with
-  | ?a -> ?b  => 
+  | ?a -> ?b  =>
     let sort_a := get_value_of_hyp a in
     match check_constr_equal sort_a constr:(Prop) with
       | true            => goal_impl_msg a
@@ -134,11 +134,11 @@ Local Ltac2 is_empty (ls : 'a list) :=
 
 
 Ltac2 print_hints () :=
-  
+
   (* If advice is given in proof window, suggest to follow that, nothing else. *)
   if (need_to_follow_advice ())
     then (print (of_string "Follow the advice in the goal window."))
-  
+
     else
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
@@ -157,18 +157,16 @@ Ltac2 print_hints () :=
         if (is_empty forall_hyps)
           then ()
           else (
-            print(of_string "");
             print(of_string "To use one of the ‘for all’-statements (∀)");
             List.fold_left (fun _ h => print (concat (of_string "    ") (of_constr h))) forall_hyps ();
             print(of_string "use");
             print(of_string "    Use ... := (...) in (...).")
           );
-        
+
         (* Print how to use exists statements. *)
         if (is_empty exists_hyps)
           then ()
           else (
-            print(of_string "");
             print(of_string "To use one of the ‘there exists’-statements (∃)");
             List.fold_left (fun _ h => print (concat (of_string "    ") (of_constr h))) exists_hyps ();
             print(of_string "use");
@@ -193,7 +191,7 @@ Module HelpNewHyp.
 Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   if Bool.neg (get_print_hypothesis_flag ()) then ()
   else
-  let msg_label := 
+  let msg_label :=
     match label with
     | None   => of_string "..."
     | Some i => of_ident i
@@ -206,7 +204,7 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
         of_string "To use "; of_constr x; of_string ", use"]);
       print (concat_list [
         of_string "    Use ... := (...) in ("; msg_label; of_string ")."])
-  | exists _, _ => 
+  | exists _, _ =>
       print (concat_list [
         of_string "To use "; of_constr x; of_string ", use"]);
       print (of_string "    Obtain such a ... .")
@@ -215,14 +213,14 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
 
 (** Given a forall- or exists-statement, prints suggestion how to use it,
   after statement is proven.
-  
+
   (for use in 'We claim that ...'-tactic.)
 *)
 
 Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   if Bool.neg (get_print_hypothesis_flag ()) then ()
   else
-  let msg_label := 
+  let msg_label :=
     match label with
     | None   => of_string "..."
     | Some i => of_ident i
@@ -235,7 +233,7 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
         of_string "After proving "; of_constr x; of_string ", use it with"]);
       print (concat_list [
         of_string "    Use ... := (...) in ("; msg_label; of_string ")."])
-  | exists _, _ => 
+  | exists _, _ =>
       print (concat_list [
         of_string "After proving "; of_constr x; of_string ", use it with"]);
       print (of_string "    Obtain such a ... .")

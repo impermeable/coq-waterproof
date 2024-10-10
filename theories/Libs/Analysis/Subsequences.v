@@ -43,7 +43,7 @@ Lemma existence_next_el_to_fun :
     (∀ (m : ℕ) (N : ℕ), ∃ k : ℕ, (N ≤ k)%nat ∧ (P m (a k))) ⇒
       ∃ f : ℕ → ℕ → ℕ, ∀ (m : ℕ) (N : ℕ), (N ≤ f m N)%nat ∧ P m (a (f m N)).
 Proof.
-    Take a : (ℕ → ℝ). 
+    Take a : (ℕ → ℝ).
     Take P : (ℕ → ℝ → Prop).
     Assume that (for all m N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)) (i).
     We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))) (ii).
@@ -61,7 +61,7 @@ Qed.
 Definition is_index_seq (n : ℕ → ℕ) :=
     ∀ k : ℕ, (n k < n (S k))%nat.
 (** Given the function that produces 'good' elements, we can use it to construct a subsequence by induction.*)
-Fixpoint create_seq 
+Fixpoint create_seq
   (f : ℕ → ℕ → ℕ) (l : ℕ) :=
   match l with
   | O => f O O
@@ -85,11 +85,11 @@ Proof.
 Qed.
 
 
-(** 
+(**
 The next lemma records that indeed the elements in the subsequence satisfy the desired property.*)
 Lemma subseq_sat_rel :
   ∀ (a : ℕ → ℝ) (g : ℕ → ℕ → ℕ) (P : ℕ → ℝ → Prop),
-    (∀ m N : ℕ, P m (a (g m N)) ) ⇒ 
+    (∀ m N : ℕ, P m (a (g m N)) ) ⇒
       ∀ k : ℕ, P k (a (create_seq g k)).
 Proof.
     Take a : (ℕ → ℝ).
@@ -121,7 +121,7 @@ Proof.
     We show both statements.
     - We need to show that (is_index_seq n).
       We need to show that (is_index_seq (create_seq g)).
-      By created_seq_is_index_seq it suffices to show that 
+      By created_seq_is_index_seq it suffices to show that
         (for all m M : ℕ, (g m M ≥ M)%nat).
       Take m, M : nat.
       By (i) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))).
@@ -147,10 +147,10 @@ Lemma incr_loc_to_glob :
       ⇒ (∀ k l : ℕ, (k ≤ l)%nat ⇒ (g k ≤ g l)%nat).
 Proof.
     Take g : (ℕ → ℕ).
-    We need to show that ((for all k : ℕ, (g k ≤ g (S k))%nat) 
+    We need to show that ((for all k : ℕ, (g k ≤ g (S k))%nat)
       ⇨ for all k l : ℕ, (k ≤ l)%nat ⇨ (g k ≤ g l)%nat).
     Assume that (∀ k : ℕ, (g k ≤ g (S k))%nat).
-    Take k : ℕ. 
+    Take k : ℕ.
     induction l as [|l IH_l].
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
     Assume that (k ≤ 0)%nat.
@@ -225,29 +225,29 @@ Fixpoint first_satisfying_element_helper
   (N : ℕ) :=
   match k with
   | O => N
-  | S l => if (rel (N-k)%nat (N-k)%nat) 
+  | S l => if (rel (N-k)%nat (N-k)%nat)
                 then k
                 else (first_satisfying_element_helper rel l N)
-  end.  
+  end.
 Definition first_satisfying_element
   (rel : ℕ → ℕ → bool)
   (l : ℕ)
   (N : ℕ)
-  := first_satisfying_element_helper rel (N-l) N.  
+  := first_satisfying_element_helper rel (N-l) N.
 (** ### From infinitely many elements to a function producing those elements*)
 Lemma inf_el_to_fun :
   ∀ (a : ℕ → ℝ) (P : ℕ → ℝ → Prop),
     (∀ N : ℕ, ∃ k : ℕ, (N ≤ k)%nat ∧ (P N (a k))) ⇒
       ∃ f : ℕ → ℕ, ∀ l : ℕ, (l ≤ f l)%nat ∧ P l (a (f l)).
 Proof.
-    Take a : (ℕ → ℝ). 
+    Take a : (ℕ → ℝ).
     Take P : (ℕ → ℝ → Prop).
     apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P k (a l))).
 Qed.
 
 
 Fixpoint seq_of_max (f : ℕ → ℕ) (l : ℕ) :=
-  match l with 
+  match l with
   | O => f O
   | S k => Nat.max (f l) (seq_of_max f k)
   end.
@@ -277,7 +277,7 @@ Proof.
       We conclude that (g 0 ≤ g 0)%nat.
     - We now show the induction step.
       Assume that (g(n) <= seq_of_max g n)%nat.
-      We need to show that (g(n + 1) ≤ 
+      We need to show that (g(n + 1) ≤
         (fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
           match l with
           | 0 => f(0)
@@ -305,10 +305,10 @@ Qed.
 
 
 (** ### From a function producing the correct elements to an index sequence*)
-Fixpoint build_seq 
-  (f : ℕ → ℕ) 
+Fixpoint build_seq
+  (f : ℕ → ℕ)
   (k : ℕ) :=
-  match k with 
+  match k with
   | O => f O
   | S m => f (S (seq_of_max f (build_seq f m)))
   end.

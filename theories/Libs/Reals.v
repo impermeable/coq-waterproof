@@ -36,26 +36,26 @@ Qed.
 Lemma true_Req : forall x y : R, Reqb x y = true -> x = y.
 Proof.
   intros.
-  destruct (Reqb_eq x y). 
+  destruct (Reqb_eq x y).
   apply (H0 H).
 Qed.
 
 Lemma Req_false : forall x y : R, x <> y -> Reqb x y = false.
 Proof.
-  intros. 
-  unfold Reqb. 
-  destruct Req_dec. 
-  contradiction. 
+  intros.
+  unfold Reqb.
+  destruct Req_dec.
+  contradiction.
   trivial.
 Qed.
 
 Lemma false_Req : forall x y : R, Reqb x y = false -> x <> y.
 Proof.
-  intros. 
-  destruct (Req_dec x y). 
-  rewrite (Req_true x y e) in H. 
-  assert (H1 : true <> false). 
-  auto with *. 
+  intros.
+  destruct (Req_dec x y).
+  rewrite (Req_true x y e) in H.
+  assert (H1 : true <> false).
+  auto with *.
   contradiction.
   apply n.
 Qed.
@@ -69,59 +69,59 @@ Proof.
   rewrite Rmult_1_l in *.
   rewrite <- (Rinv_inv r2).
   apply (Rinv_lt_contravar (/ r2) r1).
-  apply Rmult_lt_0_compat. 
-  apply Rinv_0_lt_compat. 
-  apply H0. 
+  apply Rmult_lt_0_compat.
+  apply Rinv_0_lt_compat.
+  apply H0.
   apply H.
   apply H1.
 Qed.
 
 Lemma div_pos : forall r1 r2 : R, r1 > 0 ->1 / r1 > 0.
 Proof.
-  intros. 
-  unfold Rdiv. 
-  rewrite Rmult_1_l. 
-  apply Rinv_0_lt_compat. 
+  intros.
+  unfold Rdiv.
+  rewrite Rmult_1_l.
+  apply Rinv_0_lt_compat.
   apply H.
 Qed.
 
 Lemma Rabs_zero : forall r : R, Rabs (r - 0) = Rabs r.
 Proof.
   intros.
-  rewrite Rminus_0_r. 
+  rewrite Rminus_0_r.
   trivial.
 Qed.
 
 Lemma inv_remove : forall r1 r2 : R, 0 < r1 -> 0 < r2 -> 1 / r1 < 1 / r2 -> r1 > r2.
 Proof.
   intros.
-  unfold Rdiv in *. 
+  unfold Rdiv in *.
   rewrite Rmult_1_l in *.
   rewrite <- (Rinv_inv r1), <- (Rinv_inv r2).
-  apply (Rinv_lt_contravar (/ r1) (/ r2)). 
-  apply Rmult_lt_0_compat. 
-  apply Rinv_0_lt_compat. 
+  apply (Rinv_lt_contravar (/ r1) (/ r2)).
+  apply Rmult_lt_0_compat.
+  apply Rinv_0_lt_compat.
   apply H.
-  apply Rinv_0_lt_compat. 
-  apply H0. 
-  rewrite Rmult_1_l in *. 
+  apply Rinv_0_lt_compat.
+  apply H0.
+  rewrite Rmult_1_l in *.
   apply H1.
   all: apply Rgt_not_eq; assumption.
 Qed.
 
 Lemma Rle_abs_min : forall x : R, -x <= Rabs x.
 Proof.
-  intros. 
-  rewrite <- (Rabs_Ropp (x)). 
+  intros.
+  rewrite <- (Rabs_Ropp (x)).
   apply Rle_abs.
 Qed.
 
 Lemma Rge_min_abs : forall x : R, x >= -Rabs x.
 Proof.
-  intros. 
-  rewrite <- (Ropp_involutive x). 
+  intros.
+  rewrite <- (Ropp_involutive x).
   apply Ropp_le_ge_contravar.
-  rewrite (Rabs_Ropp (- x)). 
+  rewrite (Rabs_Ropp (- x)).
   apply Rle_abs.
 Qed.
 
@@ -158,10 +158,10 @@ Qed.
 Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
 Proof.
   intros.
-  destruct (total_order_T r1 r2). 
+  destruct (total_order_T r1 r2).
   destruct s.
   exact (left r).
-  exact (right (Req_ge r1 r2 e)). 
+  exact (right (Req_ge r1 r2 e)).
   exact (right (Rle_ge r2 r1 (Rlt_le r2 r1 r))).
 Qed.
 
@@ -178,7 +178,7 @@ Qed.
 Lemma Rge_le_dec : forall r1 r2, {r1 >= r2} + {~ r2 <= r1}.
 Proof.
   intros.
-  destruct (total_order_T r1 r2). 
+  destruct (total_order_T r1 r2).
   destruct s.
   apply (right (Rlt_not_le r2 r1 r)).
   apply (left (Req_ge r1 r2 e)).
@@ -201,7 +201,7 @@ Qed.
 
 Open Scope subset_scope.
 
-Lemma left_in_closed_open {a b : R} : (a < b) -> (a : [a,b)).
+Lemma left_in_closed_open {a b : R} : (a < b) -> (a ∈ [a,b)).
 Proof.
   intro a_lt_b.
   split.
@@ -209,7 +209,7 @@ Proof.
   - exact a_lt_b.
 Qed.
 
-Lemma right_in_open_closed {a b : R} : (a < b) -> (b : (a,b]).
+Lemma right_in_open_closed {a b : R} : (a < b) -> (b ∈ (a,b]).
 Proof.
   intro a_lt_b.
   split.
@@ -224,11 +224,11 @@ Require Import Ltac2.Ltac2.
 
 (** Tactic to deal with Rabs Rmin Rmax *)
 
-Ltac2 crush_R_abs_min_max () := 
+Ltac2 crush_R_abs_min_max () :=
   unfold Rdist in *;
   unfold Rabs in *;
   unfold Rmax in *;
-  unfold Rmin in *; 
+  unfold Rmin in *;
   repeat (destruct (Rcase_abs) in * );
   repeat (destruct (Rle_dec) in * );
   repeat (destruct (Rge_dec) in * ).

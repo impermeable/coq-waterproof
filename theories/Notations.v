@@ -18,5 +18,5 @@
 
 Require Export Chains.
 Require Export Notations.Common.
+Export Notations.Common.Quantifiers.
 Require Export Notations.Reals.
-Require Export Notations.Sets.

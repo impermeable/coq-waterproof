@@ -53,9 +53,57 @@ Proof.
       reflexivity.
 Qed.
 
-(* Test 2: throws error if variable name is 'Qed' 
+(* Test 2: throws error if variable name is 'Qed'
     (quick fix for Waterproof editor / Coq lsp)  *)
 Goal forall n : nat, (n = n).
 Proof.
     Fail We use induction on Qed.
+Abort.
+
+Require Import Waterproof.Notations.Sets.
+Open Scope subset_scope.
+
+(* Test 3 : Induction on a variable quantified by
+  [∀ x ∈ nat, ...], rather than [∀ x : nat, ...] --
+  Case where variable is not introduced yet *)
+
+Goal ∀ n ∈ nat, n >= 0.
+Proof.
+We use induction on n.
+* We first show the base case (0 >= 0).
+  We conclude that (0 >= 0).
+* We now show the induction step.
+  Assume that (n >= 0).
+  We need to show that (n + 1 >= 0).
+Abort.
+
+(* Test 4: Induction on a variable quantified by
+  [∀ x ∈ nat, ...], rather than [∀ x : nat, ...] --
+  Case where variable is already introduced  with
+  [Take ... ∈ ...] statement *)
+
+Goal ∀ n ∈ nat, n >= 0.
+Proof.
+Take n ∈ nat.
+We use induction on n.
+* We first show the base case (0 >= 0).
+  We conclude that (0 >= 0).
+* We now show the induction step.
+  Assume that (n >= 0).
+  We need to show that (n + 1 >= 0).
+Abort.
+
+(* Test 5: Induction on a variable quantified by
+  [∀ x ∈ nat, ...], rather than [∀ x : nat, ...] --
+  Case where variable is already introduced,
+  with [Take .. : ...] statement *)
+
+Goal ∀ n ∈ nat, n >= 0.
+Proof.
+Take n : nat.
+We use induction on n.
+* We first show the base case (0 >= 0).
+  We conclude that (0 >= 0).
+* We now show the induction step.
+  Assume that (n >= 0).
 Abort.

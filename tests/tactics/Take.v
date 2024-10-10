@@ -227,3 +227,59 @@ Proof.
   (set (n := 1)).
   assert_no_feedback (fun () => Take n0, n1, n2 : nat) Warning.
 Abort.
+
+Require Import Waterproof.Notations.Sets.
+
+Local Parameter A : nat -> Prop.
+Definition B := as_subset _ A.
+
+(** ** Tests for taking from sets *)
+Open Scope subset_scope.
+(** Test 24: Take from a set *)
+Goal ∀ n ∈ B, n = 0.
+  Take n ∈ B.
+  assert (n ∈ B) by assumption.
+Abort.
+
+(** Test 25, Take multiple variables from a set *)
+Goal ∀ k ∈ B, ∀ l ∈ B, ∀ m ∈ B, ∀ n ∈ B, k + l + m + n = 0.
+  Take k, l, m, n ∈ B.
+  assert (k ∈ B) by assumption.
+  assert (l ∈ B) by assumption.
+  assert (m ∈ B) by assumption.
+  assert (n ∈ B) by assumption.
+Abort.
+
+
+Close Scope subset_scope.
+
+(** Test 26, Take from a set of real numbers *)
+
+Require Import Waterproof.Notations.Reals.
+Open Scope R_scope.
+Open Scope subset_scope.
+
+Local Parameter a b : R.
+
+Goal ∀ x ∈ [a, b], True.
+Proof.
+We need to show that (∀ x ∈ [a, b], True).
+Take x ∈ [a, b].
+Abort.
+
+(** Test 27, Take from a full set *)
+Goal ∀ x ∈ ℝ, x > 0.
+Take x ∈ ℝ.
+Abort.
+
+(** Test 28, Take with double coercion *)
+
+Structure test_structure  := BuildTestStructure { test_carrier :> Type }.
+Local Definition V := BuildTestStructure R.
+
+Goal ∀ x ∈ V, x = 0.
+Proof.
+Take x ∈ V. (* V first gets coerced to Type, then to subset *)
+(* To see this, for instance use *)
+(* Set Printing Coercions. *)
+Abort.

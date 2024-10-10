@@ -23,25 +23,25 @@ Require Import Ltac2.Message.
 Require Import Util.Init.
 Require Import Util.TypeCorrector.
 
-(** 
+(**
   Ltac2 function: [constr -> constr -> bool]
-    
+
   Check if the normalized form of [a] is syntactically equal to the normalized form of [b].
 
   Arguments:
     - [a, b: constr], any [constr]
-   
+
   Returns:
     - [bool]: indicating it if a and b are syntactically equal (i.e. are of the same type after normalization)
-*)  
+*)
 Ltac2 check_constr_equal (a: constr) (b: constr) :=
   Constr.equal (eval cbv in $a) (eval cbv in $b).
 
 (**
   Introduce *and prove* a new sublemma.
-    
+
   Wrapper for the build-in Gallina [assert] statement that can accept Ltac2 variables as arguments.
-    
+
   Includes a 'by' clause as used in [assert (... : ...) by ...].
 
   Arguments:
@@ -50,21 +50,21 @@ Ltac2 check_constr_equal (a: constr) (b: constr) :=
     - [by_arg: unit -> unit], function that tries the prove the new sublemma.
 *)
 Ltac2 ltac2_assert_with_by (id: ident) (lemma_constent: constr) (by_arg: unit -> unit) :=
-  (* 
+  (*
     [Std.assert] expects an [AssertType] as argument.
     An [AssrtType] consist of three parts:
       - [intropatterns opt]: the whole [(Some (Std.IntroNaming (Std.IntroIdentifier id)))] thing just wraps an [ident] into an optional [intropatterns].
       - [constr]: the actual propositions to assert.
       - [(unit -> unit) option]: the method to prove the proposition (e.g. manually done with "by [something]"). It is a series of tactic executions used to prove the [constr].
   *)
-  Std.assert (Std.AssertType 
-    (Some (Std.IntroNaming (Std.IntroIdentifier id))) 
+  Std.assert (Std.AssertType
+    (Some (Std.IntroNaming (Std.IntroIdentifier id)))
     lemma_constent (Some by_arg)
   ).
 
-(** 
+(**
   Introduce a new sublemma.
-  
+
   Wrapper for the build-in Gallina [assert] statement that can accept Ltac2 variables as arguments.
 
   Arguments:
@@ -73,16 +73,16 @@ Ltac2 ltac2_assert_with_by (id: ident) (lemma_constent: constr) (by_arg: unit ->
 *)
 Ltac2 ltac2_assert (id: ident) (lemma_content: constr) :=
   let lemma_content := correct_type_by_wrapping lemma_content in
-  Std.assert (Std.AssertType 
-    (Some (Std.IntroNaming (Std.IntroIdentifier id))) 
+  Std.assert (Std.AssertType
+    (Some (Std.IntroNaming (Std.IntroIdentifier id)))
     lemma_content None
   ).
 
 (**
   If t is a term, the following tactics allow to extract what t gets coerced to after an introduction in forall x : t, True.
-    
+
   ** Auxiliary function to get a coerced type
-    
+
   Returns:
     - [constr] The coercion of t if the goal is forall x : t, True.
 
@@ -102,10 +102,10 @@ Ltac2 get_coerced_type_aux () :=
     - [constr] The coerced term after introduction in forall x : t, True.
 *)
 Ltac2 get_coerced_type (t : constr) :=
-  let dummy_hyp := Fresh.fresh (Fresh.Free.of_goal ()) @dummy_hypothesis in 
+  let dummy_hyp := Fresh.fresh (Fresh.Free.of_goal ()) @dummy_hypothesis in
   ltac2_assert (dummy_hyp) constr:(forall _ : $t, True);
-  
-  (* 
+
+  (*
     The previous line creates an extra goal, which causes multiple goals to focus.
     Goal matching panics on this, so we need to refocus on the first goal.
   *)
@@ -113,3 +113,23 @@ Ltac2 get_coerced_type (t : constr) :=
   Control.focus 1 1 (fun () => exact (fun x => I)); (* prove the lemma *)
   clear $dummy_hyp; (* clear the resulting hypothesis *)
   z.
+
+(* Check if a constr corresponds to an ident.
+
+  Returns:
+    - [bool] that indicates whether the constr corresponds to the ident *)
+Ltac2 constr_is_ident (con : constr) (id : ident) : bool :=
+  let hyp := Control.hyp id in
+  Constr.equal con hyp. (* we don't use check_constr_equal here because we really want the expression to be the same before conversion*)
+
+  (* match Constr.Unsafe.kind con with
+  | Constr.Unsafe.Var w => Ident.equal id w
+  | _ => false
+  end.*)
+
+(* Check that a constr does not contain an id.
+
+  Returns:
+    - [bool] that indicates whether the id is contained in the constr *)
+Ltac2 constr_does_not_contain_ident (con : constr) (id : ident) : bool :=
+  Ident.equal (Fresh.fresh (Fresh.Free.of_constr con) id) id.

@@ -35,13 +35,13 @@ Require Import Ltac2.Message.
 
   Does:
     - Prints a confirmation that the goal equals the provided type.
-    
+
   Raises fatal exceptions:
     - If the goal is not syntactically equal to [t].
 *)
 Local Ltac2 check_goal (t:constr) :=
   lazy_match! goal with
-    | [ |- ?g] => 
+    | [ |- ?g] =>
       match check_constr_equal g t with
         | true => ()
         | false => throw (of_string "Wrong goal specified.")
@@ -52,11 +52,11 @@ Local Ltac2 check_goal (t:constr) :=
 
 (**
   Attempts to remove the [StateGoal.Wrapper] wrapper from the goal.
-    
+
   Arguments:
     - [t : constr], type matching the wrapped goal.
-    
-  Does: 
+
+  Does:
     - Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [StateGoal.Wrapper t].
 
   Raises fatal exceptions:
@@ -72,8 +72,29 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
   end.
 
 (**
+  Attempts to remove the [VerifyGoal.Wrapper] wrapper from the goal.
+
+  Arguments:
+    - [t : constr], type matching the wrapped goal.
+
+  Does:
+    - Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [StateGoal.Wrapper t].
+
+  Raises fatal exceptions:
+    - If the argument [t] does not match the wrapped goal.
+*)
+Local Ltac2 unwrap_verify_goal (t : constr) :=
+  lazy_match! goal with
+    | [|- VerifyGoal.Wrapper ?g] =>
+      match (check_constr_equal g t) with
+        | true  => apply VerifyGoal.wrap
+        | false => throw (of_string "Wrong goal specified.")
+      end
+  end.
+
+(**
   1) If the goal is wrapped in [State.Goal.Wrapper], attempt to remove it.
-  
+
   2) Else, check if the type of the goal is convertible to [t], if so, it replaces the goal by t.
 
   Arguments:
@@ -84,7 +105,7 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
   Does:
     - 1) Removes the wrapper if the argument matches the wrapped goal, i.e. the goal is of the form [StateGoal.Wrapper t].
     - 2) Prints a confirmation that the goal equals the provided type.
-    
+
   Raises fatal exceptions:
     - 1) If the argument [t] does not match the wrapped goal.
     - 2) If the goal is not convertible to [t].
@@ -94,6 +115,13 @@ Local Ltac2 to_show (t : constr) :=
   lazy_match! goal with
     | [|- StateGoal.Wrapper _] => unwrap_state_goal t; change $t
     | [|- _] => panic_if_goal_wrapped ();  check_goal t; change $t
+  end.
+
+Local Ltac2 to_verify (t : constr) :=
+  let t := correct_type_by_wrapping t in
+  lazy_match! goal with
+    | [|- VerifyGoal.Wrapper _] => unwrap_verify_goal t; change $t
+    | [|- _] => (warn (of_string "Did you mean to write: We need to show that (...). ?"))
   end.
 
 (*
@@ -107,9 +135,13 @@ Local Ltac2 to_show (t : constr) :=
     - To show : ...
     - To show that : ...
 
-  Optional string keywords do need to have a name, even though the parser will not populate this name. 
+  Optional string keywords do need to have a name, even though the parser will not populate this name.
   (That's why it reads "that(opt('that'))" instead of "opt('that')".
 *)
 Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) := to_show t.
 
 Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) := to_show t.
+
+Ltac2 Notation "We" "need" "to" "verify" that(opt("that")) colon(opt(":")) t(constr) := to_verify t.
+
+Ltac2 Notation "To" "verify" colon(opt(":")) t(constr) := to_verify t.
