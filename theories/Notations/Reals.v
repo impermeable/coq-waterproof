@@ -45,11 +45,11 @@ Coercion INR: nat >-> R.
 Coercion IZR: Z >-> R.
 Coercion Q2R: Q >-> R.
 
+Open Scope subset_scope.
+
 (** ** Sequences *)
 Definition converges_to (a : ℕ → ℝ) (c : ℝ) :=
-  forall ε : ℝ, ε > 0 ⇒
-    exists N : ℕ, forall n : ℕ, (n ≥ N)%nat ⇒
-      R_dist (a n) c < ε.
+  ∀ ε > 0, (∃ N1 ∈ ℕ, ∀ n ≥ N1, (R_dist (a n) c < ε)%R)%nat.
 
 Notation "a ⟶ c" := (converges_to a c) (at level 20).
 
@@ -75,5 +75,6 @@ Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))): R_scope.
 Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))): R_scope.
 Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))): R_scope.
 
+Close Scope subset_scope.
 Close Scope nat_scope.
 Close Scope R_scope.

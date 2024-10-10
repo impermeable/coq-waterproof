@@ -25,7 +25,10 @@ Require Import ClassicalChoice.
 Require Import Automation.
 Require Import Libs.Analysis.Sequences.
 Require Import Libs.Analysis.Subsequences.
-Require Import Notations.
+Require Import Notations.Common.
+Require Import Notations.Reals.
+Require Import Notations.Sets.
+Require Import Chains.
 Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -33,12 +36,11 @@ Waterproof Enable Automation RealsAndIntegers.
 Open Scope R_scope.
 
 Definition is_seq_acc_pt (a : ℕ → ℝ) (x : ℝ) : Prop :=
-  ∃ n : ℕ → ℕ, is_index_seq n ∧ Un_cv (fun (k : ℕ) ↦ a(n k)) x.
+  ∃ n ∈ ℕ → ℕ, is_index_seq n ∧ converges_to (fun (k : ℕ) ↦ a(n k)) x.
 
-Lemma seq_bdd_seq_acc_pts_bdd :
-  ∀ a : ℕ → ℝ, has_ub a ⇒ bound (is_seq_acc_pt a).
+Lemma seq_bdd_seq_acc_pts_bdd (a : ℕ → ℝ) :
+  has_ub a ⇒ bound (is_seq_acc_pt a).
 Proof.
-  Take a : (ℕ → ℝ).
   Assume that (has_ub a) (i).
   We need to show that
     (there exists m : ℝ, is_upper_bound (is_seq_acc_pt a) m).
@@ -49,12 +51,17 @@ Proof.
   Choose m := M.
   Take x : ℝ.
   Assume that (is_seq_acc_pt a x).
-  It holds that (there exists n : ℕ ⇨ ℕ,
-    is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)).
-  Obtain such an n. It holds that (is_index_seq n ∧ Un_cv (fun k ↦ a(n(k)), x)) (iv).
-  Because (iv) both (is_index_seq n) and (Un_cv (fun k ↦ (a(n(k))), x)) hold.
+  It holds that (∃ n ∈ ℕ ⇨ ℕ,
+    is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)).
+  Obtain such an n.
+  It holds that (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) (iv).
+  Because (iv) both (is_index_seq n) and (converges_to (fun k ↦ (a(n(k))), x)) hold.
   We need to show that (x ≤ M).
-  By (upp_bd_seq_is_upp_bd_lim (fun k => a (n k))) it suffices to show that (for all k : nat, (a (n k) <= M)).
+  (*FIXME*)
+  (* By (upp_bd_seq_is_upp_bd_lim (fun k => a (n k))) it suffices to show that
+    (∀ k ∈ nat, (a (n k) <= M)).*)
+  enough (∀ k ∈ nat, (a (n k) <= M)) by (
+  apply (upp_bd_seq_is_upp_bd_lim (fun k ↦ a (n k))); assumption).
   We claim that (for all k : ℕ, (a k) ≤ M) (v).
   { It holds that (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
     It holds that (for all x0 : ℝ,
@@ -64,7 +71,7 @@ Proof.
     Choose k0 := k.
     We conclude that (a k0 = a k0).
   }
-  Take k : ℕ.
+  Take k ∈ ℕ.
   By (v) it holds that (a(n k) ≤ M).
   It follows that (a(n k) ≤ M).
 Qed.
