@@ -20,7 +20,9 @@ Require Import Coq.Reals.Reals.
 Require Import Classical_Prop.
 
 Require Import Automation.
-Require Import Notations.
+Require Import Notations.Common.
+Require Import Notations.Reals.
+Require Import Notations.Sets.
 Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -32,7 +34,7 @@ Open Scope subset_scope.
 Definition open_ball (p : R) (r : R) : subset R := as_subset _ (fun x => | x - p | < r).
 
 Definition is_interior_point (a : R) (A : R -> Prop) :=
-  there exists r : R, (r > 0) /\ (for all x : R, x ∈ (open_ball a r) -> A x).
+  ∃ r > 0, ∀ x ∈ (open_ball a r), x ∈ A.
 
 Definition is_open (A : R -> Prop) := for all a : R, A a -> is_interior_point a A.
 
