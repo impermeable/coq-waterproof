@@ -20,6 +20,8 @@ Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Notations.Sets.
 
 Open Scope nat_scope.
+Open Scope subset_scope.
+
 Goal ∀ x > 3, True.
 Abort.
 
@@ -42,7 +44,7 @@ Open Scope R_scope.
 Goal ∀ x > 3, x = 5.
 Abort.
 
-Goal ∃ x > 5, x = 7.
+Goal ∃ x ≥ 5, x = 7.
 Abort.
 
 (* Combine the coercion ... *)

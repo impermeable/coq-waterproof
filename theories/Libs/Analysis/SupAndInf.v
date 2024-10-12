@@ -762,8 +762,8 @@ Lemma seq_ex_almost_maximizer_ε :
 Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a) (i).
-    We need to show that (for all ε : ℝ,  ε > 0
-      ⇨ there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
+    We need to show that (∀ ε > 0,
+      there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
     clear _defeq. Obtain such an l.
     Take ε > 0.
@@ -805,7 +805,7 @@ Proof.
     By seq_ex_almost_maximizer_m it holds that
       (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (pr) Nn - 1 / (INR m + 1)).
     Obtain such a k. Choose k0 := (Nn+k)%nat.
-    - Indeed, ((k0 >= Nn)%nat).
+    - Indeed, ((k0 ≥ Nn)%nat).
     - We need to show that ( a k0 > sequence_ub a (pr) Nn - 1 / (m + 1) ).
       We conclude that ( a k0 > sequence_ub a (pr) Nn - 1 / (m + 1) ).
 Qed.

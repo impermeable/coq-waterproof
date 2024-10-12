@@ -23,6 +23,8 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Tactics.Help.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Notations.Sets.
+Open Scope subset_scope.
 
 Waterproof Enable Hypothesis Help.
 Waterproof Enable Redirect Feedback.
@@ -58,43 +60,43 @@ Goal (forall n : nat, n = n) -> True.
 Abort.
 
 (** Test 4 : Report \forall hypotheses if available. *)
-Goal (forall n : nat, n = n) -> (forall m : nat, m + 1 = m + 1) -> (0 = 1).
+Goal (∀ n ∈ nat, n = n) -> (∀ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
 "To use one of the ‘for all’-statements (∀)";
-"    (forall n : nat, n = n)";
-"    (forall m : nat, m + 1 = m + 1)";
+"    (∀ n ∈ nat, n = n)";
+"    (∀ m ∈ nat, m + 1 = m + 1)";
 "use";
 "    Use ... := (...) in (...)."].
 Abort.
 
 (** Test 5 : Report \exists hypotheses if available. *)
-Goal (exists n : nat, n = n) -> (exists m : nat, m + 1 = m + 1) -> (0 = 1).
+Goal (∃ n ∈ nat, n = n) -> (∃ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
 "To use one of the ‘there exists’-statements (∃)";
-"    (exists n : nat, n = n)";
-"    (exists m : nat, m + 1 = m + 1)";
+"    (∃ n ∈ nat, n = n)";
+"    (∃ m ∈ nat, m + 1 = m + 1)";
 "use";
 "    Obtain ... according to (...)."].
 Abort.
 
 (** Test 6 : Report \forall and \exists hypotheses if available. *)
-Goal (forall n : nat, n = n) -> (exists m : nat, m = 0) -> (0 = 1).
+Goal (∀ n ∈ nat, n = n) -> (∃ m ∈ nat, m = 0) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
 "To use one of the ‘for all’-statements (∀)";
-"    (forall n : nat, n = n)";
+"    (∀ n ∈ nat, n = n)";
 "use";
 "    Use ... := (...) in (...).";
 "To use one of the ‘there exists’-statements (∃)";
-"    (exists m : nat, m = 0)";
+"    (∃ m ∈ nat, m = 0)";
 "use";
 "    Obtain ... according to (...)."].
 Abort.
@@ -104,13 +106,15 @@ Abort.
 (** Test advice how to use newly introduced statements. *)
 
 Require Import Waterproof.Tactics.ItHolds.
+Require Import Waterproof.Automation.
+Waterproof Enable Automation RealsAndIntegers.
 
 (** Test 7: It holds that, no label. *)
 Goal False.
 Proof.
   assert_feedback_with_strings
-  (fun () => It holds that (forall n : nat, n = n)) Info
-["To use (forall n : nat, n = n), use";
+  (fun () => It holds that (∀ n ∈ nat, n = n)) Info
+["To use (∀ n ∈ nat, n = n), use";
 "    Use ... := (...) in (...)."].
 Abort.
 
@@ -118,8 +122,8 @@ Abort.
 Goal False.
 Proof.
   assert_feedback_with_strings
-  (fun () => It holds that (forall n : nat, n = n) (i)) Info
-["To use (forall n : nat, n = n), use";
+  (fun () => It holds that (∀ n > 2, n = n) (i)) Info
+["To use (∀ n > 2, n = n), use";
 "    Use ... := (...) in (i)."].
 Abort.
 
@@ -135,9 +139,9 @@ Abort.
 Goal False.
 Proof.
   assert_feedback_with_strings
-  (fun () => Since (True) it holds that (forall n : nat, n = n))
+  (fun () => Since (True) it holds that (∀ n ≥ 4, n = n))
   Info
-["To use (forall n : nat, n = n), use";
+["To use (∀ n ≥ 4, n = n), use";
 "    Use ... := (...) in (...)."].
 Abort.
 
@@ -145,32 +149,32 @@ Abort.
 Require Import Waterproof.Tactics.Assume.
 
 (** Test 11: Assume that, no label. *)
-Goal (forall n : nat, n = n) -> False.
+Goal (∀ n ∈ nat, n = n) -> False.
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (forall n : nat, n = n))
+  (fun () => Assume that (∀ n ∈ nat, n = n))
   Info
-["To use (forall n : nat, n = n), use";
+["To use (∀ n ∈ nat, n = n), use";
 "    Use ... := (...) in (...)."].
 Abort.
 
 (** Test 12: Assume that, label. *)
-Goal (forall n : nat, n = n) -> False.
+Goal (∀ n > 3, n = n) -> False.
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (forall n : nat, n = n) (i))
+  (fun () => Assume that (∀ n > 3, n = n) (i))
   Info
-["To use (forall n : nat, n = n), use";
+["To use (∀ n > 3, n = n), use";
 "    Use ... := (...) in (i)."].
 Abort.
 
 (** Test 13: Assume negation. *)
-Goal not (forall n : nat, n = n).
+Goal not (∀ n ≥ 4, n = n).
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (forall n : nat, n = n))
+  (fun () => Assume that (∀ n ≥ 4, n = n))
   Info
-["To use (forall n : nat, n = n), use";
+["To use (∀ n ≥ 4, n = n), use";
 "    Use ... := (...) in (...)."].
 Abort.
 
@@ -183,7 +187,7 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n))
   Info
-["After proving (forall n : nat, n = n), use it with";
+["After proving (for all n, n = n), use it with";
 "    Use ... := (...) in (...)."].
 Abort.
 
@@ -193,7 +197,7 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n) (i))
   Info
-["After proving (forall n : nat, n = n), use it with";
+["After proving (for all n, n = n), use it with";
 "    Use ... := (...) in (i)."].
 Abort.
 
@@ -205,4 +209,33 @@ Proof.
   assert_no_feedback
   (fun () => It holds that (forall n : nat, n = n))
   Info.
+Abort.
+
+(** Test 17: Help on a forall goal *)
+Goal ∀ x ∈ nat, x = 0.
+Proof.
+assert_feedback_with_strings (fun () => Help) Info
+["The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable in nat, use
+    Take ... ∈ (...)."].
+Abort.
+
+(** Test 18: Help on a there-exists goal *)
+Goal ∃ x > 3, x = 0.
+Proof.
+assert_feedback_with_strings (fun () => Help) Info
+["The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable strictly larger than 3, use
+    Choose ... := (...)."].
+Abort.
+
+(** Test 19: Help on an assumption *)
+Goal ∀ x > 3, x < 2 -> x > 6.
+Proof.
+intros x Hx.
+assert_feedback_with_strings (fun () => Help) Info
+[String.concat "" ["The goal is to show an implication (⇒).
+Assume the premise "; "
+(x < 2), use
+    Assume that (...)."]].
 Abort.

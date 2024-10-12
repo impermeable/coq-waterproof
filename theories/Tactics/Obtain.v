@@ -52,6 +52,7 @@ Local Ltac2 rec destruct_and (hyp : ident) :=
   | (_ /\ _) =>
     let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
     destruct $hyp_c as [$w $hyp];
+    unfold ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $w;
     destruct_and hyp
   | _ => ()
   end.

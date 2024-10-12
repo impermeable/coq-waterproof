@@ -82,7 +82,7 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
   end;
   if sealed then
     split;
-    Control.focus 1 1 (fun () => apply VerifyGoal.unwrap);
+    Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type; apply VerifyGoal.unwrap);
     Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
   (* let v := Control.hyp s in

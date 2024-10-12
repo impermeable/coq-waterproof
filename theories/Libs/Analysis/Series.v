@@ -101,8 +101,8 @@ Proof.
         Choose M := l%nat.
         * Indeed, (M ∈ ℕ).
         * We need to show that
-            (for all n, (n ≥ M)%nat
-              ⇨ sigma(a, k, (M - 1)%nat) + sigma(a, M, n) = sigma(a, k, n)).
+            (∀ n ≥ M,
+              sigma(a, k, (M - 1)%nat) + sigma(a, M, n) = sigma(a, k, n)).
           Take n ≥ M.
           By sigma_split_v2 it suffices to show that (k < l <= n)%nat.
           We conclude that (k < l <= n)%nat.

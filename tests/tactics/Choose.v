@@ -132,9 +132,27 @@ Proof.
     assert_no_feedback (fun () => Choose n0 := 2) Warning.
 Abort.
 
+Open Scope subset_scope.
+
+(** Test 13: Choose a number larger than a number *)
 Goal ∃ n > 0, True.
 Proof.
   Choose n := 3.
-  * We conclude that (n > 0). (* TODO: syntax with "indeed"? *)
+  * Indeed, (n > 0).
   * We conclude that True.
 Qed.
+
+Require Import Coq.Reals.Reals.
+Require Import Waterproof.Notations.Reals.
+Open Scope subset_scope.
+Open Scope R_scope.
+
+(** Test 14: Choose a natural number larger than a number, but in R_scope *)
+
+Goal ∃ n ≥ 0%nat, INR(n) = 3.
+Proof.
+  Choose n := 3%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (ge n 0)).
+    Indeed, ((n ≥ 0)%nat).
+  * We need to show that (INR(n) = 3).
+Abort.

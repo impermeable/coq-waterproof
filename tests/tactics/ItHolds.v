@@ -324,6 +324,8 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 
+Open Scope subset_scope.
+
 (** Test 23: Test whether wrapper for specialize works *)
 Goal (∀ x ≥ 5, True) -> True.
 Proof.

@@ -73,9 +73,9 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 
 Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
   let sttd_goal := correct_type_by_wrapping sttd_goal in
-  let sttd_goal := (eval unfold subset_type in $sttd_goal) in
+  let sttd_goal := (eval unfold subset_type, ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $sttd_goal) in
   let current_goal := Control.goal () in
-  let current_goal := (eval unfold subset_type in $current_goal) in
+  let current_goal := (eval unfold subset_type, ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $current_goal) in
   (* Check if stated goal exactly matches current goal. *)
   match Constr.equal sttd_goal current_goal with
   | true => ()

@@ -319,4 +319,19 @@ Use x := y in (i).
   We conclude that (y = 0).
 Qed.
 
+(** Test 23 : Choose a natural number larger than another natural number, but in R_scope. *)
+
+Require Import Coq.Reals.Reals.
+Open Scope R_scope.
+
+Goal (∀ y > 0%nat, INR(y) = 0) -> True.
+Proof.
+intro i.
+Use y := 2%nat in (i).
+* assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (gt 2 0)).
+  Indeed, ((2 > 0)%nat).
+* It holds that (INR 2 = 0).
+  exact I.
+Qed.
+
 Close Scope subset_scope.

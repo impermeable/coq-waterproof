@@ -51,6 +51,7 @@ Proof.
   Choose x := (a + r/2).
   * Indeed, (x ∈ ℝ).
   * We need to show that (0 < | x - a | < r).
+    unfold gt_op, R_gt_type in *.
     It holds that (| x - a | < r).
     It holds that (| x - a | > 0).
     We conclude that (0 < | x - a | < r).

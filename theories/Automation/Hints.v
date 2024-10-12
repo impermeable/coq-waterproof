@@ -49,7 +49,7 @@ Create HintDb wp_core.
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
   (* TODO: maybe tune this better *)
-  #[export] Hint Extern 2 => progress (unfold seal in * ): wp_core.
+  #[export] Hint Extern 2 => progress (unfold seal, subset_type, gt_op, R_gt_type, nat_gt_type, ge_op, R_ge_type, nat_ge_type in * ) : wp_core.
   #[export] Hint Extern 2 => progress (unfold subset_in, conv, as_subset in * ) : wp_core.
   #[export] Hint Resolve mem_subset_full_set : wp_core.
   #[export] Hint Extern 3 => progress ltac2:(split_conjunctions ()) : wp_core.

@@ -283,3 +283,10 @@ Take x ∈ V. (* V first gets coerced to Type, then to subset *)
 (* To see this, for instance use *)
 (* Set Printing Coercions. *)
 Abort.
+
+(** Test 29, Take with an inequality in nat, but in R_scope *)
+Goal ∀ n > 3%nat, INR(n) = 0.
+Proof.
+Take n > 3%nat.
+assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(gt n 3).
+Abort.

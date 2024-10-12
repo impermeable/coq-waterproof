@@ -91,16 +91,16 @@ Notation "'for' 'all' x , P" := (forall x, P)
 Notation "∃ x ∈ A , P " :=
   (seal (fun B : subset (subset_type A) => (exists x,
     (x ∈ B) /\ P)) A)
-  (at level 200, x binder, right associativity,
-  format "'[ ' '[ ' ∃  x  ∈  A ']' , '//'  P ']'") : subset_scope.
+  (at level 200, x binder, right associativity(*,
+  format "'[ ' '[ ' ∃  x  ∈  A ']' , '//'  P ']'"*)) : subset_scope.
 
 Notation "∀ x ∈ A , P" :=
   (seal (fun B : subset (subset_type A) =>
     forall x, (x ∈ B) -> P ) A)
-  (at level 200, x binder, right associativity,
-  format "'[ ' '[ ' ∀  x  ∈  A ']' , '//'  P ']'") : subset_scope.
+  (at level 200, x binder, right associativity (*,
+  format "'[ ' '[ ' ∀  x  ∈  A ']' , '//'  P ']'"*)) : subset_scope.
 
-Notation "∃ x '>' y , P" :=
+(* Notation "∃ x '>' y , P" :=
   (seal (fun z => exists x, x > z /\ P) y)
   (at level 200, x binder, right associativity) : nat_scope.
 
@@ -114,7 +114,7 @@ Notation "∃ x '≥' y , P" :=
 
 Notation "∀ x '≥' y , P" :=
   (seal (fun z => forall x, x >= z -> P) y)
-  (at level 200, x binder, right associativity) : nat_scope.
+  (at level 200, x binder, right associativity) : nat_scope.*)
 
 Declare Scope wp_scope.
 
@@ -125,7 +125,7 @@ Class ge_type (carrier : Type) := {
 }.
 
 #[export] Instance nat_ge_type : ge_type nat :=
-  {ge_op := (fun x y => Nat.le y x) }.
+  {ge_op := ge}.
 
 #[export] Instance R_ge_type : ge_type R :=
   {ge_op := Rge}.
@@ -135,27 +135,36 @@ Class gt_type (carrier : Type) := {
 }.
 
 #[export] Instance nat_gt_type : gt_type nat :=
-  {gt_op := (fun x y => Nat.lt y x)}.
+  {gt_op := gt}.
 
 #[export] Instance R_gt_type : gt_type R :=
   {gt_op := Rgt}.
 
-(* Notation "x ≥ y" := (ge_op x y) (at level 70, no associativity) : wp_scope.
-Notation "x > y" := (gt_op x y) (at level 70, no associativity) : wp_scope. *)
+Notation "x ≥ y" := (ge_op x y) (at level 70, no associativity, only printing) : subset_scope.
+Notation "x > y" := (gt_op x y) (at level 70, no associativity, only printing) : subset_scope.
 
-Notation "∀ x '≥' y , P" :=
-  (seal (fun z => forall x, ge_op x z -> P) y)
-  (at level 200, x binder, right associativity) : wp_scope.
+Notation "∃ x '>' y , P" :=
+  (seal (fun z => exists x, gt_op x z /\ P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
 
 Notation "∀ x '>' y , P" :=
   (seal (fun z => forall x, gt_op x z -> P) y)
-  (at level 200, x binder, right associativity) : wp_scope.
+  (at level 200, x binder, right associativity) : subset_scope.
+
+Notation "∃ x '≥' y , P" :=
+  (seal (fun z => exists x, ge_op x z /\ P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
+
+Notation "∀ x '≥' y , P" :=
+  (seal (fun z => forall x, ge_op x z -> P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
+
 
 Close Scope wp_scope.
 
 Open Scope R_scope.
 
-Notation "∃ x '>' y , P" :=
+(* Notation "∃ x '>' y , P" :=
   (seal (fun z => exists x, x > z /\ P) y)
   (at level 200, x binder, right associativity) : R_scope.
 
@@ -169,7 +178,7 @@ Notation "∃ x '≥' y , P" :=
 
 Notation "∀ x '≥' y , P" :=
   (seal (fun z => forall x, x >= z -> P) y)
-  (at level 200, x binder, right associativity) : R_scope.
+  (at level 200, x binder, right associativity) : R_scope.*)
 
 Close Scope R_scope.
 

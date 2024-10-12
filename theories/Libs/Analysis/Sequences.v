@@ -87,9 +87,9 @@ Proof. (* hide proof *)
   * We need to show that (a ⟶ q ⇒ Un_cv a q).
     Assume that (a ⟶ q) (i).
     unfold Un_cv.
-    To show : (∀ ε1 : ℝ, ε1 > 0 ⇒
+    To show : (∀ ε1 > 0,
        ∃ N2 : ℕ,
-       ∀ n : ℕ, (n ≥ N2)%nat ⇨ ｜a(n) - q｜ < ε1).
+       ∀ n ≥ N2, ｜a(n) - q｜ < ε1).
     Take ε1 > 0.
     By (i) it holds that
       (∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε1)%R)%nat).
@@ -102,7 +102,7 @@ Proof. (* hide proof *)
     To show : (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat).
     Take ε > 0.
     By (ii) it holds that ( ∃ N2 : ℕ,
-       ∀ n : ℕ, (n ≥ N2)%nat ⇨ ｜a(n) - q｜ < ε).
+       ∀ n ≥ N2, ｜a(n) - q｜ < ε).
     Obtain such an N2.
     Choose N1 := N2.
     - Indeed, (N1 ∈ ℕ).
@@ -252,15 +252,14 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 
 Lemma lim_d_0 : converges_to d 0.
 Proof.
-    To show :
-      (∀ ε > 0, ∃ N1 ∈ ℕ,
-        (∀ n ≥ N1, (｜1 / (n + 1) - 0｜ < ε)%R)%nat).
+  To show :
+      (∀ ε > 0, ∃ N1 ∈ ℕ, ∀ n ≥ N1, ｜d(n) - 0｜ < ε).
     Take ε > 0.
-    By archimed_mod it holds that (∃ (n1 : nat) ∈ ℕ, (n1 > / ε)%R)%nat.
+    By archimed_mod it holds that (∃ n1 ∈ ℕ, n1 > / ε).
     Obtain such an n1. Choose N1 := n1.
     * Indeed, (N1 ∈ ℕ).
-    * We need to show that ((∀ n ≥ N1, (｜1 / (n + 1) - 0｜ < ε)%R)%nat).
-      Take n : ℕ; such that (n ≥ n1)%nat.
+    * We need to show that (∀ n ≥ N1, ｜d(n) - 0｜ < ε).
+      Take n ≥ N1.
       It suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
       We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
       - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
@@ -388,13 +387,14 @@ Proof.
   It holds that (for all eps : ℝ, eps > 0
     ⇨ ∃ N ∈ ℕ, for all n : ℕ, (n ≥ N)%nat
     ⇨ ｜ b n - l ｜ < eps).
-  It holds that (∃ N1 ∈ ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ R_dist (a n) m < ε).
+  It holds that (∃ N1 ∈ ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ | (a n) - m | < ε).
   Obtain such an N1.
-  It holds that (∃ N2 ∈ ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ R_dist (b n) l < ε).
+  It holds that (∃ N2 ∈ ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ | (b n) - l | < ε).
   Obtain such an N2.
   Define N3 := (Nat.max N1 N2).
   We claim that (b N3 < a N3).
-  { It holds that (|b(N3) - l| < ε).
+  {
+    It holds that (|b(N3) - l| < ε).
     It holds that (|a(N3) - m| < ε).
     By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
     By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).

@@ -139,24 +139,26 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
     intro $id;
     let id_c := Control.hyp id in
     lazy_match! (Control.goal ()) with
-    | (?f ?v ?u -> _) => (* FIXME: this check should be more strict *)
+    | (gt_op ?v ?u -> _) => (* FIXME: this check should be more strict *)
       if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-        intro $w
+        intro $w;
+        unfold gt_op, nat_gt_type, R_gt_type in $w
       else
-        throw (expected_different_condition_message constr:($f $v $u))
+        throw (expected_different_condition_message constr:(gt_op _ $v $u))
     | _ => throw (expected_implication_message id)
     end
   | TakeGe =>
     intro $id;
     let id_c := Control.hyp id in
     lazy_match! (Control.goal ()) with
-    | (?f ?v ?u -> _) => (* FIXME: this check should be more strict *)
+    | (ge_op ?v ?u -> _) => (* FIXME: this check should be more strict *)
       if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-        intro $w
+        intro $w;
+        unfold ge_op, nat_ge_type, R_ge_type in $w
       else
-        throw (expected_different_condition_message constr:($f $v $u))
+        throw (expected_different_condition_message constr:(ge_op _ $v $u))
     | _ => throw (expected_implication_message id)
     end
   end.
