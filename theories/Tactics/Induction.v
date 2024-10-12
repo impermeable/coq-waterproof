@@ -19,6 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
@@ -69,7 +70,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
   end;
   let x_hyp := Control.hyp x in
   let type_x := (get_value_of_hyp x_hyp) in
-  match (Constr.equal type_x constr:(nat)) with
+  match (check_constr_equal type_x constr:(nat)) with
   | true => let ih_x := Fresh.in_goal @_IH in
     induction $x_hyp as [ | $x $ih_x];
     Control.focus 1 1 (fun () =>

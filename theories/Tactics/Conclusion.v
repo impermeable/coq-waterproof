@@ -19,6 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Notations.Sets.
 Require Import Chains.Inequalities.
 Require Import Util.Goals.
 Require Import Util.Init.
@@ -72,8 +73,11 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 
 Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
   let sttd_goal := correct_type_by_wrapping sttd_goal in
+  let sttd_goal := (eval unfold subset_type in $sttd_goal) in
+  let current_goal := Control.goal () in
+  let current_goal := (eval unfold subset_type in $current_goal) in
   (* Check if stated goal exactly matches current goal. *)
-  match Constr.equal sttd_goal (Control.goal ()) with
+  match Constr.equal sttd_goal current_goal with
   | true => ()
   | false =>
     (* If not, do some additional checks. *)

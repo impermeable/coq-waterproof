@@ -123,10 +123,10 @@ Definition is_accumulation_point (a : R) :=
   ∀ ε > 0, there exists n : nat, 0 < | n - a | < ε.
 
 Definition is_isolated_point (a : ℕ) :=
-  ∃ ε > 0, ∀ (n : nat) ∈ nat, |n - a| = 0 ∨ (ε ≤ |n - a|).
+  ∃ ε > 0, ∀ n ∈ nat, |n - a| = 0 ∨ (ε ≤ |n - a|).
 
 Definition limit_in_point (f : ℕ → X) (a : ℕ) (L : X) :=
-  ∀ ε > 0, ∃ δ > 0, ∀ (n : nat) ∈ nat,
+  ∀ ε > 0, ∃ δ > 0, ∀ n ∈ nat,
        (0 < |n - a| < δ) ⇒ (dist X (f n) L < ε).
 
 Definition is_continuous_in (f : ℕ → X) (a : ℕ) :=
@@ -145,7 +145,7 @@ Proof.
     Assume that (ε > 0).
     Choose δ := (1/2).
     - Indeed, (δ > 0).
-    - We need to show that (∀ (x : nat) ∈ ℕ,
+    - We need to show that (∀ x ∈ ℕ,
         0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
       Take x ∈ nat.
       Assume that (0 < | x - a | < δ).
@@ -156,17 +156,17 @@ Proof.
       + Case (~(x = a)).
         It holds that (1 ≤ | x - a |).
         Contradiction.
-  * We need to show that ((∀ ε > 0, ∃ δ > 0, ∀ (x : nat) ∈ ℕ,
+  * We need to show that ((∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
       0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε) ⇨ is_continuous_in(h, a)).
-    Assume that (∀ ε > 0, ∃ δ > 0, ∀ (x : nat) ∈ ℕ,
+    Assume that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
       0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
     We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
     It suffices to show that (is_isolated_point a).
     unfold is_isolated_point.
-    We need to show that (∃ ε > 0, (∀ (n : nat) ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
+    We need to show that (∃ ε > 0, (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
     Choose ε := (1/2).
     - Indeed, (ε > 0).
-    - We need to show that (∀ (n : nat) ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
+    - We need to show that (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
       Take n : nat.
       Either (n = a) or (~(n=a)).
       + Case (n = a).

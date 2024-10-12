@@ -481,16 +481,3 @@ Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_constr), ","))
     "in" "(" in_hyp(constr) ")" :=
   panic_if_goal_wrapped ();
   wp_specialize' var_choice_list in_hyp.
-
-Goal (forall n : nat, n = n) -> True.
-Proof.
-intro H.
-
-Use n := _ in (H).
-Abort.
-
-Goal (∀ n > 3, n = 4) -> True.
-Proof.
-intro H.
-Use n := 2 in (H).
-Abort.

@@ -16,6 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Notations.Sets.
 
 Open Scope nat_scope.
@@ -36,11 +37,14 @@ Goal ∃ x ∈ B, x = 0.
 Abort.
 
 Require Import Coq.Reals.Reals.
-Close Scope nat_scope.
 Open Scope R_scope.
 
 Goal ∀ x > 3, x = 5.
 Abort.
 
 Goal ∃ x > 5, x = 7.
+Abort.
+
+(* Combine the coercion ... *)
+Goal ∀ x ∈ nat, Rplus x x = x.
 Abort.
