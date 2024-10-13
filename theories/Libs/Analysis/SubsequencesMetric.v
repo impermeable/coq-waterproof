@@ -62,7 +62,7 @@ Variable X : Metric_Space.
 
 Definition is_subsequence (b : ℕ → X) (a : ℕ → X) :=
     ∃ m ∈ (ℕ → ℕ),
-        is_index_sequence m ∧ ∀ k : ℕ,
+        is_index_sequence m ∧ ∀ k ∈ ℕ,
             b k = (a ◦ m) k.
 
 Definition is_accumulation_point (p : X) (a : ℕ → X) :=
@@ -208,7 +208,7 @@ Proof.
 Assume that (is_subsequence y x).
 Assume that (x ⟶ p).
 We need to show that (y ⟶ p).
-It holds that (∃ m ∈ ℕ → ℕ, is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k).
+It holds that (∃ m ∈ ℕ → ℕ, is_index_sequence m ∧ ∀ k ∈ ℕ, y k = (x ◦ m) k).
 Obtain such an m. It holds that
   (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
 Because (i) both (is_index_sequence m) and

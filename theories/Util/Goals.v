@@ -158,11 +158,11 @@ Module StrongIndIndxSeq.
 
 End StrongIndIndxSeq.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' ':' 'ℕ' 'and' 'assume' 'n(0),...,n(k)' 'are' 'defined.'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' '∈' 'ℕ' 'and' 'assume' 'n(0),...,n(k)' 'are' 'defined.'" :=
   (StrongIndIndxSeq.Wrapper _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Take  k  :  ℕ  and  assume  n(0),...,n(k)  are  defined."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Take  k  ∈  ℕ  and  assume  n(0),...,n(k)  are  defined."
   ).
 
 
