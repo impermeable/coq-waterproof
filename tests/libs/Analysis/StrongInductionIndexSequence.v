@@ -53,8 +53,8 @@ Proof.
     + We need to show that (Q n_0).
       Control.shelve ().
   - Take k ∈ ℕ and assume n(0),...,n(k) are defined.
-    Assume that (∀ l ∈ nat, l <= k -> Q (n l)).
-    Assume that (∀ l ∈ nat, l < k -> n l < n (l + 1)).
+    Assume that (∀ l ≤ k, Q (n l)).
+    Assume that (∀ l < k, n l < n (l + 1)).
     Choose n_kplus1 := 0.
     + We need to verify that (n_kplus1 ∈ nat).
       Control.shelve ().
@@ -98,8 +98,8 @@ Define the index sequence n inductively.
   + Indeed, (n_0 ∈ ℕ).
   + We conclude that (candy_seq(n_0) = sweet).
 - Take k ∈ ℕ and assume n(0),...,n(k) are defined.
-  Assume that (∀ l ∈ ℕ, (l ≤ k)%nat ⇒ candy_seq(n(l)) = sweet).
-  Assume that (∀ l ∈ ℕ, (l < k)%nat ⇒ (n(l) < n(l+1))%nat).
+  Assume that (∀ l ≤ k, candy_seq(n(l)) = sweet).
+  Assume that (∀ l < k, (n(l) < n(l+1))%nat).
   By (infinitely_many_sweet) it holds that
     (∃ m : ℕ, (m ≥ (n k) + 1)%nat ∧ candy_seq(m) = sweet).
   Obtain such an m.

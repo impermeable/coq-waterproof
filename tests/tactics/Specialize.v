@@ -334,4 +334,28 @@ Use y := 2%nat in (i).
   exact I.
 Qed.
 
+(** Test 23 : Choose a natural number less than another natural number, but in R_scope. *)
+
+Goal (∀ y < 3%nat, INR(y) = 0) -> True.
+Proof.
+intro i.
+Use y := 2%nat in (i).
+* assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (lt 2 3)).
+  Indeed, ((2 < 3)%nat).
+* It holds that (INR 2 = 0).
+  exact I.
+Qed.
+
+(** Test 24 : Choose a natural number less than another natural number, but in R_scope. *)
+
+Goal (∀ y ≤ 3%nat, INR(y) = 0) -> True.
+Proof.
+intro i.
+Use y := 2%nat in (i).
+* assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (le 2 3)).
+  Indeed, ((2 <= 3)%nat).
+* It holds that (INR 2 = 0).
+  exact I.
+Qed.
+
 Close Scope subset_scope.

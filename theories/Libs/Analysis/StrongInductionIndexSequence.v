@@ -294,7 +294,7 @@ Open Scope subset_scope.
 Theorem classic_strong_ind_index_seq_with_prop_with_element_notation {Q : nat -> Prop}
   (H0 : ∃ n_0 ∈ nat, Q n_0)
   (Hstep : forall (k : nat) (n : nat -> nat),
-    (∀ l ∈ nat, l <= k -> Q (n l)) -> (∀ l ∈ nat, l < k -> n l < n (l + 1)) ->
+    (∀ l ≤ k, Q (n l)) -> (∀ l < k, n l < n (l + 1)) ->
     ∃ n_kplus1 ∈ nat, Q n_kplus1 /\ n k < n_kplus1)
   : ∃ n : (nat -> nat), is_index_seq n /\ ∀ k ∈ nat, Q (n k).
 Proof.
@@ -315,8 +315,8 @@ Proof.
         exists n_kplus1.
         exact (proj2 Hn_kplus1).
       * apply Hstep.
-        ++ intros l Hl. apply H1.
-        ++ intros l Hl. apply H2.
+        ++ intros l Hl. unfold le_op, nat_le_type in Hl. apply H1; assumption.
+        ++ intros l Hl. unfold lt_op, nat_lt_type in Hl. apply H2; assumption.
 Qed.
 
 End StrongInductionIndexSequence.

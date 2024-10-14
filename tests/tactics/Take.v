@@ -290,3 +290,19 @@ Proof.
 Take n > 3%nat.
 assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(gt n 3).
 Abort.
+
+(** Test 30, Take with an lt in nat, but in R_scope *)
+Goal ∀ n < 3%nat, INR(n) = 0.
+Proof.
+Take n < 3%nat.
+Unset Printing Notations.
+assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(lt n 3).
+Abort.
+
+(** Test 30, Take with an lt in nat, but in R_scope *)
+Goal ∀ n ≤ 3%nat, INR(n) = 0.
+Proof.
+Take n ≤ 3%nat.
+Unset Printing Notations.
+assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(le n 3).
+Abort.

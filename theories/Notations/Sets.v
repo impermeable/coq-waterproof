@@ -140,6 +140,26 @@ Class gt_type (carrier : Type) := {
 #[export] Instance R_gt_type : gt_type R :=
   {gt_op := Rgt}.
 
+Class le_type (carrier : Type) := {
+  le_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_le_type : le_type nat :=
+  {le_op := le}.
+
+#[export] Instance R_le_type : le_type R :=
+  {le_op := Rle}.
+
+Class lt_type (carrier : Type) := {
+  lt_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_lt_type : lt_type nat :=
+  {lt_op := lt}.
+
+#[export] Instance R_lt_type : lt_type R :=
+  {lt_op := Rlt}.
+
 Notation "x ≥ y" := (ge_op x y) (at level 70, no associativity, only printing) : subset_scope.
 Notation "x > y" := (gt_op x y) (at level 70, no associativity, only printing) : subset_scope.
 
@@ -159,6 +179,21 @@ Notation "∀ x '≥' y , P" :=
   (seal (fun z => forall x, ge_op x z -> P) y)
   (at level 200, x binder, right associativity) : subset_scope.
 
+Notation "∃ x '<' y , P" :=
+  (seal (fun z => exists x, lt_op x z /\ P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
+
+Notation "∀ x '<' y , P" :=
+  (seal (fun z => forall x, lt_op x z -> P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
+
+Notation "∃ x '≤' y , P" :=
+  (seal (fun z => exists x, le_op x z /\ P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
+
+Notation "∀ x '≤' y , P" :=
+  (seal (fun z => forall x, le_op x z -> P) y)
+  (at level 200, x binder, right associativity) : subset_scope.
 
 Close Scope wp_scope.
 
