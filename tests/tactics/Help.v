@@ -187,7 +187,7 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n))
   Info
-["After proving (for all n, n = n), use it with";
+["After proving (∀ n, n = n), use it with";
 "    Use ... := (...) in (...)."].
 Abort.
 
@@ -197,7 +197,7 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n) (i))
   Info
-["After proving (for all n, n = n), use it with";
+["After proving (∀ n, n = n), use it with";
 "    Use ... := (...) in (i)."].
 Abort.
 

@@ -63,8 +63,18 @@ Introduce an arbitrary variable strictly larger than "; of_constr y; of_string "
 
 Local Ltac2 goal_forall_ge_msg (y: constr) :=
   concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable strictly larger than or equal to "; of_constr y; of_string ", use
+Introduce an arbitrary variable larger than or equal to "; of_constr y; of_string ", use
     Take ... ≥ (...)."].
+
+Local Ltac2 goal_forall_lt_msg (y: constr) :=
+  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable strictly less than "; of_constr y; of_string ", use
+    Take ... < (...)."].
+
+Local Ltac2 goal_forall_le_msg (y: constr) :=
+  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable less than or equal to "; of_constr y; of_string ", use
+    Take ... ≤ (...)."].
 
 Local Ltac2 goal_exists_el_msg (var_type: constr) :=
   concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
@@ -79,6 +89,16 @@ Choose a specific variable strictly larger than "; of_constr y; of_string ", use
 Local Ltac2 goal_exists_ge_msg (y: constr) :=
   concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
 Choose a specific variable larger than or equal to "; of_constr y; of_string ", use
+    Choose ... := (...)."].
+
+Local Ltac2 goal_exists_lt_msg (y: constr) :=
+  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable strictly less than "; of_constr y; of_string ", use
+    Choose ... := (...)."].
+
+Local Ltac2 goal_exists_le_msg (y: constr) :=
+  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable less than or equal to "; of_constr y; of_string ", use
     Choose ... := (...)."].
 
 Local Ltac2 goal_and_msg () := of_string
@@ -142,10 +162,14 @@ Local Ltac2 goal_hint () : message :=
   | ∀ _ ∈ ?v_type, _  => goal_forall_el_msg v_type
   | ∀ _ > ?y, _          => goal_forall_gt_msg y
   | ∀ _ ≥ ?y, _          => goal_forall_ge_msg y
+  | ∀ _ < ?y, _          => goal_forall_lt_msg y
+  | ∀ _ ≤ ?y, _          => goal_forall_le_msg y
   | ∃ _ ∈ conv ?v_type, _    => goal_exists_el_msg v_type
   | ∃ _ ∈ ?v_type, _    => goal_exists_el_msg v_type
   | ∃ _ > ?y, _         => goal_exists_gt_msg y
   | ∃ _ ≥ ?y, _         => goal_exists_ge_msg y
+  | ∃ _ < ?y, _         => goal_exists_lt_msg y
+  | ∃ _ ≤ ?y, _         => goal_exists_le_msg y
   | forall v:?v_type, _ => goal_forall_msg v_type
   | exists v:?v_type, _ => goal_exists_msg v_type
   | _ /\ _              => goal_and_msg ()
@@ -259,10 +283,14 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   | ∀ _ ∈ _ , _ => print_forall_msg ()
   | ∀ _ > _ , _ => print_forall_msg ()
   | ∀ _ ≥ _, _ => print_forall_msg ()
+  | ∀ _ < _ , _ => print_forall_msg ()
+  | ∀ _ ≤ _, _ => print_forall_msg ()
   | exists _, _ => print_exists_msg ()
   | ∃ _ ∈ _, _ => print_exists_msg ()
   | ∃ _ > _, _ => print_exists_msg ()
   | ∃ _ ≥ _, _ => print_exists_msg ()
+  | ∀ _ < _ , _ => print_forall_msg ()
+  | ∀ _ ≤ _, _ => print_forall_msg ()
   | _ => ()
   end.
 
