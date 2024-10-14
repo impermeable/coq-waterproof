@@ -296,14 +296,12 @@ Theorem classic_strong_ind_index_seq_with_prop_with_element_notation {Q : nat ->
   (Hstep : forall (k : nat) (n : nat -> nat),
     (∀ l ∈ nat, l <= k -> Q (n l)) -> (∀ l ∈ nat, l < k -> n l < n (l + 1)) ->
     ∃ n_kplus1 ∈ nat, Q n_kplus1 /\ n k < n_kplus1)
-  : ∃ n ∈ (nat -> nat), is_index_seq n /\ ∀ k ∈ nat, Q (n k).
+  : ∃ n : (nat -> nat), is_index_seq n /\ ∀ k ∈ nat, Q (n k).
 Proof.
   enough (exists n : nat -> nat, is_index_seq n /\ forall k : nat, Q (n k)) as H.
   + destruct H as [n0 Hn0].
     exists n0.
     split.
-    - unfold conv, as_subset, subset_in; exact I.
-    - split.
       * exact (proj1 Hn0).
       * intros k Hk.
         apply (proj2 Hn0).
@@ -340,7 +338,7 @@ Open Scope subset_scope.
 
 Local Ltac2 inductive_def_index_seq_n () :=
   lazy_match! goal with
-  | [ |- ∃ n ∈ conv (nat -> nat), is_index_sequence n /\ ∀ k ∈ conv nat, @?p n k] => (*@?p*)
+  | [ |- ∃ n : nat -> nat, is_index_sequence n /\ ∀ k ∈ conv nat, @?p n k] => (*@?p*)
     let q := eval unfold id in (fun l : nat => $p id l) in
     match Control.case (fun () => apply (@classic_strong_ind_index_seq_with_prop_with_element_notation $q)) with
     | Val _ => Control.focus 2 2 (fun () => apply StrongIndIndxSeq.unwrap)

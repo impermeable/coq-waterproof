@@ -29,7 +29,7 @@ Open Scope subset_scope.
 #[local] Parameter Q : nat -> Prop.
 
 (* Test 1: without other Waterproof tactics. *)
-Goal (∃ n ∈ (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
+Goal (∃ n : (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
 Proof.
   Define the index sequence n inductively.
   - pose (n_0 := 0); exists n_0.
@@ -44,7 +44,7 @@ Abort.
 
 (* Test 2: with other Waterproof tactics. *)
 Require Import Waterproof.Tactics.
-Goal (∃ n ∈ (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
+Goal (∃ n : (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
 Proof.
   Define the index sequence n inductively.
   - Choose n_0 := 0.
@@ -88,7 +88,7 @@ Parameter infinitely_many_sweet : ∀ k : ℕ, ∃ m ≥ k, candy_seq(m) = sweet
 Open Scope subset_scope.
 
 Goal
-  (∃ n ∈ (nat → nat), (is_index_sequence n) ∧ (∀ k ∈ ℕ, candy_seq (n k) = sweet)).
+  (∃ n : (nat → nat), (is_index_sequence n) ∧ (∀ k ∈ ℕ, candy_seq (n k) = sweet)).
 Proof.
 Define the index sequence n inductively.
 - By (infinitely_many_sweet) it holds that

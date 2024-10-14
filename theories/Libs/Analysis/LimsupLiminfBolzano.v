@@ -127,7 +127,7 @@ Qed.
 
 (** ## A slightly upgraded version of the Bolzano-Weierstrass Theorem*)
 Theorem Bolzano_Weierstrass_gen (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb (sequence_ub a (i))) :
-    ∃ n ∈ ℕ → ℕ, is_index_seq n ∧
+    ∃ n : ℕ → ℕ, is_index_seq n ∧
       converges_to (fun (k : ℕ) ↦ a (n k)) (proj1_sig(_,_,lim_sup_bdd a (i) (ii))).
 Proof.
     Define L_with_proof := (lim_sup_bdd a (i) (ii)).
@@ -156,7 +156,6 @@ Proof.
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
     Choose n := m.
-    - Indeed, (n ∈ (ℕ → ℕ)).
     - We need to show that (is_index_seq(n) ∧ ｛ k : ℕ | a(n(k)) ｝ ⟶ L).
       We show both statements.
       * We need to show that (is_index_seq m).
@@ -196,7 +195,7 @@ Proof.
     Assume that (has_lb a) (ii).
     Define iii := (maj_min a (i) (ii)).
     By Bolzano_Weierstrass_gen it holds that
-      (∃ n0 ∈ ℕ → ℕ, is_index_seq n0
+      (∃ n0 : ℕ → ℕ, is_index_seq n0
         ∧ converges_to (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) (iv).
     Obtain such an n0. It holds that
       (is_index_seq n0 ∧
@@ -211,7 +210,7 @@ Lemma acc_pt_bds_seq_ub (a : ℕ → ℝ) (i : has_ub a) (x : ℝ) :
     is_seq_acc_pt a x ⇒ ∀ m : ℕ, x ≤ sequence_ub a (i) m.
 Proof.
     Assume that (is_seq_acc_pt a x).
-    It holds that (∃ n ∈ ℕ → ℕ, is_index_seq n
+    It holds that (∃ n : ℕ → ℕ, is_index_seq n
       ∧ converges_to (fun k ↦ a(n(k)), x)).
     Obtain such an n. It holds that
       (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) (iii).
@@ -267,10 +266,10 @@ Proof.
       Take b : ℝ; such that (Raxioms.is_upper_bound (is_seq_acc_pt a) b).
       It holds that (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
       It holds that (for all x : ℝ,
-        (∃ n ∈ ℕ ⇨ ℕ, is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) ⇨ x ≤ b) (iii).
-      By (iii) it suffices to show that (∃ n ∈ ℕ ⇨ ℕ, is_index_seq n
+        (∃ n : ℕ ⇨ ℕ, is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) ⇨ x ≤ b) (iii).
+      By (iii) it suffices to show that (∃ n : ℕ ⇨ ℕ, is_index_seq n
         ∧ converges_to (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
-      By Bolzano_Weierstrass_gen we conclude that (∃ n ∈ ℕ ⇨ ℕ, is_index_seq n
+      By Bolzano_Weierstrass_gen we conclude that (∃ n : ℕ ⇨ ℕ, is_index_seq n
         ∧ converges_to (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
 Qed.
 

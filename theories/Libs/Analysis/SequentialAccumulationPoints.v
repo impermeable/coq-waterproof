@@ -36,7 +36,7 @@ Waterproof Enable Automation RealsAndIntegers.
 Open Scope R_scope.
 
 Definition is_seq_acc_pt (a : ℕ → ℝ) (x : ℝ) : Prop :=
-  ∃ n ∈ ℕ → ℕ, is_index_seq n ∧ converges_to (fun (k : ℕ) ↦ a(n k)) x.
+  ∃ n : ℕ → ℕ, is_index_seq n ∧ converges_to (fun (k : ℕ) ↦ a(n k)) x.
 
 Lemma seq_bdd_seq_acc_pts_bdd (a : ℕ → ℝ) :
   has_ub a ⇒ bound (is_seq_acc_pt a).
@@ -51,7 +51,7 @@ Proof.
   Choose m := M.
   Take x : ℝ.
   Assume that (is_seq_acc_pt a x).
-  It holds that (∃ n ∈ ℕ ⇨ ℕ,
+  It holds that (∃ n : ℕ ⇨ ℕ,
     is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)).
   Obtain such an n.
   It holds that (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) (iv).
