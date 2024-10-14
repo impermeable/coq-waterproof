@@ -19,14 +19,14 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Rbase.
-Require Import Qreals.
-Require Import Rfunctions.
-Require Import SeqSeries.
-Require Import Rtrigo.
-Require Import Ranalysis.
-Require Import Integration.
-Require Import micromega.Lra.
+From Coq Require Import Rbase.
+From Coq Require Import Qreals.
+From Coq Require Import Rfunctions.
+From Coq Require Import SeqSeries.
+From Coq Require Import Rtrigo.
+From Coq Require Import Ranalysis.
+From Coq Require Import Integration.
+From Coq Require Import Lra.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
