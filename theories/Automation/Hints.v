@@ -34,6 +34,8 @@ Require Import Libs.Reals.
 Require Import Libs.Logic.InformativeEpsilon.
 Require Import Libs.Logic.ConstructiveLogic.
 
+Local Set Default Proof Mode "Classic". (* Hint Extern respects Default Proof Mode after Rocq 9 *)
+
 (** * Waterproof core *)
 
 Create HintDb wp_core.
@@ -440,7 +442,7 @@ Create HintDb wp_reals.
   #[export] Hint Resolve div_sign_flip : wp_reals.
   #[export] Hint Resolve div_pos : wp_reals.
   #[export] Hint Resolve inv_remove : wp_reals.
-  #[export] Hint Resolve Rinv_inv : wp_reals.
+  #[export] Hint Resolve Rinv_inv : wp_reals.
   #[export] Hint Resolve Rabs_def1 : wp_reals.
   #[export] Hint Resolve Rabs_le : wp_reals.
   #[export] Hint Resolve Rabs_left : wp_reals.
@@ -481,4 +483,3 @@ Create HintDb wp_sets.
 Create HintDb wp_intuition.
 
   #[export] Hint Extern 8 => intuition (auto 2 with core): wp_intuition.
-  
