@@ -346,3 +346,12 @@ Proof.
   intro H.
   Obtain n according to (H).
 Abort.
+
+(** Test 27 : Check that the type of the variable is simplified after using obtain *)
+Goal (∃ n ∈ nat, n = 0) -> True.
+Proof.
+  intro H.
+  Obtain such an n.
+  let n_hyp := Control.hyp @n in
+  assert_is_true (Constr.equal (Constr.type n_hyp) constr:(nat)).
+Abort.

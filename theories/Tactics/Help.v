@@ -158,9 +158,10 @@ Local Ltac2 goal_hint () : message :=
       | true            => goal_impl_msg a
       | false           => goal_func_msg a
     end
+    (* TODO: goal hints for arbitrary predicates *)
   | ∀ _ ∈ conv ?v_type, _  => goal_forall_el_msg v_type
   | ∀ _ ∈ ?v_type, _  => goal_forall_el_msg v_type
-  | ∀ _ > ?y, _          => goal_forall_gt_msg y
+  | ∀ _ > ?y, _        => goal_forall_gt_msg y
   | ∀ _ ≥ ?y, _          => goal_forall_ge_msg y
   | ∀ _ < ?y, _          => goal_forall_lt_msg y
   | ∀ _ ≤ ?y, _          => goal_forall_le_msg y
@@ -181,9 +182,8 @@ Local Ltac2 goal_hint () : message :=
 Local Ltac2 forall_filter (x : constr) : bool :=
   lazy_match! x with
   | ?a -> ?b     => false
-  | ∀ _ ∈ _, _   => true
-  | ∀ _ > _, _   => true
-  | ∀ _ ≥ _, _   => true
+  (* | ∀ _ ∈ _, _   => true*)
+  | ∀ _ _, _   => true
   | forall _, _  => true
   | _            => false
   end.
@@ -191,9 +191,9 @@ Local Ltac2 forall_filter (x : constr) : bool :=
 Local Ltac2 exists_filter (x : constr) : bool :=
   lazy_match! x with
   | exists _, _  => true
-  | ∃ _ ∈ _, _   => true
-  | ∃ _ > _, _   => true
-  | ∃ _ ≥ _, _   => true
+  (* | ∃ _ ∈ _, _   => true *)
+  | ∃ _ _, _   => true
+  (* | ∃ _ ≥ _, _   => true *)
   | _            => false
   end.
 
@@ -280,17 +280,17 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
-  | ∀ _ ∈ _ , _ => print_forall_msg ()
-  | ∀ _ > _ , _ => print_forall_msg ()
+  | ∀ _ _ , _ => print_forall_msg ()
+  (* | ∀ _ > _ , _ => print_forall_msg ()
   | ∀ _ ≥ _, _ => print_forall_msg ()
   | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()
+  | ∀ _ ≤ _, _ => print_forall_msg ()*)
   | exists _, _ => print_exists_msg ()
-  | ∃ _ ∈ _, _ => print_exists_msg ()
-  | ∃ _ > _, _ => print_exists_msg ()
+  | ∃ _ _, _ => print_exists_msg ()
+  (* | ∃ _ > _, _ => print_exists_msg ()
   | ∃ _ ≥ _, _ => print_exists_msg ()
   | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()
+  | ∀ _ ≤ _, _ => print_forall_msg ()*)
   | _ => ()
   end.
 
@@ -321,13 +321,13 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
-  | ∀ _ ∈ _, _ => print_forall_msg ()
-  | ∀ _ > _, _ => print_forall_msg ()
-  | ∀ _ ≥ _, _ => print_forall_msg ()
+  | ∀ _ _, _ => print_forall_msg ()
+  (* | ∀ _ > _, _ => print_forall_msg ()
+  | ∀ _ ≥ _, _ => print_forall_msg ()*)
   | exists _, _ => print_exists_msg ()
-  | ∃ _ ∈ _, _ => print_exists_msg ()
-  | ∃ _ > _, _ => print_exists_msg ()
-  | ∃ _ ≥ _, _ => print_exists_msg ()
+  | ∃ _ _, _ => print_exists_msg ()
+  (* | ∃ _ > _, _ => print_exists_msg ()
+  | ∃ _ ≥ _, _ => print_exists_msg ()*)
   | _ => ()
   end.
 

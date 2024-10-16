@@ -35,6 +35,9 @@ Open Scope subset_scope.
 Definition is_index_sequence (n : ℕ → ℕ) :=
   ∀ k ∈ ℕ, (n k < n (k + 1))%nat.
 
+Notation "'index' 'sequence'" := (is_index_sequence) (at level 69) : metric_scope.
+Notation "'index' 'sequence'" := (is_index_sequence) (at level 69) : pred_for_subset_scope.
+
 Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 68) : metric_scope.
 
 Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 68, only parsing) : metric_scope.
@@ -61,12 +64,12 @@ Variable X : Metric_Space.
 
 
 Definition is_subsequence (b : ℕ → X) (a : ℕ → X) :=
-    ∃ m ∈ (ℕ → ℕ),
+    ∃ m : (ℕ → ℕ),
         is_index_sequence m ∧ ∀ k ∈ ℕ,
             b k = (a ◦ m) k.
 
 Definition is_accumulation_point (p : X) (a : ℕ → X) :=
-    ∃ m ∈ (ℕ → ℕ),
+    ∃ m : (ℕ → ℕ),
         is_index_sequence m ∧ (a ◦ m) ⟶ p.
 
 Lemma index_sequence_property (n : ℕ → ℕ) :
@@ -183,11 +186,11 @@ Qed.
 Close Scope nat_scope.
 
 Lemma subsequence_of_convergent_sequence (a : (ℕ → X)) (p : X) :
-    a ⟶ p ⇒ ∀ (n : ℕ → ℕ), is_index_sequence n ⇒ (a ◦ n) ⟶ p.
+    a ⟶ p ⇒ ∀ n index sequence, (a ◦ n) ⟶ p.
 Proof.
 Assume that (a ⟶ p).
-Take n : (ℕ → ℕ).
-Assume that (is_index_sequence n).
+Take n (index sequence).
+unfold is_index_sequence in _H0.
 It suffices to show that (∀ ε > 0, ∃ N1 ∈ ℕ,
   (∀ k ≥ N1, (dist _ (a (n k)) p < ε)%R)%nat).
 Take ε > 0.
@@ -202,13 +205,15 @@ Obtain such an N2. Choose N1 := N2.
   We conclude that (dist _ (a (n k)) p < ε).
 Qed.
 
+Close Scope nat_scope.
+
 Lemma equivalent_subsequence_convergence (x y : ℕ → X) (p : X) :
   is_subsequence y x ⇒ x ⟶ p ⇒ y ⟶ p.
 Proof.
 Assume that (is_subsequence y x).
 Assume that (x ⟶ p).
 We need to show that (y ⟶ p).
-It holds that (∃ m ∈ ℕ → ℕ, is_index_sequence m ∧ ∀ k ∈ ℕ, y k = (x ◦ m) k).
+It holds that (∃ m : (ℕ → ℕ), is_index_sequence m ∧ ∀ k ∈ ℕ, y k = (x ◦ m) k).
 Obtain such an m. It holds that
   (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
 Because (i) both (is_index_sequence m) and

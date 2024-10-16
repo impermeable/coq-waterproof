@@ -285,7 +285,7 @@ Take x ∈ V. (* V first gets coerced to Type, then to subset *)
 Abort.
 
 (** Test 29, Take with an inequality in nat, but in R_scope *)
-Goal ∀ n > 3%nat, INR(n) = 0.
+Goal ∀ n > 3%nat, Rplus n n = 0.
 Proof.
 Take n > 3%nat.
 assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(gt n 3).
@@ -295,14 +295,34 @@ Abort.
 Goal ∀ n < 3%nat, INR(n) = 0.
 Proof.
 Take n < 3%nat.
-Unset Printing Notations.
 assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(lt n 3).
 Abort.
 
-(** Test 30, Take with an lt in nat, but in R_scope *)
+(** Test 31, Take with an lt in nat, but in R_scope *)
 Goal ∀ n ≤ 3%nat, INR(n) = 0.
 Proof.
 Take n ≤ 3%nat.
-Unset Printing Notations.
 assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(le n 3).
+Abort.
+
+Waterproof Enable Redirect Errors.
+
+(** Test 32, Use take with the wrong symbol *)
+Goal ∀ n > 3, n = 0.
+assert_fails_with_string (fun () => Take n < 3)
+"The condition (n < 3) does not correspond to the expected condition (n > 3)".
+Abort.
+
+(** Test 33, Check that subset type is simplified when using Take with colon *)
+Goal ∀ n > 3, n = 0.
+Proof.
+Take n : R.
+assert_constr_equal (Constr.type constr:(n)) constr:(R).
+Abort.
+
+(** Test 33, Check that subset type is simplified when using Take with > *)
+Goal ∀ n > 3, n = 0.
+Proof.
+Take n > 3.
+assert_constr_equal (Constr.type constr:(n)) constr:(R).
 Abort.

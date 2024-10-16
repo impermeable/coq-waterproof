@@ -31,6 +31,8 @@ Definition subset_type {X : Type} (A : subset X) := X.
 
 Definition subset_in {X : Type} (A : subset X) (x : X) := A x.
 
+Declare Scope ensemble_scope.
+
 Notation "'set_of_subsets' U" :=
   (Ensemble (Ensemble U)) (at level 50).
 
@@ -64,17 +66,77 @@ Notation "A 'and' B 'are' 'disjoint'" :=
   (Disjoint _ A B) (at level 50).
 
 Notation "｛ x : T | P ｝" :=
-  (fun (x : T) ↦ P) (x at level 99).
+  (fun (x : T) ↦ P) (x at level 99) : ensemble_scope.
 
 Declare Scope subset_scope.
 (* Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope. *)
 
-Definition conv (T : Type) : subset T := as_subset T (fun x : T => True).
-Coercion conv : Sortclass >-> subset.
+Definition conv (T : Type) : T -> Prop := (fun x : T => True).
+Coercion conv : Sortclass >-> Funclass.
 
 Definition seal {T : Type} (Q : T -> Prop) (y : T) := Q y.
 
+
+
+Require Import Coq.Reals.Reals.
+
+Class ge_type (carrier : Type) := {
+  ge_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_ge_type : ge_type nat :=
+  {ge_op := fun y z => ge z y}.
+
+#[export] Instance R_ge_type : ge_type R :=
+  {ge_op := fun y z => Rge z y}.
+
+Class gt_type (carrier : Type) := {
+  gt_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_gt_type : gt_type nat :=
+  {gt_op := fun y z => gt z y}.
+
+#[export] Instance R_gt_type : gt_type R :=
+  {gt_op := fun y z => Rgt z y}.
+
+Class le_type (carrier : Type) := {
+  le_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_le_type : le_type nat :=
+  {le_op := fun y z => le z y}.
+
+#[export] Instance R_le_type : le_type R :=
+  {le_op := fun y z => Rle z y}.
+
+Class lt_type (carrier : Type) := {
+  lt_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_lt_type : lt_type nat :=
+  {lt_op := fun y z => lt z y}.
+
+#[export] Instance R_lt_type : lt_type R :=
+  {lt_op := fun y z => Rlt z y}.
+
+Declare Scope pred_for_subset_scope.
+
+Delimit Scope pred_for_subset_scope with pfs.
+
+Notation "∈ A" := (subset_in A) (at level 69, A at next level) : pred_for_subset_scope.
+
+Notation "< y" :=  (lt_op y) (at level 69, y at next level) : pred_for_subset_scope.
+Notation "≤ y" :=  (le_op y) (at level 69, y at next level) : pred_for_subset_scope.
+Notation "> y" :=  (gt_op y) (at level 69, y at next level) : pred_for_subset_scope.
+Notation "≥ y" :=  (ge_op y) (at level 69, y at next level) : pred_for_subset_scope.
+
 Notation "x ∈ A" := (subset_in A x) (at level 70, no associativity) : type_scope.
+
+Notation "x ≥ y" := (ge_op y x) (at level 70, no associativity, only printing) : subset_scope.
+Notation "x > y" := (gt_op y x) (at level 70, no associativity, only printing) : subset_scope.
+Notation "x ≤ y" := (le_op y x) (at level 70, no associativity, only printing) : subset_scope.
+Notation "x < y" := (lt_op y x) (at level 70, no associativity, only printing) : subset_scope.
 
 Notation "∃ x , P" := (exists x, P)
   (at level 200, x binder, right associativity) : type_scope.
@@ -88,139 +150,20 @@ Notation "∀ x , P" := (forall x, P)
 Notation "'for' 'all' x , P" := (forall x, P)
   (at level 200, x binder, right associativity, only parsing) : type_scope.
 
-Notation "∃ x ∈ A , P " :=
-  (seal (fun B : subset (subset_type A) => (exists x,
-    (x ∈ B) /\ P)) A)
-  (at level 200, x binder, right associativity(*,
-  format "'[ ' '[ ' ∃  x  ∈  A ']' , '//'  P ']'"*)) : subset_scope.
-
-Notation "∀ x ∈ A , P" :=
-  (seal (fun B : subset (subset_type A) =>
-    forall x, (x ∈ B) -> P ) A)
-  (at level 200, x binder, right associativity (*,
-  format "'[ ' '[ ' ∀  x  ∈  A ']' , '//'  P ']'"*)) : subset_scope.
-
-Notation "'there' 'exists' x ∈ A , P " :=
-  (seal (fun B : subset (subset_type A) => (exists x,
-    (x ∈ B) /\ P)) A)
-  (at level 200, x binder, right associativity, only parsing (*,
-  format "'[ ' '[ ' ∃  x  ∈  A ']' , '//'  P ']'"*)) : subset_scope.
-
-Notation "'for' 'all' x ∈ A , P" :=
-  (seal (fun B : subset (subset_type A) =>
-    forall x, (x ∈ B) -> P ) A)
-  (at level 200, x binder, right associativity, only parsing (*,
-  format "'[ ' '[ ' ∀  x  ∈  A ']' , '//'  P ']'"*)) : subset_scope.
-
-Require Import Coq.Reals.Reals.
-
-Class ge_type (carrier : Type) := {
-  ge_op : carrier -> carrier -> Prop
-}.
-
-#[export] Instance nat_ge_type : ge_type nat :=
-  {ge_op := ge}.
-
-#[export] Instance R_ge_type : ge_type R :=
-  {ge_op := Rge}.
-
-Class gt_type (carrier : Type) := {
-  gt_op : carrier -> carrier -> Prop
-}.
-
-#[export] Instance nat_gt_type : gt_type nat :=
-  {gt_op := gt}.
-
-#[export] Instance R_gt_type : gt_type R :=
-  {gt_op := Rgt}.
-
-Class le_type (carrier : Type) := {
-  le_op : carrier -> carrier -> Prop
-}.
-
-#[export] Instance nat_le_type : le_type nat :=
-  {le_op := le}.
-
-#[export] Instance R_le_type : le_type R :=
-  {le_op := Rle}.
-
-Class lt_type (carrier : Type) := {
-  lt_op : carrier -> carrier -> Prop
-}.
-
-#[export] Instance nat_lt_type : lt_type nat :=
-  {lt_op := lt}.
-
-#[export] Instance R_lt_type : lt_type R :=
-  {lt_op := Rlt}.
-
-Notation "x ≥ y" := (ge_op x y) (at level 70, no associativity, only printing) : subset_scope.
-Notation "x > y" := (gt_op x y) (at level 70, no associativity, only printing) : subset_scope.
-Notation "x ≤ y" := (le_op x y) (at level 70, no associativity, only printing) : subset_scope.
-Notation "x < y" := (lt_op x y) (at level 70, no associativity, only printing) : subset_scope.
-
-Notation "∃ x '>' y , P" :=
-  (seal (fun z => exists x, gt_op x z /\ P) y)
+Notation "'∃' x Q , P" :=
+  (seal (fun z : subset_type (Q)%pfs -> Prop => exists x : (subset_type (Q)%pfs), z x /\ P) Q%pfs)
   (at level 200, x binder, right associativity) : subset_scope.
 
-Notation "∀ x '>' y , P" :=
-  (seal (fun z => forall x, gt_op x z -> P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "∃ x '≥' y , P" :=
-  (seal (fun z => exists x, ge_op x z /\ P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "∀ x '≥' y , P" :=
-  (seal (fun z => forall x, ge_op x z -> P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "∃ x '<' y , P" :=
-  (seal (fun z => exists x, lt_op x z /\ P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "∀ x '<' y , P" :=
-  (seal (fun z => forall x, lt_op x z -> P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "∃ x '≤' y , P" :=
-  (seal (fun z => exists x, le_op x z /\ P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "∀ x '≤' y , P" :=
-  (seal (fun z => forall x, le_op x z -> P) y)
-  (at level 200, x binder, right associativity) : subset_scope.
-
-Notation "'there' 'exists' x '>' y , P" :=
-  (seal (fun z => exists x, gt_op x z /\ P) y)
+Notation "'there' 'exists' x Q , P" :=
+  (seal (fun z : subset_type (Q)%pfs -> Prop => exists x : (subset_type (Q)%pfs), z x /\ P) Q%pfs)
   (at level 200, x binder, right associativity, only parsing) : subset_scope.
 
-Notation "'for' 'all' x '>' y , P" :=
-  (seal (fun z => forall x, gt_op x z -> P) y)
-  (at level 200, x binder, right associativity, only parsing) : subset_scope.
+Notation "'∀' x Q , P" :=
+  (seal (fun z : subset_type (Q)%pfs -> Prop => forall x : (subset_type (Q)%pfs), z x -> P) Q%pfs)
+  (at level 200, x binder, right associativity) : subset_scope.
 
-Notation "'there' 'exists' x '≥' y , P" :=
-  (seal (fun z => exists x, ge_op x z /\ P) y)
-  (at level 200, x binder, right associativity, only parsing) : subset_scope.
-
-Notation "'for' 'all' x '≥' y , P" :=
-  (seal (fun z => forall x, ge_op x z -> P) y)
-  (at level 200, x binder, right associativity, only parsing) : subset_scope.
-
-Notation "'there' 'exists' x '<' y , P" :=
-  (seal (fun z => exists x, lt_op x z /\ P) y)
-  (at level 200, x binder, right associativity, only parsing) : subset_scope.
-
-Notation "'for' 'all' x '<' y , P" :=
-  (seal (fun z => forall x, lt_op x z -> P) y)
-  (at level 200, x binder, right associativity, only parsing) : subset_scope.
-
-Notation "'there' 'exists' x '≤' y , P" :=
-  (seal (fun z => exists x, le_op x z /\ P) y)
-  (at level 200, x binder, right associativity, only parsing) : subset_scope.
-
-Notation "'for' 'all' x '≤' y , P" :=
-  (seal (fun z => forall x, le_op x z -> P) y)
+Notation "'for' 'all' x Q , P" :=
+  (seal (fun z : subset_type (Q)%pfs -> Prop => forall x : (subset_type (Q)%pfs), z x -> P) Q%pfs)
   (at level 200, x binder, right associativity, only parsing) : subset_scope.
 
 Lemma mem_subset_full_set {T : Type} (x : T) : (x ∈ T).

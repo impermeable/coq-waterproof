@@ -49,7 +49,7 @@ Open Scope subset_scope.
 
 (** ** Sequences *)
 Definition converges_to (a : ℕ → ℝ) (c : ℝ) :=
-  ∀ ε > 0, (∃ N1 ∈ ℕ, ∀ n ≥ N1, (R_dist (a n) c < ε)%R)%nat.
+  ∀ ε > 0, ∃ N1 ∈ ℕ, ∀ n ≥ N1, R_dist (a n) c < ε.
 
 Notation "a ⟶ c" := (converges_to a c) (at level 20).
 

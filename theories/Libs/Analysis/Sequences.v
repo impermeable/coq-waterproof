@@ -351,9 +351,9 @@ Proof.
 Qed.
 
 Lemma low_bd_seq_is_low_bd_lim (a : ℕ → ℝ) (L M: ℝ) :
-  (∀ (n : nat) ∈ ℕ, a n ≥ M) ⇒ (converges_to a L) ⇒ L ≥ M.
+  (∀ n ∈ ℕ, a n ≥ M) ⇒ (converges_to a L) ⇒ L ≥ M.
 Proof.
-  Assume that (∀ (n : nat) ∈ ℕ, a n ≥ M).
+  Assume that (∀ n ∈ ℕ, a n ≥ M).
   Define b := (opp_seq a).
   Assume that (converges_to a L).
   It holds that (b = (fun n => - a n)).

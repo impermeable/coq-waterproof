@@ -52,7 +52,8 @@ Local Ltac2 rec destruct_and (hyp : ident) :=
   | (_ /\ _) =>
     let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
     destruct $hyp_c as [$w $hyp];
-    unfold ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $w;
+    unfold ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type,
+      nat_gt_type, subset_type in $w;
     destruct_and hyp
   | _ => ()
   end.
@@ -95,6 +96,7 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
      of_string "There aren't enough variables to obtain."])
   end;
   destruct $h as [$var $hyp];
+  unfold subset_type in $var;
   destruct_and hyp.
 
   (* TODO: older code, was stricter on when to destruct,
@@ -157,7 +159,7 @@ Ltac2 obtain_seq_according_to (vars : ident list) (hyp) :=
   | _ => throw (concat_list
     [of_string "Can only obtain variables from 'there exists...' statements."])
   end;
-  assert $og_type as $prop_label;
+  assert $pre_og_type as $prop_label;
   Control.focus 1 1 (fun () => exact $og_term);
   let h := Control.hyp hyp in
   List.iter

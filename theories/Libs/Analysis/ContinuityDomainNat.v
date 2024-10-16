@@ -134,11 +134,11 @@ Definition is_continuous_in (f : ℕ → X) (a : ℕ) :=
 
 Theorem alt_char_continuity (h : ℕ → X) (a : ℕ) :
     is_continuous_in h a ⇔ ∀ ε > 0, ∃ δ > 0,
-      (∀ (x : nat) ∈ ℕ, 0 < | x - a | < δ ⇒ dist X (h(x)) (h(a)) < ε).
+      (∀ x ∈ ℕ, 0 < | x - a | < δ ⇒ dist X (h(x)) (h(a)) < ε).
 Proof.
   We show both directions.
   * We need to show that (is_continuous_in(h, a) ⇨
-      ∀ ε > 0, ∃ δ > 0, ∀ (x : nat) ∈ ℕ,
+      ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
         0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
     Assume that (is_continuous_in h a).
     Take ε : R.

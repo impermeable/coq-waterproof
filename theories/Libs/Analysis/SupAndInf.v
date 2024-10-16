@@ -800,7 +800,7 @@ Lemma exists_almost_lim_sup_aux
     (∃ k ≥ N, (a k > sequence_ub a pr N - 1 / (INR(m) + 1))%R)%nat.
 Proof.
   We need to show that
-    (∀ (m : nat) ∈ ℕ, ∀ Nn ∈ ℕ, (∃ k ≥ Nn, (a(k) > sequence_ub(a, pr, Nn) - 1 / (m + 1))%R)%nat).
+    (∀ m ∈ ℕ, ∀ Nn ∈ ℕ, (∃ k ≥ Nn, (a(k) > sequence_ub(a, pr, Nn) - 1 / (m + 1))%R)%nat).
     Take m, Nn ∈ ℕ.
     By seq_ex_almost_maximizer_m it holds that
       (∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (pr) Nn - 1 / (INR m + 1)).

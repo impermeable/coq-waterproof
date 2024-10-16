@@ -45,11 +45,11 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
   concat_list [of_string "Expected variable of type "; of_constr e;
     of_string " instead of "; of_constr t; of_string "."].
 
-Local Ltac2 expected_different_condition_message (e : constr) :=
-  concat_list [of_string "The condition " ; of_constr e; of_string " does not correspond to what was expected"].
+Local Ltac2 expected_different_condition_message (e : constr) (expected : constr) :=
+  concat_list [of_string "The condition " ; of_constr e; of_string " does not correspond to the expected condition "; of_constr expected].
 
 Ltac2 Type TakeKind :=
-  [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe ].
+  [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe | TakeNone ].
 
 Ltac2 string_to_take_kind (s : string) :=
   if String.equal s ":" then
@@ -80,23 +80,55 @@ Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 
     throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol
     else
     match final_list with
-    | [] => throw (of_string "Too few symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, <, ≤"); TakeCol
+    | [] => TakeNone
     | hd :: _ => hd
   end.
+
+Local Ltac2 pred_from_take_kind (rhs : constr) (tk : TakeKind) :=
+  match tk with
+  | TakeCol => throw (Message.of_string "No assumption expected when using 'Take : '. Please report.");
+      constr:(0)
+  | TakeEl => constr:((∈ $rhs)%pfs)
+  | TakeGt => constr:((> $rhs)%pfs)
+  | TakeGe => constr:((≥ $rhs)%pfs)
+  | TakeLt => constr:((< $rhs)%pfs)
+  | TakeLe => constr:((≤ $rhs)%pfs)
+  | TakeNone => rhs
+  end.
+
+Local Ltac2 intro_with_assum (id : ident) (rhs : constr) (tk : TakeKind) :=
+  intro $id;
+  unfold subset_type in $id;
+  let id_c := Control.hyp id in
+  let pred := pred_from_take_kind rhs tk in
+  lazy_match! (Control.goal ()) with
+  | (?cond -> _) => (* FIXME: this check should be more strict *)
+    if check_constr_equal constr:($pred $id_c) cond then
+      let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+      intro $w;
+      unfold ge_op, nat_ge_type, R_ge_type,
+        gt_op, nat_gt_type, R_gt_type,
+        lt_op, nat_lt_type, R_lt_type,
+        le_op, nat_le_type, R_le_type in $w
+    else
+      throw (expected_different_condition_message constr:($pred $id_c) cond)
+  | _ => throw (expected_implication_message id)
+  end.
+
 
 (**
   Introduces a variable.
 
     Arguments:
         - [id : ident ]: variable to introduce.
-        - [type: constr]: type of the variable [id].
+        - [rhs : constr]: the right-hand-side in the take-command for [id].
     Does:
         - Introduces the variable [id].
     Raises fatal exceptions:
         - If the current goal does not require the introduction
           of a variable of type [type], including coercions of [type].
 *)
-Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
+Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
   let is_sealed := lazy_match! Control.goal () with
     | seal _ _ => unfold seal at 1; true
     | _ => false
@@ -110,15 +142,19 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
   end;
   match tk with
   | TakeCol =>
+    let type := rhs in
     lazy_match! (Control.goal ()) with
       | (forall _ : ?u, _) =>
         if check_constr_equal u (get_coerced_type type) then
-          intro $id
+          intro $id;
+          unfold subset_type in $id
         else throw (too_many_of_type_message type)
       | _ => throw (could_not_introduce_no_forall_message id)
       end
-    | TakeEl =>
+  | TakeEl =>
+    let type := rhs in
     intro $id;
+    unfold subset_type in $id;
     let id_c := Control.hyp id in
     lazy_match! (Control.goal ()) with
     | (?v ∈ ?set_in_cond -> _) =>
@@ -138,61 +174,11 @@ Local Ltac2 intro_ident (id : ident) (type : constr) (tk : TakeKind) :=
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
         intro $w (* TODO: could remove when this is trivial... *)
       else
-        throw (expected_different_condition_message constr:($v ∈ $set_in_cond))
+        throw (expected_different_condition_message constr:($v ∈ $set_in_cond)
+          constr:($id_c ∈ $rhs))
     | _ => throw (expected_implication_message id)
     end
-  | TakeGt =>
-    intro $id;
-    let id_c := Control.hyp id in
-    lazy_match! (Control.goal ()) with
-    | (gt_op ?v ?u -> _) => (* FIXME: this check should be more strict *)
-      if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
-        let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-        intro $w;
-        unfold gt_op, nat_gt_type, R_gt_type in $w
-      else
-        throw (expected_different_condition_message constr:(gt_op _ $v $u))
-    | _ => throw (expected_implication_message id)
-    end
-  | TakeGe =>
-    intro $id;
-    let id_c := Control.hyp id in
-    lazy_match! (Control.goal ()) with
-    | (ge_op ?v ?u -> _) => (* FIXME: this check should be more strict *)
-      if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
-        let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-        intro $w;
-        unfold ge_op, nat_ge_type, R_ge_type in $w
-      else
-        throw (expected_different_condition_message constr:(ge_op _ $v $u))
-    | _ => throw (expected_implication_message id)
-    end
-  | TakeLt =>
-    intro $id;
-    let id_c := Control.hyp id in
-    lazy_match! (Control.goal ()) with
-    | (lt_op ?v ?u -> _) => (* FIXME: this check should be more strict *)
-      if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
-        let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-        intro $w;
-        unfold lt_op, nat_lt_type, R_lt_type in $w
-      else
-        throw (expected_different_condition_message constr:(lt_op _ $v $u))
-    | _ => throw (expected_implication_message id)
-    end
-  | TakeLe =>
-    intro $id;
-    let id_c := Control.hyp id in
-    lazy_match! (Control.goal ()) with
-    | (le_op ?v ?u -> _) => (* FIXME: this check should be more strict *)
-      if Bool.and (Constr.equal v id_c) (Constr.equal u type) then
-        let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-        intro $w;
-        unfold le_op, nat_le_type, R_le_type in $w
-      else
-        throw (expected_different_condition_message constr:(le_op _ $v $u))
-    | _ => throw (expected_implication_message id)
-    end
+  | _ => intro_with_assum id rhs tk
   end.
 
 (**

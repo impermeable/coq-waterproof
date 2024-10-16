@@ -156,7 +156,7 @@ Proof.
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
     Choose n := m.
-    - We need to show that (is_index_seq(n) ∧ ｛ k : ℕ | a(n(k)) ｝ ⟶ L).
+    - We need to show that (is_index_seq(n) ∧ (fun k : ℕ ↦ a(n(k))) ⟶ L).
       We show both statements.
       * We need to show that (is_index_seq m).
         It suffices to show that (is_index_seq n).
@@ -168,7 +168,7 @@ Proof.
         (sequence_ub a (i))).
       + (* apply squeeze_theorem with (c := sequence_ub a (i))
         (a := fun (k : ℕ) ↦ L - 1 / (INR k + 1)).*)
-        To show : (∀ (k : nat) ∈ ℕ,
+        To show : (∀ k  ∈ ℕ,
           L - 1 / (k + 1) <= a(n(k)) <= sequence_ub(a, i, k)).
         Take k ∈ ℕ.
         We show both statements.
