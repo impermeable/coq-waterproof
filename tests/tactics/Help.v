@@ -239,3 +239,23 @@ Assume the premise "; "
 (x < 2), use
     Assume that (...)."]].
 Abort.
+
+(** Test 20: Help on forall with arbitrary predicate *)
+Local Parameter B : nat -> Prop.
+
+Goal ∀ x B, x < 2.
+Proof.
+assert_feedback_with_strings (fun () => Help) Info
+["The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable that is (a/an) B, use
+    Take ... ≤ (...)."].
+Abort.
+
+(** Test 21: Help on exists with arbitrary predicate *)
+Goal ∃ x B, x < 2.
+Proof.
+assert_feedback_with_strings (fun () => Help) Info
+["The goal is to show a ‘there exists’-statement (∃).
+Choose a specific variable that is (a/an) B, use
+    Choose ... := (...)."].
+Abort.

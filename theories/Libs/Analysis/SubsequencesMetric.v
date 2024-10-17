@@ -35,8 +35,11 @@ Open Scope subset_scope.
 Definition is_index_sequence (n : ℕ → ℕ) :=
   ∀ k ∈ ℕ, (n k < n (k + 1))%nat.
 
-Notation "'index' 'sequence'" := (is_index_sequence) (at level 69) : metric_scope.
-Notation "'index' 'sequence'" := (is_index_sequence) (at level 69) : pred_for_subset_scope.
+Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 69) : metric_scope.
+Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 69) : pred_for_subset_scope.
+
+Notation "'index' 'sequence'" := (is_index_sequence) (at level 69, only parsing) : metric_scope.
+Notation "'index' 'sequence'" := (is_index_sequence) (at level 69, only parsing) : pred_for_subset_scope.
 
 Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 68) : metric_scope.
 
@@ -186,11 +189,10 @@ Qed.
 Close Scope nat_scope.
 
 Lemma subsequence_of_convergent_sequence (a : (ℕ → X)) (p : X) :
-    a ⟶ p ⇒ ∀ n index sequence, (a ◦ n) ⟶ p.
+    a ⟶ p ⇒ ∀ n _index sequence_, (a ◦ n) ⟶ p.
 Proof.
 Assume that (a ⟶ p).
 Take n (index sequence).
-unfold is_index_sequence in _H0.
 It suffices to show that (∀ ε > 0, ∃ N1 ∈ ℕ,
   (∀ k ≥ N1, (dist _ (a (n k)) p < ε)%R)%nat).
 Take ε > 0.
