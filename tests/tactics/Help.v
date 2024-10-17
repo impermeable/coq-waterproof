@@ -248,7 +248,7 @@ Proof.
 assert_feedback_with_strings (fun () => Help) Info
 ["The goal is to show a ‘for all’-statement (∀).
 Introduce an arbitrary variable that is (a/an) B, use
-    Take ... ≤ (...)."].
+    Take ... (...)."].
 Abort.
 
 (** Test 21: Help on exists with arbitrary predicate *)

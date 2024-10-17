@@ -79,7 +79,7 @@ Introduce an arbitrary variable less than or equal to "; of_constr y; of_string 
 Local Ltac2 goal_forall_pred_msg (q: constr) :=
   concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
 Introduce an arbitrary variable that is (a/an) "; of_constr q; of_string ", use
-    Take ... ≤ (...)."].
+    Take ... (...)."].
 
 Local Ltac2 goal_exists_el_msg (var_type: constr) :=
   concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
