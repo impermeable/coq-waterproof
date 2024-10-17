@@ -24,6 +24,7 @@ Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Notations.Sets.
 
 Waterproof Enable Redirect Feedback.
 
@@ -129,4 +130,49 @@ Goal exists n : nat, n + 1 = n + 1.
 Proof.
     set (n := 3).
     assert_no_feedback (fun () => Choose n0 := 2) Warning.
+Abort.
+
+Open Scope subset_scope.
+
+(** Test 13: Choose a number larger than a number *)
+Goal ∃ n > 0, True.
+Proof.
+  Choose n := 3.
+  * Indeed, (n > 0).
+  * We conclude that True.
+Qed.
+
+Require Import Coq.Reals.Reals.
+Require Import Waterproof.Notations.Reals.
+Open Scope subset_scope.
+Open Scope R_scope.
+
+(** Test 14: Choose a natural number larger than a number, but in R_scope *)
+
+Goal ∃ n ≥ 0%nat, INR(n) = 3.
+Proof.
+  Choose n := 3%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (ge n 0)).
+    Indeed, ((n ≥ 0)%nat).
+  * We need to show that (INR(n) = 3).
+Abort.
+
+(** Test 15: Choose a natural number less than a number, but in R_scope *)
+(* TODO: the goal here becomes strange *)
+Goal ∃ n < 4%nat, INR(n) = 3.
+Proof.
+  Choose n := 2%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (lt n (S (S n)))).
+    Indeed, ((n < S (S n))%nat).
+  * We need to show that (INR(n) = 3).
+Abort.
+
+(** Test 16: Choose a natural number less than or equal to a number, but in R_scope *)
+(* TODO: the goal here becomes strange *)
+Goal ∃ n ≤ 4%nat, INR(n) = 3.
+Proof.
+  Choose n := 3%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (le n ((S n)))).
+    Indeed, (n ≤ S n)%nat.
+  * We need to show that (INR(n) = 3).
 Abort.

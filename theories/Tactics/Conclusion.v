@@ -19,6 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Notations.Sets.
 Require Import Chains.Inequalities.
 Require Import Util.Goals.
 Require Import Util.Init.
@@ -31,13 +32,13 @@ Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
 Ltac2 warn_equivalent_goal_given () :=
-  warn (of_string 
-"The statement you provided does not exactly correspond to what you need to show. 
+  warn (of_string
+"The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable."
   ).
 
 Ltac2 wrong_goal_msg (wrong_goal : constr) :=
-  concat_list 
+  concat_list
     [of_constr wrong_goal; of_string " does not correspond to what you need to show."].
 
 (**
@@ -52,7 +53,7 @@ Ltac2 wrong_goal_msg (wrong_goal : constr) :=
 Local Ltac2 target_equals_goal_judgementally (target : constr) :=
   let target := eval cbv in $target in
   let real_goal := Control.goal () in
-  let real_goal := eval cbv in $real_goal in 
+  let real_goal := eval cbv in $real_goal in
   Constr.equal target real_goal.
 
 
@@ -60,11 +61,11 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
   Check if stated goal is what needs to be proven judgementally.
   If so changes current goal into stated goal.
   Uses global or weak global statement inequality chains of to compare
-  these to the current goal.  
+  these to the current goal.
 
   Arguments:
     - [sttd_goal: constr], stated goal, the expression that should equal the goal under focus.
-    
+
   Raises fatal exceptions:
     - If [sttd_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
@@ -72,10 +73,13 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 
 Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
   let sttd_goal := correct_type_by_wrapping sttd_goal in
+  let sttd_goal := (eval unfold subset_type, ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $sttd_goal) in
+  let current_goal := Control.goal () in
+  let current_goal := (eval unfold subset_type, ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $current_goal) in
   (* Check if stated goal exactly matches current goal. *)
-  match Constr.equal sttd_goal (Control.goal ()) with
+  match Constr.equal sttd_goal current_goal with
   | true => ()
-  | false => 
+  | false =>
     (* If not, do some additional checks. *)
     (* For inequality chains, consider the global statement. *)
     lazy_match! sttd_goal with
@@ -95,35 +99,35 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
       (* Convert current goal to the given inequality chain.*)
       enough $sttd_goal by (waterprove 5 false Main)
     (* For the rest, just check for judgemental equality. *)
-    | _ => 
+    | _ =>
       match target_equals_goal_judgementally sttd_goal with
-      | true => warn_equivalent_goal_given (); change $sttd_goal  
+      | true => warn_equivalent_goal_given (); change $sttd_goal
       | false => throw (wrong_goal_msg sttd_goal)
       end
     end
   end.
 
-(** Attempts to solve current goal. 
+(** Attempts to solve current goal.
 
   If argument [postpone] is [true], actually solving the goal is postponed.
   The goal is shelved using an evar.
 *)
-Local Ltac2 conclude (postpone : bool) := 
+Local Ltac2 conclude (postpone : bool) :=
   if postpone
     then
       (* Postpone solving current goal using evar *)
       (* (using admit gave confusing 'warning' ) *)
       let g := Control.goal () in
       let evar_id := Fresh.in_goal @_Hpostpone in
-      ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr g); 
-      let evar := Control.hyp evar_id in 
+      ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr g);
+      let evar := Control.hyp evar_id in
       exact $evar;
       warn (concat_list [of_string "Please come back later to provide an actual proof of ";
         of_constr g; of_string "."])
     else
       (* Attempt to solve current goal *)
       let err_msg (g : constr) := concat_list
-        [of_string "Could not verify that "; of_constr g; of_string "."] 
+        [of_string "Could not verify that "; of_constr g; of_string "."]
       in
       match Control.case (fun () => waterprove 5 true Main) with
       | Val _ => ()
@@ -134,7 +138,7 @@ Local Ltac2 conclude (postpone : bool) :=
 (** Attempts to solve current goal using additional lemma which has to be used. *)
 Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
   let err_msg (g : constr) := concat_list
-    [of_string "Could not verify that "; of_constr g; of_string "."] 
+    [of_string "Could not verify that "; of_constr g; of_string "."]
   in
   match Control.case (fun () =>
     rwaterprove 5 true Main xtr_lemma)
@@ -144,7 +148,7 @@ Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
   | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 
-(** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors 
+(** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
 Local Ltac2 conclude_by (xtr_lemma : constr) :=
   wrapper_core_by_tactic core_conclude_by xtr_lemma.
@@ -159,15 +163,16 @@ Local Ltac2 conclude_since (xtr_claim : constr) :=
 
 (**
   Removes a [StateGoal.Wrapper] wrapper from the goal.
-    
+
   Arguments: None
-    
-  Does: 
+
+  Does:
     - Removes the wrapper [StateGoal.Wrapper G].
 *)
 Local Ltac2 unwrap_state_goal_no_check () :=
   lazy_match! goal with
     | [|- StateGoal.Wrapper _] => apply StateGoal.wrap
+    | [|- VerifyGoal.Wrapper _] => apply VerifyGoal.wrap
     | [|- _] => ()
   end.
 
@@ -182,7 +187,7 @@ Local Ltac2 unwrap_state_goal_no_check () :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) := 
+Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -191,7 +196,7 @@ Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) :=
 (**
   Alternative notation for [We conclude that ...].
 *)
-Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(constr) :=      
+Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -228,14 +233,20 @@ Ltac2 Notation "Since" xtr_claim(constr) "we" "conclude" tht(opt("that")) target
     - [target_goal: constr], expression that should equal the goal under focus.
 
   Raises exceptions:
-    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, 
+    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus,
         even after rewriting.
-  
+
   Raises warning:
     - [Please come back later to provide an actual proof of [target_goal].], always.
 *)
-Ltac2 Notation "By" "magic" "we" "conclude" tht(opt("that")) target_goal(constr) := 
+Ltac2 Notation "By" "magic" "we" "conclude" tht(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
   conclude true.
+
+Ltac2 Notation "Indeed" "," target_goal(constr) :=
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  guarantee_stated_goal_matches target_goal;
+  conclude false.

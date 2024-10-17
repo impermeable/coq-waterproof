@@ -20,7 +20,9 @@ Require Import Coq.Reals.Reals.
 Require Import Classical_Prop.
 
 Require Import Automation.
-Require Import Notations.
+Require Import Notations.Common.
+Require Import Notations.Reals.
+Require Import Notations.Sets.
 Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -32,7 +34,7 @@ Open Scope subset_scope.
 Definition open_ball (p : R) (r : R) : subset R := as_subset _ (fun x => | x - p | < r).
 
 Definition is_interior_point (a : R) (A : R -> Prop) :=
-  there exists r : R, (r > 0) /\ (for all x : R, x : (open_ball a r) -> A x).
+  ∃ r > 0, ∀ x ∈ (open_ball a r), x ∈ A.
 
 Definition is_open (A : R -> Prop) := for all a : R, A a -> is_interior_point a A.
 
@@ -44,7 +46,8 @@ Definition is_closed (A : R -> Prop) := is_open (complement A).
 (** Notations *)
 Notation "B( p , r )" := (open_ball p r) (at level 68, format "B( p ,  r )").
 
-Local Ltac2 unfold_open_ball (statement : constr) := eval unfold open_ball, pred in $statement.
+Local Ltac2 unfold_open_ball (statement : constr) := eval unfold open_ball,
+  as_subset in $statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "B" x(opt(seq("in", constr))) :=
   wp_unfold unfold_open_ball (Some "B") true x.
@@ -82,7 +85,8 @@ Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
 Notation "'ℝ' '\' A" := (complement A) (at level 20, only parsing).
 
-Local Ltac2 unfold_complement (statement : constr) := eval unfold complement, pred in $statement.
+Local Ltac2 unfold_complement (statement : constr) := eval unfold complement,
+  as_subset in $statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "ℝ\" x(opt(seq("in", constr))) :=
   wp_unfold unfold_complement (Some "ℝ\") true x.
@@ -106,7 +110,7 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" x(opt(seq(
   wp_unfold unfold_is_closed (Some "closed") false x.
 
 (** Hints *)
-Lemma zero_in_interval_closed_zero_open_one : (0 : [0,1)).
+Lemma zero_in_interval_closed_zero_open_one : (0 ∈ [0,1)).
 Proof.
   We need to show that (0 <= 0 /\ 0 < 1).
   We show both (0 <= 0) and (0 < 1).
@@ -115,7 +119,7 @@ Proof.
 Qed.
 #[export] Hint Resolve zero_in_interval_closed_zero_open_one : wp_reals.
 
-Lemma one_in_complement_interval_closed_zero_open_one : (1 : ℝ \ [0,1)).
+Lemma one_in_complement_interval_closed_zero_open_one : (1 ∈ ℝ \ [0,1)).
 Proof.
   We need to show that (~ ((0 <= 1) /\ (1 < 1))).
   We conclude that (¬ 0 <= 1 < 1).
@@ -127,15 +131,15 @@ Qed.
 
 Lemma not_in_compl_implies_in (A : subset ℝ) (x : ℝ) : (¬ x ∈ ℝ\A) -> (x ∈ A).
 Proof.
-  Assume that (¬ x : ℝ\A).
+  Assume that (¬ x ∈ ℝ\A).
   It holds that (¬ ¬ x ∈ A).
   We conclude that (x ∈ A).
 Qed.
 
-Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x ∈ A) -> (¬ x : ℝ\A).
+Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x ∈ A) -> (¬ x ∈ ℝ\A).
 Proof.
   Assume that (x ∈ A).
-  We conclude that (¬ x : ℝ\A).
+  We conclude that (¬ x ∈ ℝ\A).
 Qed.
 
 #[export] Hint Resolve not_in_compl_implies_in : wp_negation_reals.

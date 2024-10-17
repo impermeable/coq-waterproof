@@ -17,9 +17,12 @@
 (******************************************************************************)
 
 (** ** Standard mathematical function notation. *)
-Notation " f ( x , .. , y )" := (.. (f x) .. y) 
+Notation " f ( x , .. , y )" := (.. (f x) .. y)
   (at level 10,
   format "f '(' x ,  .. ,  y ')'") : type_scope.
+
+(* Separate module because otherwise there are conflicts when introducing the quantifiers for sets *)
+Module Import Quantifiers.
 
 (** ** Quantifiers
   Allow unicode characters ∀ and ∃ for readability.
@@ -39,6 +42,8 @@ Notation "'there' 'exists' x .. y , P " := (exists x, .. (exists y, P) ..)
 Notation "∃ x .. y , P " := (exists x, .. (exists y, P) ..)
   (at level 200, x binder, y binder, right associativity,
   only parsing) : type_scope.
+
+End Quantifiers.
 
 Notation "'fun' x .. y '↦' t" := (fun x => .. (fun y => t) ..)
   (at level 200, x binder, y binder, right associativity,

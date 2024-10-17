@@ -59,13 +59,13 @@ Abort.
 Waterproof Enable Redirect Feedback.
 Waterproof Enable Redirect Errors.
 (** * Test 3
-    Warning case: provided goal is equivalent, 
+    Warning case: provided goal is equivalent,
         but uses an alternative notation.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
     assert_feedback_with_string (fun () => We conclude that (1+1 = 2)) Warning
-"The statement you provided does not exactly correspond to what you need to show. 
+"The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
 
@@ -106,7 +106,7 @@ Qed.
     even with the provided lemma.
 
     NOTE: this test would also pass if we just
-    write 
+    write
     [We conclude that (2 = 1).]
     Applarently, waterprove is powerful enough to apply symmetry to hypotheses.
 *)
@@ -119,27 +119,27 @@ Qed.
 
 
 (** * Test 3
-    Warning case: provided goal is equivalent, 
+    Warning case: provided goal is equivalent,
         but uses an alternative notation.
 *)
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
     assert_feedback_with_string (fun () => We conclude that (2 = 2)) Warning
-"The statement you provided does not exactly correspond to what you need to show. 
+"The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
 
 (** * Test 5
     Shows that [waterprove]
     can solve [(1 < 2)]
-    without explcitly being given 
+    without explcitly being given
     the lemma that states [0 < 1].
 *)
 Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
     assert (useless: 1 = 1).
     reflexivity.
-    assert_fails_with_string 
+    assert_fails_with_string
     (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
 "Could not verify this follows from test_by_we_conclude_1.".
 Abort.
@@ -183,7 +183,7 @@ Goal A -> B.
 Abort.
 
 
-(* Test 11: 'Since ...' works. 
+(* Test 11: 'Since ...' works.
   For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
 Goal A -> B.
 Proof.
@@ -273,7 +273,7 @@ Proof.
 Abort.
 
 (** * Test 8
-  Test whether we conclude that can solve simple induction proof from 
+  Test whether we conclude that can solve simple induction proof from
   inequality chain.
 *)
 
@@ -291,7 +291,7 @@ Proof.
 Qed.
 
 (** * Test 9
-  Test whether the conclude tactic can handle boolean statements 
+  Test whether the conclude tactic can handle boolean statements
 *)
 Goal (is_true true).
 Proof.

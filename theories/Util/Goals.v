@@ -27,7 +27,7 @@ Module Case.
 
   Private Inductive Wrapper (A G : Type) : Type :=
     | wrap : G -> Wrapper A G.
-  
+
   Definition unwrap (A G : Type) : Wrapper A G -> G :=
     fun x => match x with wrap _ _ y => y end.
 
@@ -42,29 +42,29 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Case' ( A )." :=
   ).
 
 Module NaturalInduction.
-  
+
   Module Base.
     Private Inductive Wrapper (G : Type) : Type :=
       | wrap : G -> Wrapper G.
-    
+
     Definition unwrap (G : Type) : Wrapper G -> G :=
       fun x => match x with wrap _ y => y end.
-  
+
   End Base.
 
   Module Step.
-    
+
     Private Inductive Wrapper (G : Type) : Type :=
       | wrap : G -> Wrapper G.
-    
+
     Definition unwrap (G : Type) : Wrapper G -> G :=
       fun x => match x with wrap _ y => y end.
-  
+
   End Step.
 
 End NaturalInduction.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case' ( G )." := 
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'first' 'show' 'the' 'base' 'case' ( G )." :=
   (NaturalInduction.Base.Wrapper G) (
     at level 99,
     only printing,
@@ -80,10 +80,10 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' '
 
 
 Module StateGoal.
-  
+
   Private Inductive Wrapper (G : Type) : Type :=
     | wrap : G -> Wrapper G.
-  
+
   Definition unwrap (G : Type) : Wrapper G -> G :=
     fun x => match x with wrap _ y => y end.
 
@@ -94,6 +94,23 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 's
     at level 99,
     only printing,
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  show  that  ( G ). '//' or  write: '//'   We  conclude  that  ( G ). '//' if  no  intermediary  proof  steps  are  required."
+  ).
+
+Module VerifyGoal.
+
+  Private Inductive Wrapper (G : Type) : Type :=
+    | wrap : G -> Wrapper G.
+
+  Definition unwrap (G : Type) : Wrapper G -> G :=
+    fun x => match x with wrap _ y => y end.
+
+End VerifyGoal.
+
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'verify' 'that' '(' G ').' 'or' 'write:' 'Indeed,' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'" :=
+  (VerifyGoal.Wrapper G) (
+    at level 99,
+    only printing,
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   We  need  to  verify  that  ( G ). '//' or  write: '//'   Indeed,  ( G ). '//' if  no  intermediary  proof  steps  are  required."
   ).
 
 Module StateHyp.
@@ -117,7 +134,7 @@ Module ByContradiction.
 
   Private Inductive Wrapper (A G : Type) : Type :=
     | wrap : G -> Wrapper A G.
-  
+
   Definition unwrap (A G : Type) : Wrapper A G -> G :=
     fun x => match x with wrap _ _ y => y end.
 
@@ -141,15 +158,15 @@ Module StrongIndIndxSeq.
 
 End StrongIndIndxSeq.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' ':' 'ℕ' 'and' 'assume' 'n(0),...,n(k)' 'are' 'defined.'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' '∈' 'ℕ' 'and' 'assume' 'n(0),...,n(k)' 'are' 'defined.'" :=
   (StrongIndIndxSeq.Wrapper _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Take  k  :  ℕ  and  assume  n(0),...,n(k)  are  defined."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//'   Take  k  ∈  ℕ  and  assume  n(0),...,n(k)  are  defined."
   ).
 
 
-Ltac2 raise_goal_wrapped_error () := 
+Ltac2 raise_goal_wrapped_error () :=
   throw (of_string "You cannot do this right now, follow the advice in the goal window.").
 
 
@@ -164,6 +181,7 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- NaturalInduction.Base.Wrapper _] => raise_goal_wrapped_error ()
     | [|- NaturalInduction.Step.Wrapper _] => raise_goal_wrapped_error ()
     | [|- StateGoal.Wrapper _]             => raise_goal_wrapped_error ()
+    | [|- VerifyGoal.Wrapper _]            => raise_goal_wrapped_error ()
     | [|- StateHyp.Wrapper _ _ _]              => raise_goal_wrapped_error ()
     | [|- ByContradiction.Wrapper _ _]     => raise_goal_wrapped_error ()
     | [|- _] => ()

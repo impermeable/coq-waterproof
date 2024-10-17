@@ -24,6 +24,8 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Init.
 Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
 
+Require Import Notations.Sets.
+
 Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
@@ -43,6 +45,19 @@ Local Ltac2 try_out_label (label : ident) :=
   | Err exn => Control.zero exn
   | Val _ => clear $label
   end.
+
+Local Ltac2 rec destruct_and (hyp : ident) :=
+  let hyp_c := Control.hyp hyp in
+  match! (Constr.type hyp_c) with
+  | (_ /\ _) =>
+    let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+    destruct $hyp_c as [$w $hyp];
+    unfold ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type,
+      nat_gt_type, subset_type in $w;
+    destruct_and hyp
+  | _ => ()
+  end.
+
 
 (** *
   Attempts to obtain a variable from a user-specified statement.
@@ -65,16 +80,37 @@ Local Ltac2 try_out_label (label : ident) :=
 Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   let h := Control.hyp hyp in
   let type_h := get_type h in
+  match! type_h with
+  | seal _ _ => unfold seal at 1 in $hyp
+  | _ => ()
+  end;
+  let h := Control.hyp hyp in
+  let type_h := get_type h in
   lazy_match! type_h with
   | ex  ?pred =>
-    check_binder_name pred var
+    check_binder_warn pred var true
   | sig ?pred =>
-    check_binder_name pred var
+    check_binder_warn pred var true
   | _ => throw (concat_list
     [of_string "Couldn't obtain "; of_ident var; of_string "."; fnl ();
      of_string "There aren't enough variables to obtain."])
   end;
-  destruct $h as [$var $hyp].
+  destruct $h as [$var $hyp];
+  unfold subset_type in $var;
+  destruct_and hyp.
+
+  (* TODO: older code, was stricter on when to destruct,
+    but new code seems more user-friendly *)
+  (* match! Constr.type h with
+  | (* TODO: check if agree: now immediately destruct 'and' statements *)
+    (* ((pred _ _) ?a) /\ _ =>
+    let var_constr := Control.hyp var in
+    let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
+    if Constr.equal var_constr a then
+      destruct $h as [$w $hyp]
+    else () *)
+  | _ => ()
+  end.*)
 
 (* Quick fix for Wateproof editor / Coq lsp, where
   [Obtain such an
@@ -111,14 +147,19 @@ Ltac2 obtain_seq_according_to (vars : ident list) (hyp) :=
   (* make a copy of the original proposition *)
   let prop_label := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
   let og_term := Control.hyp hyp in
-  let og_type := get_type og_term in
+  let pre_og_type := get_type og_term in
+  let og_type :=
+    match! pre_og_type with
+    | seal _ _ => eval unfold seal at 1 in $pre_og_type
+    | _ => pre_og_type
+    end in
   lazy_match! og_type with
   | ex  ?pred => ()
   | sig ?pred => ()
   | _ => throw (concat_list
     [of_string "Can only obtain variables from 'there exists...' statements."])
   end;
-  assert $og_type as $prop_label;
+  assert $pre_og_type as $prop_label;
   Control.focus 1 1 (fun () => exact $og_term);
   let h := Control.hyp hyp in
   List.iter
@@ -147,7 +188,12 @@ Ltac2 obtain_according_to_last (vars : ident list) :=
   lazy_match! goal with
   | [id_h : _ |- _ ] =>
     let h := Control.hyp id_h in
-    let type_h := get_type h in
+    let pre_type_h := get_type h in
+    let type_h :=
+      match! pre_type_h with
+      | seal _ _ => eval unfold seal at 1 in $pre_type_h
+      | _ => pre_type_h
+      end in
     lazy_match! type_h with
     | ex  ?pred =>
       obtain_seq_according_to vars id_h

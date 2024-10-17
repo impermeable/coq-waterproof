@@ -19,10 +19,15 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Util.Constr.
 Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 Require Import Util.Evars.
+
+Require Import Tactics.BothStatements.
+
+Require Import Notations.Sets.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
@@ -53,9 +58,13 @@ Local Ltac2 _binder_name_equal (name : ident) (b : binder) :=
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
+  let sealed := lazy_match! (Control.goal ()) with
+    | seal _ _ => unfold seal at 1; true
+    | _ => false
+    end in
   lazy_match! goal with
     | [ |- ex ?a] =>
-      check_binder_name a s;
+      check_binder_warn a s true;
       set ($s := $t);
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
@@ -70,7 +79,42 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       assert ($w : $v = $t) by reflexivity
 
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
-  end.
+  end;
+  if sealed then
+    split;
+    Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type,
+      gt_op, R_gt_type, nat_gt_type, lt_op, R_lt_type, nat_lt_type,
+      le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
+  else ().
+  (* let v := Control.hyp s in
+  lazy_match! (Control.goal ()) with
+  | (?cond /\ _) =>
+    match! cond  with
+    | ?predicate ?var =>
+      (* Check variable *)
+      if Bool.and (constr_is_ident var s) (constr_does_not_contain_ident predicate s) then
+        split; Control.enter (fun () => apply StateGoal.unwrap)
+      else
+        match! cond with
+        | ?other_pred ?var_1 ?other_arg =>
+            if Bool.and (constr_is_ident var_1 s)
+              (Bool.and (constr_does_not_contain_ident other_pred s)
+                        (constr_does_not_contain_ident other_arg s)) then
+              split; Control.enter (fun () => apply StateGoal.unwrap)
+            else
+              ()
+        | _ => ()
+      end
+    | _ =>
+      (* case forall but not followed by implication
+          from a membership of a set*)
+      ()
+    end
+  | _ =>
+    (* case forall but not followed by implication *)
+    ()
+  end.*)
 
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in
@@ -86,6 +130,10 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
+  let sealed := lazy_match! (Control.goal ()) with
+  | seal _ _ => unfold seal at 1; true
+  | _ => false
+  end in
   lazy_match! goal with
   | [ |- ex ?a] =>
       (* Make a suggestion of the base name for renaming of blank evars *)
@@ -107,7 +155,14 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       |  false => exists $t
       end
   | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
-  end.
+  end;
+  if sealed then
+    split;
+    Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type,
+      gt_op, R_gt_type, nat_gt_type, lt_op, R_lt_type, nat_lt_type,
+      le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
+  else ().
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
   panic_if_goal_wrapped ();

@@ -18,7 +18,10 @@
 
 Require Import Coq.Reals.Reals.
 
-Require Import Notations.
+Require Import Notations.Common.
+Require Import Notations.Reals.
+Require Import Notations.Sets.
+Require Import Chains.
 Require Import Tactics.
 Require Import Waterproof.Automation.
 
@@ -29,18 +32,13 @@ Open Scope R_scope.
 
 (** Definitions *)
 Definition is_accumulation_point (a : R) :=
-  for all ε : R, (ε > 0) ⇒
-    there exists x : R, 0 < |x - a| < ε.
+  ∀ ε > 0, ∃ x ∈ R, 0 < |x - a| < ε.
 
 Definition is_isolated_point (a : R) :=
-  there exists ε : R, (ε > 0) ∧
-    (for all x : R, |x - a| = 0 ∨ (ε ≤ |x - a|)).
+  ∃ ε > 0, ∀ x ∈ R, |x - a| = 0 ∨ (ε ≤ |x - a|).
 
 Definition limit_in_point (f : R → R) (a : R) (q : R) :=
- for all ε : R, (ε > 0) ⇒
-   there exists δ : R, (δ > 0) ∧
-     (for all x : R,
-       (0 < |x - a| < δ) ⇒ (|(f x) - q| < ε)).
+ ∀ ε > 0, ∃ δ > 0, ∀ x ∈ R, (0 < |x - a| < δ) ⇒ (|(f x) - q| < ε).
 
 Definition is_continuous_in (f : R → R) (a : R) :=
   ((is_accumulation_point a) ∧ (limit_in_point f a (f a))) ∨ (is_isolated_point a).
@@ -48,42 +46,37 @@ Definition is_continuous_in (f : R → R) (a : R) :=
 Lemma every_point_in_R_acc_point_R (a : R) :
   is_accumulation_point a.
 Proof.
-  We need to show that (∀ r : R, r > 0 ⇒ ∃ x : R, 0 < | x - a | < r).
-  Take r : R.
-  Assume that (r > 0).
+  We need to show that (∀ r > 0, ∃ x ∈ R, 0 < | x - a | < r).
+  Take r > 0.
   Choose x := (a + r/2).
-  It holds that (| x - a | < r).
-  It holds that (| x - a | > 0).
-  We conclude that (0 < | x - a | < r).
+  * Indeed, (x ∈ ℝ).
+  * We need to show that (0 < | x - a | < r).
+    unfold gt_op, R_gt_type in *.
+    It holds that (| x - a | < r).
+    It holds that (| x - a | > 0).
+    We conclude that (0 < | x - a | < r).
 Qed.
 
-Theorem alt_char_continuity :
-  ∀ h : R → R, ∀ a : R, 
-    is_continuous_in h a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : R, 0 < | x - a | < δ ⇒ | h(x) - h(a) | < ε).
+Theorem alt_char_continuity (h : R → R) (a : R) :
+    is_continuous_in h a ⇔ ∀ ε > 0, ∃ δ > 0,
+      (∀ x ∈ R, 0 < | x - a | < δ ⇒ | h(x) - h(a) | < ε).
 Proof.
-  Take h : (R → R).
-  Take a : R.
   We show both directions.
-  * We need to show that (is_continuous_in(h, a) ⇒ for all ε : ℝ,
-      ε > 0 ⇒ there exists δ : ℝ,
-        δ > 0 ∧ (for all x : ℝ,
-        0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε)).
+  * We need to show that (is_continuous_in(h, a) ⇨ ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
+      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε).
     Assume that (is_continuous_in h a).
     Either ((is_accumulation_point a) ∧ (limit_in_point h a (h a))) or (is_isolated_point a).
     + Case ((is_accumulation_point a) ∧ (limit_in_point h a (h a))).
-      Take ε : R.
-      Assume that (ε > 0).
-      It holds that (there exists δ1 : R, (δ1 > 0) ∧
-        (for all x : R,
-          (0 < |x - a| < δ1) ⇒ (|(h x) - (h a)| < ε))).
+      Take ε > 0.
+      It holds that (∃ δ1 > 0, ∀ x ∈ R,
+          (0 < |x - a| < δ1) ⇒ (|(h x) - (h a)| < ε)).
       Obtain such a δ1.
       Choose δ := (δ1).
-      We show both statements.
-      - We conclude that (δ > 0).
-      -  We conclude that (for all x : ℝ,
-      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε).
+      - Indeed, (δ > 0).
+      - We conclude that (∀ x ∈ ℝ,
+          0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε).
     + Case (is_isolated_point a).
-      It holds that (there exists ε : ℝ, ε > 0 ∧ (for all x : ℝ, |x - a| = 0 ∨ ε ≤ |x - a|)).
+      It holds that (∃ ε > 0, ∀ x ∈ ℝ, |x - a| = 0 ∨ ε ≤ |x - a|).
       Obtain such an ε.
       It holds that (ε > 0).
       Define z := (a + ε / 2).
@@ -93,14 +86,10 @@ Proof.
         Contradiction.
       - It holds that (| z - a| < ε).
         Contradiction.
-  * We need to show that ((for all ε : ℝ,
-      ε > 0 ⇨ there exists δ : ℝ,
-        δ > 0 ∧ (for all x : ℝ,
-          0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε)) ⇨ is_continuous_in(h, a)).
-    Assume that ((for all ε : ℝ,
-    ε > 0 ⇨ there exists δ : ℝ,
-      δ > 0 ∧ (for all x : ℝ,
-        0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε))).
+  * We need to show that ((∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
+      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) ⇨ is_continuous_in(h, a)).
+    Assume that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
+ 0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) .
     unfold is_continuous_in.
     We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
     It suffices to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ).

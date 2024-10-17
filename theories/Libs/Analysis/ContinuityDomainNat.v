@@ -21,27 +21,29 @@ Require Import Coq.Reals.Reals.
 Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Negation.
-Require Import Notations.
+Require Import Notations.Common.
+Require Import Notations.Reals.
+Require Import Notations.Sets.
+Require Import Chains.
 
 Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
+Open Scope subset_scope.
 
 (** Hints *)
 
 (** TODO: move these lemmas somewhere else *)
 
-Lemma aux1 : for all n m : ℕ, (n = m) ⇒ |m - n| = |n - n|.
+Lemma aux1 (n m : ℕ) : (n = m) ⇒ |m - n| = |n - n|.
 Proof.
-  Take n, m : ℕ.
   Assume that (n = m).
   We conclude that (& |m - n| = |m - m| = m - m = 0 = n - n = |n - n|).
 Qed.
 #[export] Hint Resolve aux1 : wp_reals.
 
-Lemma Rabs_n_min_m : forall m n : ℕ, (m <= n)%nat -> | n - m | = n - m.
+Lemma Rabs_n_min_m (m n : ℕ) : (m <= n)%nat -> | n - m | = n - m.
 Proof.
-  Take m, n : nat.
   Assume that (m <= n)%nat.
   It holds that (m <= n).
   We conclude that (| n - m | = n - m).
@@ -49,9 +51,8 @@ Qed.
 
 #[export] Hint Resolve Rabs_n_min_m : wp_reals.
 
-Lemma Rabs_m_lt_n : forall m n : ℕ, (m < n)%nat -> 1 <= | n - m |.
+Lemma Rabs_m_lt_n (m n : ℕ) : (m < n)%nat -> 1 <= | n - m |.
 Proof.
-  Take m, n : nat.
   Assume that (m < n)%nat.
   It holds that (m <= n).
   It holds that ( | n - m | = n - m).
@@ -64,25 +65,23 @@ Qed.
 
 #[export] Hint Resolve Rabs_m_lt_n : wp_reals.
 
-Lemma nat_not_equal_dist_larger_one : for all n m : ℕ, (n ≠ m) -> (1 ≤ | m - n |).
+Lemma nat_not_equal_dist_larger_one (n m : ℕ) : (n ≠ m) -> (1 ≤ | m - n |).
 Proof.
-  Take n, m : ℕ.
   Assume that (n ≠ m).
   assert (n > m ∨ n < m)%nat as i by (apply Nat.lt_gt_cases; auto).
   Because (i) either (n > m)%nat or (n < m)%nat holds.
   + Case (n > m)%nat.
     It holds that (| n - m | = | m - n | ).
     It holds that (1 <= | n - m |).
-    We conclude that (1 <= | m - n |).      
+    We conclude that (1 <= | m - n |).
   + Case (m > n)%nat.
     We conclude that (1 <= | m - n |).
 Qed.
 #[export] Hint Resolve nat_not_equal_dist_larger_one : wp_reals.
 
-Lemma nat_dist_larger_zero_not_equal :
-  forall n m : nat, 0 < | n - m | -> ~(n = m).
+Lemma nat_dist_larger_zero_not_equal (n m : nat) :
+  0 < | n - m | -> ~(n = m).
 Proof.
-Take n, m : nat.
 Assume that (0 <  | n - m | ).
 Either (n = m)%nat or (~(n= m))%nat.
 + Case (n = m)%nat.
@@ -93,10 +92,9 @@ Either (n = m)%nat or (~(n= m))%nat.
 Qed.
 #[export] Hint Resolve nat_dist_larger_zero_not_equal : wp_reals.
 
-Lemma nat_dist_less_than_one_iff_equal :
-  forall n m : ℕ, (n = m) <-> (| m - n | < 1).
+Lemma nat_dist_less_than_one_iff_equal (n m : ℕ) :
+  (n = m) <-> (| m - n | < 1).
 Proof.
-  Take n, m : nat.
   We show both directions.
   - We need to show that (n = m ⇨ |m - n| < 1).
     Assume that (n = m).
@@ -122,42 +120,34 @@ Variable X : Metric_Space.
 Coercion Base : Metric_Space >-> Sortclass.
 
 Definition is_accumulation_point (a : R) :=
-  for all ε : R, (ε > 0) ⇒
-    there exists n : nat, 0 < | n - a | < ε.
+  ∀ ε > 0, there exists n : nat, 0 < | n - a | < ε.
 
-Definition is_isolated_point (a : R) :=
-  there exists ε : R, (ε > 0) ∧
-    (for all n : nat, |n - a| = 0 ∨ (ε ≤ |n - a|)).
+Definition is_isolated_point (a : ℕ) :=
+  ∃ ε > 0, ∀ n ∈ nat, |n - a| = 0 ∨ (ε ≤ |n - a|).
 
 Definition limit_in_point (f : ℕ → X) (a : ℕ) (L : X) :=
- for all ε : R, (ε > 0) ⇒
-   there exists δ : R, (δ > 0) ∧
-     (for all n : nat,
-       (0 < |n - a| < δ) ⇒ (dist X (f n) L < ε)).
+  ∀ ε > 0, ∃ δ > 0, ∀ n ∈ nat,
+       (0 < |n - a| < δ) ⇒ (dist X (f n) L < ε).
 
 Definition is_continuous_in (f : ℕ → X) (a : ℕ) :=
   ((is_accumulation_point a) ∧ (limit_in_point f a (f a))) ∨ (is_isolated_point a).
 
-Theorem alt_char_continuity :
-  ∀ h : ℕ → X, ∀ a : ℕ, 
-    is_continuous_in h a ⇔ ∀ ε : R, ε > 0 ⇒ ∃ δ : R, (δ > 0) ∧ (∀ x : ℕ, 0 < | x - a | < δ ⇒ dist X (h(x)) (h(a)) < ε).
+Theorem alt_char_continuity (h : ℕ → X) (a : ℕ) :
+    is_continuous_in h a ⇔ ∀ ε > 0, ∃ δ > 0,
+      (∀ x ∈ ℕ, 0 < | x - a | < δ ⇒ dist X (h(x)) (h(a)) < ε).
 Proof.
-  Take h : (ℕ → X).
-  Take a : ℕ.
   We show both directions.
-  * We need to show that (is_continuous_in(h, a) ⇨ for all ε : ℝ,
-        ε > 0 ⇨ there exists δ : ℝ,
-          δ > 0 ∧ (for all x : ℕ,
-            0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε)).
+  * We need to show that (is_continuous_in(h, a) ⇨
+      ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
+        0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
     Assume that (is_continuous_in h a).
     Take ε : R.
     Assume that (ε > 0).
     Choose δ := (1/2).
-    We show both statements.
-    - We conclude that (δ > 0).
-    - We need to show that (for all x : nat,
-          0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
-      Take x : nat.
+    - Indeed, (δ > 0).
+    - We need to show that (∀ x ∈ ℕ,
+        0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
+      Take x ∈ nat.
       Assume that (0 < | x - a | < δ).
       Either (x = a) or (~(x=a)).
       + Case (x = a).
@@ -166,22 +156,17 @@ Proof.
       + Case (~(x = a)).
         It holds that (1 ≤ | x - a |).
         Contradiction.
-  * We need to show that ((for all ε : ℝ,
-      ε > 0 ⇨ there exists δ : ℝ,
-        δ > 0 ∧ (for all x : ℕ,
-          0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε)) ⇨ is_continuous_in(h, a)).
-    Assume that ((for all ε : ℝ,
-      ε > 0 ⇨ there exists δ : ℝ,
-        δ > 0 ∧ (for all x : ℕ,
-          0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε))).
+  * We need to show that ((∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
+      0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε) ⇨ is_continuous_in(h, a)).
+    Assume that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
+      0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
     We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
     It suffices to show that (is_isolated_point a).
     unfold is_isolated_point.
-    We need to show that (∃ ε : ℝ, ε > 0 ∧ (for all n : ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
+    We need to show that (∃ ε > 0, (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
     Choose ε := (1/2).
-    We show both statements.
-    - We conclude that (ε > 0).
-    - We need to show that (for all n : ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
+    - Indeed, (ε > 0).
+    - We need to show that (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
       Take n : nat.
       Either (n = a) or (~(n=a)).
       + Case (n = a).

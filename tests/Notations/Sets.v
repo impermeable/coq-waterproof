@@ -16,30 +16,37 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Util.MessagesToUser.
-Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Notations.Reals.
+Require Import Waterproof.Notations.Sets.
 
-(* Waterproof Enable Redirect Warnings. *)
+Open Scope nat_scope.
+Open Scope subset_scope.
 
-Waterproof Enable Redirect Feedback.
-Waterproof Enable Redirect Errors.
-
-(** Test whether enabling the hypothesis flag works.
-*)
-Waterproof Enable Hypothesis Help.
-
-Goal False.
-assert_is_true (get_print_hypothesis_flag ()).
+Goal ∀ x > 3, True.
 Abort.
 
-(** Test whether disabling the hypothesis flag works.
-*)
-Waterproof Disable Hypothesis Help.
-
-Goal False.
-assert_is_false (get_print_hypothesis_flag ()).
+Goal ∀ x ≥ 3, True.
 Abort.
 
+Local Parameter B : subset nat.
 
+Open Scope subset_scope.
+
+Goal ∀ x ∈ B, x = 0.
+Abort.
+
+Goal ∃ x ∈ B, x = 0.
+Abort.
+
+Require Import Coq.Reals.Reals.
+Open Scope R_scope.
+
+Goal ∀ x > 3, x = 5.
+Abort.
+
+Goal ∃ x ≥ 5, x = 7.
+Abort.
+
+(* Combine the coercion ... *)
+Goal ∀ x ∈ nat, Rplus x x = x.
+Abort.
