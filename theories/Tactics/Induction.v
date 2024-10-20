@@ -19,7 +19,9 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Util.Binders.
 Require Import Util.Constr.
+Require Import Util.Evars.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
@@ -37,6 +39,26 @@ Proof.
   reflexivity.
 Qed.
 
+Open Scope subset_scope.
+
+(**
+  The induction principle we would like to use
+  with sealed notations.
+*)
+Lemma induction_principle_elements {P : nat -> Prop} :
+    P 0 -> (∀ k ∈ nat, P k -> P (k + 1)) ->
+    ∀ k ∈ nat, P k.
+Proof.
+  intros H_base IH k k_in_nat.
+  induction k as [| k IHk].
+  - exact H_base.
+  - rewrite Sn_eq_nplus1.
+    apply IH.
+    + exact I.
+    + apply IHk.
+      exact I.
+Qed.
+
 (** * induction_without_hypothesis_naming
     Performs mathematical induction.
 
@@ -52,7 +74,42 @@ Qed.
 
 *)
 Ltac2 induction_without_hypothesis_naming (x: ident) :=
-  let introduce_trivial_hypothesis (y_hyp : constr) :=
+  lazy_match! Control.goal () with
+  | ∀ _ ∈ conv nat, _ =>
+      check_binder_warn (Control.goal ()) x false;
+      apply induction_principle_elements;
+      Control.focus 1 1 (fun () => apply NaturalInduction.Base.unwrap);
+      Control.focus 2 2 (fun () =>
+        let stmt :=
+          change_binder_name_under_seal (Control.goal ()) x in
+        change $stmt;
+        apply NaturalInduction.Step.unwrap)
+  | forall _ : nat, _ =>
+      check_binder_warn (Control.goal ()) x false;
+      intro $x;
+      let x_hyp := Control.hyp x in
+      let ih_x := Fresh.in_goal @_IH in
+      induction $x_hyp as [| $x $ih_x];
+      Control.focus 1 1 (fun () =>
+        apply NaturalInduction.Base.unwrap);
+      Control.focus 2 2 (fun () =>
+        rewrite Sn_eq_nplus1;
+        revert $ih_x;
+        revert $x;
+        apply NaturalInduction.Step.unwrap)
+  | _ =>
+    (* When x is a variable in the local context ... *)
+    match Control.case (fun () => Control.hyp x) with
+    | Val (x_hyp, _) =>
+      (* apply ordinary induction principle *)
+      induction $x_hyp; Control.enter (fun () => apply StateGoal.unwrap)
+    | Err exn =>
+      print (of_exn exn);
+      throw (Message.of_string "Cannot apply induction here")
+    end
+  end.
+
+  (*let introduce_trivial_hypothesis (y_hyp : constr) :=
     lazy_match! Control.goal () with
     | (?u ∈ conv nat -> _) =>
         if Constr.equal u y_hyp then
@@ -90,7 +147,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
     revert $ih_x;
     rewrite (Sn_eq_nplus1 $x_hyp); apply (NaturalInduction.Step.unwrap))
   | false => induction $x_hyp; Control.enter (fun () => apply StateGoal.unwrap)
-  end.
+  end.*)
 
 Ltac2 induction_without_hypothesis_naming' (x: ident) :=
   match Control.case (fun () => Control.hyp x) with

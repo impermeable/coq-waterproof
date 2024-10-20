@@ -245,17 +245,15 @@ Lemma elements_le_seq_of_max_pre (g : ℕ → ℕ) (n : ℕ) :
     (g n ≤ seq_of_max g n)%nat.
 Proof.
     We use induction on n.
-    - We first show the base case (g(0) ≤ seq_of_max(g, 0))%nat.
+    - We need to show that (g(0) ≤ seq_of_max(g, 0))%nat.
       We need to show that (g 0 ≤ g 0)%nat.
       We conclude that (g 0 ≤ g 0)%nat.
-    - We now show the induction step.
-      Assume that (g(n) <= seq_of_max g n)%nat.
-      We need to show that (g(n + 1) ≤
+    - We need to show that (g(S n) ≤
         (fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
           match l with
           | 0 => f(0)
           | S k => Nat.max(f(l), seq_of_max(f, k))
-          end)(g, n + 1))%nat.
+          end)(g, S n))%nat.
       It holds that (n + 1 = S n)%nat.
       It suffices to show that (g(n) ≤ seq_of_max(g, n))%nat.
       We conclude that (g(n) ≤ seq_of_max(g, n))%nat.
