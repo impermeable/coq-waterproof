@@ -139,7 +139,6 @@ Proof.
       It suffices to show that (g k = g 0)%nat.
       We conclude that (g k = g 0)%nat.
     - We now show the induction step.
-      Take l ∈ ℕ.
       Assume that ((k ≤ l) ⇨ (g k ≤ g l))%nat (IH).
       Assume that (k ≤ l + 1)%nat.
       destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].

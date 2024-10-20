@@ -147,7 +147,6 @@ tests/tactics/Unfold.v
 tests/tactics/Help.v
 
 ## Util
-tests/util/Binders.v
 tests/util/Evars.v
 tests/util/MessagesToUser.v
 tests/util/Assertions.v

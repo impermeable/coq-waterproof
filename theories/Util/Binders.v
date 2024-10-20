@@ -18,7 +18,6 @@
 
 From Ltac2 Require Import Ltac2.
 From Ltac2 Require Import Message.
-Require Import Notations.Sets.
 Require Import Util.MessagesToUser.
 
 Local Ltac2 concat_list (ls : message list) : message :=
@@ -101,56 +100,4 @@ Ltac2 check_binder_warn (expr : constr) (candidate_name) (exact_correspondence :
       warn (concat_list [of_string "Expected variable name ";  of_ident fresh_binder_name;
         of_string " instead of "; of_ident candidate_name;
         of_string "."])
-  end.
-
-(**
-If the constr [c] is of product type, then return a
-constr in which the binder name associated to the
-product is changed to [id]
-
-Arguments:
-  - [c : constr] The expression in which the binder
-    name should be changed
-  - [id : constr] The new binder name
-
-Returns:
-  - [constr] The new expression with the new binder name
-*)
-Ltac2 change_binder_name (c : constr) (id : ident) :=
-  match Constr.Unsafe.kind c with
-  | Constr.Unsafe.Prod a b =>
-      let bi := Constr.Binder.make (Some id) (Constr.Binder.type a) in
-      Constr.Unsafe.make (Constr.Unsafe.Prod bi b)
-  | _ => c
-  end.
-
-(**
-If the constr [c] is of sealed product type (the types
-that we use for the custom waterproof forall notation),
-then return a constr in which the binder name associated
-to the product is changed to [id]
-
-Arguments:
-  - [c : constr] The expression in which the binder
-    name should be changed
-  - [id : constr] The new binder name
-
-Returns:
-  - [constr] The new expression with the new binder name
-*)
-Ltac2 change_binder_name_under_seal (c : constr) (id : ident) :=
-  lazy_match! c with
-  | seal ?f ?d =>
-      let new_f :=
-        match Constr.Unsafe.kind f with
-        | Constr.Unsafe.Lambda a b =>
-          let stmt := change_binder_name b id in
-          Constr.Unsafe.make (Constr.Unsafe.Lambda a stmt)
-        | _ => f
-        end in
-      match Constr.Unsafe.check new_f with
-      | Val x => constr:(seal $new_f $d)
-      | Err exn => c
-      end
-  | _ => c
   end.

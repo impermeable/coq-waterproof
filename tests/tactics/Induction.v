@@ -23,9 +23,6 @@ Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.Assertions.
-Require Import Waterproof.Util.MessagesToUser.
-
-Waterproof Enable Redirect Feedback.
 
 (** Test 0: This should work fine *)
 Goal forall n : nat, (n = n).
@@ -45,9 +42,7 @@ Qed.
 Goal (0 = 0) -> forall n : nat, (n = n).
 Proof.
     intro n.
-    assert_feedback_with_string
-    (fun () => We use induction on k) Warning
-    "Expected variable name n instead of k.".
+    We use induction on k.
     - Fail We first show the base case (2 = 2).
       We first show the base case  (0 = 0).
       Fail We first show the base case (1 = 1).
@@ -78,7 +73,6 @@ We use induction on n.
 * We first show the base case (0 >= 0).
   We conclude that (0 >= 0).
 * We now show the induction step.
-  Take n ∈ nat.
   Assume that (n >= 0).
   We need to show that (n + 1 >= 0).
 Abort.
@@ -90,11 +84,11 @@ Abort.
 
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
+Take n ∈ nat.
 We use induction on n.
 * We first show the base case (0 >= 0).
   We conclude that (0 >= 0).
 * We now show the induction step.
-  Take n ∈ nat.
   Assume that (n >= 0).
   We need to show that (n + 1 >= 0).
 Abort.
@@ -108,7 +102,8 @@ Goal ∀ n ∈ nat, n >= 0.
 Proof.
 Take n : nat.
 We use induction on n.
-* We need to show that (0 ∈ nat -> 0 >= 0).
-  Control.shelve ().
-* We need to show that (S n ∈ nat -> S n >= 0).
+* We first show the base case (0 >= 0).
+  We conclude that (0 >= 0).
+* We now show the induction step.
+  Assume that (n >= 0).
 Abort.
