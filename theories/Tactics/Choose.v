@@ -66,13 +66,15 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     | [ |- ex ?a] =>
       check_binder_warn a s true;
       set ($s := $t);
+      unfold subset_type in $s;
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       match Constr.has_evar t with
       | true =>
         rename_blank_evars_in_term (Ident.to_string s) t;
         warn (concat_list [of_string "Please come back later to make a definitive choice for "; of_ident s; of_string "."; fnl ();
-        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."])
+        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."]);
+        assert_fix_earlier_warning ()
       | _ => ()
       end;
       exists $v;
@@ -151,6 +153,7 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       |  true =>
         rename_blank_evars_in_term name t;
         warn (concat_list [of_string "Please come back later to make a definite choice."]);
+        assert_fix_earlier_warning ();
         eexists $t
       |  false => exists $t
       end
