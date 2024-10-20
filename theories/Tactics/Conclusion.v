@@ -118,12 +118,14 @@ Local Ltac2 conclude (postpone : bool) :=
       (* Postpone solving current goal using evar *)
       (* (using admit gave confusing 'warning' ) *)
       let g := Control.goal () in
+      (* assert
       let evar_id := Fresh.in_goal @_Hpostpone in
       ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr g);
       let evar := Control.hyp evar_id in
-      exact $evar;
+      exact $evar;*)
       warn (concat_list [of_string "Please come back later to provide an actual proof of ";
-        of_constr g; of_string "."])
+        of_constr g; of_string "."]);
+      admit
     else
       (* Attempt to solve current goal *)
       let err_msg (g : constr) := concat_list

@@ -74,10 +74,11 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
       (* (using 'admit' would have shown a confusing warning message) *)
       assert $claim as $id;
       Control.focus 1 1 (fun () =>
-        let evar_id := Fresh.in_goal @_Hpostpone in
+        (* let evar_id := Fresh.in_goal @_Hpostpone in
         ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr claim);
         let evar := Control.hyp evar_id in
-        exact $evar
+        exact $evar*)
+        admit
         );
       warn (concat_list [of_string "Please come back later to provide an actual proof of ";
         of_constr claim; of_string "."])
