@@ -18,6 +18,8 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
 Require Import Util.Binders.
 Require Import Util.Constr.
@@ -98,15 +100,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
         revert $x;
         apply NaturalInduction.Step.unwrap)
   | _ =>
-    (* When x is a variable in the local context ... *)
-    match Control.case (fun () => Control.hyp x) with
-    | Val (x_hyp, _) =>
-      (* apply ordinary induction principle *)
-      induction $x_hyp; Control.enter (fun () => apply StateGoal.unwrap)
-    | Err exn =>
-      print (of_exn exn);
-      throw (Message.of_string "Cannot apply induction here")
-    end
+    throw (of_string "Cannot apply natural induction on this goal.")
   end.
 
 (* Quick fix for Wateproof editor / Coq lsp, where

@@ -91,10 +91,10 @@ Abort.
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
 Take n ∈ nat.
-We use induction on n.
-* We need to show that (0 >= 0).
+induction n.
+* change (0 >= 0).
   We conclude that (0 >= 0).
-* We need to show that (S n >= 0).
+* change (S n >= 0).
 Abort.
 
 (* Test 5: Induction on a variable quantified by
@@ -105,8 +105,8 @@ Abort.
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
 Take n : nat.
-We use induction on n.
-* We need to show that (0 ∈ nat -> 0 >= 0).
+induction n.
+* change (0 ∈ nat -> 0 >= 0).
   Control.shelve ().
-* We need to show that (S n ∈ nat -> S n >= 0).
+* change (S n ∈ nat -> S n >= 0).
 Abort.

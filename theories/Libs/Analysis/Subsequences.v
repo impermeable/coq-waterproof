@@ -244,7 +244,7 @@ Qed.
 Lemma elements_le_seq_of_max_pre (g : ℕ → ℕ) (n : ℕ) :
     (g n ≤ seq_of_max g n)%nat.
 Proof.
-    We use induction on n.
+    induction n.
     - We need to show that (g(0) ≤ seq_of_max(g, 0))%nat.
       We need to show that (g 0 ≤ g 0)%nat.
       We conclude that (g 0 ≤ g 0)%nat.
