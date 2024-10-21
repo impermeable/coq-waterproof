@@ -286,6 +286,7 @@ Proof.
   * We first show the base case (F(0%nat) = F(0%nat)).
     We conclude that (F(0) = F(0))%nat.
   * We now show the induction step.
+    intro k.
     intro H1.
     We conclude that (& F(k+1) = F(k) = F(0))%nat.
 Qed.
