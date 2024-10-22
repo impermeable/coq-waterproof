@@ -57,5 +57,4 @@ match check_binder_name unsealed_stmt @l false with
     of_string " instead of ";
     of_ident x]))
 end.
-
 Abort.

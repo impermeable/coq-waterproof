@@ -78,7 +78,7 @@ Qed.
 Ltac2 induction_without_hypothesis_naming (x: ident) :=
   lazy_match! Control.goal () with
   | ∀ _ ∈ conv nat, _ =>
-      check_binder_warn (Control.goal ()) x false;
+      check_binder_warn (Control.goal ()) x true;
       apply induction_principle_elements;
       Control.focus 1 1 (fun () => apply NaturalInduction.Base.unwrap);
       Control.focus 2 2 (fun () =>
@@ -87,7 +87,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
         change $stmt;
         apply NaturalInduction.Step.unwrap)
   | forall _ : nat, _ =>
-      check_binder_warn (Control.goal ()) x false;
+      check_binder_warn (Control.goal ()) x true;
       intro $x;
       let x_hyp := Control.hyp x in
       let ih_x := Fresh.in_goal @_IH in
