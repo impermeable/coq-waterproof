@@ -212,3 +212,23 @@ Ltac2 case (t:constr) :=
   end.
 
 Ltac2 Notation "Case" t(constr) := case t.
+
+(**
+  A goal to remind the reader to go back to an earlier
+  warning
+*)
+
+Inductive fix_earlier_warning : Prop :=.
+
+Notation "'Fix' 'an' 'earlier' 'warning'" := fix_earlier_warning.
+
+(**
+Intended for use in combination with magic:
+Adds a custom "False" as a shelved goal, so the
+proof cannot be finished without removing the warning.
+*)
+Ltac2 assert_fix_earlier_warning () :=
+  let w := Fresh.in_goal @__aux in
+  assert fix_earlier_warning as $w;
+  Control.focus 1 1 (fun () => admit);
+  clear $w.

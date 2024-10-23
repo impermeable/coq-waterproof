@@ -176,3 +176,14 @@ Proof.
     Indeed, (n ≤ S n)%nat.
   * We need to show that (INR(n) = 3).
 Abort.
+
+(** Test 17: Cannot close the goal after choosing a blank,
+  even if automation has already resolved the evar. *)
+Goal ∃ n < 1%nat, (n ≥ 0)%nat.
+Proof.
+Choose n := _.
+* Indeed, (n < 1)%nat.
+* We conclude that (n ≥ 0)%nat.
+Fail (). (* no such goal *)
+Fail Qed. (* there are goals given up *)
+Abort.
