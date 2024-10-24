@@ -69,7 +69,7 @@ Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
-(n = !?n)."]).
+(n = ?n?)."]).
 Abort.
 
 (** Test 6: Choose a named evar *)
@@ -85,7 +85,7 @@ Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
-(n = !?n)."]).
+(n = ?n?)."]).
     assert (?n = 0).
 Abort.
 
@@ -95,15 +95,15 @@ Goal exists n : nat, n + 1 = n + 1.
     assert_feedback_with_string (fun () => Choose n := (_ + _ + _)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
-(n = !?n + !?n0 + !?n1)."]).
-    change (!?n + !?n0 + !?n1 + 1 = !?n + !?n0 + !?n1 + 1).
+(n = ?n? + ?n0? + ?n1?)."]).
+    change (?n? + ?n0? + ?n1? + 1 = ?n? + ?n0? + ?n1? + 1).
 Abort.
 Require Import Waterproof.Util.Evars.
 (** Test 9: Choose a blank without specifying the name of the variable *)
 Goal exists n : nat, n + 1 = n + 1.
   assert_feedback_with_string (fun () => Choose (_)) Warning
 "Please come back later to make a definite choice.".
-  change (!?n + 1 = !?n + 1).
+  change (?n? + 1 = ?n? + 1).
 Abort.
 
 (** Test 10: Choose a blank if binder has no name *)

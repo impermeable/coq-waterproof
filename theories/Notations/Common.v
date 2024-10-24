@@ -71,5 +71,5 @@ Notation "'Derive' 'a' 'contradiction.'" := (False)
 Definition identity_seal {T : Type} (x : T) : T.
 exact x. Qed.
 
-Notation "! x" := (identity_seal x) (at level 1, x at next level,
-  format "! x").
+Notation "x ?" := (identity_seal x) (at level 1,
+  format "x ?").

@@ -115,7 +115,7 @@ Proof.
 intro H.
 assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a.".
-It holds that (forall b c : nat, !?a + b + c = 0) (i).
+It holds that (forall b c : nat, ?a? + b + c = 0) (i).
 Abort.
 
 (** Test 8 : use multiple placeholders as variable names *)
@@ -124,7 +124,7 @@ Proof.
 intro H.
 assert_feedback_with_string (fun () => Use a := _, b := _, c := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a, b, c.".
-It holds that (!?a + !?b + !?c = 0).
+It holds that (?a? + ?b? + ?c? = 0).
 Abort.
 
 (** Test 9 : use named placeholder: then renaming shouldn't happen *)
@@ -149,7 +149,7 @@ Proof.
 intro H.
 ltac1:(evar (e : nat)).
 Use a := (?e + _) in (H).
-It holds that (forall b : nat, ?e + !?a + b = 0) (i).
+It holds that (forall b : nat, ?e + ?a? + b = 0) (i).
 Abort.
 
 (** Test 12 : use an earlier introduced evar *)
@@ -157,9 +157,9 @@ Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
 intro H.
 Use a := _ in (H).
-It holds that (forall b : nat, !?a + b = 0) (i).
-Use b := !?a in (i).
-It holds that (!?a + !?a = 0).
+It holds that (forall b : nat, ?a? + b = 0) (i).
+Use b := ?a? in (i).
+It holds that (?a? + ?a? = 0).
 Abort.
 
 (** Test 13 : TODO: illustration of slightly strange behavior : was fixed with
@@ -198,9 +198,9 @@ Proof.
 intro H.
 assert_feedback_with_strings (fun () => Use x := _ in (H)) Warning
 ["Please come back to this line later to make a definite choice for x."].
-* We need to verify that (!?x ∈ B).
+* We need to verify that (?x? ∈ B).
   Control.shelve ().
-* It holds that (!?x = 0).
+* It holds that (?x? = 0).
 Abort.
 
 (** Test 16 : Specialize variables in a long statements
@@ -240,11 +240,11 @@ intro H.
 assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
   Warning
 ["Please come back to this line later to make a definite choice for x, y, z."].
-* We need to verify that (!?x ∈ B).
+* We need to verify that (?x? ∈ B).
   Control.shelve ().
-* We need to verify that (!?z ∈ D).
+* We need to verify that (?z? ∈ D).
   Control.shelve ().
-* It holds that (1 = 1 -> !?x = !?y + !?z).
+* It holds that (1 = 1 -> ?x? = ?y? + ?z?).
 Abort.
 
 (** Test 19: have a set that depends on an earlier set*)
@@ -367,8 +367,8 @@ Goal (∀ x > 2, x = 0) -> True.
 Proof.
 intro i.
 Use x := _ in (i).
-* Fail Indeed, (!?x > 2).
-  We need to verify that (!?x > 2).
+* Fail Indeed, (?x? > 2).
+  We need to verify that (?x? > 2).
   Control.shelve ().
 Abort.
 
