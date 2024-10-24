@@ -109,6 +109,7 @@ Proof.
     We need to show that
       (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (N₀ + k)%nat), maj_ss a N₀ (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (N₀ +k)%nat) (maj_ss a N₀ (i))).
+    We need to show that (a(n) ≤ (let (a0, _) := ii in a0)).
     clear _defeq.
     Obtain such an l. It holds that
       (is_lub (EUn (fun (k : ℕ) ↦ a (N₀ +k)%nat)) l).
@@ -118,6 +119,7 @@ Proof.
       and (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ l ≤ b) hold.
     It holds that (for all x : ℝ, EUn (fun k ↦ (a (N₀ + k)%nat), x) ⇨ x ≤ l).
     It holds that (N₀ + (n-N₀) = n)%nat.
+
     It suffices to show that (EUn (fun (k : ℕ) ↦ (a (N₀ + k)%nat)) (a n)).
     We need to show that (there exists k : ℕ, a n = a (N₀ + k)%nat).
     We need to show that (∃ k : ℕ, a n = a (N₀ + k)%nat).
@@ -256,6 +258,7 @@ Proof.
       Assume that (is_seq_acc_pt a x).
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
+      We need to show that (x ≤ proj1_sig (_,_,iii)).
       clear _defeq.
       Obtain such an l. simpl.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))

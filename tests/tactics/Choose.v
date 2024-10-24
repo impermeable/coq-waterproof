@@ -158,21 +158,19 @@ Proof.
 Abort.
 
 (** Test 15: Choose a natural number less than a number, but in R_scope *)
-(* TODO: the goal here becomes strange *)
 Goal ∃ n < 4%nat, INR(n) = 3.
 Proof.
   Choose n := 2%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (lt n (S (S n)))).
-    Indeed, ((n < S (S n))%nat).
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n < 4)%nat).
+    Indeed, ((n < 4)%nat).
   * We need to show that (INR(n) = 3).
 Abort.
 
 (** Test 16: Choose a natural number less than or equal to a number, but in R_scope *)
-(* TODO: the goal here becomes strange *)
 Goal ∃ n ≤ 4%nat, INR(n) = 3.
 Proof.
   Choose n := 3%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (le n ((S n)))).
-    Indeed, (n ≤ S n)%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n ≤ 4)%nat).
+    Indeed, (n ≤ 4)%nat.
   * We need to show that (INR(n) = 3).
 Abort.
