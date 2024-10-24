@@ -75,8 +75,8 @@ Proof.
   (fun () => Expand the definition of foo in (foo = 4))
 "Remove this line in the final version of your proof.")
   Info
-["result:
-  (0 = 4)"].
+["Result:";
+  "(0 = 4)"].
 Abort.
 
 (* Test 4: Unfold term in given statement that matches goal,
@@ -90,8 +90,8 @@ Proof.
   (fun () => Expand the definition of foo in (foo = 1))
 "Remove this line in the final version of your proof.")
   Info
-["replace line with:
-  We need to show that (0 = 1)."].
+["Replace line with:";
+  "We need to show that (0 = 1)."].
 Abort.
 
 (* Test 5: Unfold term in given statement that matches hypothesis,
@@ -105,8 +105,8 @@ Proof.
   (fun () => Expand the definition of foo in (foo = 0))
 "Remove this line in the final version of your proof.")
   Info
-["replace line with:
-  It holds that (0 = 0)."].
+["Replace line with:";
+  "It holds that (0 = 0)."].
 Abort.
 
 
