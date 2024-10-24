@@ -178,12 +178,14 @@ Proof.
 Abort.
 
 (** Test 17: Cannot close the goal after choosing a blank,
-  even if automation has already resolved the evar. *)
-Goal ∃ n < 1%nat, (n ≥ 0)%nat.
+  regardless of whether automation has already resolved the evar. *)
+Goal ∃ n < 1%nat, True.
 Proof.
 Choose n := _.
-* Indeed, (n < 1)%nat.
-* We conclude that (n ≥ 0)%nat.
+{ We need to verify that ((n < 1)%nat).
+  We conclude that (n < 1)%nat.
+}
+* We conclude that (True).
 Fail (). (* no such goal *)
 Fail Qed. (* there are goals given up *)
 Abort.

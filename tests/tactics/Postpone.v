@@ -64,3 +64,11 @@ Goal False.
   assert_feedback_with_string (fun () => By magic it suffices to show that (True)) Warning
 "Please come back later to prove that it suffices to show that True".
 Abort.
+
+(** Test 5: Cannot close proof after use of magic. *)
+Goal True.
+Proof.
+  By magic we conclude that (True).
+  Fail (). (* No remaining goals. *)
+  Fail Qed. (* Some goals given up. *)
+Abort.
