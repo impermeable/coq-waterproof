@@ -176,3 +176,18 @@ Proof.
     Indeed, (n ≤ S n)%nat.
   * We need to show that (INR(n) = 3).
 Abort.
+
+(** Test 17: Test notation in wrapper *)
+(* TODO: the goal here becomes strange *)
+Goal ∃ n ≤ 4, n = 3.
+Proof.
+  Choose n := 3.
+  let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s "(Add the following line to the proof:
+ {
+    We need to verify that (n ≤ 4).
+ }
+ or write:
+ { Indeed, (n ≤ 4).}
+ if no intermediary proof steps are required.)".
+Abort.

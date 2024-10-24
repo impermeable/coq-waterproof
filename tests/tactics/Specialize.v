@@ -358,4 +358,18 @@ Use y := 2%nat in (i).
   exact I.
 Qed.
 
+(** Test 25 : Test notation in wrapper. *)
+Goal (∀ y ≤ 3, y = 0) -> True.
+intro i.
+Use y := 2 in (i).
+let s := Message.to_string (Message.of_constr (Control.goal ())) in
+assert_string_equal s "(Add the following line to the proof:
+ {
+    We need to verify that (2 <= 3).
+ }
+ or write:
+ { Indeed, (2 <= 3).}
+ if no intermediary proof steps are required.)".
+Abort.
+
 Close Scope subset_scope.

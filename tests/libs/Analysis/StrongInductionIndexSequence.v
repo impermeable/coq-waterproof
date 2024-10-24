@@ -21,6 +21,7 @@ Require Import Waterproof.Libs.Analysis.StrongInductionIndexSequence.
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Notations.Sets.
+Require Import Waterproof.Util.Assertions.
 
 Close Scope R_scope.
 Open Scope nat_scope.
@@ -110,3 +111,14 @@ Define the index sequence n inductively.
     * We conclude that (candy_seq(n_kplus1) = sweet).
     * We conclude that (n(k) < n_kplus1)%nat.
 Qed.
+
+(* Test 4: Test notation in wrapper *)
+Goal
+  (∃ n : (nat → nat), (is_index_sequence n) ∧ (∀ k ∈ ℕ, candy_seq (n k) = sweet)).
+Proof.
+Define the index sequence n inductively.
+* Control.shelve ().
+* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s "(Add the following line to the proof:
+ * Take k ∈ ℕ and assume n(0),...,n(k) are defined.)".
+Abort.
