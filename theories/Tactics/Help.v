@@ -27,9 +27,8 @@ Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
 Require Import Notations.Sets.
-Open Scope subset_scope.
-
 Require Import Waterprove.
+Open Scope subset_scope.
 
 Local Ltac2 goal_impl_msg (premise: constr) :=
   concat_list [of_string "The goal is to show an implication (⇒).
