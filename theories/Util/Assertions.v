@@ -424,7 +424,8 @@ Ltac2 string_equal (s1:string) (s2:string) := string_equal_rec 0 s1 s2.
 Ltac2 assert_string_equal (s1:string) (s2:string) :=
   match string_equal s1 s2 with
     | true => print_success (of_string "Test passed: strings are equal")
-    | false => fail_test (of_string "Strings not equal")
+    | false => fail_test (concat_list [of_string "Strings not equal: Expected: ";
+    fnl (); of_string s1; fnl (); of_string "Got:"; fnl (); of_string s2])
   end.
 
 

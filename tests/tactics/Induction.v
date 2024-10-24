@@ -110,3 +110,20 @@ induction n.
   Control.shelve ().
 * change (S n ∈ nat -> S n >= 0).
 Abort.
+
+(* Test 6: test notation in wrapper *)
+Goal ∀ n ∈ nat, n >= 0.
+Proof.
+We use induction on n.
+* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s 
+ "(Add the following line to the proof:
+ 
+ - We first show the base case (0 >= 0).)".
+  Control.shelve ().
+* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s 
+ "(Add the following line to the proof:
+ 
+ - We now show the induction step.)".
+Abort.
