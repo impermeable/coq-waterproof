@@ -358,4 +358,16 @@ Use y := 2%nat in (i).
   exact I.
 Qed.
 
+(** Test 25 : Fail to close proof is blank is left in proof. *)
+Goal (∀ y ≤ 3%nat, True) -> True.
+Proof.
+  intro H.
+  Use y := _ in (H).
+  { Indeed, (?y <= 3)%nat. }
+  It holds that (True).
+  We conclude that (True).
+  Fail ().  (* No goals remaining. *)
+  Fail Qed. (* Cannot close proof. *)
+Abort.
+
 Close Scope subset_scope.
