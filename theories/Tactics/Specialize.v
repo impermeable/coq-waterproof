@@ -277,7 +277,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
           | None => Fresh.fresh (Fresh.Free.of_goal ()) @_aux_sp_
           | Some temp_id => Fresh.fresh (Fresh.Free.of_goal ()) temp_id
           end in
-          set ($aux_x := $c);
+          pose ($aux_x := $c);
           (i, aux_x)) var_choice_list in
       let wrapped_var_choice_list :=
         List.map (fun (i, aux_x) => (i, Control.hyp aux_x)) def_list in
