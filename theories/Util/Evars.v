@@ -19,6 +19,7 @@
 Require Export Ltac2.Ltac2.
 
 Require Import Waterproof.Waterproof.
+Require Import Waterproof.Notations.Common.
 
 Ltac2 @ external refine_goal_with_evar : string -> unit := "coq-waterproof" "refine_goal_with_evar_external".
 
@@ -28,4 +29,6 @@ Ltac2 rename_blank_evars_in_term (base_name : string) (x : constr) :=
   let evars := blank_evars_in_term x in
   let m := List.length evars in
   List.fold_left (fun _ ev => Control.new_goal ev) (evars) ();
-  Control.focus 2 (Int.add m 1) (fun () => refine_goal_with_evar base_name; Control.shelve()).
+  Control.focus 2 (Int.add m 1) (fun () =>
+    ltac1:(refine (identity_seal _));
+    refine_goal_with_evar base_name; Control.shelve()).
