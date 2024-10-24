@@ -110,19 +110,12 @@ Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
 (** Attempts to solve current goal.
 
   If argument [postpone] is [true], actually solving the goal is postponed.
-  The goal is shelved using an evar.
+  The goal is given up using admitted.
 *)
 Local Ltac2 conclude (postpone : bool) :=
   if postpone
     then
-      (* Postpone solving current goal using evar *)
-      (* (using admit gave confusing 'warning' ) *)
       let g := Control.goal () in
-      (* assert
-      let evar_id := Fresh.in_goal @_Hpostpone in
-      ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr g);
-      let evar := Control.hyp evar_id in
-      exact $evar;*)
       warn (concat_list [of_string "Please come back later to provide an actual proof of ";
         of_constr g; of_string "."]);
       admit

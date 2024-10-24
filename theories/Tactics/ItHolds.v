@@ -56,7 +56,7 @@ Local Ltac2 try_out_label (label : ident) :=
   identifier starting with '_H' is generated.
 
   Additionally, if argument [postpone] is [true], actually proving the claim is postponed.
-  The claim is asserted and the proof is shelved using an evar.
+  The claim is asserted and the proof is given up on using admit.
   *)
 Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):=
   let err_msg (g : constr) := concat_list
@@ -70,14 +70,8 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
   let claim := correct_type_by_wrapping claim in
   if postpone
     then
-      (* Assert claim and proof using shelved evar *)
-      (* (using 'admit' would have shown a confusing warning message) *)
       assert $claim as $id;
       Control.focus 1 1 (fun () =>
-        (* let evar_id := Fresh.in_goal @_Hpostpone in
-        ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr claim);
-        let evar := Control.hyp evar_id in
-        exact $evar*)
         admit
         );
       warn (concat_list [of_string "Please come back later to provide an actual proof of ";
@@ -216,7 +210,7 @@ Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))
 
 
 (** * By magic it holds that ... (...)
-  Asserts a claim and proves it using a shelved evar.
+  Asserts a claim and gives up on proof using admit.
 
   Arguments:
     - [label: ident option], optional name for the claim.
