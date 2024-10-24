@@ -119,6 +119,8 @@ Proof.
 Define the index sequence n inductively.
 * Control.shelve ().
 * let s := Message.to_string (Message.of_constr (Control.goal ())) in
-  assert_string_equal s "(Add the following line to the proof:
- * Take k ∈ ℕ and assume n(0),...,n(k) are defined.)".
+  assert_string_equal s 
+ "(Add the following line to the proof:
+ 
+ - Take k ∈ ℕ and assume n(0),...,n(k) are defined.)".
 Abort.

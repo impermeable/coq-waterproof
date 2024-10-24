@@ -223,8 +223,10 @@ Proof.
   intro x.
   Either (x < 0) or (x ≥ 0).
   let s := Message.to_string (Message.of_constr (Control.goal ())) in
-  assert_string_equal s "(Add the following line to the proof:
- * Case (x < 0).)".
+  assert_string_equal s 
+ "(Add the following line to the proof:
+ 
+ - Case (x < 0).)".
 Abort.
 
 Close Scope nat_scope.

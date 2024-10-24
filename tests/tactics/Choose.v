@@ -183,11 +183,16 @@ Goal ∃ n ≤ 4, n = 3.
 Proof.
   Choose n := 3.
   let s := Message.to_string (Message.of_constr (Control.goal ())) in
-  assert_string_equal s "(Add the following line to the proof:
- {
-    We need to verify that (n ≤ 4).
- }
+  assert_string_equal s 
+ "(Add the following line to the proof:
+ 
+ { Indeed, (n ≤ 4). }
+ 
  or write:
- { Indeed, (n ≤ 4).}
- if no intermediary proof steps are required.)".
+ 
+ { We need to verify that (n ≤ 4).
+ 
+ }
+ 
+ if intermediary proof steps are required.)".
 Abort.
