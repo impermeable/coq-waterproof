@@ -187,9 +187,10 @@ Goal (∀ n ∈ B, n = 0) -> True.
 Proof.
 intro H.
 Use n := 3 in (H).
-* We need to verify that (3 ∈ B).
+{ We need to verify that (3 ∈ B).
   Control.shelve ().
-* It holds that (3 = 0).
+}
+It holds that (3 = 0).
 Abort.
 
 (** Test 15 : Choose a blank for a variable in a set *)
@@ -359,9 +360,27 @@ Use y := 2%nat in (i).
   exact I.
 Qed.
 
+(** Test 25 : Test notation in wrapper. *)
+Goal (∀ y ≤ 3, y = 0) -> True.
+intro i.
+Use y := 2 in (i).
+let s := Message.to_string (Message.of_constr (Control.goal ())) in
+assert_string_equal s (String.concat ""
+ ["(Add the following line to the proof:
+ ";"
+ { Indeed, (2 <= 3). }
+ ";"
+ or write:
+ ";"
+ { We need to verify that (2 <= 3).
+ ";"
+ }
+ ";"
+ if intermediary proof steps are required.)"]).
+Abort.
 Close Scope R_scope.
 
-(** Test 25 : The automation shouldn't resolve the evars... *)
+(** Test 26 : The automation shouldn't resolve the evars... *)
 
 Waterproof Enable Automation RealsAndIntegers.
 
@@ -374,7 +393,7 @@ Use x := _ in (i).
   Control.shelve ().
 Abort.
 
-(** Test 26 : Fail to close proof is blank is left in proof. *)
+(** Test 27 : Fail to close proof is blank is left in proof. *)
 
 Goal (∀ y ≥ 0, True) -> True.
 Proof.

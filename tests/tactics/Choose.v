@@ -177,9 +177,29 @@ Proof.
   * We need to show that (INR(n) = 3).
 Abort.
 
+(** Test 17: Test notation in wrapper *)
+(* TODO: the goal here becomes strange *)
+Goal ∃ n ≤ 4, n = 3.
+Proof.
+  Choose n := 3.
+  let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s (String.concat ""
+ ["(Add the following line to the proof:
+ ";"
+ { Indeed, (n ≤ 4). }
+ ";"
+ or write:
+ ";"
+ { We need to verify that (n ≤ 4).
+ ";"
+ }
+ ";"
+ if intermediary proof steps are required.)"]).
+Abort.
+
 Close Scope R_scope.
 Open Scope nat_scope.
-(** Test 17: Cannot close the goal after choosing a blank,
+(** Test 18: Cannot close the goal after choosing a blank,
   regardless of whether automation has already resolved the evar. *)
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -196,7 +216,7 @@ Abort.
 Close Scope R_scope.
 Open Scope nat_scope.
 
-(** Test 18 : The automation shouldn't resolve the evars *)
+(** Test 19 : The automation shouldn't resolve the evars *)
 
 Goal ∃ n < 1, 3 = n.
 Proof.

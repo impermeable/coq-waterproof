@@ -340,7 +340,9 @@ Local Ltac2 inductive_def_index_seq_n () :=
   let apply_induction_principle (p : constr) :=
     let q := eval unfold id in (fun l : nat => $p id l) in
     match Control.case (fun () => apply (@classic_strong_ind_index_seq_with_prop_with_element_notation $q)) with
-    | Val _ => Control.focus 2 2 (fun () => apply StrongIndIndxSeq.unwrap)
+    | Val _ =>
+      Control.focus 1 1 (fun () => apply StrongIndIndxSeq.Base.unwrap);
+      Control.focus 2 2 (fun () => apply StrongIndIndxSeq.Step.unwrap)
     | Err exn => throw (of_string "The index sequence cannot be defined using this technique.")
     end in
   lazy_match! goal with
@@ -356,9 +358,18 @@ Ltac2 Notation "Define" "the" "index" "sequence" "n" "inductively" :=
 
 Local Ltac2 take_first_k () :=
   lazy_match! goal with
-  | [|- StrongIndIndxSeq.Wrapper _] => apply StrongIndIndxSeq.wrap; intros k n
+  | [|- StrongIndIndxSeq.Step.Wrapper _] => apply StrongIndIndxSeq.Step.wrap; intros k n
   | [|- _] => throw (of_string "No need to introduce first k elements of sequence n.")
   end.
 
-Ltac2 Notation "Take" "k" "∈" "ℕ" "and" "assume" "n(0),...,n(k)" "are" "defined" :=
+Local Ltac2 strong_ind_indx_base () :=
+  lazy_match! goal with
+  | [|- StrongIndIndxSeq.Base.Wrapper _] => apply StrongIndIndxSeq.Base.wrap
+  | [|- _] => throw (of_string "No need to define n_0.")
+  end.
+
+Ltac2 Notation "We" "first" "define" "n_0" :=
+  strong_ind_indx_base ().
+
+Ltac2 Notation "Take" "k" "∈" "ℕ" "and" "assume" "n_0,...,n_k" "are" "defined" :=
   take_first_k ().
