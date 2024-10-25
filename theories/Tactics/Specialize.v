@@ -291,7 +291,8 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
       | true => ()
       | false => warn (concat_list (
           [of_string "Please come back to this line later to make a definite choice for ";
-            _of_idents evars; of_string "."]))
+            _of_idents evars; of_string "."]));
+          assert_fix_earlier_warning ()
       end;
       (* Rename the blank evars in the terms supplied by the user,
         in such a way that the base name is derived from the binder name. *)
@@ -447,7 +448,8 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
   | true => ()
   | false => warn (concat_list (
       [of_string "Please come back to this line later to make a definite choice for ";
-        _of_idents evars; of_string "."]))
+        _of_idents evars; of_string "."]));
+      assert_fix_earlier_warning ()
   end;
   lazy_match! statement with
     | _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)

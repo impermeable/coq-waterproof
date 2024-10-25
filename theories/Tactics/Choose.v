@@ -66,13 +66,15 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     | [ |- ex ?a] =>
       check_binder_warn a s true;
       pose ($s := $t);
+      unfold subset_type in $s;
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       match Constr.has_evar t with
       | true =>
         rename_blank_evars_in_term (Ident.to_string s) t;
         warn (concat_list [of_string "Please come back later to make a definitive choice for "; of_ident s; of_string "."; fnl ();
-        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."])
+        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."]);
+        assert_fix_earlier_warning ()
       | _ => ()
       end;
       exists $v;
@@ -87,34 +89,6 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
     Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
-  (* let v := Control.hyp s in
-  lazy_match! (Control.goal ()) with
-  | (?cond /\ _) =>
-    match! cond  with
-    | ?predicate ?var =>
-      (* Check variable *)
-      if Bool.and (constr_is_ident var s) (constr_does_not_contain_ident predicate s) then
-        split; Control.enter (fun () => apply StateGoal.unwrap)
-      else
-        match! cond with
-        | ?other_pred ?var_1 ?other_arg =>
-            if Bool.and (constr_is_ident var_1 s)
-              (Bool.and (constr_does_not_contain_ident other_pred s)
-                        (constr_does_not_contain_ident other_arg s)) then
-              split; Control.enter (fun () => apply StateGoal.unwrap)
-            else
-              ()
-        | _ => ()
-      end
-    | _ =>
-      (* case forall but not followed by implication
-          from a membership of a set*)
-      ()
-    end
-  | _ =>
-    (* case forall but not followed by implication *)
-    ()
-  end.*)
 
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in
@@ -151,6 +125,7 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       |  true =>
         rename_blank_evars_in_term name t;
         warn (concat_list [of_string "Please come back later to make a definite choice."]);
+        assert_fix_earlier_warning ();
         eexists $t
       |  false => exists $t
       end

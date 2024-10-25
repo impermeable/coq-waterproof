@@ -23,6 +23,7 @@ Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Util.Assertions.
 Require Import Waterproof.Util.MessagesToUser.
+Require Import Waterproof.Notations.Common.
 
 Waterproof Enable Redirect Feedback.
 
@@ -114,7 +115,7 @@ Proof.
 intro H.
 assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a.".
-It holds that (forall b c : nat, ?a + b + c = 0) (i).
+It holds that (forall b c : nat, ?a? + b + c = 0) (i).
 Abort.
 
 (** Test 8 : use multiple placeholders as variable names *)
@@ -123,7 +124,7 @@ Proof.
 intro H.
 assert_feedback_with_string (fun () => Use a := _, b := _, c := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a, b, c.".
-It holds that (?a + ?b + ?c = 0).
+It holds that (?a? + ?b? + ?c? = 0).
 Abort.
 
 (** Test 9 : use named placeholder: then renaming shouldn't happen *)
@@ -148,7 +149,7 @@ Proof.
 intro H.
 ltac1:(evar (e : nat)).
 Use a := (?e + _) in (H).
-It holds that (forall b : nat, ?e + ?a + b = 0) (i).
+It holds that (forall b : nat, ?e + ?a? + b = 0) (i).
 Abort.
 
 (** Test 12 : use an earlier introduced evar *)
@@ -156,9 +157,9 @@ Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
 intro H.
 Use a := _ in (H).
-It holds that (forall b : nat, ?a + b = 0) (i).
-Use b := ?a in (i).
-It holds that (?a + ?a = 0).
+It holds that (forall b : nat, ?a? + b = 0) (i).
+Use b := ?a? in (i).
+It holds that (?a? + ?a? = 0).
 Abort.
 
 (** Test 13 : TODO: illustration of slightly strange behavior : was fixed with
@@ -186,9 +187,10 @@ Goal (∀ n ∈ B, n = 0) -> True.
 Proof.
 intro H.
 Use n := 3 in (H).
-* We need to verify that (3 ∈ B).
+{ We need to verify that (3 ∈ B).
   Control.shelve ().
-* It holds that (3 = 0).
+}
+It holds that (3 = 0).
 Abort.
 
 (** Test 15 : Choose a blank for a variable in a set *)
@@ -197,9 +199,9 @@ Proof.
 intro H.
 assert_feedback_with_strings (fun () => Use x := _ in (H)) Warning
 ["Please come back to this line later to make a definite choice for x."].
-* We need to verify that (?x ∈ B).
+* We need to verify that (?x? ∈ B).
   Control.shelve ().
-* It holds that (?x = 0).
+* It holds that (?x? = 0).
 Abort.
 
 (** Test 16 : Specialize variables in a long statements
@@ -239,11 +241,11 @@ intro H.
 assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
   Warning
 ["Please come back to this line later to make a definite choice for x, y, z."].
-* We need to verify that (?x ∈ B).
+* We need to verify that (?x? ∈ B).
   Control.shelve ().
-* We need to verify that (?z ∈ D).
+* We need to verify that (?z? ∈ D).
   Control.shelve ().
-* It holds that (1 = 1 -> ?x = ?y + ?z).
+* It holds that (1 = 1 -> ?x? = ?y? + ?z?).
 Abort.
 
 (** Test 19: have a set that depends on an earlier set*)
@@ -357,5 +359,51 @@ Use y := 2%nat in (i).
 * It holds that (INR 2 = 0).
   exact I.
 Qed.
+
+(** Test 25 : Test notation in wrapper. *)
+Goal (∀ y ≤ 3, y = 0) -> True.
+intro i.
+Use y := 2 in (i).
+let s := Message.to_string (Message.of_constr (Control.goal ())) in
+assert_string_equal s (String.concat ""
+ ["(Add the following line to the proof:
+ ";"
+ { Indeed, (2 <= 3). }
+ ";"
+ or write:
+ ";"
+ { We need to verify that (2 <= 3).
+ ";"
+ }
+ ";"
+ if intermediary proof steps are required.)"]).
+Abort.
+Close Scope R_scope.
+
+(** Test 26 : The automation shouldn't resolve the evars... *)
+
+Waterproof Enable Automation RealsAndIntegers.
+
+Goal (∀ x > 2, x = 0) -> True.
+Proof.
+intro i.
+Use x := _ in (i).
+* Fail Indeed, (?x? > 2).
+  We need to verify that (?x? > 2).
+  Control.shelve ().
+Abort.
+
+(** Test 27 : Fail to close proof is blank is left in proof. *)
+
+Goal (∀ y ≥ 0, True) -> True.
+Proof.
+  intro H.
+  Use y := _ in (H).
+  { Indeed, ((?y? >= 0)). }
+  It holds that (True).
+  We conclude that (True).
+  Fail ().  (* No goals remaining. *)
+  Fail Qed. (* Cannot close proof. *)
+Abort.
 
 Close Scope subset_scope.
