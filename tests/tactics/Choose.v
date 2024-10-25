@@ -179,14 +179,30 @@ Abort.
 
 Close Scope R_scope.
 Open Scope nat_scope.
+(** Test 17: Cannot close the goal after choosing a blank,
+  regardless of whether automation has already resolved the evar. *)
 
-(** Test 17 : The automation shouldn't resolve the evars *)
+Waterproof Enable Automation RealsAndIntegers.
 
-Goal ∃ n ≥ 0, 3 = n.
+Goal ∃ n ≥ 0, True.
 Proof.
 Choose n := _.
-* Fail Indeed, (n ≥ 0).
-  We need to verify that (n ≥ 0).
+{ Indeed, (n ≥ 0). }
+* We conclude that (True).
+Fail (). (* no such goal *)
+Fail Qed. (* there are goals given up *)
+Abort.
+
+Close Scope R_scope.
+Open Scope nat_scope.
+
+(** Test 18 : The automation shouldn't resolve the evars *)
+
+Goal ∃ n < 1, 3 = n.
+Proof.
+Choose n := _.
+* Fail Indeed, (n < 1).
+  We need to verify that (n < 1).
   Control.shelve ().
 * We need to show that (3 = n).
   Fail We conclude that (3 = n).

@@ -359,9 +359,11 @@ Use y := 2%nat in (i).
   exact I.
 Qed.
 
+Close Scope R_scope.
+
 (** Test 25 : The automation shouldn't resolve the evars... *)
 
-Close Scope R_scope.
+Waterproof Enable Automation RealsAndIntegers.
 
 Goal (∀ x > 2, x = 0) -> True.
 Proof.
@@ -370,6 +372,19 @@ Use x := _ in (i).
 * Fail Indeed, (?x? > 2).
   We need to verify that (?x? > 2).
   Control.shelve ().
+Abort.
+
+(** Test 26 : Fail to close proof is blank is left in proof. *)
+
+Goal (∀ y ≥ 0, True) -> True.
+Proof.
+  intro H.
+  Use y := _ in (H).
+  { Indeed, ((?y? >= 0)). }
+  It holds that (True).
+  We conclude that (True).
+  Fail ().  (* No goals remaining. *)
+  Fail Qed. (* Cannot close proof. *)
 Abort.
 
 Close Scope subset_scope.
