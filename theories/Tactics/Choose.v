@@ -65,7 +65,7 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
   lazy_match! goal with
     | [ |- ex ?a] =>
       check_binder_warn a s true;
-      set ($s := $t);
+      pose ($s := $t);
       unfold subset_type in $s;
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
@@ -89,34 +89,6 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
     Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
-  (* let v := Control.hyp s in
-  lazy_match! (Control.goal ()) with
-  | (?cond /\ _) =>
-    match! cond  with
-    | ?predicate ?var =>
-      (* Check variable *)
-      if Bool.and (constr_is_ident var s) (constr_does_not_contain_ident predicate s) then
-        split; Control.enter (fun () => apply StateGoal.unwrap)
-      else
-        match! cond with
-        | ?other_pred ?var_1 ?other_arg =>
-            if Bool.and (constr_is_ident var_1 s)
-              (Bool.and (constr_does_not_contain_ident other_pred s)
-                        (constr_does_not_contain_ident other_arg s)) then
-              split; Control.enter (fun () => apply StateGoal.unwrap)
-            else
-              ()
-        | _ => ()
-      end
-    | _ =>
-      (* case forall but not followed by implication
-          from a membership of a set*)
-      ()
-    end
-  | _ =>
-    (* case forall but not followed by implication *)
-    ()
-  end.*)
 
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in

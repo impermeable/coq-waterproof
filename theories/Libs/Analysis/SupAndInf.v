@@ -767,6 +767,7 @@ Proof.
     We need to show that (∀ ε > 0,
       there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
+    We need to show that (∀ ε > 0, ∃ k, a(k) > (let (a0, _) := lub_a_prf in a0) - ε).
     clear _defeq. Obtain such an l.
     Take ε > 0.
     We claim that (is_sup (EUn a) l).
@@ -779,6 +780,7 @@ Proof.
     It holds that (there exists n : ℕ , y = a n).
     Obtain such an n.
     Choose k := n.
+    simpl.
     We need to show that (l - ε < a n).
     We conclude that (& l - ε < y = a n).
 Qed.
