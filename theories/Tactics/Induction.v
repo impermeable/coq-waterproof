@@ -18,8 +18,12 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
+Require Import Util.Binders.
 Require Import Util.Constr.
+Require Import Util.Evars.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
@@ -37,6 +41,26 @@ Proof.
   reflexivity.
 Qed.
 
+Open Scope subset_scope.
+
+(**
+  The induction principle we would like to use
+  with sealed notations.
+*)
+Lemma induction_principle_elements {P : nat -> Prop} :
+    P 0 -> (∀ k ∈ nat, P k -> P (k + 1)) ->
+    ∀ k ∈ nat, P k.
+Proof.
+  intros H_base IH k k_in_nat.
+  induction k as [| k IHk].
+  - exact H_base.
+  - rewrite Sn_eq_nplus1.
+    apply IH.
+    + exact I.
+    + apply IHk.
+      exact I.
+Qed.
+
 (** * induction_without_hypothesis_naming
     Performs mathematical induction.
 
@@ -52,88 +76,33 @@ Qed.
 
 *)
 Ltac2 induction_without_hypothesis_naming (x: ident) :=
-  let introduce_trivial_hypothesis (y_hyp : constr) :=
-    lazy_match! Control.goal () with
-    | (?u ∈ conv nat -> _) =>
-        if Constr.equal u y_hyp then
-          let w := Fresh.in_goal @_H in
-          intro $w
-        else ()
-    | _ => ()
-    end in
-  match Control.case (fun () => Control.hyp x) with
-    | Val x => ()
-    | Err _ =>
-        intros $x;
-        let x_hyp := Control.hyp x in
-        let _ := introduce_trivial_hypothesis x_hyp in ()
-  end;
-  let x_hyp := Control.hyp x in
-  let type_x := (get_value_of_hyp x_hyp) in
-  match (check_constr_equal type_x constr:(nat)) with
-  | true => let ih_x := Fresh.in_goal @_IH in
-    induction $x_hyp as [ | $x $ih_x];
-    Control.focus 1 1 (fun () =>
-      introduce_trivial_hypothesis constr:(0);
-      apply (NaturalInduction.Base.unwrap));
-    Control.focus 2 2 (fun () =>
-    let x_hyp := Control.hyp x in
-    let ih_hyp := Control.hyp ih_x in
-    lazy_match! Constr.type ih_hyp with
-    | (?u ∈ conv nat -> _) =>
-        if Constr.equal u x_hyp then
-          specialize ($ih_hyp I)
-        else ()
-    | _ => ()
-    end;
-    introduce_trivial_hypothesis constr:(S $x_hyp);
-    revert $ih_x;
-    rewrite (Sn_eq_nplus1 $x_hyp); apply (NaturalInduction.Step.unwrap))
-  | false => induction $x_hyp; Control.enter (fun () => apply StateGoal.unwrap)
+  lazy_match! Control.goal () with
+  | ∀ _ ∈ conv nat, _ =>
+      check_binder_warn (Control.goal ()) x true;
+      apply induction_principle_elements;
+      Control.focus 1 1 (fun () => apply NaturalInduction.Base.unwrap);
+      Control.focus 2 2 (fun () =>
+        let stmt :=
+          change_binder_name_under_seal (Control.goal ()) x in
+        change $stmt;
+        apply NaturalInduction.Step.unwrap)
+  | forall _ : nat, _ =>
+      check_binder_warn (Control.goal ()) x true;
+      intro $x;
+      let x_hyp := Control.hyp x in
+      let ih_x := Fresh.in_goal @_IH in
+      induction $x_hyp as [| $x $ih_x];
+      Control.focus 1 1 (fun () =>
+        apply NaturalInduction.Base.unwrap);
+      Control.focus 2 2 (fun () =>
+        rewrite Sn_eq_nplus1;
+        revert $ih_x;
+        revert $x;
+        apply NaturalInduction.Step.unwrap)
+  | _ =>
+    throw (of_string "Cannot apply natural induction on this goal.")
   end.
 
-Ltac2 induction_without_hypothesis_naming' (x: ident) :=
-  match Control.case (fun () => Control.hyp x) with
-    | Val x => ()
-    | Err _ => intros $x
-  end;
-  let x_hyp := Control.hyp x in
-  let type_x := (get_value_of_hyp x_hyp) in
-  (* possibly introduce the trivial hypothesis that arises from an original
-    goal of the form ∀ x ∈ ..., ... (rather than ∀ x : ..., ...) *)
-  let introduce_trivial_hypothesis (y : ident) :=
-    let y_hyp := Control.hyp y in
-    lazy_match! Control.goal () with
-    | (?u ∈ conv nat) =>
-        if Constr.equal u y_hyp then
-          let w := Fresh.in_goal @_H in
-          intro $w; true
-        else false
-    | _ => false
-    end in
-  match (Constr.equal type_x constr:(nat)) with
-    | true => let ih_x := Fresh.in_goal @_IH in
-      induction $x_hyp as [ | $x $ih_x];
-      (* With the first goal ... *)
-      Control.focus 1 1 (fun () =>
-        lazy_match! Control.goal () with
-        | (0 ∈ conv nat -> _) =>
-          let w := Fresh.in_goal @_H in
-          intro $w;
-          Std.clear [w]
-        | _ => ()
-        end;
-        apply (NaturalInduction.Base.unwrap));
-      (* With the second goal ... *)
-      Control.focus 2 2 (fun () =>
-        let ih_hyp := Control.hyp ih_x in
-        if (introduce_trivial_hypothesis x) then
-          specialize ($ih_hyp I)
-        else ();
-        revert $ih_x; rewrite (Sn_eq_nplus1 $x_hyp);
-        apply (NaturalInduction.Step.unwrap))
-    | false => induction $x_hyp; Control.enter (fun () => apply StateGoal.unwrap)
-  end.
 (* Quick fix for Wateproof editor / Coq lsp, where
   [We use induction on
 

@@ -67,3 +67,9 @@ Notation "¬ x" := (~x) (at level 75, right associativity) : type_scope.
 
 Notation "'Derive' 'a' 'contradiction.'" := (False)
   (only printing).
+
+Definition identity_seal {T : Type} (x : T) : T.
+exact x. Qed.
+
+Notation "x ?" := (identity_seal x) (at level 1,
+  format "x ?").
