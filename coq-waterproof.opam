@@ -1,9 +1,10 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "2.1.1+8.17"
+version: "2.2.0+8.17"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
+  "Pim Otte"
   "Balthazar Pathiachvili"
   "Cosmin Manea"
   "Lulof Pirée"
