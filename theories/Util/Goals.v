@@ -151,19 +151,36 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' '('
 
 Module StrongIndIndxSeq.
 
-  Private Inductive Wrapper (G : Type) : Type :=
+  Module Base.
+    Private Inductive Wrapper (G : Type) : Type :=
     | wrap : G -> Wrapper G.
 
-  Definition unwrap (G : Type) : Wrapper G -> G :=
-    fun x => match x with wrap _ y => y end.
+    Definition unwrap (G : Type) : Wrapper G -> G :=
+      fun x => match x with wrap _ y => y end.
+  End Base.
+
+  Module Step.
+    Private Inductive Wrapper (G : Type) : Type :=
+      | wrap : G -> Wrapper G.
+
+    Definition unwrap (G : Type) : Wrapper G -> G :=
+      fun x => match x with wrap _ y => y end.
+  End Step.
 
 End StrongIndIndxSeq.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'Take' 'k' '∈' 'ℕ' 'and' 'assume' 'n(0),...,n(k)' 'are' 'defined.'" :=
-  (StrongIndIndxSeq.Wrapper _) (
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'first' 'define' 'n_0' '.'" :=
+  (StrongIndIndxSeq.Base.Wrapper _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  Take  k  ∈  ℕ  and  assume  n(0),...,n(k)  are  defined."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  We  first  define  n_0 ."
+  ).
+
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'Take' 'k' '∈' 'ℕ' 'and' 'assume' 'n_0,...,n_k' 'are' 'defined.'" :=
+  (StrongIndIndxSeq.Step.Wrapper _) (
+    at level 99,
+    only printing,
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  Take  k  ∈  ℕ  and  assume  n_0,...,n_k  are  defined."
   ).
 
 
@@ -185,7 +202,8 @@ Ltac2 panic_if_goal_wrapped () :=
     | [|- VerifyGoal.Wrapper _]            => raise_goal_wrapped_error ()
     | [|- StateHyp.Wrapper _ _ _]          => raise_goal_wrapped_error ()
     | [|- ByContradiction.Wrapper _ _]     => raise_goal_wrapped_error ()
-    | [|- StrongIndIndxSeq.Wrapper _]      => raise_goal_wrapped_error ()
+    | [|- StrongIndIndxSeq.Base.Wrapper _]      => raise_goal_wrapped_error ()
+    | [|- StrongIndIndxSeq.Step.Wrapper _]      => raise_goal_wrapped_error ()
     | [|- _] => ()
   end.
 

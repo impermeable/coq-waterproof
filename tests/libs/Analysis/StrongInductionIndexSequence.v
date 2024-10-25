@@ -33,9 +33,10 @@ Open Scope subset_scope.
 Goal (∃ n : (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
 Proof.
   Define the index sequence n inductively.
-  - pose (n_0 := 0); exists n_0.
+  - We first define n_0.
+    pose (n_0 := 0); exists n_0.
     Control.shelve ().
-  - Take k ∈ ℕ and assume n(0),...,n(k) are defined.
+  - Take k ∈ ℕ and assume n_0,...,n_k are defined.
     intros H1 H2.
     pose (n_kplus1 := 0); exists n_kplus1.
     split.
@@ -48,12 +49,13 @@ Require Import Waterproof.Tactics.
 Goal (∃ n : (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
 Proof.
   Define the index sequence n inductively.
-  - Choose n_0 := 0.
+  - We first define n_0.
+    Choose n_0 := 0.
     + We need to verify that (n_0 ∈ nat).
       Control.shelve ().
     + We need to show that (Q n_0).
       Control.shelve ().
-  - Take k ∈ ℕ and assume n(0),...,n(k) are defined.
+  - Take k ∈ ℕ and assume n_0,...,n_k are defined.
     Assume that (∀ l ≤ k, Q (n l)).
     Assume that (∀ l < k, n l < n (l + 1)).
     Choose n_kplus1 := 0.
@@ -92,13 +94,14 @@ Goal
   (∃ n : (nat → nat), (is_index_sequence n) ∧ (∀ k ∈ ℕ, candy_seq (n k) = sweet)).
 Proof.
 Define the index sequence n inductively.
-- By (infinitely_many_sweet) it holds that
+- We first define n_0.
+  By (infinitely_many_sweet) it holds that
     (∃ m : ℕ, (m ≥ 0)%nat ∧ candy_seq(m) = sweet).
   Obtain such an m.
   Choose n_0 := m.
   + Indeed, (n_0 ∈ ℕ).
   + We conclude that (candy_seq(n_0) = sweet).
-- Take k ∈ ℕ and assume n(0),...,n(k) are defined.
+- Take k ∈ ℕ and assume n_0,...,n_k are defined.
   Assume that (∀ l ≤ k, candy_seq(n(l)) = sweet).
   Assume that (∀ l < k, (n(l) < n(l+1))%nat).
   By (infinitely_many_sweet) it holds that
@@ -117,10 +120,14 @@ Goal
   (∃ n : (nat → nat), (is_index_sequence n) ∧ (∀ k ∈ ℕ, candy_seq (n k) = sweet)).
 Proof.
 Define the index sequence n inductively.
-* Control.shelve ().
 * let s := Message.to_string (Message.of_constr (Control.goal ())) in
-  assert_string_equal s 
+  assert_string_equal s (String.concat "" ["(Add the following line to the proof:
+ ";"
+ - We first define n_0.)"]);
+  Control.shelve ().
+* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s (String.concat "" [
  "(Add the following line to the proof:
- 
- - Take k ∈ ℕ and assume n(0),...,n(k) are defined.)".
+ ";"
+ - Take k ∈ ℕ and assume n_0,...,n_k are defined.)"]).
 Abort.
