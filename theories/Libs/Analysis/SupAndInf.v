@@ -140,7 +140,9 @@ Proof.
         ∀ L ∈ ℝ, L is an upper bound for A ⇒ M ≤ L).
       We show both statements.
       + We conclude that (M is an upper bound for A).
-      + We conclude that (∀ L ∈ ℝ, L is an upper bound for A ⇒ M ≤ L).
+      + We need to show that (∀ L ∈ ℝ, L is an upper bound for A ⇒ M ≤ L).
+        Take L ∈ ℝ.
+        We conclude that (L is an upper bound for A ⇒ M ≤ L).
 Qed.
 
 Lemma R_complete_unsealed : ∀ (A : ℝ → Prop), ∀ (a : ℝ),

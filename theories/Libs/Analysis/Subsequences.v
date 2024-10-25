@@ -32,6 +32,7 @@ Require Import Chains.
 Require Import Tactics.
 
 Require Import Waterprove.
+Open Scope subset_scope.
 
 Waterproof Enable Automation RealsAndIntegers.
 

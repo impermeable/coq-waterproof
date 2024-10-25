@@ -64,24 +64,24 @@ Ltac2 unfold_in_statement (unfold_method: constr -> constr)
       match Constr.equal g statement with
       | false => Control.zero Inner
       | true =>
+        print (of_string "Replace line with:");
         let msg (unfolded : constr) := concat_list
-          [of_string "replace line with:
-  We need to show that "; of_constr unfolded; of_string "."] in
+          [of_string "We need to show that "; of_constr unfolded; of_string "."] in
         print (msg unfolded_statement)
       end
     | [_ : ?hyp |- _ ] =>
       match Constr.equal hyp statement with
       | false => Control.zero Inner
       | true =>
+        print (of_string "Replace line with:");
         let msg (unfolded : constr) := concat_list
-          [of_string "replace line with:
-  It holds that "; of_constr unfolded; of_string "."] in
+          [of_string "It holds that "; of_constr unfolded; of_string "."] in
         print (msg unfolded_statement)
       end
     | [ |- _ ] =>
+      print (of_string "Result:");
       let msg (unfolded : constr) := concat_list
-      [of_string "result:
-  "; of_constr unfolded] in
+      [of_constr unfolded] in
       print (msg unfolded_statement)
     end
   | true =>
