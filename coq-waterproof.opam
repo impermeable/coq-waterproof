@@ -15,8 +15,7 @@ authors: [
 
 synopsis: "Coq proofs in a style that resembles non-mechanized mathematical proofs"
 description: """
-The coq-waterproof library allows you to write Coq proofs in a style that resembles non-mechanized mathematical proofs.
-Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts.
+The Waterproof plugin for the Coq proof assistant allows you to write Coq proofs in a style that resembles handwritten mathematical proofs, designed to help university students with learning how to prove mathematical statements.
 """
 
 license: "LGPL-3.0-or-later"
@@ -31,11 +30,7 @@ depends: [
 ]
 
 build: [
-  ["dune" "build" "-p" "coq-waterproof" "@install"]
-]
-
-install: [
-  ["dune" "install" "-p" "coq-waterproof"]
+  ["dune" "build" "-p" name "-j" jobs "@install"]
 ]
 
 available: arch != "s390x"
