@@ -168,7 +168,7 @@ Definition is_bounded_below (A : subset ℝ) :=
 
 A real number $m : ℝ$ is called the **infimum** of a subset $A : ℝ → \mathsf{Prop}$ if it is the largest lower bound.*)
 Definition is_inf (A : subset ℝ) (m : ℝ) :=
-  (is_lower_bound A m) ∧ (∀ l : R, is_lower_bound A l ⇒ l ≤ m).
+  (is_lower_bound A m) ∧ (∀ l ∈ R, is_lower_bound A l ⇒ l ≤ m).
 
 (* Implement notations for these concepts. *)
 Notation "m 'is' 'the' '_infimum_' 'of' A" := (is_inf A m) (at level 69).
@@ -314,7 +314,7 @@ Proof.
     Because (i) both (is_upper_bound (set_opp A) M) and
       (for all M0 : ℝ, M0 ∈ ℝ -> is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
     We need to show that
-      (is_lower_bound A (- M) ∧ (for all l : ℝ, is_lower_bound A l ⇨ l ≤ -M)).
+      (is_lower_bound A (- M) ∧ (∀ l ∈ ℝ, is_lower_bound A l ⇨ l ≤ -M)).
     We show both statements.
     - We need to show that (is_lower_bound A (- M)).
       We claim that (is_upper_bound (set_opp A) M).
@@ -326,8 +326,8 @@ Proof.
 
       By upp_bd_set_opp_to_low_bd_set we conclude that (is_lower_bound A (-M)).
 
-    - We need to show that (∀ l : ℝ, is_lower_bound A l ⇒ l ≤ -M).
-      Take l : ℝ.
+    - We need to show that (∀ l ∈ ℝ, is_lower_bound A l ⇒ l ≤ -M).
+      Take l ∈ ℝ.
       Assume that (is_lower_bound A l).
       It holds that (is_upper_bound (set_opp A) M
         ∧ (for all M0 : ℝ, M0 ∈ ℝ -> is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
@@ -411,7 +411,7 @@ Proof.
     Take m ∈ R.
     Assume that (is_inf A m) (i).
     Because (i) both (is_lower_bound A m) (ii) and
-      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
+      (∀ M0 ∈ ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
     By (ii) we conclude that (is_lower_bound A m).
 Qed.
 (** ## Any lower bound is less than or equal to the infimum*)
@@ -426,7 +426,7 @@ Proof.
     Assume that (is_inf A m) (i).
     Assume that (is_lower_bound A l).
     Because (i) both (is_lower_bound A m) and
-      (for all M0 : ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
+      (∀ M0 ∈ ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
     We conclude that (l ≤ m).
 Qed.
 
@@ -669,11 +669,11 @@ Proof.
     We show both statements.
     + We need to show that (is_lower_bound A m).
       It holds that (
-      is_lower_bound A m ∧ (for all l : ℝ,
+      is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m)
       ) (i).
       Because (i) both (is_lower_bound A m) and
-        (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
+        (∀ l ∈ ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
       It follows that (is_lower_bound A m).
 
     + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a).
@@ -694,15 +694,15 @@ Proof.
       (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
 
     We need to show that (
-      is_lower_bound A m ∧ (for all l : ℝ,
+      is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m)
     ).
     We show both statements.
     + We need to show that (is_lower_bound A m).
       By (ii) we conclude that (is_lower_bound A m).
-    + We need to show that (for all l : ℝ, is_lower_bound A l ⇨ l ≤ m).
+    + We need to show that (∀ l ∈ ℝ, is_lower_bound A l ⇨ l ≤ m).
       By if_almost_minimizer_ε_then_every_low_bd_smaller
-      we conclude that (for all l : ℝ,
+      we conclude that (∀ l ∈ ℝ,
       is_lower_bound A l ⇨ l ≤ m).
 Qed.
 

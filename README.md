@@ -11,7 +11,7 @@
 
 The Waterproof plugin for the Coq proof assistant (`coq-waterproof`) allows you to write Coq proofs in **a style that resembles handwritten mathematical proofs**, designed to help university
 students with learning how to prove mathematical statements.
-Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts. The plugin can be used directly in combination with the Coq proof assistant, but it may be worth checking out 
+Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts. The plugin can be used directly in combination with the Coq proof assistant, but it may be worth checking out
 the related [vscode extension](https://marketplace.visualstudio.com/items?itemName=waterproof-tue.waterproof) as well.
 
 ## Installation
@@ -39,18 +39,17 @@ The following snippet from gives a taste of a proof written using coq-waterproof
 ```coq
 Goal 2 is the infimum of [2, 5).
 Proof.
-We need to show that
-  (2 is a _lower bound_ for [2, 5) ∧
-     (for all l : ℝ, l is a _lower bound_ for [2, 5) ⇒ l ≤ 2)).
+We need to show that (2 is a _lower bound_ for [2, 5)
+  ∧ (∀ l ∈ ℝ, l is a _lower bound_ for [2, 5) ⇨ l ≤ 2)).
 We show both statements.
-- We need to show that (2 is a lower bound for [2, 5)).    
-  We need to show that (for all c : ℝ, c : [2, 5) ⇒ 2 ≤ c).
-  Take c : ℝ. Assume that (c : [2, 5)).
-  We conclude that (2 ≤ c).
-- We need to show that
-    (for all l : ℝ, l is a lower bound for [2, 5) ⇒ l ≤ 2).
-  Take l : ℝ. Assume that (l is a lower bound for [2, 5)).
-  We conclude that (l ≤ 2).
+  - We need to show that (2 is a lower bound for [2, 5)).
+    We need to show that (∀ c ∈ [2, 5), 2 ≤ c).
+    Take c ∈ [2, 5).
+    We conclude that (2 ≤ c).
+  - We need to show that
+      (∀ l ∈ ℝ, l is a lower bound for [2, 5) ⇒ l ≤ 2).
+    Take l ∈ ℝ. Assume that (l is a lower bound for [2, 5)).
+    We conclude that (l ≤ 2).
 Qed.
 ```
 
@@ -91,7 +90,7 @@ Require Import Waterproof.Notations.
 
 The more advanced tactics rely on automation. The automation function is called `waterprove`, which employs `wp_auto` and `wp_eauto`, together with a customizable set of hint-databases.
 
-`wp_auto` and `wp_eauto` are rewrite of `auto` and `eauto` with better backtracking support, which can be use to retrieve the full backtrace during the execution of those functions, which allows to have a better control on the execution flow of the hints. For example, it can be used to reject a complete proof if certain lemmas are not used and continue to search for a new one.  
+`wp_auto` and `wp_eauto` are rewrite of `auto` and `eauto` with better backtracking support, which can be use to retrieve the full backtrace during the execution of those functions, which allows to have a better control on the execution flow of the hints. For example, it can be used to reject a complete proof if certain lemmas are not used and continue to search for a new one.
 
 ### Configuration
 
@@ -124,7 +123,7 @@ The behavior of the automation tactics can be configured by importing specific f
 * **Declaring a new automation dataset**: Example:
   ```coq
   Require Import Waterproof.Automation.
-  
+
   Waterproof Declare Automation Foo.
   Waterproof Set Main Databases Foo core, wp_core.
   Waterproof Set Decidability Databases Foo wp_decidability_classical.
