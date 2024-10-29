@@ -86,6 +86,16 @@ To then install the library so it is available from other projects, you can run
 dune install -p coq-waterproof
 ```
 
+## Building with opam
+
+The above method does not pin `coq-waterproof` to the local version in the working
+directory. Instead, one can run, from the root directory,
+```
+opam install .
+```
+and `coq-waterproof` _will_ be pinned to the local version, and will
+be installed (in the current opam switch).
+
 ## Warning
 
 When importing Waterproof in a .v file when using coq-lsp, we standard get the following warning
@@ -125,7 +135,7 @@ If you use VSCode, we recommend installing the [OCaml Platform](https://marketpl
 
 In principle, we use **dune** to build `coq-waterproof`, but we try to
 still support building with **make** as well. Before creating a PR, it is
-recommended to check that this really works. For this, both `_CoqProjectForMake`
+recommended to check that this really works (although the CI will check for this as well). For this, both `_CoqProjectForMake`
 and `waterproof.mlpack` need to be in order, i.e. they need to contain
 the correct files, and in particular `waterproof.mlpack` needs the files
 to be in the right order.
