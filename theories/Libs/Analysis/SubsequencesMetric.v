@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
+Require Import Coq.ZArith.ZArith Coq.Reals.Reals.
 
 Require Import Automation.
 Require Import Libs.Analysis.MetricSpaces.
