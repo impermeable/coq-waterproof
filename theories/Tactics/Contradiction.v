@@ -62,6 +62,7 @@ Ltac2 contra () :=
 *)
 
 Ltac2 contradiction () := 
+  inform (of_string "Reasoning with contradiction");
   lazy_match! goal with
   | [ id_h : _ |- _ ] =>
     let h := Control.hyp id_h in

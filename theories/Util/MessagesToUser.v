@@ -61,6 +61,9 @@ Ltac2 Type exn ::= [RedirectedToUserError (message)].
 Ltac2 send_message (lvl : FeedbackLevel) (msg : message) :=
   send_message_external (feedback_lvl_to_ffi lvl) msg.
 
+Ltac2 debug (msg : message) :=
+  send_message Debug msg.
+
 Ltac2 inform (msg : message) :=
   send_message Info msg.
 

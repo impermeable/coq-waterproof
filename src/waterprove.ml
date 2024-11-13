@@ -19,6 +19,9 @@
 open EConstr
 open Hints
 open Proofview
+open Proofview.Notations
+(* open Exceptions *)
+(* open Pp *)
 
 open Hint_dataset
 open Hint_dataset_declarations
@@ -79,13 +82,13 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type): unit tactic =
-  Proofview.Goal.enter @@ fun goal ->
+  (Exceptions.debug (Pp.str "Entering waterprove")) >>= fun _ -> (Proofview.Goal.enter @@ fun goal ->
     begin
       if shield && !automation_shield then 
         automation_routine 3 lems (get_current_databases Shorten)
       else
         automation_routine depth lems (get_current_databases database_type)
-    end
+    end)
 
 (**
   Restricted Waterprove

@@ -39,7 +39,7 @@ This can make your proof less readable."
 
 Ltac2 wrong_goal_msg (wrong_goal : constr) :=
   concat_list
-    [of_constr wrong_goal; of_string " does not correspond to what you need to show."].
+    [of_constr wrong_goal; of_string " does not correspond to what you need to show tada."].
 
 (**
   Check if [target] is judgementally (i.e. by rewriting definitions) equal to the goal.
@@ -183,6 +183,7 @@ Local Ltac2 unwrap_state_goal_no_check () :=
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
 Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) :=
+  debug (of_string "Notation we conclude");
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;

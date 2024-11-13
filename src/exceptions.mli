@@ -93,6 +93,12 @@ val inform :
   Pp.t -> unit Proofview.tactic
 
 (**
+  Send an debug message
+*)
+val debug :
+  Pp.t -> unit Proofview.tactic
+
+(**
   Throws an error
 *)
 val err :

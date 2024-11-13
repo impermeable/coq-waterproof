@@ -146,6 +146,12 @@ let inform (input : Pp.t) : unit Proofview.tactic =
   message Info input
 
 (**
+  Send a debug message
+*)
+let debug (input : Pp.t) : unit Proofview.tactic =
+  message Debug input
+
+(**
   Throw an error
 *)
 let err (input : Pp.t) : unit Proofview.tactic =
