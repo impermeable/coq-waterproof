@@ -36,7 +36,7 @@ Definition open_ball (p : R) (r : R) : subset R := as_subset _ (fun x => | x - p
 Definition is_interior_point (a : R) (A : R -> Prop) :=
   ∃ r > 0, ∀ x ∈ (open_ball a r), x ∈ A.
 
-Definition is_open (A : R -> Prop) := for all a : R, A a -> is_interior_point a A.
+Definition is_open (A : R -> Prop) := ∀ a ∈ A, is_interior_point a A.
 
 Definition complement (A : R -> Prop) : subset R := as_subset _ (fun x => not (A x)).
 
