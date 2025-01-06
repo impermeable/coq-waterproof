@@ -16,28 +16,45 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+From Ltac2 Require Import Ltac2.
 
-Require Import Util.Goals.
+Require Import Waterproof.Util.Binders.
+Require Import Waterproof.Notations.Sets.
+Require Import Ltac2.Message.
+Require Import Waterproof.Util.MessagesToUser.
+Require Import Waterproof.Util.Assertions.
 
-(**
-  Defines a variable in an arbitrary goal.
+Open Scope subset_scope.
 
-  Arguments:
-    - [u: constr], the name of the variable.
-    - [t: constr], the variable to be defined.
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat ls (of_string "").
 
-  Does:
-    - defines [t] as [u].
-*)
-Local Ltac2 defining (u: ident) (t: constr) :=
-  pose ($u := $t);
-  let u_constr := Control.hyp u in 
-  let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
-  assert ($w : $u_constr = $t) by reflexivity.
-    
+Waterproof Enable Redirect Feedback.
 
+(** Test 1 : warn on wrong binder *)
+Goal forall x : nat, x = 0.
+Proof.
+assert_feedback_with_string
+  (fun () => check_binder_warn (Control.goal ()) @y false) Warning
+"Expected variable name x instead of y.".
+Abort.
 
-Ltac2 Notation "Define" u(ident) ":=" t(constr) :=
-  panic_if_goal_wrapped ();
-  defining u t.
+(** Test 2 : Test that binder can get renamed
+    by change_binder_name_under_seal function *)
+Goal False.
+Proof.
+let new_stmt :=
+  (change_binder_name_under_seal
+  constr:(∀ k ∈ nat, k = 3) @l) in
+let unsealed_stmt :=
+  eval unfold seal at 1 in $new_stmt in
+match check_binder_name unsealed_stmt @l false with
+| None => ()
+| Some x => Control.zero (TestFailedError
+  (concat_list
+   [of_string "expected binder name ";
+    of_ident @l;
+    of_string " instead of ";
+    of_ident x]))
+end.
+Abort.
