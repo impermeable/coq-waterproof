@@ -19,9 +19,15 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Util.Constr.
+Require Import Util.Binders.
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 Require Import Util.Evars.
+
+Require Import Tactics.BothStatements.
+
+Require Import Notations.Sets.
 
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -37,7 +43,7 @@ Local Ltac2 _binder_name_equal (name : ident) (b : binder) :=
 (** * Choose *)
 
 (**
-    
+
   Instantiate a variable in an [exists] [goal], according to a given [constr], and also renames the [constr]. The [constr] can contain blanks, which are filled in
   with freshly named evars, so that the user can refer to them later.
 
@@ -52,46 +58,37 @@ Local Ltac2 _binder_name_equal (name : ident) (b : binder) :=
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
+  let sealed := lazy_match! (Control.goal ()) with
+    | seal _ _ => unfold seal at 1; true
+    | _ => false
+    end in
   lazy_match! goal with
     | [ |- ex ?a] =>
-      (* Check for correct binder name *)
-      match Constr.Unsafe.kind a with
-      | Constr.Unsafe.Lambda b _ =>
-          match Constr.Binder.name b with
-          | None => () (* TODO: is it true that we want to do nothing here?,
-                          i.e. in the case of anonymous binders. *)
-          | Some binder_name =>
-            (* If a variable already exists, the binder gets renamed visually, but 
-            the binder name internally remains the same.
-            This gives confusing behavior. To go around this,
-            we try to guess what the binder got renamed into by introducing a fresh
-            ident based on the binder name. *)
-            let fresh_binder_name := Fresh.fresh (Fresh.Free.of_goal () ) binder_name in 
-            if Bool.neg (Ident.equal fresh_binder_name s) then
-              warn (concat_list [of_string "A variable name "; of_ident fresh_binder_name;
-                of_string " was expected, but a variable name "; of_ident s;
-                of_string " was given.
-The variable has been renamed."])
-            else ()
-          end
-      | _ => ()
-      end;
-      set ($s := $t);
+      check_binder_warn a s true;
+      pose ($s := $t);
+      unfold subset_type in $s;
       let v := Control.hyp s in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
       match Constr.has_evar t with
-      | true => 
+      | true =>
         rename_blank_evars_in_term (Ident.to_string s) t;
-        
-        warn (concat_list [of_string "Please come back to this line later to make a definite choice for "; of_ident s; of_string ".
-For now you can use that "; of_constr constr:($v = $t); of_string "."])
+        warn (concat_list [of_string "Please come back later to make a definitive choice for "; of_ident s; of_string "."; fnl ();
+        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."]);
+        assert_fix_earlier_warning ()
       | _ => ()
       end;
-      exists $v;      
+      exists $v;
       assert ($w : $v = $t) by reflexivity
-      
+
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
-  end.
+  end;
+  if sealed then
+    split;
+    Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type,
+      gt_op, R_gt_type, nat_gt_type, lt_op, R_lt_type, nat_lt_type,
+      le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
+  else ().
 
 (**
   Instantiate a variable in an [exists] [goal], according to a given [constr], without renaming said [constr]. The [constr] can contain blanks, which are filled in
@@ -107,6 +104,10 @@ For now you can use that "; of_constr constr:($v = $t); of_string "."])
     - If the [goal] is not an [exists] [goal].
 *)
 Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
+  let sealed := lazy_match! (Control.goal ()) with
+  | seal _ _ => unfold seal at 1; true
+  | _ => false
+  end in
   lazy_match! goal with
   | [ |- ex ?a] =>
       (* Make a suggestion of the base name for renaming of blank evars *)
@@ -123,16 +124,24 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       match Constr.has_evar t with
       |  true =>
         rename_blank_evars_in_term name t;
-        warn (concat_list [of_string "Please come back to this line later to make a definite choice."]);
+        warn (concat_list [of_string "Please come back later to make a definite choice."]);
+        assert_fix_earlier_warning ();
         eexists $t
       |  false => exists $t
       end
   | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
-  end.
+  end;
+  if sealed then
+    split;
+    Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type,
+      gt_op, R_gt_type, nat_gt_type, lt_op, R_lt_type, nat_lt_type,
+      le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
+  else ().
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
   panic_if_goal_wrapped ();
-  match s with 
+  match s with
     | None => choose_variable_in_exists_no_renaming t
     | Some s => choose_variable_in_exists_goal_with_renaming s t
   end.
