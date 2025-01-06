@@ -113,8 +113,6 @@ Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
     assert_fails_with_string (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool)
 "Internal err:(a is already used.)".
-(** (String.concat "" ["Internal"; "
-"; "  err:(a is already used."]).*)
 Abort.
 
 (** Test 10: Two sets of multiple variables of the same type.
