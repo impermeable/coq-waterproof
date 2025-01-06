@@ -183,9 +183,6 @@ Create HintDb wp_eq_opp.
   (** <<- (x - y) = y - x>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_minus_distr) : wp_eq_opp.
 
-  (** <<- (y - x) = x - y>> *)
-  #[export] Hint Extern 1 => (rewrite Ropp_minus_distr') : wp_eq_opp.
-
   (** <<- (x * y) = - x * y>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_mult_distr_l) : wp_eq_opp.
 
@@ -208,7 +205,7 @@ Create HintDb wp_eq_opp.
   #[export] Hint Extern 1 => (rewrite Rmult_opp_opp) : wp_eq_opp.
 
   (** <<- a / b = - (a / b)>> *)
-  #[export] Hint Extern 1 => (rewrite Ropp_div) : wp_eq_opp.
+  #[export] Hint Extern 1 => (rewrite Rdiv_opp_l) : wp_eq_opp.
 
   (** <<-a  + a = 0>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_opp_l) : wp_eq_opp.
