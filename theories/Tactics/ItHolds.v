@@ -31,18 +31,19 @@ Require Import Util.TypeCorrector.
 Require Import Waterprove.
 
 Require Import Waterproof.Tactics.Help.
+Require Import Notations.Sets.
 
 
 (** Tries to make the assertion [True] with label [label].
   Throws an error if this fails, i.e. if the label is already used
   for another one of the hypotheses.
-  
-  This check was separated out from the 'assert'-tactics below because the 
+
+  This check was separated out from the 'assert'-tactics below because the
   '[label] is already used error' would otherwise be caught in
   the code meant to catch [AutomationFailure] errors. *)
 
 Local Ltac2 try_out_label (label : ident) :=
-  match Control.case (fun () => 
+  match Control.case (fun () =>
     assert True as $label by exact I)
   with
   | Err exn => Control.zero exn
@@ -53,15 +54,15 @@ Local Ltac2 try_out_label (label : ident) :=
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
   identifier starting with '_H' is generated.
-  
+
   Additionally, if argument [postpone] is [true], actually proving the claim is postponed.
-  The claim is asserted and the proof is shelved using an evar.
+  The claim is asserted and the proof is given up on using admit.
   *)
 Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):=
   let err_msg (g : constr) := concat_list
     [of_string "Could not verify that "; of_constr g; of_string "."] in
-  let id := 
-    match label with 
+  let id :=
+    match label with
     | None => Fresh.in_goal @_H
     | Some label => try_out_label label; label
     end
@@ -69,22 +70,17 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
   let claim := correct_type_by_wrapping claim in
   if postpone
     then
-      (* Assert claim and proof using shelved evar *)
-      (* (using 'admit' would have shown a confusing warning message) *)
       assert $claim as $id;
       Control.focus 1 1 (fun () =>
-        let evar_id := Fresh.in_goal @_Hpostpone in
-        ltac1:(id claim |- evar (id : claim)) (Ltac1.of_ident evar_id) (Ltac1.of_constr claim); 
-        let evar := Control.hyp evar_id in 
-        exact $evar
+        admit
         );
       warn (concat_list [of_string "Please come back later to provide an actual proof of ";
         of_constr claim; of_string "."])
-      
+
     else
       (* Assert claim and attempt to prove automatically *)
       match Control.case (fun () =>
-        assert $claim as $id by 
+        assert $claim as $id by
           (waterprove 5 true Main))
       with
       | Val _ => ()
@@ -102,15 +98,15 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
 Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
   let err_msg (g : constr) := concat_list
     [of_string "Could not verify that "; of_constr g; of_string "."] in
-  let id := 
-    match label with 
+  let id :=
+    match label with
     | None => Fresh.in_goal @_H
     | Some label => try_out_label label; label
     end
   in
   let claim := correct_type_by_wrapping claim in
   match Control.case (fun () =>
-    assert $claim as $id by 
+    assert $claim as $id by
       (rwaterprove 5 true Main xtr_lemma))
   with
   | Val _ => ()
@@ -118,7 +114,9 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
   | Err exn => Control.zero exn (* includes FailedToUse error *)
   end.
 
-(** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors 
+
+
+(** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
 Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
   wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma;
@@ -135,12 +133,12 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
 
 
 (**
-  Attempts to assert a claim and proves it automatically using a specified lemma, 
+  Attempts to assert a claim and proves it automatically using a specified lemma,
   this lemma has to be used.
 
   Arguments:
     - [xtr_lemma: constr], reference to a lemma used to prove the claim (via [rwaterprove]).
-    - [label: ident option], optional name for the claim. 
+    - [label: ident option], optional name for the claim.
         If the proof succeeds, it will become a hypothesis (bearing [label] as name).
     - [claim: constr], the actual content of the claim to prove.
 
@@ -155,14 +153,14 @@ Ltac2 Notation "By" xtr_lemma(constr) "it" "holds" "that" claim(constr) label(op
 Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
-    
-  
+
+
 (** * It holds that ... (...)
   Attempts to assert a claim and proves it automatically.
   Removes [StateHyp.Wrapper] wrapper from the goal (proving claim by automation not necessary).
 
   Arguments:
-    - [label: ident option], optional name for the claim. 
+    - [label: ident option], optional name for the claim.
         If the proof succeeds, it will become a hypothesis (bearing [label] as name).
     - [claim: constr], the actual content of the claim to prove.
 
@@ -172,12 +170,12 @@ Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label
     - (fatal) If goal is wrapped in [StateHyp.Wrapper] and the wrong statement is specified.
 *)
 Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
-  (* Try out label first. 
+  (* Try out label first.
     Code results in wrong error if done inside repeated match.. *)
   match label with | None => () | Some label => try_out_label label end;
-  
+
   match! goal with
-  | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] => 
+  | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
     let h_constr := Control.hyp h in
     (* sanity check "h = h_spec" *)
     if check_constr_equal h_constr h_spec
@@ -202,7 +200,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     | None => ()
     | Some label => Std.rename [(w, label)]
     end *)
-  | [|- _] => 
+  | [|- _] =>
     panic_if_goal_wrapped ();
     wp_assert claim label false
   end.
@@ -212,10 +210,10 @@ Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))
 
 
 (** * By magic it holds that ... (...)
-  Asserts a claim and proves it using a shelved evar.
+  Asserts a claim and gives up on proof using admit.
 
   Arguments:
-    - [label: ident option], optional name for the claim. 
+    - [label: ident option], optional name for the claim.
     - [claim: constr], the actual content of the claim to prove.
 
     Raises exception:
@@ -225,6 +223,6 @@ Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))
     - [Please come back later to provide an actual proof of [claim].], always.
 *)
 
-Ltac2 Notation "By" "magic" "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) := 
+Ltac2 Notation "By" "magic" "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert claim label true.

@@ -1,11 +1,11 @@
 {
-    "name": "coq-waterproof dev container for Coq 8.17",
+    "name": "coq-waterproof dev container for Coq 8.18",
 
     "build": {
         "dockerfile": "Dockerfile"
     },
 
-    "onCreateCommand": "echo \"Installing coq-waterproof for the first time\" && dune build -p coq-waterproof && autoreconf -i -s && sudo env PATH=$PATH ./configure && sed -i 's/# -R/-R/' _CoqProject && sed -i 's/# -I/-I/' _CoqProject",
+    "onCreateCommand": "echo \"Installing coq-waterproof for the first time\" && dune build -p coq-waterproof",
 
     "customizations": {
         "vscode": {

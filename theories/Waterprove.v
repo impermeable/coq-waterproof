@@ -23,6 +23,7 @@ Ltac2 Type exn ::=  [ Inner
                     | FailedToProve (constr) ].
 
 Require Import Waterproof.
+Require Import Notations.Sets.
 
 Require Import Ltac2.Bool.
 Require Import Ltac2.Init.
@@ -47,14 +48,20 @@ Local Ltac2 database_type_to_ffi (db_type: database_type): database_type_ffi :=
     | Shorten => database_type_shorten ()
   end.
 
+Open Scope subset_scope.
+
 Local Ltac2 contains_shielded_pattern (): bool :=
   lazy_match! goal with
     | [ |- forall _, _ ] => true
+    | [ |- ∀ _ _ , _] => true
     | [ |- exists _, _ ] => true
+    | [ |- ∃ _ _ , _] => true
     | [ |- _ /\ _] => true
     | [ |- _ \/ _] => true
     | [ |- _] => false
   end.
+
+Close Scope subset_scope.
 
 (** Internal versions of [waterprove] and [rwaterprove]. *)
 Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
@@ -62,7 +69,7 @@ Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list
 
 Local Ltac2 _risky_rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type) (must : constr list) (forbidden : constr list) : unit  :=
   rwaterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type) must forbidden.
-  
+
 
 (** Checks whether [x] is in the current list of hypotheses *)
 (* TODO: there could be a better way with [Control.hyps], but this seems to work. *)
@@ -78,12 +85,12 @@ Local Ltac2 in_hypotheses (x : constr) :=
   | [ |- _ ] => false
   end.
 
-Local Ltac2 _rwaterprove (depth: int) (shield: bool) (db_type: database_type) 
+Local Ltac2 _rwaterprove (depth: int) (shield: bool) (db_type: database_type)
   (xtr_lemma : constr) : unit :=
   (* workaround for anomalies and troubles with proof finding
      when additional extra lemma is one of the hypotheses *)
-  (* Anonalies occur when 
-      1. the goal can be solved and [xtr_lemma] is the most recent (and second to most recent?) 
+  (* Anonalies occur when
+      1. the goal can be solved and [xtr_lemma] is the most recent (and second to most recent?)
         hypothesis added
       2. the goal cannot be solved and [xtr_lemma] is a hypothesis *)
   match in_hypotheses xtr_lemma with
@@ -100,9 +107,9 @@ Local Ltac2 _rwaterprove (depth: int) (shield: bool) (db_type: database_type)
 (* Assumes goal is of the form (g1 /\ ... /\ gn). *)
 Local Ltac2 rec waterprove_iterate_conj (depth: int) (shield: bool)
  (db_type: database_type) (xtr_lemma : constr option) :=
-  (* accepts optional extra lemma since it can be called by restricted version 
+  (* accepts optional extra lemma since it can be called by restricted version
     [rwaterprove_iterate_conj] when extra lemma is no longer required but still available *)
-  let list_lemmas := 
+  let list_lemmas :=
     match xtr_lemma with
     | None => []
     | Some lem => [fun () => lem]
@@ -122,7 +129,7 @@ Local Ltac2 rec waterprove_iterate_conj (depth: int) (shield: bool)
   (* base case *)
   | [ |- _ ] =>
     (* Prove remaining goal. *)
-    match Control.case (fun () => 
+    match Control.case (fun () =>
       _waterprove depth shield list_lemmas db_type)
     with
     | Val _ => ()
@@ -145,15 +152,15 @@ Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
     match Control.case (fun () => Control.focus 1 1 (fun () =>
       _rwaterprove depth shield db_type xtr_lemma))
     with
-    | Val _ => 
+    | Val _ =>
       (* succesfully used lemma; prove remaining goals, but without restriction. *)
       waterprove_iterate_conj depth shield db_type (Some xtr_lemma)
-    | Err exn => 
+    | Err exn =>
       (* failed, could be due to restriction; try to prove without. *)
       match Control.case (fun () => Control.focus 1 1 (fun () =>
         _waterprove depth shield [] db_type))
       with
-      | Val _ => 
+      | Val _ =>
         (* succesful. prove remaining statements with restriction. *)
         rwaterprove_iterate_conj depth shield db_type xtr_lemma
       | Err exn => Control.zero (FailedToProve g1)
@@ -179,13 +186,13 @@ Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
   end.
 
 
-(** External versions of (restricted) automation. 
+(** External versions of (restricted) automation.
   (In)equality chains are attempted piece by piece. *)
 
 Lemma _and_assoc1 (A B C : Prop) : A /\ B /\ C -> (A /\ B) /\ C.
 Proof. apply and_assoc. Qed.
 
-(**  Attempts to prove current goal. 
+(**  Attempts to prove current goal.
   Throws [FailedToProve] error with statement that could not be proven.
   (In)equality chains are attempted piece by piece.
 *)
@@ -205,7 +212,7 @@ Ltac2 waterprove (depth: int) (shield: bool) (db_type: database_type) :=
     end
   end.
 
-(**  Attempts to prove current goal. 
+(**  Attempts to prove current goal.
   Throws [FailedToProve] error with statement that could not be proven.
   Throws [FailedToUse] error with [xtr_lemma] if no proof could be found
     that uses it.

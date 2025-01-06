@@ -17,9 +17,46 @@
 (******************************************************************************)
 
 (**
+  A rudimentary feedback log
+*)
+val feedback_log : Feedback.level -> Pp.t list ref
+
+(**
+  The id that we obtained when registering wp_feedback_logger as a feeder in Feedback.mli
+*)
+val wp_feedback_logger_id : int option ref
+
+(**
+  Our own logger that we add as a feeder to Coq's feedback mechanism in Feedback.mli
+*)
+val wp_feedback_logger : Feedback.feedback -> unit
+
+(**
+  Adds the wp_feedback_logger to Coq's feeedback mechanism
+*)
+val add_wp_feedback_logger : unit -> unit
+
+(**
   Should hypothesis hints be printed (For instance on how you can use a forall statement)?
 *)
 val print_hypothesis_help : bool ref
+
+(**
+  The last thrown warning
+*)
+val last_thrown_warning : Pp.t option ref
+
+(**
+  Redirect warnings: this is useful when testing the plugin: meant to redirect Waterproof
+  errors directly to the log
+*)
+val redirect_feedback : bool ref
+
+(**
+  Redirect errors: this is useful when testing the plugin: meant to redirect errors
+  to Control.zero rather than CErrors.user_err
+*)
+val redirect_errors : bool ref
 
 (**
   Type of exceptions used in Wateproof
@@ -44,7 +81,30 @@ val warn :
   Pp.t -> unit Proofview.tactic
 
 (**
+  Sends a notice
+*)
+val notice :
+  Pp.t -> unit Proofview.tactic
+
+(**
+  Send an info message
+*)
+val inform :
+  Pp.t -> unit Proofview.tactic
+
+(**
   Throws an error
 *)
 val err :
   Pp.t -> unit Proofview.tactic
+
+(**
+  A general function for sending feedback
+*)
+val message :
+  Feedback.level -> Pp.t -> unit Proofview.tactic
+
+(**
+  Check the last warning against a string
+*)
+val get_last_warning : unit -> Pp.t option Proofview.tactic

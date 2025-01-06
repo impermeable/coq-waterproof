@@ -16,19 +16,37 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
+Require Import Waterproof.Notations.Reals.
+Require Import Waterproof.Notations.Sets.
 
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Notations.Common.
+Open Scope nat_scope.
+Open Scope subset_scope.
 
-Ltac2 @ external refine_goal_with_evar : string -> unit := "coq-core.plugins.coq-waterproof" "refine_goal_with_evar_external".
+Goal ∀ x > 3, True.
+Abort.
 
-Ltac2 @ external blank_evars_in_term : constr -> evar list := "coq-core.plugins.coq-waterproof" "blank_evars_in_term_external".
+Goal ∀ x ≥ 3, True.
+Abort.
 
-Ltac2 rename_blank_evars_in_term (base_name : string) (x : constr) :=
-  let evars := blank_evars_in_term x in
-  let m := List.length evars in
-  List.fold_left (fun _ ev => Control.new_goal ev) (evars) ();
-  Control.focus 2 (Int.add m 1) (fun () =>
-    ltac1:(refine (identity_seal _));
-    refine_goal_with_evar base_name; Control.shelve()).
+Local Parameter B : subset nat.
+
+Open Scope subset_scope.
+
+Goal ∀ x ∈ B, x = 0.
+Abort.
+
+Goal ∃ x ∈ B, x = 0.
+Abort.
+
+Require Import Coq.Reals.Reals.
+Open Scope R_scope.
+
+Goal ∀ x > 3, x = 5.
+Abort.
+
+Goal ∃ x ≥ 5, x = 7.
+Abort.
+
+(* Combine the coercion ... *)
+Goal ∀ x ∈ nat, Rplus x x = x.
+Abort.

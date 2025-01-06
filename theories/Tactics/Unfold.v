@@ -52,7 +52,7 @@ Ltac2 Type exn ::=  [ Inner ].
     - always if [throw_error = true], because it indicates that the user needs to
       remove this line from the proof script.
     - none if [throw_error = false].
- 
+
 *)
 Ltac2 unfold_in_statement (unfold_method: constr -> constr)
   (def_name : string option) (statement : constr) (throw_error : bool) :=
@@ -63,25 +63,25 @@ Ltac2 unfold_in_statement (unfold_method: constr -> constr)
     | [ |- ?g] =>
       match Constr.equal g statement with
       | false => Control.zero Inner
-      | true => 
+      | true =>
+        print (of_string "Replace line with:");
         let msg (unfolded : constr) := concat_list
-          [of_string "replace line with:
-  We need to show that "; of_constr unfolded; of_string "."] in
+          [of_string "We need to show that "; of_constr unfolded; of_string "."] in
         print (msg unfolded_statement)
       end
     | [_ : ?hyp |- _ ] =>
       match Constr.equal hyp statement with
       | false => Control.zero Inner
       | true =>
+        print (of_string "Replace line with:");
         let msg (unfolded : constr) := concat_list
-          [of_string "replace line with:
-  It holds that "; of_constr unfolded; of_string "."] in
+          [of_string "It holds that "; of_constr unfolded; of_string "."] in
         print (msg unfolded_statement)
       end
     | [ |- _ ] =>
+      print (of_string "Result:");
       let msg (unfolded : constr) := concat_list
-      [of_string "result:
-  "; of_constr unfolded] in
+      [of_constr unfolded] in
       print (msg unfolded_statement)
     end
   | true =>
@@ -100,7 +100,7 @@ Ltac2 unfold_in_statement (unfold_method: constr -> constr)
     else ().
 
 (**
-  Attempts to unfold definition(s) in every statement according to specified method. 
+  Attempts to unfold definition(s) in every statement according to specified method.
   If succesful it prints a list of suitable tactics
   that can be used to incorporate the unfolded statements into the user's proof script.
     E.g. if the defition was unfolded in the proof goal, the list will include
@@ -118,17 +118,17 @@ Ltac2 unfold_in_statement (unfold_method: constr -> constr)
     - [always/none] depending on value of [throw_error].
 *)
 
-Ltac2 unfold_in_all (unfold_method: constr -> constr) 
+Ltac2 unfold_in_all (unfold_method: constr -> constr)
   (def_name : string option) (throw_error : bool) :=
 
-  
+
   let goal := Control.goal () in
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
 
   let hyps := List.map (fun (i, def, t) => t) (Control.hyps ()) in
-  let unfolded_hyps := List.map unfold_method hyps in 
-  let only_unfolded_hyps := 
+  let unfolded_hyps := List.map unfold_method hyps in
+  let only_unfolded_hyps :=
     List.map (fun (uh, h) => uh) (
       List.filter_out (fun (uh, h) => Constr.equal uh h) (
         List.combine unfolded_hyps hyps
@@ -144,27 +144,25 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 
       (* Print unfolded goal *)
       if did_unfold_goal
-        then 
-          print (of_string "");
-          print (concat_list [of_string "  We need to show that "; 
+        then
+          print (concat_list [of_string "  We need to show that ";
             of_constr unfolded_goal; of_string "."])
         else ();
 
       (* Print unfolded hypotheses *)
       if (Bool.neg (_is_empty only_unfolded_hyps))
         then
-          print (of_string "");
           let it_holds_msg := fun (x : constr) => concat_list
             [of_string "  It holds that "; of_constr x; of_string "."] in
-          List.fold_left (fun _ unfolded_h => print (it_holds_msg unfolded_h)) 
+          List.fold_left (fun _ unfolded_h => print (it_holds_msg unfolded_h))
             only_unfolded_hyps ()
         else ()
-    
+
     else
       (* Print no statements with definition *)
       match def_name with
       | None => print (of_string "Definition does not appear in any statement.")
-      | Some def_name => print (concat_list 
+      | Some def_name => print (concat_list
           [of_string "'"; of_string def_name; of_string "'";
             of_string " does not appear in any statement."])
       end;

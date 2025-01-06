@@ -27,6 +27,7 @@ Require Import Reals.Reals.
 Require Import Reals.Rdefinitions.
 Require Import Sets.Classical_sets.
 Require Import Sets.Ensembles.
+Require Import Notations.Sets.
 
 Require Import Chains.
 Require Import Libs.Negation.
@@ -39,7 +40,7 @@ Require Import Libs.Logic.ConstructiveLogic.
 Create HintDb wp_core.
 
   (* #[export] Hint Extern 1 ( _ = _ ) => progress(cbn; ltac2:(simpl_ineq_chains ()); ltac2:(split_conjunctions ())) : wp_core. *)
-  (* #[export] Hint Resolve eq_sym : wp_core. *) 
+  (* #[export] Hint Resolve eq_sym : wp_core. *)
   (* including [eq_sym] slows down automation significantly, and we can apparantly do without :)
     [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
@@ -47,7 +48,12 @@ Create HintDb wp_core.
   (* #[export] Hint Extern 2 ( _ = _ ) => congruence 20 : wp_core. *)
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
-
+  (* TODO: maybe tune this better *)
+  #[export] Hint Extern 2 => progress (unfold seal, subset_type, gt_op, R_gt_type, nat_gt_type, ge_op, R_ge_type, nat_ge_type,
+    lt_op, R_lt_type, nat_lt_type, le_op, R_le_type, nat_le_type in * ) : wp_core.
+  #[export] Hint Extern 2 => progress (unfold subset_in, conv, as_subset in * ) : wp_core.
+  #[export] Hint Resolve mem_subset_full_set : wp_core.
+  #[export] Hint Extern 3 => progress ltac2:(split_conjunctions ()) : wp_core.
 (** * Definitions *)
 
 Create HintDb wp_definitions.
@@ -152,10 +158,10 @@ Create HintDb wp_eq_mult.
   #[export] Hint Extern 1 => (rewrite Rmult_assoc) : wp_eq_mult.
 
   (** <<x * (y+z) = x * y + x * z>> *)
-  #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_l) : wp_eq_mult wp_eq_plus. 
+  #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_l) : wp_eq_mult wp_eq_plus.
 
   (** <<(x+y) * z = x * z + y * z>> *)
-  #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_r) : wp_eq_mult wp_eq_plus. 
+  #[export] Hint Extern 1 => (rewrite Rmult_plus_distr_r) : wp_eq_mult wp_eq_plus.
 
   (** <<x + y = y + x>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_comm) : wp_eq_plus.
@@ -196,10 +202,10 @@ Create HintDb wp_eq_opp.
   #[export] Hint Extern 1 => (rewrite Ropp_plus_distr) : wp_eq_opp.
 
   (** <<--a = a>> *)
-  #[export] Hint Extern 1 => (rewrite Ropp_involutive) : wp_eq_opp. 
+  #[export] Hint Extern 1 => (rewrite Ropp_involutive) : wp_eq_opp.
 
   (** <<-a * -b = a * b>> *)
-  #[export] Hint Extern 1 => (rewrite Rmult_opp_opp) : wp_eq_opp. 
+  #[export] Hint Extern 1 => (rewrite Rmult_opp_opp) : wp_eq_opp.
 
   (** <<- a / b = - (a / b)>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_div) : wp_eq_opp.
@@ -272,34 +278,34 @@ Create HintDb wp_eq_one.
 Create HintDb wp_eq_abs.
 
   (** << ||a - a|| = 0 >> *)
-  #[export] Hint Extern 1 => (rewrite R_dist_eq) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite R_dist_eq) : wp_eq_abs.
 
   (** << ||a * b - a * c|| = ||a|| * ||b - c|| >> *)
-  #[export] Hint Extern 1 => (rewrite R_dist_mult_l) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite R_dist_mult_l) : wp_eq_abs.
 
   (** <<||a - b|| = ||b - a||>> *)
-  #[export] Hint Extern 1 => (rewrite R_dist_sym) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite R_dist_sym) : wp_eq_abs.
 
   (** << |a - b| = |b - a|, using Rabs >> *)
-  #[export] Hint Extern 1 => (rewrite Rabs_minus_sym) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite Rabs_minus_sym) : wp_eq_abs.
 
   (** << | |a| | = |a| >> *)
-  #[export] Hint Extern 1 => (rewrite Rabs_Rabsolu) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite Rabs_Rabsolu) : wp_eq_abs.
 
   (** << |-a| = |a| >> *)
-  #[export] Hint Extern 1 => (rewrite Rabs_Ropp) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite Rabs_Ropp) : wp_eq_abs.
 
   (** << |a * b| = |a| * |b| >> *)
-  #[export] Hint Extern 1 => (rewrite Rabs_mult) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite Rabs_mult) : wp_eq_abs.
 
   (** << a^2 = |a|^2 >> *)
-  #[export] Hint Extern 1 => (rewrite Rsqr_abs) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite Rsqr_abs) : wp_eq_abs.
 
   (** << sqrt(a^2) = |a| >> *)
-  #[export] Hint Extern 1 => (rewrite sqrt_Rsqr_abs) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite sqrt_Rsqr_abs) : wp_eq_abs.
 
   (** << | a |^2 = a^2 >> *)
-  #[export] Hint Extern 1 => (rewrite pow2_abs) : wp_eq_abs. 
+  #[export] Hint Extern 1 => (rewrite pow2_abs) : wp_eq_abs.
 
 
 (** * Square root *)
@@ -336,7 +342,7 @@ Create HintDb wp_eq_sqr.
 Create HintDb wp_eq_exp.
 
   (** << ln (exp a)) = a >> *)
-  #[export] Hint Extern 1 => (rewrite ln_exp) : wp_eq_exp. 
+  #[export] Hint Extern 1 => (rewrite ln_exp) : wp_eq_exp.
 
   (** << exp (-a) = / exp a>> *)
   #[export] Hint Extern 1 => (rewrite exp_Ropp) : wp_eq_exp.
@@ -345,7 +351,7 @@ Create HintDb wp_eq_exp.
   #[export] Hint Extern 1 => (rewrite exp_plus) : wp_eq_exp.
 
   (** << ln (exp a)) = a >> *)
-  #[export] Hint Extern 1 => (rewrite ln_exp) : wp_eq_exp. 
+  #[export] Hint Extern 1 => (rewrite ln_exp) : wp_eq_exp.
 
 
 (** * Integers *)
@@ -377,7 +383,7 @@ Create HintDb wp_negation_nat.
 (** * Real numbers *)
 
 Create HintDb wp_reals.
-
+   (* TODO : at the moment we don't use this version of subsets... *)
   #[export] Hint Extern 2 => ltac2:(simpl_member_subset ()); lra : wp_reals.
 
   #[export] Hint Extern 1 (pred R _ _) => simpl; lra : wp_reals.
@@ -388,7 +394,7 @@ Create HintDb wp_reals.
   #[export] Hint Extern 1 ( Rge _ _ ) => lra : wp_reals.
   #[export] Hint Extern 1 ( Rlt _ _ ) => lra : wp_reals.
   #[export] Hint Extern 1 ( Rgt _ _ ) => lra : wp_reals.
-  
+
   #[export] Hint Extern 1 (~ (Rle _ _) ) => lra : wp_reals.
   #[export] Hint Extern 1 (~ (Rge _ _) ) => lra : wp_reals.
   #[export] Hint Extern 1 (~ (Rlt _ _) ) => lra : wp_reals.
@@ -432,9 +438,9 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rmin_glb : wp_reals.
   #[export] Hint Resolve Rmin_glb_lt : wp_reals.
   (** lemmas to relate <= with >= and < with > *)
-  #[export] Hint Resolve Rge_le : wp_reals.
+  (* #[export] Hint Resolve Rge_le : wp_reals.*) (* This was really hampering performance *)
   #[export] Hint Resolve Rle_ge : wp_reals.
-  #[export] Hint Resolve Rgt_lt : wp_reals.
+  (* #[export] Hint Resolve Rgt_lt : wp_reals.*)
   #[export] Hint Resolve Rlt_gt : wp_reals.
 
   #[export] Hint Resolve div_sign_flip : wp_reals.
@@ -481,4 +487,3 @@ Create HintDb wp_sets.
 Create HintDb wp_intuition.
 
   #[export] Hint Extern 8 => intuition (auto 2 with core): wp_intuition.
-  

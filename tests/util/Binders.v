@@ -16,19 +16,45 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
+From Ltac2 Require Import Ltac2.
 
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Notations.Common.
+Require Import Waterproof.Util.Binders.
+Require Import Waterproof.Notations.Sets.
+Require Import Ltac2.Message.
+Require Import Waterproof.Util.MessagesToUser.
+Require Import Waterproof.Util.Assertions.
 
-Ltac2 @ external refine_goal_with_evar : string -> unit := "coq-core.plugins.coq-waterproof" "refine_goal_with_evar_external".
+Open Scope subset_scope.
 
-Ltac2 @ external blank_evars_in_term : constr -> evar list := "coq-core.plugins.coq-waterproof" "blank_evars_in_term_external".
+Local Ltac2 concat_list (ls : message list) : message :=
+  List.fold_right concat (of_string "") ls.
 
-Ltac2 rename_blank_evars_in_term (base_name : string) (x : constr) :=
-  let evars := blank_evars_in_term x in
-  let m := List.length evars in
-  List.fold_left (fun _ ev => Control.new_goal ev) (evars) ();
-  Control.focus 2 (Int.add m 1) (fun () =>
-    ltac1:(refine (identity_seal _));
-    refine_goal_with_evar base_name; Control.shelve()).
+Waterproof Enable Redirect Feedback.
+
+(** Test 1 : warn on wrong binder *)
+Goal forall x : nat, x = 0.
+Proof.
+assert_feedback_with_string
+  (fun () => check_binder_warn (Control.goal ()) @y false) Warning
+"Expected variable name x instead of y.".
+Abort.
+
+(** Test 2 : Test that binder can get renamed
+    by change_binder_name_under_seal function *)
+Goal False.
+Proof.
+let new_stmt :=
+  (change_binder_name_under_seal
+  constr:(∀ k ∈ nat, k = 3) @l) in
+let unsealed_stmt :=
+  eval unfold seal at 1 in $new_stmt in
+match check_binder_name unsealed_stmt @l false with
+| None => ()
+| Some x => Control.zero (TestFailedError
+  (concat_list
+   [of_string "expected binder name ";
+    of_ident @l;
+    of_string " instead of ";
+    of_ident x]))
+end.
+Abort.

@@ -61,7 +61,7 @@ Proof.
   left; exact b.
 Qed.
 
-(** Test 5: This tests whether given x >= 0, either x > 0 or x = 0. 
+(** Test 5: This tests whether given x >= 0, either x > 0 or x = 0.
             Also tests whether the hypothesis name from the tactic can be chosen flexibly. *)
 Goal forall x : R, x >= 0 -> exists n : nat, INR(n) > x.
   intros x h.
@@ -214,3 +214,21 @@ Goal forall b : bool, is_true (eqb b true) \/ is_true (eqb b false) \/ is_true (
   - Case (eqb b false).
     exact I.
 Qed.
+
+Waterproof Enable Automation RealsAndIntegers.
+Open Scope nat_scope.
+(** Test 15: Test for the right notation in the goal*)
+Goal forall x : nat, x = x.
+Proof.
+  intro x.
+  Either (x < 0) or (x ≥ 0).
+  let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s 
+ "(Add the following line to the proof:
+ 
+ - Case (x < 0).)".
+Abort.
+
+Close Scope nat_scope.
+
+Waterproof Disable Automation RealsAndIntegers.
