@@ -40,9 +40,6 @@ jobs:
             startGroup "Building documentation"
               sudo chmod 777 -R .
               opam install -y -v odoc
-
-              autoreconf -i -s
-              ./configure
               make doc
             endGroup
 

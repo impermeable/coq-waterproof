@@ -1,9 +1,10 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "2.1.1+8.19"
+version: "2.2.0+8.19"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
+  "Pim Otte"
   "Balthazar Pathiachvili"
   "Cosmin Manea"
   "Lulof Pirée"
@@ -14,8 +15,7 @@ authors: [
 
 synopsis: "Coq proofs in a style that resembles non-mechanized mathematical proofs"
 description: """
-The coq-waterproof library allows you to write Coq proofs in a style that resembles non-mechanized mathematical proofs.
-Mathematicians unfamiliar with the Coq syntax are able to read the resulting proof scripts.
+The Waterproof plugin for the Coq proof assistant allows you to write Coq proofs in a style that resembles handwritten mathematical proofs, designed to help university students with learning how to prove mathematical statements.
 """
 
 license: "LGPL-3.0-or-later"
@@ -30,14 +30,10 @@ depends: [
 ]
 
 build: [
-  ["dune" "build" "-p" "coq-waterproof" "@install"]
+  ["dune" "build" "-p" name "-j" jobs "@install"]
 ]
 
-install: [
-  ["dune" "install" "-p" "coq-waterproof"]
-]
-
-available: arch != "s390x"
+available: (arch != "s390x") & (arch != "ppc64") & (os != "win32")
 
 tags: [
   "keyword:mathematics education"
