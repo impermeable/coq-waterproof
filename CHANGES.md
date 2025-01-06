@@ -1,5 +1,25 @@
 # Change log for the coq-waterproof library
 
+## Version 2.2.0+8.20
+
+- Allow for standard math notation
+- No longer automatically replace terms introduced by choose in the goal
+- Add bullets and curly brackets to wrappers
+- Update the induction tactic, so that the variable needs to be introduced in the induction step
+- Allow for obtaining multiple variables
+- Test warning and error messages
+- Update documentation and add developer documentation
+- Simplify the build proces
+- Create a devcontainer
+- Warn on unexpected variable names by comparing to binder names
+- Refactor the ffi
+- Change expand definition tactic so it unfolds in all statements
+- Add possibility to postpone proofs
+- Quickfix for using Qed as variable name
+- Allow for choosing blanks
+- Add custom version of the specialize tactic
+- Allow for boolean statements in tactics
+
 ## Version 2.1.1+8.20
 
 - Compatibility with Coq 8.20

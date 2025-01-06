@@ -16,28 +16,37 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.Notations.Reals.
+Require Import Waterproof.Notations.Sets.
 
-Require Import Util.Goals.
+Open Scope nat_scope.
+Open Scope subset_scope.
 
-(**
-  Defines a variable in an arbitrary goal.
+Goal ∀ x > 3, True.
+Abort.
 
-  Arguments:
-    - [u: constr], the name of the variable.
-    - [t: constr], the variable to be defined.
+Goal ∀ x ≥ 3, True.
+Abort.
 
-  Does:
-    - defines [t] as [u].
-*)
-Local Ltac2 defining (u: ident) (t: constr) :=
-  pose ($u := $t);
-  let u_constr := Control.hyp u in 
-  let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
-  assert ($w : $u_constr = $t) by reflexivity.
-    
+Local Parameter B : subset nat.
 
+Open Scope subset_scope.
 
-Ltac2 Notation "Define" u(ident) ":=" t(constr) :=
-  panic_if_goal_wrapped ();
-  defining u t.
+Goal ∀ x ∈ B, x = 0.
+Abort.
+
+Goal ∃ x ∈ B, x = 0.
+Abort.
+
+Require Import Coq.Reals.Reals.
+Open Scope R_scope.
+
+Goal ∀ x > 3, x = 5.
+Abort.
+
+Goal ∃ x ≥ 5, x = 7.
+Abort.
+
+(* Combine the coercion ... *)
+Goal ∀ x ∈ nat, Rplus x x = x.
+Abort.
