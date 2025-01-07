@@ -1,8 +1,8 @@
 package "waterproof" (
     directory = "."
-    version = "2.2.0+8.20"
+    version = "2.2.0+dev"
     description = "Waterproof plugin"
-    requires = "coq-core.plugins.ltac coq-core.plugins.ltac2"
+    requires = "rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2"
     archive(byte) = "waterproof.cma"
     archive(native) = "waterproof.cmxa"
     plugin(byte) = "waterproof.cma"
