@@ -48,7 +48,7 @@ let info_counter = Summary.ref ~name:"info_counter" 0
 *)
 let wp_feedback_logger (fb : feedback) : unit =
   match fb.contents with
-  | Message (lvl, _, msg) ->
+  | Message (lvl, _, _, msg) ->
     (feedback_log lvl :=
       (msg) :: !(feedback_log lvl);
     info_counter := !info_counter + 1)
