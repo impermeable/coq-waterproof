@@ -1,4 +1,4 @@
-package "waterproof" (
+package "plugin" (
     directory = "."
     version = "2.2.0+dev"
     description = "Waterproof plugin"
