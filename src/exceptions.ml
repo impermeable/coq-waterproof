@@ -125,7 +125,7 @@ let message (lvl : Feedback.level) (input : Pp.t) : unit Proofview.tactic =
   if !redirect_feedback then
     Proofview.tclUNIT @@ (feedback_log lvl := input :: !(feedback_log lvl))
   else
-    Proofview.tclUNIT @@ feedback (Message (lvl, None, input))
+    Proofview.tclUNIT @@ feedback (Message (lvl, None, [], input))
 
 (**
   Send a warning
