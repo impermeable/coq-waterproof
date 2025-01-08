@@ -51,14 +51,14 @@ Qed.
 
 Waterproof Enable Automation RealsAndIntegers.
 
-Goal forall x: R, x: [0, 4] -> 0 <= x.
+Goal forall x: R, x ∈ [0, 4] -> 0 <= x.
 Proof.
   Take x: R.
-  Assume that (x: [0, 4]).
+  Assume that (x ∈ [0, 4]).
   We conclude that (0 <= x).
 Qed.
 
-Goal 2: [0, 4].
+Goal 2 ∈ [0, 4].
 Proof.
-  We conclude that (2: [0, 4]).
+  We conclude that (2 ∈ [0, 4]).
 Qed.

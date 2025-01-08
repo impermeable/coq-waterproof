@@ -22,6 +22,7 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 (** Test 0: This should work fine *)
@@ -29,9 +30,12 @@ Goal forall n : nat, n <= 2*n.
     Take n : nat.
 Abort.
 
-(** Test 1: Also this should work fine *)
+Waterproof Enable Redirect Feedback.
+
+(** Test 1: Also this should work fine, but with a warning *)
 Goal forall n : nat, n <= 2*n.
-    Take x : nat.
+    assert_feedback_with_string (fun () => Take x : nat) Warning
+"Expected variable name n instead of x.".
 Abort.
 
 (** Test 2: This should raise an error, because the type does not match*)
@@ -39,7 +43,7 @@ Goal forall n : nat, n <= 2*n.
     Fail Take n : bool.
 Abort.
 
-(** Test 3: This should raise an error, 
+(** Test 3: This should raise an error,
     because [Take] solves forall-quatifiers *)
 Goal exists n : nat, n <= 2*n.
     Fail Take n : nat.
@@ -78,7 +82,14 @@ Abort.
 (** Test 6: Two sets of multiple variables of the same type,
     but with different names *)
 Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    Take a, b, c : nat and d, e: bool.
+    assert_feedback_with_strings
+    (fun () => Take a, b, c : nat and d, e: bool) Warning
+[
+"Expected variable name n instead of a.";
+"Expected variable name m instead of b.";
+"Expected variable name k instead of c.";
+"Expected variable name b1 instead of d.";
+"Expected variable name b2 instead of e."].
 Abort.
 
 (** Test 7: not allowed to introduce so many bools *)
@@ -87,7 +98,7 @@ Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
 Abort.
 
 (** Test 8: look how crazy many vars we can introduce*)
-Goal forall (a b c d e f g: nat) (b1 b2: bool), 
+Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
     Take a, b, c, d, e, f, g : nat and b1, b2: bool.
 Abort.
@@ -98,9 +109,10 @@ Abort.
     Currently it raises "Internal (err:(a is already used.))"
     which seems clear enough :)
     *)
-Goal forall (a b c d e f g: nat) (b1 b2: bool), 
+Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
-    assert_raises_error (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool).
+    assert_fails_with_string (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool)
+"Internal err:(a is already used.)".
 Abort.
 
 (** Test 10: Two sets of multiple variables of the same type.
@@ -123,7 +135,7 @@ Goal not (0 = 1).
 Abort.
 
 Require Import Coq.Reals.Reals.
-(** Test 13: Introducing too many variables when 
+(** Test 13: Introducing too many variables when
     the for all statement is followed by an implication.
 *)
 Goal forall (n : nat) (x y : R), (0 < x < y)%R -> (x^n < y^n)%R.
@@ -137,7 +149,8 @@ Abort.
 
 (** Test 14: Warn on using a different variable name *)
 Goal forall n : nat, n = n.
-  Take m : nat. (* This should produce a warning *)
+  assert_feedback_with_string (fun () => Take m : nat) Warning
+"Expected variable name n instead of m.".
 Abort.
 
 (** Test 15: Warn on using different variable name, if variable has
@@ -145,10 +158,11 @@ Abort.
 Goal forall n : nat, n = n.
 Proof.
   set (n := 1).
-  Take m : nat. (* This should produce a warning *)
+  assert_feedback_with_string (fun () => Take m : nat) Warning
+"Expected variable name n0 instead of m.".
 Abort.
 
-(** Test 16: Do not warn if variable has visually been renamed (although 
+(** Test 16: Do not warn if variable has visually been renamed (although
     internally, the binder name stays the same) *)
 Goal forall n : nat, n = n.
 Proof.
@@ -159,8 +173,9 @@ Abort.
 (** Test 17: Warn on using different variable name *)
 Goal forall m n : nat, n = m.
 Proof.
-  Take n : nat. (* This should produce a warning *)
-  Take n0 : nat. (* This should produce no warning *)
+  assert_feedback_with_string (fun () => Take n : nat) Warning
+"Expected variable name m instead of n.".
+  assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
 (** Test 18: Warn on using different variable name *)
@@ -168,37 +183,40 @@ Goal forall m n : nat, n = m.
 Proof.
   set (m := 3).
   set (n := 4).
-  Take m0 : nat. (* This should produce no warning *)
-  Take n0 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take m0 : nat) Warning.
+  assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
-(** Test 19: If a statement reuses a same binder name, and 
+(** Test 19: If a statement reuses a same binder name, and
     variable are introduced one by one, go with the
     visually rename binder. *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
   Take n : nat.
-  Take n0 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
 
 (** Test 20: Fail when twice the same variable is introduced *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
-  Fail Take n, n : nat. (* This should also produce a warning *)
+  assert_feedback_with_string (fun () => assert_fails_with_string (fun () => Take n, n : nat)
+"Internal err:(n is already used.)") (*This should produce an error ... *)
+Warning
+"Expected variable name n0 instead of n.". (* ... and also produce a warning *)
 Abort.
 
 (** Test 21: It should be possible to provide fresh variable names
     (although in the expected order) *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
-  Take n, n0 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n, n0 : nat) Warning.
 Abort.
 
 (** Test 22: It should be possible to provide fresh variable names
     (although in the expected order) case with 3 variables *)
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
-  Take n, n0, n1 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n, n0, n1 : nat) Warning.
 Abort.
 
 (** Test 23: It should  be possible to provide fresh variable names
@@ -207,5 +225,104 @@ Abort.
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
   (set (n := 1)).
-  Take n0, n1, n2 : nat. (* This should produce no warning *)
+  assert_no_feedback (fun () => Take n0, n1, n2 : nat) Warning.
+Abort.
+
+Require Import Waterproof.Notations.Sets.
+
+Local Parameter A : nat -> Prop.
+Definition B := as_subset _ A.
+
+(** ** Tests for taking from sets *)
+Open Scope subset_scope.
+(** Test 24: Take from a set *)
+Goal ∀ n ∈ B, n = 0.
+  Take n ∈ B.
+  assert (n ∈ B) by assumption.
+Abort.
+
+(** Test 25, Take multiple variables from a set *)
+Goal ∀ k ∈ B, ∀ l ∈ B, ∀ m ∈ B, ∀ n ∈ B, k + l + m + n = 0.
+  Take k, l, m, n ∈ B.
+  assert (k ∈ B) by assumption.
+  assert (l ∈ B) by assumption.
+  assert (m ∈ B) by assumption.
+  assert (n ∈ B) by assumption.
+Abort.
+
+
+Close Scope subset_scope.
+
+(** Test 26, Take from a set of real numbers *)
+
+Require Import Waterproof.Notations.Reals.
+Open Scope R_scope.
+Open Scope subset_scope.
+
+Local Parameter a b : R.
+
+Goal ∀ x ∈ [a, b], True.
+Proof.
+We need to show that (∀ x ∈ [a, b], True).
+Take x ∈ [a, b].
+Abort.
+
+(** Test 27, Take from a full set *)
+Goal ∀ x ∈ ℝ, x > 0.
+Take x ∈ ℝ.
+Abort.
+
+(** Test 28, Take with double coercion *)
+
+Structure test_structure  := BuildTestStructure { test_carrier :> Type }.
+Local Definition V := BuildTestStructure R.
+
+Goal ∀ x ∈ V, x = 0.
+Proof.
+Take x ∈ V. (* V first gets coerced to Type, then to subset *)
+(* To see this, for instance use *)
+(* Set Printing Coercions. *)
+Abort.
+
+(** Test 29, Take with an inequality in nat, but in R_scope *)
+Goal ∀ n > 3%nat, Rplus n n = 0.
+Proof.
+Take n > 3%nat.
+assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(gt n 3).
+Abort.
+
+(** Test 30, Take with an lt in nat, but in R_scope *)
+Goal ∀ n < 3%nat, INR(n) = 0.
+Proof.
+Take n < 3%nat.
+assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(lt n 3).
+Abort.
+
+(** Test 31, Take with an lt in nat, but in R_scope *)
+Goal ∀ n ≤ 3%nat, INR(n) = 0.
+Proof.
+Take n ≤ 3%nat.
+assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(le n 3).
+Abort.
+
+Waterproof Enable Redirect Errors.
+
+(** Test 32, Use take with the wrong symbol *)
+Goal ∀ n > 3, n = 0.
+assert_fails_with_string (fun () => Take n < 3)
+"The condition (n < 3) does not correspond to the expected condition (n > 3)".
+Abort.
+
+(** Test 33, Check that subset type is simplified when using Take with colon *)
+Goal ∀ n > 3, n = 0.
+Proof.
+Take n : R.
+assert_constr_equal (Constr.type constr:(n)) constr:(R).
+Abort.
+
+(** Test 33, Check that subset type is simplified when using Take with > *)
+Goal ∀ n > 3, n = 0.
+Proof.
+Take n > 3.
+assert_constr_equal (Constr.type constr:(n)) constr:(R).
 Abort.

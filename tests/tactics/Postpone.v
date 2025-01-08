@@ -23,6 +23,10 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
+Require Import Waterproof.Util.Assertions.
+
+Waterproof Enable Redirect Feedback.
 
 (** By magic it holds that ....  *)
 
@@ -35,10 +39,11 @@ Abort.
 (** Test 1: postpone proof of claim. Claim added to hypotheses, warning raised. *)
 Goal (0 = 0).
 Proof.
-  By magic it holds that (False) (H2).
-  By magic it holds that (0 = 1) (H3).
+  assert_feedback_with_string (fun () => By magic it holds that (False) (H2)) Warning
+"Please come back later to provide an actual proof of False.".
+  assert_feedback_with_string (fun () => By magic it holds that (0 = 1) (H3)) Warning
+"Please come back later to provide an actual proof of (0 = 1).".
 Abort.
-
 
 (** By magic we conclude that ...  *)
 
@@ -51,5 +56,19 @@ Abort.
 (** Test 3: postpone proof of conclusion. Raises warning. *)
 Goal (0 = 1).
 Proof.
-  By magic we conclude that (0 = 1).
+  assert_feedback_with_string (fun () => By magic we conclude that (0 = 1)) Warning
+"Please come back later to provide an actual proof of (0 = 1).".
+Abort.
+
+Goal False.
+  assert_feedback_with_string (fun () => By magic it suffices to show that (True)) Warning
+"Please come back later to prove that it suffices to show that True".
+Abort.
+
+(** Test 5: Cannot close proof after use of magic. *)
+Goal True.
+Proof.
+  By magic we conclude that (True).
+  Fail (). (* No remaining goals. *)
+  Fail Qed. (* Some goals given up. *)
 Abort.

@@ -23,11 +23,15 @@ Require Import micromega.Lra.
 Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Reals.
-Require Import Notations.
+Require Import Notations.Common.
+Require Import Notations.Reals.
+Require Import Notations.Sets.
+Require Import Chains.
 
 Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope R_scope.
+Open Scope subset_scope.
 
 Section Definitions.
 Context (X : Metric_Space).
@@ -37,27 +41,39 @@ Context (X : Metric_Space).
 Coercion Base : Metric_Space >-> Sortclass.
 
 Definition dist_positive :
-  ∀ x y : X, dist X x y ≥ 0
-  := dist_pos X.
+  ∀ x ∈ X, ∀ y ∈ X, dist X x y ≥ 0.
+Proof.
+  Take x, y ∈ X.
+  By dist_pos we conclude that (dist X x y ≥ 0).
+Qed.
 
 Definition dist_non_degenerate :
-  ∀ x y : X, (dist X x y = 0) ⇒ (x = y). 
-  Take x, y : X.
+  ∀ x ∈ X, ∀ y ∈ X,
+  (dist X x y = 0) ⇒ (x = y).
+Proof.
+  Take x, y ∈ X.
   By (proj1(_,_,(dist_refl X x y))) we conclude that (dist X x y = 0 ⇨ x = y).
 Defined.
 
 Definition dist_symmetric :
-  ∀ x y : X, dist X x y = dist X y x
-  := dist_sym X.
+  ∀ x ∈ X, ∀ y ∈ X,
+  dist X x y = dist X y x.
+Proof.
+  Take x, y ∈ X.
+  By dist_sym we conclude that (dist X x y = dist X y x).
+Qed.
 
 Definition dist_triangle_inequality :
-  ∀ x y z : X, dist X x z ≤ dist X x y + dist X y z.
-  Take x, y, z : X. 
+  ∀ x ∈ X, ∀ y ∈ X, ∀ z ∈ X,
+  dist X x z ≤ dist X x y + dist X y z.
+Proof.
+  Take x, y, z ∈ X.
   By (dist_tri X) we conclude that (dist X x z ≤ dist X x y + dist X y z).
 Qed.
 
-Definition dist_reflexive : ∀ x : X, dist X x x = 0.
-  Take x : X.
+Definition dist_reflexive : ∀ x ∈ X, dist X x x = 0.
+Proof.
+  Take x ∈ X.
   By (proj2(_, _, (dist_refl X x x))) we conclude that (dist X x x = 0).
 Defined.
 
@@ -65,7 +81,7 @@ End Definitions.
 
 (** ** Example : a discrete metric on the real line *)
 
-Definition d_discrete_R : 
+Definition d_discrete_R :
   ℝ → ℝ → ℝ := fun (x y : ℝ) => if Reqb x y then 0 else 3.
 
 Lemma d'_eq_0 : forall x y : ℝ,
@@ -85,7 +101,7 @@ Qed.
 
 Lemma d'_eq_3 : forall x y : ℝ, d_discrete_R x y = 3 -> (Reqb x y) = false.
 Proof.
-Take x, y : ℝ. 
+Take x, y : ℝ.
 Assume that (d_discrete_R x y = 3).
 It holds that ( (if Reqb x y then 0 else 3) = 3) (i).
 Either (x = y) or (x ≠ y).

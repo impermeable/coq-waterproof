@@ -1,12 +1,6 @@
 src/META.coq-waterproof
 -R theories/ Waterproof
-# The following three lines can be commented out
-# to make coq-lsp work while working on the library:
-# -R _build/default/theories/ Waterproof
-# -I _build/install/default/lib/coq-waterproof/plugin
-# -I _build/install/default/lib/
 -I src
--I @LTAC2_CAML_FILES@
 
 # Coq-Wateproof OCaml plugin
 src/backtracking.ml
@@ -76,6 +70,7 @@ theories/Tactics/ToShow.v
 theories/Tactics/Unfold.v
 
 theories/Util/Assertions.v
+theories/Util/Binders.v
 theories/Util/Constr.v
 theories/Util/Evars.v
 theories/Util/Goals.v
@@ -116,7 +111,7 @@ tests/chains/Manipulation.v
 
 ## Automation
 
-### General  
+### General
 tests/automation/Shield.v
 tests/automation/Chains.v
 
@@ -126,6 +121,9 @@ tests/automation/databases/Decidability.v
 tests/automation/databases/Empty.v
 tests/automation/databases/Integers.v
 tests/automation/databases/RealsAndIntegers.v
+
+## Notations
+tests/Notations/Sets.v
 
 ## Tactics
 tests/tactics/Assume.v
@@ -146,10 +144,14 @@ tests/tactics/Specialize.v
 tests/tactics/Take.v
 tests/tactics/ToShow.v
 tests/tactics/Unfold.v
+tests/tactics/Help.v
 
 ## Util
+tests/util/Binders.v
 tests/util/Evars.v
 tests/util/MessagesToUser.v
+tests/util/Assertions.v
+tests/util/TypeCorrector.v
 
 ## Libs
 tests/libs/Negation.v

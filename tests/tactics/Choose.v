@@ -22,7 +22,11 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Notations.Sets.
+Require Import Waterproof.Notations.Common.
+Waterproof Enable Redirect Feedback.
 
 (** Test 0: This should choose m equal to n *)
 Goal forall n : nat, exists m : nat, n = m.
@@ -62,37 +66,51 @@ Abort.
 
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (_).
+    assert_feedback_with_string (fun () => Choose n := (_)) Warning
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n?)."]).
 Abort.
 
 (** Test 6: Choose a named evar *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (?[m]).
+    assert_feedback_with_string (fun () => Choose n := (?[m])) Warning
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?m)."]).
 Abort.
 
-(** Test 7: Choose a blank check tha blank was renamed *)
+(** Test 7: Choose a blank check that blank was renamed *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (_).
+    assert_feedback_with_string (fun () => Choose n := (_)) Warning
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n?)."]).
     assert (?n = 0).
 Abort.
 
-(** Test 8: Choose a more complicated blank and check that renaming took place, 
+(** Test 8: Choose a more complicated blank and check that renaming took place,
     by reformulating the goal in terms of the new named evars. *)
 Goal exists n : nat, n + 1 = n + 1.
-    Choose n := (_ + _ + _).
-    change (?n + ?n0 + ?n1 + 1 = ?n + ?n0 + ?n1 + 1).
+    assert_feedback_with_string (fun () => Choose n := (_ + _ + _)) Warning
+(String.concat "" ["Please come back later to make a definitive choice for n.
+For now you can use that "; "
+(n = ?n? + ?n0? + ?n1?)."]).
+    change (?n? + ?n0? + ?n1? + 1 = ?n? + ?n0? + ?n1? + 1).
 Abort.
-
+Require Import Waterproof.Util.Evars.
 (** Test 9: Choose a blank without specifying the name of the variable *)
 Goal exists n : nat, n + 1 = n + 1.
-  Choose (_).
-  change (?n + 1 = ?n + 1).
+  assert_feedback_with_string (fun () => Choose (_)) Warning
+"Please come back later to make a definite choice.".
+  change (?n? + 1 = ?n? + 1).
 Abort.
 
 (** Test 10: Choose a blank if binder has no name *)
 Goal exists _ : nat, True.
 Proof.
-  Choose (_).
+  assert_feedback_with_string (fun () => Choose (_)) Warning
+"Please come back later to make a definite choice.".
   (* In this case, the blank evar should be renamed to `x` *)
   assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
 Abort.
@@ -102,22 +120,108 @@ Abort.
 (** Test 11: Warn on different variable name *)
 Goal exists n : nat, n + 1 = n + 1.
 Proof.
-    Choose m := 1.
+    assert_feedback_with_strings (fun () => Choose m := 1) Warning
+["Expected variable name n instead of m."].
 Abort.
 
-(** Test 12: Warn on different variable name when binder is shielded,
+(** Test 12: Do not warn on different variable name when binder is shielded,
     because of an already existing definition. *)
 Goal exists n : nat, n + 1 = n + 1.
 Proof.
     set (n := 3).
-    Choose n0 := 2.
+    assert_no_feedback (fun () => Choose n0 := 2) Warning.
 Abort.
 
-(** Test 12: Warn on different variable name when binder is shielded,
-    because of an already existing definition, using that already
-    defined variable *)
-Goal exists n : nat, n + 1 = n + 1.
+Open Scope subset_scope.
+
+(** Test 13: Choose a number larger than a number *)
+Goal ∃ n > 0, True.
 Proof.
-    set (n := 3).
-    Choose n0 := n.
+  Choose n := 3.
+  * Indeed, (n > 0).
+  * We conclude that True.
+Qed.
+
+Require Import Coq.Reals.Reals.
+Require Import Waterproof.Notations.Reals.
+Open Scope subset_scope.
+Open Scope R_scope.
+
+(** Test 14: Choose a natural number larger than a number, but in R_scope *)
+
+Goal ∃ n ≥ 0%nat, INR(n) = 3.
+Proof.
+  Choose n := 3%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (ge n 0)).
+    Indeed, ((n ≥ 0)%nat).
+  * We need to show that (INR(n) = 3).
+Abort.
+
+(** Test 15: Choose a natural number less than a number, but in R_scope *)
+Goal ∃ n < 4%nat, INR(n) = 3.
+Proof.
+  Choose n := 2%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n < 4)%nat).
+    Indeed, ((n < 4)%nat).
+  * We need to show that (INR(n) = 3).
+Abort.
+
+(** Test 16: Choose a natural number less than or equal to a number, but in R_scope *)
+Goal ∃ n ≤ 4%nat, INR(n) = 3.
+Proof.
+  Choose n := 3%nat.
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n ≤ 4)%nat).
+    Indeed, (n ≤ 4)%nat.
+  * We need to show that (INR(n) = 3).
+Abort.
+
+(** Test 17: Test notation in wrapper *)
+(* TODO: the goal here becomes strange *)
+Goal ∃ n ≤ 4, n = 3.
+Proof.
+  Choose n := 3.
+  let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  assert_string_equal s (String.concat ""
+ ["(Add the following line to the proof:
+ ";"
+ { Indeed, (n ≤ 4). }
+ ";"
+ or write:
+ ";"
+ { We need to verify that (n ≤ 4).
+ ";"
+ }
+ ";"
+ if intermediary proof steps are required.)"]).
+Abort.
+
+Close Scope R_scope.
+Open Scope nat_scope.
+(** Test 18: Cannot close the goal after choosing a blank,
+  regardless of whether automation has already resolved the evar. *)
+
+Waterproof Enable Automation RealsAndIntegers.
+
+Goal ∃ n ≥ 0, True.
+Proof.
+Choose n := _.
+{ Indeed, (n ≥ 0). }
+* We conclude that (True).
+Fail (). (* no such goal *)
+Fail Qed. (* there are goals given up *)
+Abort.
+
+Close Scope R_scope.
+Open Scope nat_scope.
+
+(** Test 19 : The automation shouldn't resolve the evars *)
+
+Goal ∃ n < 1, 3 = n.
+Proof.
+Choose n := _.
+* Fail Indeed, (n < 1).
+  We need to verify that (n < 1).
+  Control.shelve ().
+* We need to show that (3 = n).
+  Fail We conclude that (3 = n).
 Abort.
