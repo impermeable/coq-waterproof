@@ -1,8 +1,9 @@
 (coq.theory
-  (name Waterproof)
-  (package coq-waterproof)
-  (flags :standard)
-  (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2))
+ (name Waterproof)
+ (package coq-waterproof)
+ (flags :standard)
+ (theories Stdlib Ltac2)
+ (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2))
 
 (include_subdirs qualified)
 
