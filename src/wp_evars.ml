@@ -49,7 +49,7 @@ let refine_goal_with_evar (input : string) : unit tactic =
     let env = Proofview.Goal.env gl in
     let concl = Proofview.Goal.concl gl in
     Refine.refine ~typecheck:true begin function sigma ->
-      let sigma, t = Evarutil.new_evar ~src 
+      let sigma, t = Evarutil.new_evar ~typeclass_candidate:false ~src
           ~naming:(Namegen.IntroFresh (Names.Id.of_string input))
           env sigma concl in
       (sigma, t)
