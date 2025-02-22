@@ -225,7 +225,7 @@ Ltac2 print_hints () :=
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
       | Val _           => print (goal_directly ())
-      | Err exn         =>
+      | Err _           =>
 
         (* Suggest hint to solve goal *)
         print (goal_hint ());

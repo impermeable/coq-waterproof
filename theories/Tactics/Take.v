@@ -129,13 +129,13 @@ Local Ltac2 intro_with_assum (id : ident) (rhs : constr) (tk : TakeKind) :=
           of a variable of type [type], including coercions of [type].
 *)
 Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
-  let is_sealed := lazy_match! Control.goal () with
+  let _ := lazy_match! Control.goal () with
     | seal _ _ => unfold seal at 1; true
     | _ => false
     end in
   let current_goal := Control.goal () in
   match Constr.Unsafe.kind (current_goal) with
-  | Constr.Unsafe.Prod b a =>
+  | Constr.Unsafe.Prod _ _ =>
       (* Check whether the expected binder name was provided. *)
       check_binder_warn current_goal id true
   | _ => throw (could_not_introduce_no_forall_message id)
