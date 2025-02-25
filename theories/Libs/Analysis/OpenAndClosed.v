@@ -16,8 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Classical_Prop.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Classical_Prop.
 
 Require Import Automation.
 Require Import Notations.Common.

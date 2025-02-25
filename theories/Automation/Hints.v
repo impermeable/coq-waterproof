@@ -18,17 +18,17 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Arith.PeanoNat.
-Require Import Classical_Pred_Type.
-Require Import Lia.
-Require Import Lra.
-Require Import Logic.ClassicalEpsilon.
-Require Import Reals.Reals.
-Require Import Reals.Rdefinitions.
-Require Import Sets.Classical_sets.
-Require Import Sets.Ensembles.
-Require Import Notations.Sets.
+From Stdlib Require Import Arith.PeanoNat.
+From Stdlib Require Import Classical_Pred_Type.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Lra.
+From Stdlib Require Import Logic.ClassicalEpsilon.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Reals.Rdefinitions.
+From Stdlib Require Import Sets.Classical_sets.
+From Stdlib Require Import Sets.Ensembles.
 
+Require Import Notations.Sets.
 Require Import Chains.
 Require Import Libs.Negation.
 Require Import Libs.Reals.

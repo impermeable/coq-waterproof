@@ -142,7 +142,7 @@ Proof.
   * We conclude that True.
 Qed.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Require Import Waterproof.Notations.Reals.
 Open Scope subset_scope.
 Open Scope R_scope.

@@ -1,7 +1,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
@@ -190,7 +190,7 @@ Abort.
 End test_differences_sort_of_goal.
 
 (** Test 13: Check whether we can handle boolean statements *)
-Require Import Coq.Bool.Bool.
+From Stdlib Require Import Bool.
 Goal forall b : bool, is_true(eqb b true) \/ is_true(eqb b false) -> True.
 Proof.
   intro b.
@@ -223,10 +223,10 @@ Proof.
   intro x.
   Either (x < 0) or (x ≥ 0).
   let s := Message.to_string (Message.of_constr (Control.goal ())) in
-  assert_string_equal s 
- "(Add the following line to the proof:
- 
- - Case (x < 0).)".
+  assert_string_equal s
+(String.concat "" ["(Add the following line to the proof:
+";" ";"
+ - Case (x < 0).)"]).
 Abort.
 
 Close Scope nat_scope.

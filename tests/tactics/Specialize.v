@@ -323,7 +323,7 @@ Qed.
 
 (** Test 23 : Choose a natural number larger than another natural number, but in R_scope. *)
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Open Scope R_scope.
 
 Goal (∀ y > 0%nat, INR(y) = 0) -> True.

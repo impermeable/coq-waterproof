@@ -134,7 +134,7 @@ Goal not (0 = 1).
   Fail Take p : (0 = 1).
 Abort.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 (** Test 13: Introducing too many variables when
     the for all statement is followed by an implication.
 *)

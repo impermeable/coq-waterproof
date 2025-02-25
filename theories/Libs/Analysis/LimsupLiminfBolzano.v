@@ -16,10 +16,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Lra.
-Require Import Classical.
-Require Import Classical_Pred_Type.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Lra.
+From Stdlib Require Import Classical.
+From Stdlib Require Import Classical_Pred_Type.
 
 Require Import Automation.
 Require Import Libs.Analysis.Sequences.

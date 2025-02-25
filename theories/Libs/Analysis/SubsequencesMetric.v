@@ -16,7 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.ZArith.ZArith Coq.Reals.Reals.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Automation.
 Require Import Libs.Analysis.MetricSpaces.

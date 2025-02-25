@@ -16,9 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Lra.
-Require Import Coq.Reals.Reals.
-Require Import Reals.ROrderedType.
+From Stdlib Require Import Lra.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import ROrderedType.
 
 Require Import Notations.
 

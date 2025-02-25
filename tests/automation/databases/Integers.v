@@ -26,7 +26,7 @@ Require Import Waterproof.Tactics.
 Open Scope nat_scope.
 (* Test 0: check if notations work. *)
 
-Require Import Lia.
+From Stdlib Require Import Lia.
 
 Goal  ∀ n : ℕ -> ℕ, (∀ k : ℕ, (n (k + 1) > n k)%nat) ⇒
     ∀ k : ℕ, (n k ≥ k)%nat.
@@ -37,10 +37,9 @@ Goal  ∀ n : ℕ -> ℕ, (∀ k : ℕ, (n (k + 1) > n k)%nat) ⇒
   - assert (H1 : S k = k + 1) by (auto with wp_integers zarith).
     rewrite H1.
     assert (H2 : n (k + 1) > n k) by (auto with wp_integers zarith).
-    auto with wp_integers zarith. 
+    auto with wp_integers zarith.
 Qed.
 
-Require Import Lia.
 Goal (& 3 < 4 <= 5).
   cbn; repeat split; solve [ltac1:(auto with wp_core wp_integers)].
 Qed.
