@@ -50,10 +50,10 @@ Ltac2 either_or_prop (t1:constr) (t2:constr) :=
   let t2 := correct_type_by_wrapping t2 in
   let attempt () :=
     assert ($t1 \/ $t2) as $h_id;
-    Control.focus 1 1 (fun () => 
+    Control.focus 1 1 (fun () =>
       let automation () := waterprove 4 false Decidability in
-      first 
-        [ 
+      first
+        [
           automation ()
           | apply or_comm; automation ()
         ]
@@ -64,7 +64,7 @@ Ltac2 either_or_prop (t1:constr) (t2:constr) :=
         destruct $h_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-      | Err exn => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
+      | Err _ => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
     end.
 
 (**
@@ -81,10 +81,10 @@ Ltac2 either_or_type (t1:constr) (t2:constr) :=
   let h_id := Fresh.in_goal @_temp in
   let attempt () :=
     assert ({$t1} + {$t2}) as $h_id;
-    Control.focus 1 1 (fun () => 
+    Control.focus 1 1 (fun () =>
       let automation () := waterprove 3 false Decidability in
-      first 
-        [ 
+      first
+        [
           automation ()
           | apply sumbool_comm; automation ()
         ]
@@ -95,7 +95,7 @@ Ltac2 either_or_type (t1:constr) (t2:constr) :=
         destruct $h_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-      | Err exn => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
+      | Err _ => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
     end.
 
 (**
@@ -109,19 +109,19 @@ Ltac2 either_or_type (t1:constr) (t2:constr) :=
     - splits the proof by case distinction; wraps the resulting goals in the Case.Wrapper
 *)
 Ltac2 either_or (t1:constr) (t2:constr) :=
-  let goal_is_prop := 
+  let goal_is_prop :=
     lazy_match! goal with
-      | [ |- ?u] => 
+      | [ |- ?u] =>
         (* Check whether [u] is not a proposition. *)
         let sort_u := get_value_of_hyp(u) in
         check_constr_equal sort_u constr:(Prop)
     end
   in
-  if goal_is_prop 
+  if goal_is_prop
     then either_or_prop t1 t2
-    else either_or_type t1 t2. 
+    else either_or_type t1 t2.
 
-Ltac2 Notation "Either" t1(constr) "or" t2(constr) := 
+Ltac2 Notation "Either" t1(constr) "or" t2(constr) :=
   panic_if_goal_wrapped ();
   either_or t1 t2.
 
@@ -207,10 +207,10 @@ Ltac2 either_or_or_prop (t1:constr) (t2:constr) (t3:constr) :=
   let t3 := correct_type_by_wrapping t3 in
   let attempt () :=
     assert ($t1 \/ $t2 \/ $t3) as $h1_id;
-    Control.focus 1 1 (fun () => 
+    Control.focus 1 1 (fun () =>
       let automation () := waterprove 4 false Decidability in
-      let g := Control.goal () in first 
-      [ 
+      let _ := Control.goal () in first
+      [
         automation ()
       ]
     )
@@ -221,12 +221,12 @@ Ltac2 either_or_or_prop (t1:constr) (t2:constr) (t3:constr) :=
       let h_val := Control.hyp h1_id in
       destruct $h_val as [_ | $h2_id];
       Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
-      Control.focus 2 2 (fun () => 
+      Control.focus 2 2 (fun () =>
         let h2_val := Control.hyp h2_id in
         destruct $h2_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t2));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t3)))
-    | Err exn => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
+    | Err _ => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
   end.
 
 (**
@@ -244,10 +244,10 @@ Ltac2 either_or_or_type (t1:constr) (t2:constr) (t3:constr) :=
   let h_id := Fresh.in_goal @_temp in
   let attempt () :=
     assert (sumtriad $t1 $t2 $t3) as $h_id;
-    Control.focus 1 1 (fun () => 
+    Control.focus 1 1 (fun () =>
       let automation () := waterprove 3 false Decidability in
-      let g := Control.goal () in first 
-      [ 
+      let _ := Control.goal () in first
+      [
         apply double_sumbool_sumtriad_abc; automation ()
       | apply double_sumbool_sumtriad_acb; automation ()
       | apply double_sumbool_sumtriad_bac; automation ()
@@ -264,7 +264,7 @@ Ltac2 either_or_or_type (t1:constr) (t2:constr) (t3:constr) :=
       Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
       Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
       Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
-    | Err exn => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
+    | Err _ => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
   end.
 
 (**
@@ -280,7 +280,7 @@ Ltac2 either_or_or_type (t1:constr) (t2:constr) (t3:constr) :=
 *)
 Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
   lazy_match! goal with
-    | [ |- ?u] => 
+    | [ |- ?u] =>
       (* Check whether [u] is not a proposition. *)
       let sort_u := get_value_of_hyp(u) in
       if (check_constr_equal sort_u constr:(Prop))
@@ -288,6 +288,6 @@ Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
       else either_or_or_type t1 t2 t3
   end.
 
-Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) := 
+Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) :=
   panic_if_goal_wrapped ();
   either_or_or t1 t2 t3.

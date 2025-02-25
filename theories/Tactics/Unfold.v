@@ -126,10 +126,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
 
-  let hyps := List.map (fun (i, def, t) => t) (Control.hyps ()) in
+  let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
   let unfolded_hyps := List.map unfold_method hyps in
   let only_unfolded_hyps :=
-    List.map (fun (uh, h) => uh) (
+    List.map (fun (uh, _) => uh) (
       List.filter_out (fun (uh, h) => Constr.equal uh h) (
         List.combine unfolded_hyps hyps
       )

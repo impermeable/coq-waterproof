@@ -275,7 +275,7 @@ Ltac2 rec assert_list_equal (f : 'a -> 'a -> bool) (of_a : 'a -> message) (x:'a 
     | [] =>
       match y with
         | [] => print_success (of_string "Test passed: lists indeed equal")
-        | y_head::y_tai => fail_test (of_string "Second list has more elements")
+        | _::_ => fail_test (of_string "Second list has more elements")
       end
   end.
 

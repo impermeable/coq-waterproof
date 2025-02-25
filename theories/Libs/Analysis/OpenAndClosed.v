@@ -59,9 +59,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", co
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", constr))) :=
   wp_unfold unfold_open_ball (Some "open ball ") false x.
 
-Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 68).
+Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 69).
 
-Notation "a 'is' 'an' 'interior' 'point' 'of' A" := (is_interior_point a A) (at level 68, only parsing).
+Notation "a 'is' 'an' 'interior' 'point' 'of' A" := (is_interior_point a A) (at level 69, only parsing).
 
 Local Ltac2 unfold_is_interior_point (statement : constr) := eval unfold is_interior_point in $statement.
 
@@ -70,9 +70,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_interior_point (Some "interior point") false x.
 
-Notation "A 'is' '_open_'" := (is_open A) (at level 68).
+Notation "A 'is' '_open_'" := (is_open A) (at level 69).
 
-Notation "A 'is' 'open'" := (is_open A) (at level 68, only parsing).
+Notation "A 'is' 'open'" := (is_open A) (at level 69, only parsing).
 
 Local Ltac2 unfold_is_open (statement : constr) := eval unfold is_open in $statement.
 
@@ -83,7 +83,7 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" x(opt(seq("i
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
-Notation "'ℝ' '\' A" := (complement A) (at level 20, only parsing).
+Notation "'ℝ' '\' A" := (complement A) (at level 0, only parsing).
 
 Local Ltac2 unfold_complement (statement : constr) := eval unfold complement,
   as_subset in $statement.
@@ -98,9 +98,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "complement" x(opt(seq("in", con
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "complement" x(opt(seq("in", constr))) :=
   wp_unfold unfold_complement (Some "complement") false x.
 
-Notation "A 'is' '_closed_'" := (is_closed A) (at level 68).
+Notation "A 'is' '_closed_'" := (is_closed A) (at level 69).
 
-Notation "A 'is' 'closed'" := (is_closed A) (at level 68, only parsing).
+Notation "A 'is' 'closed'" := (is_closed A) (at level 69, only parsing).
 
 Local Ltac2 unfold_is_closed (statement : constr) := eval unfold is_closed in $statement.
 

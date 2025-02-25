@@ -42,7 +42,7 @@ Local Ltac2 _ident_to_hyp_list (ls : (ident * constr) list) : (Std.hypothesis * 
   has an evar.
 *)
 Local Ltac2 _names_evars (ls : (ident * constr) list) : ident list
- := List.map (fun (i, x) => i) (List.filter (fun (i, x) => Constr.has_evar x) ls).
+ := List.map (fun (i, _) => i) (List.filter (fun (_, x) => Constr.has_evar x) ls).
 
 (**
   Helper function to make a message of a list of idents,
@@ -125,14 +125,14 @@ Ltac2 rec get_binders_with_implication_from_goal_aux () :
                   let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
                   ((b, cond, w, ct) :: b_list, Int.add ct 1) ) in
   lazy_match! goal with
-  | [ |- _ -> ?x] =>
+  | [ |- _ -> ?_x] =>
     let w := Fresh.fresh (Fresh.Free.of_goal ()) @___aux in
     intro $w;
     let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
     (b_list, Int.add ct 1)
   | [ |- forall _ : _, _ ] =>
     match Constr.Unsafe.kind (Control.goal ()) with
-    | Constr.Unsafe.Prod b a =>
+    | Constr.Unsafe.Prod b _ =>
       match Constr.Binder.name b with
       | None =>
         let w := Fresh.fresh (Fresh.Free.of_goal ()) @___aux in
@@ -255,7 +255,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
   lazy_match! statement with
     | (* TODO: this can be relaxed, the code presumably also
          works with an implication *)
-      _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
+      _ -> ?_x => (* Exclude matching on functions (naming codomain necessary) *)
       throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
     | forall _ : _, _ =>
       (* Create new hypotheses *)
@@ -307,23 +307,20 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
         test_insertion ();
         (* Add the statments that variables are in sets as new subgoals *)
         let new_hyp_list :=
-          List.fold_left (fun prev_id_list (bin, con, id, nr)  =>
+          List.fold_left (fun prev_id_list (_, con, id, nr)  =>
           (* Only do something for the binders that the caller provided *)
-          match List.find_opt (fun (i, aux_x) =>
+          match List.find_opt (fun (_, aux_x) =>
             Ident.equal id aux_x) def_list with
           | None => prev_id_list
-          | Some (_, aux_x) =>
+          | Some (_, _) =>
             Control.focus 1 1 (fun () =>
               let aux_id := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-              let fresh_of_id := Fresh.fresh (Fresh.Free.of_goal ()) id in
-              let id_c := Control.hyp aux_x in
               (* add the subgoal *)
               enough ($con) as $aux_id;
               (nr, aux_id) :: prev_id_list)
           end) [] binder_types in
         Control.focus 1 1 (fun () =>
         let constr_w := Control.hyp w in
-        let type_w := Constr.type constr_w in
         (* In the specialized statement, now also use the proved
            set memberships *)
         Std.specialize (constr_w, Std.ExplicitBindings
@@ -346,7 +343,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
       (* revert the order of the goals, so the order is natural *)
       ltac1:(revgoals);
       (* substitute the temporary definitions *)
-      List.iter (fun (i, c) => subst $c) def_list
+      List.iter (fun (_, c) => subst $c) def_list
     | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
   end.
 
@@ -454,7 +451,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
       assert_fix_earlier_warning ()
   end;
   lazy_match! statement with
-    | _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
+    | _ -> ?_x => (* Exclude matching on functions (naming codomain necessary) *)
       throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
     | forall _ : _, _ =>
       (* Create new hypotheses *)
@@ -465,7 +462,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
       List.iter (fun (i, c) =>
         rename_blank_evars_in_term (Ident.to_string i) c) var_choice_list;
       apply (StateHyp.unwrap $new_w_t $new_w_c));
-      List.iter (fun (i, c) => subst $c) def_list;
+      List.iter (fun (_, c) => subst $c) def_list;
       ltac1:(revgoals)
       (* still need to restate the goal *)
     | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
