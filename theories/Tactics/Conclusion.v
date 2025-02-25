@@ -182,7 +182,7 @@ Local Ltac2 unwrap_state_goal_no_check () :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) :=
+Ltac2 Notation "We" "conclude" _(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -191,7 +191,7 @@ Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(constr) :=
 (**
   Alternative notation for [We conclude that ...].
 *)
-Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(constr) :=
+Ltac2 Notation "It" "follows" _(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -208,13 +208,13 @@ Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(constr) :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "By" xtr_lemma(constr) "we" "conclude" tht(opt("that")) target_goal(constr) :=
+Ltac2 Notation "By" xtr_lemma(constr) "we" "conclude" _(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
   conclude_by xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(constr) "we" "conclude" tht(opt("that")) target_goal(constr) :=
+Ltac2 Notation "Since" xtr_claim(constr) "we" "conclude" _(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -234,7 +234,7 @@ Ltac2 Notation "Since" xtr_claim(constr) "we" "conclude" tht(opt("that")) target
   Raises warning:
     - [Please come back later to provide an actual proof of [target_goal].], always.
 *)
-Ltac2 Notation "By" "magic" "we" "conclude" tht(opt("that")) target_goal(constr) :=
+Ltac2 Notation "By" "magic" "we" "conclude" _(opt("that")) target_goal(constr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;

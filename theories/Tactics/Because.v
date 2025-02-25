@@ -25,11 +25,11 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
-Local Ltac2 check_wrong_prop_specified (user_type:constr) (coq_type:constr) := 
+Local Ltac2 check_wrong_prop_specified (user_type:constr) (coq_type:constr) :=
  match Constr.equal user_type coq_type with
     | true  => ()
-    | false => throw (concat_list 
-      [of_string "Property "; of_constr user_type; of_string " should be "; 
+    | false => throw (concat_list
+      [of_string "Property "; of_constr user_type; of_string " should be ";
        of_constr coq_type; of_string "."])
   end.
 
@@ -67,10 +67,10 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
     | Some v => v
   end
   in
-  
+
   (* Destruct copy and check if types agree. *)
   destruct $copy_val as [$uu $vv];
-  
+
   let type_u := get_value_of_hyp_id uu in
   check_wrong_prop_specified tu type_u;
 
@@ -78,7 +78,7 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
   check_wrong_prop_specified tv type_v.
 
 
-Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("hold")) := 
+Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) _(opt("hold")) :=
   panic_if_goal_wrapped ();
   and_hypothesis_destruct_with_types s u tu v tv.
 
@@ -95,7 +95,7 @@ Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident
 
   Does:
     - splits [s] into its two respective parts. Wraps the goal for both parts in the [Case.Wrapper] wrapper.
-  
+
   Raises fatal exceptions:
     - If the specified type [tu] or [tv] is not actually the type of [u] or [v] resp.
 *)
@@ -104,7 +104,7 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
   let s_val := Control.hyp s in
   let copy := Fresh.in_goal @copy in
   pose $s_val as copy;
-  
+
   let copy_val := Control.hyp copy in
   (* Create identifiers if not specified. *)
   let uu := match u with
@@ -117,7 +117,7 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
     | Some v => v
   end
   in
-  
+
   (* Destruct copy and check if types agree. *)
   destruct $copy_val as [$uu | $vv];
   Control.focus 1 1 (fun () =>
@@ -125,13 +125,13 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
     check_wrong_prop_specified tu type_u;
     apply (Case.unwrap $type_u)
   );
-  
+
   Control.focus 2 2 (fun () =>
     let type_v := get_value_of_hyp_id vv in
     check_wrong_prop_specified tv type_v;
     apply (Case.unwrap $type_v)
   ).
 
-Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("holds")) :=
+Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) _(opt("holds")) :=
   panic_if_goal_wrapped ();
   or_hypothesis_destruct_with_types s u tu v tv.

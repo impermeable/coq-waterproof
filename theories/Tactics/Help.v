@@ -161,7 +161,7 @@ Local Ltac2 need_to_follow_advice () : bool :=
 Local Ltac2 goal_hint () : message :=
   let gl := Control.goal () in
   lazy_match! gl with
-  | ?a -> ?b  =>
+  | ?a -> ?_b  =>
     let sort_a := get_value_of_hyp a in
     match check_constr_equal sort_a constr:(Prop) with
       | true            => goal_impl_msg a
@@ -192,7 +192,7 @@ Local Ltac2 goal_hint () : message :=
 
 Local Ltac2 forall_filter (x : constr) : bool :=
   lazy_match! x with
-  | ?a -> ?b     => false
+  | _ -> ?_b     => false
   (* | ∀ _ ∈ _, _   => true*)
   | ∀ _ _, _   => true
   | forall _, _  => true
@@ -225,13 +225,13 @@ Ltac2 print_hints () :=
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
       | Val _           => print (goal_directly ())
-      | Err exn         =>
+      | Err _           =>
 
         (* Suggest hint to solve goal *)
         print (goal_hint ());
 
         (* Collect forall- and exists-statements *)
-        let hyps := List.map (fun (i, x, t) => t) (Control.hyps ()) in
+        let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
         let forall_hyps := List.filter (forall_filter) hyps in
         let exists_hyps := List.filter (exists_filter) hyps in
 
@@ -289,7 +289,7 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
         of_string "To use "; of_constr x; of_string ", use"]);
       print (of_string "    Obtain such a ... .") in
   lazy_match! x with
-  | ?a -> ?b => ()
+  | _ -> ?_b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _ , _ => print_forall_msg ()
   (* | ∀ _ > _ , _ => print_forall_msg ()
@@ -330,7 +330,7 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
         of_string "After proving "; of_constr x; of_string ", use it with"]);
       print (of_string "    Obtain such a ... .") in
   lazy_match! x with
-  | ?a -> ?b => ()
+  | _ -> ?_b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _, _ => print_forall_msg ()
   (* | ∀ _ > _, _ => print_forall_msg ()
