@@ -198,7 +198,7 @@ Proof.
 Abort.
 
 (* Test 14: added test for a previous bug with "expand the definition in" *)
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Notations.Sets.

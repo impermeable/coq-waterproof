@@ -16,9 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Reals.ROrderedType.
-Require Import micromega.Lra.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Reals.ROrderedType.
+From Stdlib Require Import micromega.Lra.
 
 Require Import Tactics.
 Require Import Automation.

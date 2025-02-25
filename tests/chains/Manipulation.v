@@ -18,8 +18,8 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Coq.Reals.Reals.
-Require Import micromega.Lra.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Lra.
 
 Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.

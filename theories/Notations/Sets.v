@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Sets.Ensembles.
+From Stdlib Require Import Sets.Ensembles.
 
 Require Import Notations.Common.
 
@@ -78,7 +78,7 @@ Definition seal {T : Type} (Q : T -> Prop) (y : T) := Q y.
 
 
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 
 Class ge_type (carrier : Type) := {
   ge_op : carrier -> carrier -> Prop

@@ -16,8 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Classical_Prop.
-Require Import Classical_Pred_Type.
+From Stdlib Require Import Classical_Prop.
+From Stdlib Require Import Classical_Pred_Type.
 
 Lemma or_func (A B C D : Prop) :
   (A -> C) -> (B -> D) -> (A \/ B) -> (C \/ D).

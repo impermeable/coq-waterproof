@@ -17,7 +17,7 @@
 (******************************************************************************)
 
 Require Import Ltac2.Ltac2.
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
@@ -28,20 +28,20 @@ Open Scope R_scope.
 Definition Rdist (x y : R) := Rabs (x - y).
 Local Parameter (f : R -> R) (a L : R).
 
-Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
+Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)
       ->
-     (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R, 
+     (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
   intro H.
   solve_by_manipulating_negation_in @H.
 Qed.
 
-Goal (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R, 
+Goal (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps)))
      ->
-     ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
+     ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps).
 Proof.
   intro H.
@@ -203,10 +203,10 @@ Qed.
 (** Test tactic that tries every hypothesis *)
 
 (* Test 22 *)
-Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
+Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)
       ->
-     (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R, 
+     (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
   intro H.
@@ -214,10 +214,10 @@ Proof.
 Qed.
 
 (* Test 23 *)
-Goal (0 = 0) -> (2 = 2) -> ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R, 
+Goal (0 = 0) -> (2 = 2) -> ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)
       ->
-     (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R, 
+     (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
   intros zero_eq_zero two_eq_two H.

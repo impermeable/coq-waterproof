@@ -16,11 +16,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Lia.
-Require Import Arith.
-Require Import Arith.Compare.
-Require Import ClassicalChoice.
-Require Import ChoiceFacts.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Arith.
+From Stdlib Require Import Arith.Compare.
+From Stdlib Require Import ClassicalChoice.
+From Stdlib Require Import ChoiceFacts.
 
 Require Export Libs.Analysis.SubsequencesMetric.
 

@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Classical.
+From Stdlib Require Import Classical.
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
