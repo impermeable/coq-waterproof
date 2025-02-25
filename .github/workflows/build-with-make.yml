@@ -12,7 +12,7 @@ jobs:
     name: build with make
     runs-on: ubuntu-latest
     container:
-      image: coqorg/coq:dev-ocaml-4.14.2-flambda
+      image: rocq/rocq-prover:dev-ocaml-4.14.2-flambda
       options: --user root
 
     steps:
