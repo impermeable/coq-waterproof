@@ -125,7 +125,7 @@ Ltac2 rec get_binders_with_implication_from_goal_aux () :
                   let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
                   ((b, cond, w, ct) :: b_list, Int.add ct 1) ) in
   lazy_match! goal with
-  | [ |- _ -> ?x] =>
+  | [ |- _ -> ?_x] =>
     let w := Fresh.fresh (Fresh.Free.of_goal ()) @___aux in
     intro $w;
     let (b_list, ct) := get_binders_with_implication_from_goal_aux () in
@@ -255,7 +255,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
   lazy_match! statement with
     | (* TODO: this can be relaxed, the code presumably also
          works with an implication *)
-      _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
+      _ -> ?_x => (* Exclude matching on functions (naming codomain necessary) *)
       throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
     | forall _ : _, _ =>
       (* Create new hypotheses *)
@@ -309,13 +309,12 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
         let new_hyp_list :=
           List.fold_left (fun prev_id_list (_, con, id, nr)  =>
           (* Only do something for the binders that the caller provided *)
-          match List.find_opt (fun (i, aux_x) =>
+          match List.find_opt (fun (_, aux_x) =>
             Ident.equal id aux_x) def_list with
           | None => prev_id_list
-          | Some (_, aux_x) =>
+          | Some (_, _) =>
             Control.focus 1 1 (fun () =>
               let aux_id := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-              let id_c := Control.hyp aux_x in
               (* add the subgoal *)
               enough ($con) as $aux_id;
               (nr, aux_id) :: prev_id_list)
@@ -452,7 +451,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
       assert_fix_earlier_warning ()
   end;
   lazy_match! statement with
-    | _ -> ?x => (* Exclude matching on functions (naming codomain necessary) *)
+    | _ -> ?_x => (* Exclude matching on functions (naming codomain necessary) *)
       throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
     | forall _ : _, _ =>
       (* Create new hypotheses *)
