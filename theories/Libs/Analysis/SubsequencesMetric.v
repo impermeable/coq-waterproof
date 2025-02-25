@@ -41,9 +41,9 @@ Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 69) : pred_for_
 Notation "'index' 'sequence'" := (is_index_sequence) (at level 69, only parsing) : metric_scope.
 Notation "'index' 'sequence'" := (is_index_sequence) (at level 69, only parsing) : pred_for_subset_scope.
 
-Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 68) : metric_scope.
+Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 69) : metric_scope.
 
-Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 68, only parsing) : metric_scope.
+Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 69, only parsing) : metric_scope.
 
 Local Ltac2 unfold_is_index_sequence (statement : constr) := eval unfold is_index_sequence in $statement.
 
@@ -60,7 +60,7 @@ Definition is_index_seq (n : ℕ → ℕ) :=
 
 Notation "a ◦ n" := (fun (k : nat) => a (n k)) (right associativity, at level 11).
 
-Notation "a ◦ n ◦ m" := (fun (k : nat) => a (n (m k))) (right associativity, at level 12).
+Notation "a ◦ n ◦ m" := (fun (k : nat) => a (n (m k))) (right associativity).
 
 Section my_section.
 Variable X : Metric_Space.
@@ -243,16 +243,16 @@ Qed.
 
 End my_section.
 
-Notation "b 'is' 'a' '_subsequence_' 'of' a" := (is_subsequence _ b a) (at level 68) : metric_scope.
-Notation "b 'is' 'a' 'subsequence' 'of' a" := (is_subsequence _ b a) (at level 68, only parsing) : metric_scope.
+Notation "b 'is' 'a' '_subsequence_' 'of' a" := (is_subsequence _ b a) (at level 69) : metric_scope.
+Notation "b 'is' 'a' 'subsequence' 'of' a" := (is_subsequence _ b a) (at level 69, only parsing) : metric_scope.
 Local Ltac2 unfold_is_subsequence (statement : constr) := eval unfold is_subsequence in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "subsequence" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_subsequence (Some "subsequence") true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "subsequence" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_subsequence (Some "subsequence") false x.
 
-Notation "p 'is' 'an' '_accumulation' 'point_' 'of' a" := (is_accumulation_point _ p a) (at level 68) : metric_scope.
-Notation "p 'is' 'an' 'accumulation' 'point' 'of' a" := (is_accumulation_point _ p a) (at level 68, only parsing) : metric_scope.
+Notation "p 'is' 'an' '_accumulation' 'point_' 'of' a" := (is_accumulation_point _ p a) (at level 69) : metric_scope.
+Notation "p 'is' 'an' 'accumulation' 'point' 'of' a" := (is_accumulation_point _ p a) (at level 69, only parsing) : metric_scope.
 Local Ltac2 unfold_is_accumulation_point (statement : constr) := eval unfold is_accumulation_point in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation point" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_accumulation_point (Some "accumulation point") true x.

@@ -343,7 +343,7 @@ Local Ltac2 inductive_def_index_seq_n () :=
     | Val _ =>
       Control.focus 1 1 (fun () => apply StrongIndIndxSeq.Base.unwrap);
       Control.focus 2 2 (fun () => apply StrongIndIndxSeq.Step.unwrap)
-    | Err exn => throw (of_string "The index sequence cannot be defined using this technique.")
+    | Err _ => throw (of_string "The index sequence cannot be defined using this technique.")
     end in
   lazy_match! goal with
   | [ |- ∃ n : nat -> nat, is_index_sequence n /\ ∀ k ∈ conv nat, @?p n k] => (*@?p*) apply_induction_principle p
