@@ -24,6 +24,8 @@ open Waterprove
 
 let waterproof_version : string = "2.2.0+8.17"
 
+(** Temporary hack to add lconstr and open_lconstr to Ltac2 **)
+(** This enables many tactics without parentheses **)
 module Ltac2Extension = struct
 
 let add_scope s f =
