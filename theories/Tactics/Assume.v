@@ -154,9 +154,17 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "Assume" "that" x(list1(seq(lconstr, opt(seq("as", "(", ident, ")"))), "and")) := assume x.
 
 (**
   Simply alternative notation for [Assume].
 *)
 Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+
+Notation "[ ( % @ < x 'as'" := x (at level 0).
+
+Lemma test (x y : nat) : (x < 10) -> (y < 10) -> True.
+Proof.
+Assume that x < 10 as (i).
+
+Qed.
