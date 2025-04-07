@@ -65,8 +65,14 @@ Notation "A ⊂ B" :=
 Notation "A 'and' B 'are' 'disjoint'" :=
   (Disjoint _ A B) (at level 50).
 
+Notation "A 'is' 'empty'" :=
+  (A = ∅) (at level 45).
+
 Notation "｛ x : T | P ｝" :=
   (fun (x : T) ↦ P) (x at level 99) : ensemble_scope.
+
+Notation " [ n ] " :=
+  (fun (x : nat) ↦ x < n).
 
 Declare Scope subset_scope.
 (* Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope. *)
