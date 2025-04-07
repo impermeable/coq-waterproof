@@ -21,6 +21,9 @@ if __name__ == "__main__":
     failed = False
     print("Current working directory:")
     print(os.getcwd())
+    print("fcc version:")
+    result = subprocess.run(['which', 'fcc'], capture_output=True)
+    print(result.stdout)
     for filename in glob.iglob('**/*.mv', recursive=True, root_dir=FOLDER):
         print(filename)
         result = subprocess.run(['fcc', '--root=../../../', f'{FOLDER}/{filename}'],
