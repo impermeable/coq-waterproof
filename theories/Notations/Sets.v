@@ -66,7 +66,7 @@ Notation "A 'and' B 'are' 'disjoint'" :=
   (Disjoint _ A B) (at level 50).
 
 Notation "A 'is' 'empty'" :=
-  (¬(exists a : _, In _ A a)) (at level 45).
+  (forall a : _, ~ In _ A a) (at level 45).
 
 Notation "A 'is' 'inhabited'" :=
   (exists a : _, In _ A a) (at level 45).
