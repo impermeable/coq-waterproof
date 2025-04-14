@@ -35,6 +35,8 @@ Require Import Libs.Reals.
 Require Import Libs.Logic.InformativeEpsilon.
 Require Import Libs.Logic.ConstructiveLogic.
 
+Local Set Default Proof Mode "Classic". (* Hint Extern respects Default Proof Mode after Rocq 9 *)
+
 (** * Waterproof core *)
 
 Create HintDb wp_core.

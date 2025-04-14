@@ -116,6 +116,8 @@ Either (x = y) or (x ≠ y).
   By Req_false we conclude that (Reqb x y = false).
 Qed.
 
+Local Set Default Proof Mode "Classic". (* Hint Extern respects Default Proof Mode after Rocq 9 *)
+
 #[export] Hint Resolve d'_eq_0 : wp_reals.
 #[export] Hint Resolve d'_eq_3 : wp_reals.
 #[export] Hint Extern 0 => unfold d_discrete_R; rewrite Req_true; lra : wp_reals.
