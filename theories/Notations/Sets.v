@@ -66,7 +66,10 @@ Notation "A 'and' B 'are' 'disjoint'" :=
   (Disjoint _ A B) (at level 50).
 
 Notation "A 'is' 'empty'" :=
-  (A = ∅) (at level 45).
+  (¬(exists a : _, In _ A a)) (at level 45).
+
+Notation "A 'is' 'inhabited'" :=
+  (exists a : _, In _ A a) (at level 45).
 
 Notation "｛ x : T | P ｝" :=
   (fun (x : T) ↦ P) (x at level 99) : ensemble_scope.
