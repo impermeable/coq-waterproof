@@ -28,7 +28,7 @@ if __name__ == "__main__":
         raise Exception(f"Could not find the folder {FOLDER}")
     for filename in glob.iglob('**/*.mv', recursive=True, root_dir=FOLDER):
         print(filename)
-        result = subprocess.run(['fcc', '--root=../../../', f'{FOLDER}/{filename}'],
+        result = subprocess.run(['fcc', f'{FOLDER}/{filename}'],
                        capture_output=True)
         if result.returncode != 0:
             raise Exception(f"Compilation of file {filename} has failed\n{result.stderr}")
