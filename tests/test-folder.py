@@ -24,6 +24,8 @@ if __name__ == "__main__":
     print("fcc version:")
     result = subprocess.run(['which', 'fcc'], capture_output=True)
     print(result.stdout)
+    if not os.path.isdir(FOLDER):
+        raise Exception(f"Could not find the folder {FOLDER}")
     for filename in glob.iglob('**/*.mv', recursive=True, root_dir=FOLDER):
         print(filename)
         result = subprocess.run(['fcc', '--root=../../../', f'{FOLDER}/{filename}'],
