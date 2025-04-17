@@ -85,7 +85,7 @@ Lemma convergence_equivalence (a : ℕ → ℝ) (q : ℝ) :
 Proof. (* hide proof *)
   We show both directions.
   * We need to show that (a ⟶ q ⇒ Un_cv a q).
-    Assume that (a ⟶ q) (i).
+    Assume that a ⟶ q as (i).
     unfold Un_cv.
     To show : (∀ ε1 > 0,
        ∃ N2 : ℕ,
@@ -98,7 +98,7 @@ Proof. (* hide proof *)
     Take n ≥ N2.
     We conclude that (｜a(n) - q｜ < ε1).
   * We need to show that (Un_cv a q ⇒ a ⟶ q).
-    Assume that (Un_cv a q) (ii).
+    Assume that Un_cv a q as (ii).
     To show : (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat).
     Take ε > 0.
     By (ii) it holds that ( ∃ N2 : ℕ,
@@ -153,7 +153,7 @@ Definition evt_eq_sequences (a b : ℕ → ℝ) :=
 Lemma conv_evt_eq_seq (a b : ℕ → ℝ) (l : ℝ) :
    (evt_eq_sequences a b) ⇒ (a ⟶ l) ⇒ (b ⟶ l).
 Proof.
-  Assume that (evt_eq_sequences a b) (i) and (a ⟶ l).
+  Assume that (evt_eq_sequences a b) as (i) and (a ⟶ l).
   To show : (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat).
   Take ε > 0.
   It holds that
@@ -329,7 +329,7 @@ Lemma upp_bd_seq_is_upp_bd_lim (a : ℕ → ℝ) (L M: ℝ) :
   (∀ n ∈ ℕ, a n ≤ M) ⇒ (converges_to a L) ⇒ L ≤ M.
 Proof.
   Assume that (∀ n ∈ ℕ, (a n) ≤ M).
-  Assume that (converges_to a L) (i).
+  Assume that (converges_to a L) as (i).
   By Rle_or_lt it holds that (L ≤ M ∨ M < L) (ii).
   Because (ii) either (L ≤ M) or (M < L) holds.
   - Case (L ≤ M).

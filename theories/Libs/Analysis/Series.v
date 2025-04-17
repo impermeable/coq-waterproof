@@ -84,7 +84,7 @@ Theorem mouse_tail (a : ℕ → ℝ) (k l : ℕ) (L : ℝ) :
         ⇔
       (converges_to (fun Nn ↦ sigma a k Nn) ((sigma a k (l-1)) + L))).
 Proof.
-    Assume that (k < l)%nat (i).
+    Assume that (k < l)%nat as (i).
     We show both directions.
     - We need to show that (converges_to (fun Nn ↦ (sigma a l Nn), L)
         ⇨ converges_to (fun Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)).
@@ -114,7 +114,7 @@ Proof.
         We need to show that (converges_to (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
         By (xi) we conclude that (converges_to (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
     - We need to show that (converges_to (fun Nn ↦ (sigma a k Nn), (sigma a k (l - 1) + L)) ⇨ converges_to (fun Nn ↦ (sigma a l Nn), L)).
-      Assume that (converges_to (fun Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)) (ii).
+      Assume that (converges_to (fun Nn ↦ (sigma a k Nn), sigma a k (l - 1) + L)) as (ii).
       We claim that (converges_to (fun N ↦ (sigma a k (l-1)), (sigma a k (l-1)))).
       { We need to show that ((constant_sequence (sigma a k (l-1))) ⟶ (sigma a k (l-1))).
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).

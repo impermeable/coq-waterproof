@@ -193,8 +193,8 @@ Theorem Bolzano_Weierstrass (a : ℕ → ℝ) :
     ∃ (n : ℕ → ℕ), ∃ (l : ℝ), is_index_seq n ∧
       converges_to (fun (k : ℕ) ↦ a (n k)) l ).
 Proof.
-    Assume that (has_ub a) (i).
-    Assume that (has_lb a) (ii).
+    Assume that (has_ub a) as (i).
+    Assume that (has_lb a) as (ii).
     Define iii := (maj_min a (i) (ii)).
     By Bolzano_Weierstrass_gen it holds that
       (∃ n0 : ℕ → ℕ, is_index_seq n0

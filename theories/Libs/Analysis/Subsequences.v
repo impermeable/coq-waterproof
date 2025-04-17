@@ -48,7 +48,7 @@ Lemma existence_next_el_to_fun (a : ℕ → ℝ) (P : ℕ → ℝ → Prop) :
     (∀ (m : ℕ), ∀ (N : ℕ), ∃ k : ℕ, (N ≤ k)%nat ∧ (P m (a k))) ⇒
       ∃ f : ℕ → ℕ → ℕ, ∀ (m : ℕ), ∀ (N : ℕ), (N ≤ f m N)%nat ∧ P m (a (f m N)).
 Proof.
-    Assume that (∀ m : ℕ, ∀ N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)) (i).
+    Assume that (∀ m : ℕ, ∀ N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)) as (i).
     We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))) (ii).
     {
         Take m : ℕ.
@@ -75,7 +75,7 @@ Lemma created_seq_is_index_seq (g : ℕ → ℕ → ℕ) :
     (∀ m : ℕ, ∀ N : ℕ, (g m N ≥ N)%nat ) ⇒
       is_index_seq (create_seq g).
 Proof.
-    Assume that (∀ m : ℕ, ∀ N : ℕ, (g m N ≥ N)%nat) (i).
+    Assume that (∀ m : ℕ, ∀ N : ℕ, (g m N ≥ N)%nat) as (i).
     We need to show that (∀ k ∈ ℕ, (create_seq g k < create_seq g (S k))%nat).
     Take k ∈ ℕ.
     By (i) it holds that (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
@@ -88,7 +88,7 @@ Lemma subseq_sat_rel (a : ℕ → ℝ) (g : ℕ → ℕ → ℕ) (P : ℕ → �
     (∀ m : ℕ, ∀ N : ℕ, P m (a (g m N)) ) ⇒
       ∀ k : ℕ, P k (a (create_seq g k)).
 Proof.
-    Assume that (∀ m : ℕ, ∀ N : ℕ, P m (a (g m N))) (i).
+    Assume that (∀ m : ℕ, ∀ N : ℕ, P m (a (g m N))) as (i).
     induction k. (*TODO: if we use 'We use induction on k.'-tacftic, then we cannot directly match on k + 1 *)
     - We need to show that (P 0%nat (a (g 0%nat 0%nat))).
       By (i) we conclude that (P 0%nat (a (g 0%nat 0%nat))).

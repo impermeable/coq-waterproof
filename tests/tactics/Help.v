@@ -162,7 +162,7 @@ Abort.
 Goal (∀ n > 3, n = n) -> False.
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (∀ n > 3, n = n) (i))
+  (fun () => Assume that ∀ n > 3, n = n as (i))
   Info
 ["To use (∀ n > 3, n = n), use";
 "    Use ... := (...) in (i)."].
@@ -172,7 +172,7 @@ Abort.
 Goal not (∀ n ≥ 4, n = n).
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (∀ n ≥ 4, n = n))
+  (fun () => Assume that ∀ n ≥ 4, n = n)
   Info
 ["To use (∀ n ≥ 4, n = n), use";
 "    Use ... := (...) in (...)."].

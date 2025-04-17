@@ -41,7 +41,7 @@ Definition is_seq_acc_pt (a : ℕ → ℝ) (x : ℝ) : Prop :=
 Lemma seq_bdd_seq_acc_pts_bdd (a : ℕ → ℝ) :
   has_ub a ⇒ bound (is_seq_acc_pt a).
 Proof.
-  Assume that (has_ub a) (i).
+  Assume that (has_ub a) as (i).
   We need to show that
     (there exists m : ℝ, is_upper_bound (is_seq_acc_pt a) m).
   We need to show that (there exists m : ℝ,

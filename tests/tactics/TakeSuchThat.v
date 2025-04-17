@@ -63,7 +63,7 @@ Abort.
 
 Goal forall x:nat, (x > 1) -> (x > 0).
 Proof.
-    Take x : nat; such that (x > 1) (i).
+    Take x : nat; such that (x > 1) as (i).
     assert_hyp_has_type @x constr:(nat).
     assert_hyp_has_type @i constr:(x > 1).
 Abort.

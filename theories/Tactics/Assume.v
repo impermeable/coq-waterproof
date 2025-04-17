@@ -150,13 +150,14 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
   end.
 
-
+Notation "[ ( % @ < x 'and'" := x (at level 0).
+Notation "[ ( % @ < x 'as'" := x (at level 0).
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "Assume" "that" x(list1(seq(lconstr, opt(seq("as", "(", ident, ")"))), "and")) := assume x.
 
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "such" "that" x(list1(seq(lconstr, opt(seq("as", "(", ident, ")"))), "and")) := assume x.

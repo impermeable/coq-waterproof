@@ -313,7 +313,7 @@ Abort.
 Goal ∀ y ∈ B, (∀ x ∈ B, x = 0) -> y = 0.
 Proof.
 Take y ∈ B.
-Assume that (∀ x ∈ B, x = 0) (i).
+Assume that (∀ x ∈ B, x = 0) as (i).
 Use x := y in (i).
 * Indeed, (y ∈ B).
 * Fail We conclude that (y = 0). (* TODO: fix this? *)
