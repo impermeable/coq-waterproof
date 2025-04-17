@@ -103,7 +103,7 @@ let thaw (r: 'a repr) (f: (unit, 'a) fun1): 'a tactic = app_fun1 f unit r ()
 let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
   let _, pv = Proofview.init sigma [] in
   let name, poly = Names.Id.of_string "ltac2_delayed", false in
-  let c, pv, _, _, _ = Proofview.apply ~name ~poly env tac pv in
+  let c, pv, _, _= Proofview.apply ~name ~poly env tac pv in
   let _, sigma = Proofview.proofview pv in
   (sigma, c)
 
