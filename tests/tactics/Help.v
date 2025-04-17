@@ -128,11 +128,12 @@ Proof.
 Abort.
 
 (** Test 9: By ... it holds that, no label. *)
-Goal False.
+Goal True -> False.
 Proof.
   (** TODO: is this consistent with the statement
       without the by clause and with the since clause? *)
-  By I it holds that (forall n : nat, True).
+  intro i.
+  By i it holds that (forall n : nat, True).
 Abort.
 
 (** Test 10: Since ... it holds that, no label. *)

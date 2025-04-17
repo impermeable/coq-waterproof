@@ -82,11 +82,11 @@ Ltac2 Notation "It" "suffices" "to" "show" that(opt("that")) statement(constr) :
   wp_enough statement.
 
 
-Ltac2 Notation "By" xtr_lemma(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+Ltac2 Notation "By" xtr_lemma(lconstr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
   panic_if_goal_wrapped ();
   wp_enough_by statement xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+Ltac2 Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
   panic_if_goal_wrapped ();
   wp_enough_since statement xtr_claim.
 

@@ -132,6 +132,8 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
   HelpNewHyp.suggest_how_to_use claim label.
 
 
+Notation "[ ( % @ < x 'it'" := x (at level 0).
+
 (**
   Attempts to assert a claim and proves it automatically using a specified lemma,
   this lemma has to be used.
@@ -146,11 +148,11 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
     - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-Ltac2 Notation "By" xtr_lemma(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "By" xtr_lemma(lconstr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_by claim label xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
 

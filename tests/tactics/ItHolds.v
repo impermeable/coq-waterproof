@@ -74,7 +74,7 @@ Proof.
     (* This is just to test if the extra lemma is really needed: *)
     Fail It holds that (x_var = 10).
 
-    By (H_x_is_10) it holds that (x_var = 10).
+    By H_x_is_10 it holds that (x_var = 10).
 Abort.
 
 (** * Test 3
@@ -210,14 +210,14 @@ Goal A -> False.
 Proof.
   intro H.
   pose f.
-  Since (A -> B) it holds that B.
+  Since A -> B it holds that B.
 Abort.
 
 (* Test 12: 'Since ...' fails if claimed cause is not proven previously. *)
 Goal A -> False.
 Proof.
   intro H.
-  Fail Since (A -> B) it holds that B.
+  Fail Since A -> B it holds that B.
 Abort.
 
 (*
@@ -239,7 +239,7 @@ Abort.
 Goal A -> False.
 Proof.
   intro H.
-  Since (A -> B) it holds that B.
+  Since A -> B it holds that B.
 Abort.
 
 
@@ -251,8 +251,8 @@ Abort.
 Goal A -> False.
 Proof.
   intro H.
-  Fail By (A -> B) it holds that B.
-  Since (A -> B) it holds that B.
+  Fail By A -> B it holds that B.
+  Since A -> B it holds that B.
 Abort.
 
 (* Test 16: 'Since ...' with reference fails. *)

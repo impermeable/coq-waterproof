@@ -69,7 +69,7 @@ Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
   intros A B.
   (* Clearly this statement isn't helpful in proving the goal! *)
-  Fail By (f_increasing) it suffices to show that (1 + 1 = 2).
+  Fail By f_increasing it suffices to show that (1 + 1 = 2).
 Abort.
 
 
@@ -111,7 +111,7 @@ Abort.
 Goal B.
 Proof.
   pose g.
-  Since (A -> B) it suffices to show that A.
+  Since A -> B it suffices to show that A.
 Abort.
 
 Parameter b : bool.
@@ -119,7 +119,7 @@ Parameter b : bool.
 Goal ((is_true b) -> B) -> B.
 Proof.
   intro H.
-  Since (is_true b -> B) it suffices to show that (b).
+  Since is_true b -> B it suffices to show that (b).
 Abort.
 
 (* Test 12: "It suffices" works with a boolean statement *)
@@ -135,5 +135,5 @@ Goal ((is_true b) -> B) -> B.
 Proof.
   intro H.
   It holds that (true).
-  Since (true) it suffices to show that (b).
+  Since true it suffices to show that (b).
 Abort.
