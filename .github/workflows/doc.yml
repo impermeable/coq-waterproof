@@ -44,7 +44,7 @@ jobs:
             endGroup
 
       - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: "docs/"
 
@@ -64,4 +64,4 @@ jobs:
     steps:
       - name: Deploy documentation to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
