@@ -2,15 +2,24 @@
   (name Waterproof)
   (package coq-waterproof)
   (flags :standard)
+  (theories Ltac2)
   (plugins coq-waterproof.plugin coq-core.plugins.ltac coq-core.plugins.ltac2))
+
+; For later versionos of Coq, this should be:
+; (theories Stdlib Ltac2)
+; (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2)
 
 (include_subdirs qualified)
 
 (rule
  (alias runtest)
- (deps (alias ../install))
+ (deps
+  (package coq-waterproof)
+  (package coq-lsp)
+  %{project_root}/tests/test-folder.py
+  (source_tree %{workspace_root}/waterproof-exercises))
  (action (progn
              (echo "Testing:")
              (run pwd)
-             (run python3 ../../../tests/test-folder.py ../../../../waterproof-exercises)
+             (run python3 %{project_root}/tests/test-folder.py %{workspace_root}/../../waterproof-exercises/Analysis-1)
 )))

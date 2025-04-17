@@ -119,8 +119,8 @@ dune build -p coq-waterproof
 
 ## Running external tests
 
-If one has a folder `waterproof-exercises` at the same level as the folder
-`coq-waterproof`, one can test coq-waterproof against all the files
+If one has symlink to a folder called `waterproof-exercises` 
+in the project root (i.e. in `coq-waterproof`), one can test coq-waterproof against all the files
 (typically exercise sheets) in `waterproof-exercises` by executing
 
 ```
