@@ -34,9 +34,9 @@ let rec pr_scope =
   let open Ltac2_plugin in
   let open Tac2expr in
   let open CAst in function
-    | SexprStr {v=s} -> Pp.qstring s
-    | SexprInt {v=n} -> Pp.int n
-    | SexprRec (_, {v=na}, args) ->
+    | SexprStr {v=s; _} -> Pp.qstring s
+    | SexprInt {v=n; _} -> Pp.int n
+    | SexprRec (_, {v=na; _}, args) ->
       let na = match na with
         | None -> Pp.str "_"
         | Some id -> Names.Id.print id
@@ -51,23 +51,23 @@ let scope_fail s args =
 let () = add_scope "lconstr" (fun arg ->
   let open Ltac2_plugin in
   let delimiters = List.map (function
-      | Tac2expr.SexprRec (_, { v = Some s }, []) -> s
+      | Tac2expr.SexprRec (_, { v = Some s; _ }, []) -> s
       | _ -> scope_fail "lconstr" arg)
       arg
   in
   let act e = Tac2quote.of_constr ~delimiters e in
-  Tac2entries.ScopeRule (Procq.Symbol.nterm Procq.Constr.lconstr, act)
+  Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
   )
 
 let () = add_scope "open_lconstr" (fun arg ->
   let open Ltac2_plugin in
   let delimiters = List.map (function
-      | Tac2expr.SexprRec (_, { v = Some s }, []) -> s
+      | Tac2expr.SexprRec (_, { v = Some s; _ }, []) -> s
       | _ -> scope_fail "open_.constr" arg)
       arg
   in
   let act e = Tac2quote.of_open_constr ~delimiters e in
-  Tac2entries.ScopeRule (Procq.Symbol.nterm Procq.Constr.lconstr, act)
+  Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
   )
 
 end
