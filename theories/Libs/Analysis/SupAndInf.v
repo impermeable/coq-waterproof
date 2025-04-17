@@ -347,7 +347,7 @@ Proof.
     Take z : ℝ. Assume that (A z).
     Assume that is_bounded_below A as (vi).
     Define B := (set_opp A).
-    We claim that (is_bounded_above B) (i).
+    We claim that (is_bounded_above B) as (i).
     { By bdd_below_to_bdd_above_set_opp it suffices to show that (is_bounded_below A).
       We conclude that (is_bounded_below A).
     }

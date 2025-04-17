@@ -49,7 +49,7 @@ Lemma existence_next_el_to_fun (a : ℕ → ℝ) (P : ℕ → ℝ → Prop) :
       ∃ f : ℕ → ℕ → ℕ, ∀ (m : ℕ), ∀ (N : ℕ), (N ≤ f m N)%nat ∧ P m (a (f m N)).
 Proof.
     Assume that (∀ m : ℕ, ∀ N : ℕ, there exists k : ℕ , (N ≤ k)%nat ∧ P m (a k)) as (i).
-    We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))) (ii).
+    We claim that (∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N)))) as (ii).
     {
         Take m : ℕ.
         apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).

@@ -195,7 +195,7 @@ Abort.
 Goal (forall n : nat, n = n) -> False.
 Proof.
   assert_feedback_with_strings
-  (fun () => We claim that (forall n : nat, n = n) (i))
+  (fun () => We claim that (forall n : nat, n = n) as (i))
   Info
 ["After proving (∀ n, n = n), use it with";
 "    Use ... := (...) in (i)."].

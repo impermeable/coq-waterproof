@@ -91,12 +91,12 @@ Proof.
       Assume that (converges_to (fun Nn ↦ (sigma a l Nn), L)).
       (* TODO: fix
          By lim_const_seq it holds that H1 : (Un_cv (fun N ↦ sigma a k (l-1)%nat) (sigma a k (l-1)%nat)). *)
-      We claim that (converges_to (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))) (xi).
+      We claim that (converges_to (fun N ↦ sigma a k (l-1)) (sigma a k (l-1))) as (xi).
       { We need to show that (converges_to (constant_sequence (sigma a k (l-1))) (sigma a k (l-1))).
         By lim_const_seq we conclude that (converges_to (constant_sequence (sigma a k (l-1))) (sigma a k (l-1))).
       }
       By convergence_plus it holds that (converges_to (fun Nn ↦ sigma a k (l-1)%nat + sigma a l Nn) (sigma a k (l-1)%nat + L)).
-      We claim that (evt_eq_sequences (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (fun Nn ↦ (sigma a k Nn))) (x).
+      We claim that (evt_eq_sequences (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn)) (fun Nn ↦ (sigma a k Nn))) as (x).
       { We need to show that (∃ M ∈ ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k (l - 1)%nat + sigma a l n = sigma a k n).
         Choose M := l%nat.
         * Indeed, (M ∈ ℕ).
@@ -120,7 +120,7 @@ Proof.
         By lim_const_seq we conclude that (constant_sequence (sigma a k (l-1)) ⟶ sigma a k (l-1)).
       }
       By convergence_minus it holds that (converges_to (fun N ↦ sigma a k N - (sigma a k (l-1))) (sigma a k (l-1) + L - (sigma a k (l-1)))).
-      We claim that (evt_eq_sequences (fun Nn ↦ (sigma a k Nn - sigma a k (l-1))) (fun Nn ↦ (sigma a l Nn))) (iii).
+      We claim that (evt_eq_sequences (fun Nn ↦ (sigma a k Nn - sigma a k (l-1))) (fun Nn ↦ (sigma a l Nn))) as (iii).
       { We need to show that (∃ M ∈ ℕ, ∀ n : ℕ, (n ≥ M)%nat ⇒ sigma a k n - sigma a k (l-1) = sigma a l n).
         Choose M := l%nat.
         * Indeed, (M ∈ ℕ).

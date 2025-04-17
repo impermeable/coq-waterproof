@@ -62,7 +62,7 @@ Proof.
     (∀ k ∈ nat, (a (n k) <= M)).*)
   enough (∀ k ∈ nat, (a (n k) <= M)) by (
   apply (upp_bd_seq_is_upp_bd_lim (fun k ↦ a (n k))); assumption).
-  We claim that (for all k : ℕ, (a k) ≤ M) (v).
+  We claim that (for all k : ℕ, (a k) ≤ M) as (v).
   { It holds that (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).
     It holds that (for all x0 : ℝ,
       (there exists k : ℕ, x0 = a k) ⇨ x0 ≤ M).
