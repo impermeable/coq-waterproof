@@ -26,6 +26,7 @@ bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
 depends: [
   "ocaml" {>= "4.09.0"}
   "rocq-prover" {>= "9.0" & < "9.1" | = "dev"}
+  "coq" {>= "9.0" & < "9.1" | = "dev"}
   "dune" {>= "3.8"}
 ]
 
