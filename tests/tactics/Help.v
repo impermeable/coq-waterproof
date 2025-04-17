@@ -122,7 +122,7 @@ Abort.
 Goal False.
 Proof.
   assert_feedback_with_strings
-  (fun () => It holds that (∀ n > 2, n = n) (i)) Info
+  (fun () => It holds that ∀ n > 2, n = n as (i)) Info
 ["To use (∀ n > 2, n = n), use";
 "    Use ... := (...) in (i)."].
 Abort.

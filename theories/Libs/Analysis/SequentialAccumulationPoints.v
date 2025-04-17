@@ -54,7 +54,7 @@ Proof.
   It holds that (∃ n : ℕ ⇨ ℕ,
     is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)).
   Obtain such an n.
-  It holds that (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) (iv).
+  It holds that (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) as (iv).
   Because (iv) both (is_index_seq n) and (converges_to (fun k ↦ (a(n(k))), x)) hold.
   We need to show that (x ≤ M).
   (*FIXME*)

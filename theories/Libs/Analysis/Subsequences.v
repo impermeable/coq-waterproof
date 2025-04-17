@@ -104,7 +104,7 @@ Proof.
     By existence_next_el_to_fun it holds that
       (∃ g : ℕ → ℕ → ℕ, ∀ (m : ℕ), ∀ (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))).
     Obtain such a g. It holds that
-      (∀ (m : ℕ), ∀ (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) (i).
+      (∀ (m : ℕ), ∀ (N : ℕ), (N ≤ g m N)%nat ∧ P m (a (g m N))) as (i).
     Choose n := (create_seq g).
     We show both statements.
     - We need to show that (is_index_seq n).
@@ -122,7 +122,7 @@ Proof.
       Take m : ℕ.
       We need to show that (for all M : ℕ, P(m, a (g(m, M)))).
       Take M : ℕ.
-      By (i) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) (ii).
+      By (i) it holds that ((M ≤ g m M)%nat ∧ P m (a (g m M))) as (ii).
       Because (ii) both (M ≤ g m M)%nat and (P m (a (g m M))) hold.
       We conclude that (P m (a (g m M))).
 Qed.

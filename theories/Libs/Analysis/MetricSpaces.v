@@ -94,7 +94,7 @@ Either (x = y) or (x ≠ y).
   By Req_true we conclude that (Reqb x y = true).
 
 + Case (x ≠ y).
-  It holds that ((if Reqb(x, y) then 0 else 3) = 0) (i).
+  It holds that ((if Reqb(x, y) then 0 else 3) = 0) as (i).
   rewrite (Req_false x y H) in i.
   Contradiction.
 Qed.
@@ -103,7 +103,7 @@ Lemma d'_eq_3 : forall x y : ℝ, d_discrete_R x y = 3 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ.
 Assume that (d_discrete_R x y = 3).
-It holds that ( (if Reqb x y then 0 else 3) = 3) (i).
+It holds that ( (if Reqb x y then 0 else 3) = 3) as (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   rewrite (Req_true x y H) in i.

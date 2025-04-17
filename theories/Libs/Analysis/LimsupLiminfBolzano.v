@@ -51,7 +51,7 @@ Defined.
 Lemma lim_const_min_1_over_n_plus_1 (x : ℝ) :
   converges_to (fun (n : ℕ) ↦ x - 1 / (INR n + 1)) x.
 Proof.
-    It holds that (x = x - 0) (i).
+    It holds that (x = x - 0) as (i).
     rewrite (i) at 1.
     apply convergence_minus with
       (a := fun (n : ℕ) ↦ x)
@@ -70,7 +70,7 @@ Proof.
     By exists_almost_lim_sup_aux it holds that
       (∃ n : ℕ, (n ≥ N₀)%nat ∧ a n > sequence_ub a (i) N₀ - 1 / (INR(m) + 1)).
     Obtain such an n. It holds that
-      ((n ≥ N₀)%nat ∧ a n > sequence_ub a (i) N₀ - 1 / (INR(m) + 1)) (iii).
+      ((n ≥ N₀)%nat ∧ a n > sequence_ub a (i) N₀ - 1 / (INR(m) + 1)) as (iii).
     Choose k := n.
     We show both statements.
     - We need to show that (N₀ ≤ k)%nat.
@@ -86,7 +86,7 @@ Proof.
       }
       Because (iii) both (n ≥ N₀)%nat and
         (a n > sequence_ub a i N₀ - 1 / (m + 1)) hold.
-      It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n) (v).
+      It holds that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) ≤ a n) as (v).
       We need to show that (proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a k).
       We conclude that (& proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1) < a n = a k).
 Qed.
@@ -114,7 +114,7 @@ Proof.
     Obtain such an l. It holds that
       (is_lub (EUn (fun (k : ℕ) ↦ a (N₀ +k)%nat)) l).
     It holds that (Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), l)
-      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ l ≤ b)) (iii).
+      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ l ≤ b)) as (iii).
     Because (iii) both (Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), l))
       and (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ l ≤ b) hold.
     It holds that (for all x : ℝ, EUn (fun k ↦ (a (N₀ + k)%nat), x) ⇨ x ≤ l).
@@ -143,7 +143,7 @@ Proof.
           ∧ (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1))).
       Obtain such an m_seq. It holds that
        (is_index_seq m_seq ∧
-        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a i ii) - 1 / (k + 1))) (v).
+        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a i ii) - 1 / (k + 1))) as (v).
       Because (v) both (is_index_seq m_seq) and
         (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) (vi) hold.
       Choose m := m_seq.
@@ -154,7 +154,7 @@ Proof.
         By (vi) we conclude that (∀ k : ℕ, a (m k) > L - 1 / (INR(k) + 1)).
     }
     Obtain such an m. It holds that
-      (is_index_seq m ∧ (for all k : ℕ, a (m k) > L - 1 / (k + 1))) (iv).
+      (is_index_seq m ∧ (for all k : ℕ, a (m k) > L - 1 / (k + 1))) as (iv).
     Because (iv) both (is_index_seq m) (v) and
       (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
     Choose n := m.
@@ -198,10 +198,10 @@ Proof.
     Define iii := (maj_min a (i) (ii)).
     By Bolzano_Weierstrass_gen it holds that
       (∃ n0 : ℕ → ℕ, is_index_seq n0
-        ∧ converges_to (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) (iv).
+        ∧ converges_to (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) as (iv).
     Obtain such an n0. It holds that
       (is_index_seq n0 ∧
-        converges_to (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) (v).
+        converges_to (fun (k : ℕ) ↦ a (n0 k)) (proj1_sig (_,_,lim_sup_bdd a (i) (iii)))) as (v).
     Choose n := n0.
     Choose l := (proj1_sig (_,_,lim_sup_bdd a (i) (iii))).
     By (v) it suffices to show that (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), proj1_sig (_,_,lim_sup_bdd a (i) (iii)))).
@@ -215,7 +215,7 @@ Proof.
     It holds that (∃ n : ℕ → ℕ, is_index_seq n
       ∧ converges_to (fun k ↦ a(n(k)), x)).
     Obtain such an n. It holds that
-      (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) (iii).
+      (is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) as (iii).
     Because (iii) both (is_index_seq n) and (converges_to (fun k ↦ a(n(k)), x)) hold.
     Take m : ℕ.
     Define L := (sequence_ub a (i) m).
@@ -227,7 +227,7 @@ Proof.
     It holds that (∃ K ∈ ℕ, ∀ k : ℕ, (k ≥ K)%nat ⇒ R_dist (a (n k)) x < ε).
     Obtain such a K. Define N₀ := (Nat.max K m).
     It holds that (R_dist (a (n N₀)) x < ε).
-    By Rabs_def2 it holds that (a (n N₀) - x < ε ∧ - ε < a (n N₀) - x) (v).
+    By Rabs_def2 it holds that (a (n N₀) - x < ε ∧ - ε < a (n N₀) - x) as (v).
     Because (v) both (a (n N₀) - x < ε) and (- ε < a (n N₀) - x) hold.
     It holds that (x - a (n N₀) < x - L).
     It holds that (a (n N₀) > L).
@@ -269,7 +269,7 @@ Proof.
       Take b : ℝ; such that (Raxioms.is_upper_bound (is_seq_acc_pt a) b).
       It holds that (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
       It holds that (for all x : ℝ,
-        (∃ n : ℕ ⇨ ℕ, is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) ⇨ x ≤ b) (iii).
+        (∃ n : ℕ ⇨ ℕ, is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) ⇨ x ≤ b) as (iii).
       By (iii) it suffices to show that (∃ n : ℕ ⇨ ℕ, is_index_seq n
         ∧ converges_to (fun k ↦ a(n(k))) (proj1_sig (_,_,lim_sup_bdd a (i) (ii)))).
       By Bolzano_Weierstrass_gen we conclude that (∃ n : ℕ ⇨ ℕ, is_index_seq n
@@ -284,14 +284,14 @@ Lemma finite_or_find_one (a : ℕ → ℝ) (L : ℝ) :
     (∀ m ∈ ℕ, (∃ n ≥ m, (a n ≥ L)%R)%nat).
 Proof.
     Define P := (∃ N ∈ ℕ, (∀ k ≥ N, (a k < L)%R)%nat).
-    By classic it holds that (P \/ ~P) (i).
+    By classic it holds that (P \/ ~P) as (i).
     Because (i) either P or (¬P) holds.
     - Case P.
       left.
       assumption.
     - Case (¬P).
       right.
-      It holds that (~ ∃ N ∈ ℕ, (∀ k ≥ N, (a k < L)%R)%nat) (ii).
+      It holds that (~ ∃ N ∈ ℕ, (∀ k ≥ N, (a k < L)%R)%nat) as (ii).
       We conclude that (∀ m ∈ ℕ, (∃ n ≥ m, (a(n) ≥ L)%R)%nat).
 Qed.
 

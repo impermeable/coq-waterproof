@@ -80,7 +80,7 @@ Proof.
       Obtain such an ε.
       It holds that (ε > 0).
       Define z := (a + ε / 2).
-      It holds that (|z - a| = 0 \/ ε ≤ | z - a |) (ii).
+      It holds that (|z - a| = 0 \/ ε ≤ | z - a |) as (ii).
       destruct ii.
       - It holds that (| z - a | > 0).
         Contradiction.

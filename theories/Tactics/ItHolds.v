@@ -148,11 +148,11 @@ Notation "[ ( % @ < x 'it'" := x (at level 0).
     - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-Ltac2 Notation "By" xtr_lemma(lconstr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "By" xtr_lemma(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_by claim label xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
 
@@ -207,7 +207,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     wp_assert claim label false
   end.
 
-Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")")))  :=
+Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
   wp_assert_with_unwrap claim label.
 
 
@@ -225,6 +225,6 @@ Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))
     - [Please come back later to provide an actual proof of [claim].], always.
 *)
 
-Ltac2 Notation "By" "magic" "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "By" "magic" "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert claim label true.

@@ -119,7 +119,7 @@ Lemma R_complete (A : ℝ → Prop) :
 Proof.
     Take a ∈ A.
     Assume that A is bounded from above as (i).
-    It holds that (∃ M ∈ ℝ, is_upper_bound A M) (ii).
+    It holds that (∃ M ∈ ℝ, is_upper_bound A M) as (ii).
     We claim that (there exists x : ℝ, A x).
     { Choose (a). We conclude that (A a). }
     We claim that (bound A). (* TODO: make this a separate lemma. *)
@@ -252,8 +252,8 @@ Proof.
     Take a : ℝ. Assume that (A a).
     It holds that (for all b : ℝ, (set_opp A b) ⇒ m ≤ b).
     We claim that (A (--a)).
-    { It holds that (--a = a) (ii).
-      It holds that (A a) (iii).
+    { It holds that (--a = a) as (ii).
+      It holds that (A a) as (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
@@ -275,8 +275,8 @@ Proof.
     We need to show that (∀ a : ℝ, (A a) ⇒ -M ≤ a).
     Take a : ℝ. Assume that (A a).
     We claim that (A (--a)).
-    { It holds that (--a = a) (ii).
-      It holds that (A a) (iii).
+    { It holds that (--a = a) as (ii).
+      It holds that (A a) as (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
@@ -310,7 +310,7 @@ Proof.
     Take M ∈ ℝ.
     Assume that (is_sup (set_opp A) M).
     It holds that (is_upper_bound (set_opp A) M
-        ∧ (for all M0 : ℝ, M0 ∈ ℝ -> is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)) (i).
+        ∧ (for all M0 : ℝ, M0 ∈ ℝ -> is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)) as (i).
     Because (i) both (is_upper_bound (set_opp A) M) and
       (for all M0 : ℝ, M0 ∈ ℝ -> is_upper_bound (set_opp A) M0 ⇨ M ≤ M0) hold.
     We need to show that
@@ -320,7 +320,7 @@ Proof.
       We claim that (is_upper_bound (set_opp A) M).
       We need to show that (for all a : ℝ, (set_opp A a) ⇒ a ≤ M).
       Take a : ℝ. Assume that (set_opp A a).
-      It holds that (for all x : ℝ, (set_opp A x) ⇒ x ≤ M) (ii).
+      It holds that (for all x : ℝ, (set_opp A x) ⇒ x ≤ M) as (ii).
       By (ii) it holds that (is_upper_bound (set_opp A) M).
       We conclude that (a <= M).
 
@@ -331,7 +331,7 @@ Proof.
       Assume that (is_lower_bound A l).
       It holds that (is_upper_bound (set_opp A) M
         ∧ (for all M0 : ℝ, M0 ∈ ℝ -> is_upper_bound (set_opp A) M0 ⇨ M ≤ M0)).
-      It holds that (∀ b : ℝ, b ∈ ℝ -> is_upper_bound (set_opp A) b ⇒ M ≤ b) (ii).
+      It holds that (∀ b : ℝ, b ∈ ℝ -> is_upper_bound (set_opp A) b ⇒ M ≤ b) as (ii).
       By low_bd_set_to_upp_bd_set_opp it holds that (is_upper_bound (set_opp A) (-l)).
       By (ii) it holds that (M ≤ -l).
       We conclude that (l ≤ - M).
@@ -352,12 +352,12 @@ Proof.
       We conclude that (is_bounded_below A).
     }
     We claim that (A (--z)).
-    { It holds that (--z = z) (ii).
-      It holds that (A z) (iii).
+    { It holds that (--z = z) as (ii).
+      It holds that (A z) as (iii).
       (* TODO: We conclude that (--z ∈ A). should work *)
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
-    It holds that ((set_opp A) (-z)) (iv).
+    It holds that ((set_opp A) (-z)) as (iv).
     It holds that (B (-z)).
     By R_complete it holds that (∃ M ∈ ℝ, is_sup B M).
     Obtain such an M.
@@ -378,7 +378,7 @@ Proof.
     Take M ∈ ℝ.
     Assume that (is_sup A M).
     It holds that (is_upper_bound A M
-      ∧ (∀ b ∈ ℝ, is_upper_bound A b ⇨ M ≤ b)) (i).
+      ∧ (∀ b ∈ ℝ, is_upper_bound A b ⇨ M ≤ b)) as (i).
     Because (i) both (is_upper_bound A M) and
       (∀ M0 ∈ ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
     It follows that (is_upper_bound A M).
@@ -444,7 +444,7 @@ Proof.
     Assume that (L < M).
     We argue by contradiction.
     Assume that (¬ (there exists a : ℝ, (A a) ∧ L < a)) as (i).
-    It holds that (∀ x : ℝ, (A x) ⇒ x <= L) (ii).
+    It holds that (∀ x : ℝ, (A x) ⇒ x <= L) as (ii).
     By (ii) it holds that (is_upper_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_upp_bd_ge_sup it holds that (M <= L).
@@ -465,7 +465,7 @@ Proof.
     Assume that (L > m).
     We argue by contradiction.
     Assume that (¬ (there exists a : ℝ, (A a) ∧ L > a)).
-    It holds that (∀ x : ℝ, (A x) ⇒ L ≤ x) (i).
+    It holds that (∀ x : ℝ, (A x) ⇒ L ≤ x) as (i).
     By (i) it holds that (is_lower_bound A L).
     (** TODO: why can't this be done automatically? *)
     By any_low_bd_le_inf it holds that (L <= m).
@@ -482,13 +482,13 @@ Take A : (ℝ → Prop) and M ∈ ℝ.
 Assume that (∀ L : ℝ, L < M ⇒ there exists a : ℝ, (A a) ∧ L < a) as (i).
 Take K ∈ ℝ.
 Assume that (is_upper_bound A K).
-It holds that (∀ a : ℝ, (A a) ⇒ a ≤ K) (ii).
+It holds that (∀ a : ℝ, (A a) ⇒ a ≤ K) as (ii).
 We need to show that (M ≤ K).
 We argue by contradiction.
 Assume that (¬ M ≤ K).
 It holds that (M > K).
 By (i) it holds that (∃ a : ℝ, (A a) ∧ K < a).
-Obtain such an a. It holds that ((A a) ∧ (K < a)) (iii).
+Obtain such an a. It holds that ((A a) ∧ (K < a)) as (iii).
 Because (iii) both (A a) and (K < a) hold.
 By (ii) it holds that (a ≤ K).
 It holds that (K < K).
@@ -505,13 +505,13 @@ Take A : (ℝ → Prop) and m ∈ ℝ.
 Assume that (∀ L : ℝ, L > m ⇒ there exists a : ℝ, (A a) ∧ L > a) as (i).
 Take K ∈ ℝ.
 Assume that (is_lower_bound A K).
-It holds that (∀ a : ℝ, (A a) ⇒ K ≤ a) (ii).
+It holds that (∀ a : ℝ, (A a) ⇒ K ≤ a) as (ii).
 We need to show that (K ≤ m).
 We argue by contradiction.
 Assume that (¬ K ≤ m).
 It holds that (K > m).
 By (i) it holds that (∃ a : ℝ, (A a) ∧ K > a).
-Obtain such an a. It holds that ((A a) ∧ (K > a)) (iii).
+Obtain such an a. It holds that ((A a) ∧ (K > a)) as (iii).
 Because (iii) both (A a) and (K > a) hold.
 By (ii) it holds that (K ≤ a).
 It holds that (K > K).
@@ -534,7 +534,7 @@ Proof.
     Define ε1 := (M - L).
     It holds that (ε1 > 0).
     By (i) it holds that (there exists a : ℝ, (A a) ∧ M - ε1 < a).
-    Obtain such an a. It holds that ((A a) ∧ (M - ε1 < a)) (ii).
+    Obtain such an a. It holds that ((A a) ∧ (M - ε1 < a)) as (ii).
     Because (ii) both (A a) and (M - ε1 < a) hold.
     Choose (a).
     + Indeed, (a ∈ A).
@@ -557,7 +557,7 @@ Proof.
     Define ε1 := (L - m).
     It holds that (ε1 > 0).
     By (i) it holds that (there exists a : ℝ, (A a) ∧ m + ε1 > a).
-    Obtain such an a. It holds that ((A a) ∧ (m + ε1 > a)) (ii).
+    Obtain such an a. It holds that ((A a) ∧ (m + ε1 > a)) as (ii).
     Choose (a).
     - Indeed, (a ∈ A).
     - We conclude that (& a < m + ε1 = m + L - m = L).
@@ -620,7 +620,7 @@ Proof.
       It holds that (
       is_upper_bound A M
       ∧ (∀ M0 ∈ ℝ,
-        is_upper_bound A M0 ⇨ M ≤ M0) ) (i).
+        is_upper_bound A M0 ⇨ M ≤ M0) ) as (i).
       Because (i) both (is_upper_bound A M) and
         (∀ M0 ∈ ℝ, is_upper_bound A M0 ⇨ M ≤ M0) hold.
       It follows that (is_upper_bound A M).
@@ -636,7 +636,7 @@ Proof.
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                M - ε < a) ) (i).
+                M - ε < a) ) as (i).
     Because (i) both (is_upper_bound A M) (ii) and
       (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (iii) hold.
 
@@ -671,7 +671,7 @@ Proof.
       It holds that (
       is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m)
-      ) (i).
+      ) as (i).
       Because (i) both (is_lower_bound A m) and
         (∀ l ∈ ℝ, is_lower_bound A l ⇨ l ≤ m) hold.
       It follows that (is_lower_bound A m).
@@ -689,7 +689,7 @@ Proof.
       is_lower_bound A m
       ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
-                m + ε > a) ) (i).
+                m + ε > a) ) as (i).
     Because (i) both (is_lower_bound A m) (ii) and
       (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
 
@@ -717,7 +717,7 @@ Proof.
     We argue by contradiction.
     Assume that (¬ (A M ∨ (for all a : ℝ, (A a) ⇒ a < M))).
     It holds that ((¬ (A M)) ∧
-      ¬(∀ a : ℝ, (A a) ⇒ a < M)) (i).
+      ¬(∀ a : ℝ, (A a) ⇒ a < M)) as (i).
     Because (i) both(¬ (A M)) and (¬(∀ a : ℝ, (A a) ⇒ a < M)) hold.
     We claim that (for all a : ℝ, (A a) ⇒ a < M).
     {
@@ -728,7 +728,7 @@ Proof.
       {
         Assume that (M = a) as (ii).
         We claim that (A M).
-        { It holds that (A a) (iii).
+        { It holds that (A a) as (iii).
           (* TODO: We conclude that (A M). should work *)
       exact (eq_ind_r(_,_,A,(iii),_,(ii))).
         }
@@ -775,7 +775,7 @@ Proof.
       apply is_sup_is_lub_iff; assumption.
     }
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
-    Obtain such a y. It holds that ((EUn a) y ∧ y > l - ε) (iv).
+    Obtain such a y. It holds that ((EUn a) y ∧ y > l - ε) as (iv).
     Because (iv) both (EUn a y) and (y > l - ε) hold.
     It holds that (there exists n : ℕ , y = a n).
     Obtain such an n.

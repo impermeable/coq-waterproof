@@ -45,7 +45,7 @@ Lemma sigma_split_v2 (a : ℕ → ℝ) (k  l M : ℕ) :
 Proof.
   Assume that
     (k < l)%nat and (l ≤ M)%nat.
-  It holds that (l = S (l - 1)%nat) (i).
+  It holds that (l = S (l - 1)%nat) as (i).
   (* TODO: It suffices to show that (sigma a k Nn = sigma a k (l - 1) + sigma a (S (l - 1)) Nn).*)
   rewrite (i) at 2.
   By sigma_split it suffices to show that (k <= l - 1 < M)%nat.
@@ -136,7 +136,7 @@ Proof.
       apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
       + By (iii) we conclude that (evt_eq_sequences (fun n ↦ (sigma a k n - sigma a k (l - 1)), fun n ↦ (sigma a l n))).
       + We need to show that (converges_to (fun N ↦ (sigma a k N - sigma a k (l - 1)), L)).
-        It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (iv).
+        It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) as (iv).
         rewrite <- (iv). (* TODO come up with some notation for this (meaning transport)*)
         By (ii) we conclude that (converges_to (fun N ↦ (sigma a k N - sigma a k (l - 1)), sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.

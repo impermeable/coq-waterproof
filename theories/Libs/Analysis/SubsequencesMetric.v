@@ -218,7 +218,7 @@ Assume that (x ⟶ p).
 We need to show that (y ⟶ p).
 It holds that (∃ m : (ℕ → ℕ), is_index_sequence m ∧ ∀ k ∈ ℕ, y k = (x ◦ m) k).
 Obtain such an m. It holds that
-  (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) (i).
+  (is_index_sequence m ∧ ∀ k : ℕ, y k = (x ◦ m) k) as (i).
 Because (i) both (is_index_sequence m) and
   (for all k : nat, y k = x (m k)) hold.
 
@@ -235,7 +235,7 @@ Obtain such a K. Choose N3 := K.
   By index_sequence_property it holds that (m K ≥ K)%nat.
   It holds that (m k ≥ K)%nat.
   It holds that (dist _ (x (m k)) p < ε).
-  It holds that (y k = x (m k)) (iv).
+  It holds that (y k = x (m k)) as (iv).
   (* It holds that H5 : (dist (y k) p = dist (x (m k)) p). Why does this not work? *)
   rewrite (iv).
   We conclude that ( dist _ (x (m k)) p < ε).

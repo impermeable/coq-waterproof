@@ -115,7 +115,7 @@ Proof.
 intro H.
 assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a.".
-It holds that (forall b c : nat, ?a? + b + c = 0) (i).
+It holds that (forall b c : nat, ?a? + b + c = 0) as (i).
 Abort.
 
 (** Test 8 : use multiple placeholders as variable names *)
@@ -149,7 +149,7 @@ Proof.
 intro H.
 ltac1:(evar (e : nat)).
 Use a := (?e + _) in (H).
-It holds that (forall b : nat, ?e + ?a? + b = 0) (i).
+It holds that (forall b : nat, ?e + ?a? + b = 0) as (i).
 Abort.
 
 (** Test 12 : use an earlier introduced evar *)
@@ -157,7 +157,7 @@ Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
 intro H.
 Use a := _ in (H).
-It holds that (forall b : nat, ?a? + b = 0) (i).
+It holds that (forall b : nat, ?a? + b = 0) as (i).
 Use b := ?a? in (i).
 It holds that (?a? + ?a? = 0).
 Abort.

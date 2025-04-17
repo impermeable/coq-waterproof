@@ -134,7 +134,7 @@ Proof.
       By lt_0_IZR it holds that (0 < up x)%Z.
       It holds that (0 <= up x)%Z.
       By IZN it holds that (∃ k : ℕ, up x = Z.of_nat k).
-      Obtain such a k. It holds that (up x = Z.of_nat k) (ii).
+      Obtain such a k. It holds that (up x = Z.of_nat k) as (ii).
       Choose n := k.
       + Indeed, (n ∈ ℕ).
       + We need to show that (INR k > x).
@@ -277,7 +277,7 @@ Proof.
     {
       apply convergence_equivalence; assumption.
     }
-    By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
+    By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) as (i).
     We claim that (converges_to (opp_seq d) (-0)).
     {
       apply convergence_equivalence; assumption.
@@ -308,13 +308,13 @@ Proof.
     Take n ≥ N1.
     We claim that (-ε < a n - l).
     { It holds that (n ≥ Na)%nat.
-      It holds that (R_dist (a n) l < ε) (iii).
+      It holds that (R_dist (a n) l < ε) as (iii).
       By Rabs_def2 it holds that (a n - l < ε /\ -ε < a n - l).
       We conclude that (-ε < a n - l).
     }
     We claim that (c n - l < ε).
     { It holds that (n ≥ Nc)%nat.
-      It holds that (R_dist (c n) l < ε) (iii).
+      It holds that (R_dist (c n) l < ε) as (iii).
       By Rabs_def2 it holds that (c n - l < ε /\ -ε < c n - l).
       We conclude that (c n - l < ε).
     }
@@ -330,7 +330,7 @@ Lemma upp_bd_seq_is_upp_bd_lim (a : ℕ → ℝ) (L M: ℝ) :
 Proof.
   Assume that (∀ n ∈ ℕ, (a n) ≤ M).
   Assume that (converges_to a L) as (i).
-  By Rle_or_lt it holds that (L ≤ M ∨ M < L) (ii).
+  By Rle_or_lt it holds that (L ≤ M ∨ M < L) as (ii).
   Because (ii) either (L ≤ M) or (M < L) holds.
   - Case (L ≤ M).
     It follows that (L ≤ M).
@@ -432,7 +432,7 @@ We show both directions.
   Obtain such a q.
   It holds that (there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)).
   Obtain such an M1.
-  It holds that (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (i).
+  It holds that (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) as (i).
   Because (i) both (M1 > 0) and
     (for all n : ℕ, | a n - q | ≤ M1).
   We need to show that (∃ M > 0, (∀ n ∈ ℕ, | a n | ≤ M)).
@@ -452,7 +452,7 @@ We show both directions.
     is_bounded_equivalent a ⇨ is_bounded a).
   Assume that (∃ M1 > 0, ∀ n ∈ ℕ, |a n| ≤ M1).
   Obtain such an M1. It holds that
-    (M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1) (i).
+    (M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1) as (i).
   Because (i) both (M1 > 0) and
   (for all n : ℕ, | a n | ≤ M1) hold.
   (* Expand the definition of is_bounded. *)
