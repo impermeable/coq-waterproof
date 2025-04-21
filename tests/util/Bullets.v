@@ -62,3 +62,22 @@ split.
     { exact w. }
     exact w.
 Qed.
+
+Set Bullet Behavior "Waterproof Strict Subproofs".
+Goal (A ∧ A) ∧ (A ∧ A) ∧ (A ∧ A ∧ A).
+Proof.
+split.
+{ - split.
+    + exact w.
+    + exact w. }
+split.
++ split.
+  Fail exact w.
+  - exact w.
+  - exact w.
++ split.
+  { exact w. }
+  * split.
+    { exact w. }
+    exact w.
+Qed.
