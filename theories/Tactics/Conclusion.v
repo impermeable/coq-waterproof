@@ -197,7 +197,7 @@ Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(lconstr) :=
   guarantee_stated_goal_matches target_goal;
   conclude false.
 
-Notation "[ ( % @ < x 'we'" := x (at level 0).
+Notation "[ ( % @ < x 'we'" := x (at level 0, only parsing).
 
 
 (**

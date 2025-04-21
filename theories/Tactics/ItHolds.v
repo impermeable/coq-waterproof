@@ -132,7 +132,7 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
   HelpNewHyp.suggest_how_to_use claim label.
 
 
-Notation "[ ( % @ < x 'it'" := x (at level 0).
+Notation "[ ( % @ < x 'it'" := x (at level 0, only parsing).
 
 (**
   Attempts to assert a claim and proves it automatically using a specified lemma,

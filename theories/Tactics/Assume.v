@@ -150,8 +150,8 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
   end.
 
-Notation "[ ( % @ < x 'and'" := x (at level 0).
-Notation "[ ( % @ < x 'as'" := x (at level 0).
+Notation "[ ( % @ < x 'and'" := x (at level 0, only parsing).
+Notation "[ ( % @ < x 'as'" := x (at level 0, only parsing).
 (**
   Version with type checking.
 *)
