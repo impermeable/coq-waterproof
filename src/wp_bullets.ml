@@ -158,8 +158,9 @@ module Strict = struct
     suggest = (fun prf -> suggest_on_solved_goal (suggest_bullet prf))
 
   }
-  let _ = register_behavior strict
 end
+
+let _ = register_behavior Strict.strict
 
 (** Definitions for the bullet behavior "Waterproof Relaxed Subproofs."
 A bullet point will unfocus all finished subproofs, and will focus a new subproof. *)
@@ -185,5 +186,6 @@ module Relaxed = struct
     suggest = (fun prf -> suggest_on_solved_goal (suggest_bullet prf))
 
   }
-  let _ = register_behavior wp_relaxed_bullets
 end
+
+let _ = register_behavior Relaxed.wp_relaxed_bullets
