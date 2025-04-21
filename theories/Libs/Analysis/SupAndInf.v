@@ -410,7 +410,7 @@ Proof.
     Take A : (ℝ → Prop).
     Take m ∈ R.
     Assume that (is_inf A m) as (i).
-    Because (i) both (is_lower_bound A m) (ii) and
+    Because (i) both (is_lower_bound A m) as (ii) and
       (∀ M0 ∈ ℝ, is_lower_bound A M0 ⇨ M0 ≤ m) hold.
     By (ii) we conclude that (is_lower_bound A m).
 Qed.
@@ -637,8 +637,8 @@ Proof.
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 M - ε < a) ) as (i).
-    Because (i) both (is_upper_bound A M) (ii) and
-      (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (iii) hold.
+    Because (i) both (is_upper_bound A M) as (ii) and
+      (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) as (iii) hold.
 
     We need to show that (
     is_upper_bound A M
@@ -690,7 +690,7 @@ Proof.
       ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 m + ε > a) ) as (i).
-    Because (i) both (is_lower_bound A m) (ii) and
+    Because (i) both (is_lower_bound A m) as (ii) and
       (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) hold.
 
     We need to show that (

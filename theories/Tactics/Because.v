@@ -25,6 +25,9 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
+Notation "[ ( % @ < x 'hold'" := x (at level 0, only parsing).
+Notation "[ ( % @ < x 'holds'" := x (at level 0, only parsing).
+
 Local Ltac2 check_wrong_prop_specified (user_type:constr) (coq_type:constr) := 
  match Constr.equal user_type coq_type with
     | true  => ()
@@ -78,7 +81,7 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
   check_wrong_prop_specified tv type_v.
 
 
-Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(constr) u(opt(seq("(", ident, ")"))) "and" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("hold")) := 
+Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "and" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) w(opt("hold")) := 
   panic_if_goal_wrapped ();
   and_hypothesis_destruct_with_types s u tu v tv.
 
@@ -132,6 +135,6 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
     apply (Case.unwrap $type_v)
   ).
 
-Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(constr) u(opt(seq("(", ident, ")"))) "or" tv(constr) v(opt(seq("(", ident, ")"))) w(opt("holds")) :=
+Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "or" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) w(opt("holds")) :=
   panic_if_goal_wrapped ();
   or_hypothesis_destruct_with_types s u tu v tv.

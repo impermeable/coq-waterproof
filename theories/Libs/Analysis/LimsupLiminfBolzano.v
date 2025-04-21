@@ -145,7 +145,7 @@ Proof.
        (is_index_seq m_seq ∧
         (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a i ii) - 1 / (k + 1))) as (v).
       Because (v) both (is_index_seq m_seq) and
-        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) (vi) hold.
+        (for all k : ℕ, a (m_seq k) > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (k + 1)) as (vi) hold.
       Choose m := m_seq.
       We show both statements.
       - We need to show that (is_index_seq m).
@@ -155,8 +155,8 @@ Proof.
     }
     Obtain such an m. It holds that
       (is_index_seq m ∧ (for all k : ℕ, a (m k) > L - 1 / (k + 1))) as (iv).
-    Because (iv) both (is_index_seq m) (v) and
-      (for all k : ℕ, a (m k) > L - 1 / (k + 1)) (vi) hold.
+    Because (iv) both (is_index_seq m) as (v) and
+      (for all k : ℕ, a (m k) > L - 1 / (k + 1)) as (vi) hold.
     Choose n := m.
     - We need to show that (is_index_seq(n) ∧ (fun k : ℕ ↦ a(n(k))) ⟶ L).
       We show both statements.
