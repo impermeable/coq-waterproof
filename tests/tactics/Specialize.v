@@ -32,7 +32,7 @@ Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
 Use n := 3 in (H).
-It holds that (3 = 3).
+It holds that 3 = 3.
 Abort.
 
 (** Test 1: This should fail as the wrong variable name is chosen. *)
@@ -66,7 +66,7 @@ Local Parameter F_identity : forall n : nat, F n = n.
 Goal True.
 Proof.
 Fail It holds that (F 3 = 3).
-Use n := (5) in (F_identity).
+Use n := 5 in F_identity.
 It holds that (F 5 = 5).
 Abort.
 
@@ -82,7 +82,7 @@ Abort.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Use n := 3 in (H).
+Use n := 3 in H.
 ltac1:(rename H into HH).   (* test for hypohtesis without producing output *)
 Abort.
 
@@ -90,7 +90,7 @@ Abort.
 Goal (forall n m : nat, n = m) -> False.
 Proof.
 intro H.
-Use n := 3, m := 4 in (H).
+Use n := 3, m := 4 in H.
 It holds that (3 = 4).
 Abort.
 
@@ -406,4 +406,12 @@ Proof.
   Fail Qed. (* Cannot close proof. *)
 Abort.
 
+
+(** Test 28: Choose should allow complex expression without parens. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Use n := 3 + 1 in H.
+It holds that 4 = 4.
+Abort.
 Close Scope subset_scope.
