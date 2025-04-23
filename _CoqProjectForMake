@@ -17,6 +17,8 @@ src/waterprove.ml
 src/waterprove.mli
 src/wp_auto.ml
 src/wp_auto.mli
+src/wp_bullets.ml
+src/wp_bullets.mli
 src/wp_eauto.ml
 src/wp_eauto.mli
 src/wp_evars.ml

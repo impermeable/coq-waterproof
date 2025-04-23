@@ -80,6 +80,20 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND FilterErrorsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Filter" "Errors" ] ->
+    {
+      filter_errors := true
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Filter" "Errors" ] ->
+    {
+      filter_errors := false
+    }
+END
+
 VERNAC COMMAND EXTEND AutomationDebugEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Debug" "Automation" ] ->
     {
