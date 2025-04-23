@@ -24,8 +24,8 @@ open Waterprove
 
 let waterproof_version : string = "2.2.0+8.17"
 
-(** The code below is a hack to patch in (open_)lconstr into Ltac2 **)
-(** It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 **)
+(* The code below is a hack to patch in (open_)lconstr into Ltac2 *)
+(* It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 *)
 let add_scope s f =
   Ltac2_plugin.Tac2entries.register_scope (Names.Id.of_string s) f
 
@@ -65,7 +65,7 @@ let () = add_scope "open_lconstr" (fun arg ->
   let act e = Ltac2_plugin.Tac2quote.of_open_constr ~delimiters e in
   Ltac2_plugin.Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
   )
-(** End of hack **)
+(* End of hack *)
 }
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
