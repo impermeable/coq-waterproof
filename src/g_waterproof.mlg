@@ -65,7 +65,7 @@ let () = add_scope "open_lconstr" (fun arg ->
   let act e = Ltac2_plugin.Tac2quote.of_open_constr ~delimiters e in
   Ltac2_plugin.Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
   )
-(** End of hack ** )
+(** End of hack **)
 }
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
