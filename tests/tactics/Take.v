@@ -335,4 +335,11 @@ Take n > 2 + 1.
 assert_constr_equal (Constr.type constr:(n)) constr:(R).
 Abort.
 
-(** Test 35, TODO: Check that take can be used with ∈ and complex expression without parens **)
+(** Test 35, Check that take can be used with ∈ and complex expression without parens **)
+
+Definition const_nat (_ : nat) : Type := nat.
+
+Goal ∀ m ∈ nat, ∀ n ∈ nat, ∀ k ∈ nat, ∀ l ∈ nat, ∀ j ∈ nat, True.
+Proof.
+Take m, n ∈ const_nat 0 and k, l ∈ const_nat 1 and j ∈ const_nat 2.
+Abort.
