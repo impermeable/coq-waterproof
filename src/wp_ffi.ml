@@ -97,7 +97,7 @@ let define7 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd rep
   fun x0 x1 x2 x3 x4 x5 x6 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4) (repr_to r5 x5) (repr_to r6 x6)
 
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
-let thaw (r: 'a repr) (f: (unit, 'a) fun1): 'a tactic = app_fun1 f unit r ()
+let thaw (f: (unit, 'a) fun1): 'a tactic = f ()
 
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
 let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
@@ -113,8 +113,8 @@ let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map):
 
   Comes from [coq/plugins/ltac2/tac2tactics.ml]
 *)
-let delayed_of_thunk (r: 'a repr) (tac: (unit, 'a) fun1) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
-  delayed_of_tactic (thaw r tac) env sigma
+let delayed_of_thunk (tac: (unit, 'a) fun1) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
+  delayed_of_tactic (thaw tac) env sigma
 
 (** Converts a ['a repr] into a [(unit -> 'a) repr] *)
 let thunk (r: 'a repr): (unit, 'a) fun1 repr = fun1 unit r
@@ -189,7 +189,7 @@ let () =
         waterprove
           depth
           ~shield
-          (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          (List.map (fun lem -> delayed_of_thunk lem) lems)
           database_type
       end >>= fun () -> tclUNIT @@ of_unit ()
 
@@ -201,7 +201,7 @@ let () =
         rwaterprove
           depth
           ~shield
-          (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          (List.map (fun lem -> delayed_of_thunk lem) lems)
           database_type
           must_use
           forbidden
