@@ -46,7 +46,7 @@ Definition is_continuous_in (f : R → R) (a : R) :=
 Lemma every_point_in_R_acc_point_R (a : R) :
   is_accumulation_point a.
 Proof.
-  We need to show that (∀ r > 0, ∃ x ∈ R, 0 < | x - a | < r).
+  We need to show that ∀ r > 0, ∃ x ∈ R, 0 < | x - a | < r.
   Take r > 0.
   Choose x := (a + r/2).
   * Indeed, (x ∈ ℝ).
