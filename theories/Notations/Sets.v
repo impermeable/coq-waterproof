@@ -55,7 +55,6 @@ Notation "A ∪ B" :=
 Notation "A \ B" :=
   (Setminus _ A B) (at level 45) : subset_scope.
 
-Notation "x ∈ A" := (subset_in A x) (at level 70, no associativity) : type_scope.
 
 Notation "x ∉ A" :=
   (~ In _ A x) (at level 50) : subset_scope.
@@ -80,9 +79,7 @@ Notation " [ n ] " :=
 
 Notation "𝒫( X )" := (Power_set _ X) : subset_scope.
 
-Notation "{ x ∈ X | P }" := (fun x => x ∈ X ∧ P) (x binder).
 
-Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 45).
 
 (* Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope. *)
 
@@ -146,6 +143,7 @@ Notation "≤ y" :=  (le_op y) (at level 69, y at next level) : pred_for_subset_
 Notation "> y" :=  (gt_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "≥ y" :=  (ge_op y) (at level 69, y at next level) : pred_for_subset_scope.
 
+Notation "x ∈ A" := (subset_in A x) (at level 69, no associativity) : type_scope.
 Notation "x ≥ y" := (ge_op y x) (at level 70, no associativity, only printing) : subset_scope.
 Notation "x > y" := (gt_op y x) (at level 70, no associativity, only printing) : subset_scope.
 Notation "x ≤ y" := (le_op y x) (at level 70, no associativity, only printing) : subset_scope.
@@ -183,6 +181,10 @@ Lemma mem_subset_full_set {T : Type} (x : T) : (x ∈ T).
 Proof.
 unfold subset_in, conv, as_subset; exact I.
 Qed.
+
+Notation "{ x ∈ X | P }" := (fun x => x ∈ X ∧ P) (x binder).
+
+Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 44).
 
 Open Scope subset_scope.
 

@@ -39,10 +39,10 @@ Definition const_seq_from {A : Type} (a : A) (k : nat) (seq : nat -> A) :=
 Context {A : Type} {P : nat -> (nat -> A) -> Prop} (HypP : dep_only_on_start P).
 Context (a0 : A) (H0 : P 0 (const_seq a0))
   (Hstep : forall (k : nat) (prev : nat -> A),
-    P k prev -> {a : A | P (S k) (const_seq_from a (S k) prev)}).
+    P k prev -> sig (fun a => P (S k) (const_seq_from a (S k) prev))).
 
 
-Fixpoint ind_seq_of_seq_and_prop (k : nat) : {seq : nat -> A | P k seq} :=
+Fixpoint ind_seq_of_seq_and_prop (k : nat) : sig (fun (seq : nat -> A) => P k seq) :=
   match k with
   | O   => exist _ (const_seq a0) H0
   | S k => exist _ (const_seq_from
@@ -52,7 +52,7 @@ Fixpoint ind_seq_of_seq_and_prop (k : nat) : {seq : nat -> A | P k seq} :=
   end.
 
 
-Definition ind_seq_with_prop : {seq : nat -> A | forall k : nat, P k seq}.
+Definition ind_seq_with_prop : sig (fun (seq : nat -> A) => forall k : nat, P k seq).
 Proof.
   set ind_seq_of_seq_and_prop as seq_of_seq.
   exists (fun k => proj1_sig (seq_of_seq k) k). (* take the diagonal *)
@@ -112,10 +112,10 @@ Qed.
 Theorem strong_ind_seq_with_prop {A : Type} {P : nat -> (nat -> A) -> Prop} (HypP : dep_only_on_start P)
   (a0 : A) (H0 : P 0 (const_seq a0))
   (Hstep : forall (k : nat) (prev : nat -> A),
-    (forall l : nat, l <= k -> P l prev) -> {a : A | forall l : nat, l <= (S k) -> P l (const_seq_from a (S k) prev)})
-  : {seq : nat -> A | forall k : nat, P k seq}.
+    (forall l : nat, l <= k -> P l prev) -> sig (fun (a : A) => forall l : nat, l <= (S k) -> P l (const_seq_from a (S k) prev)))
+  : sig (fun (seq : nat -> A) => forall k : nat, P k seq).
 Proof.
-  enough {seq : nat -> A | forall k : nat, forall l : nat, l <= k -> P l seq} as [seq Hseq].
+  enough (sig (fun (seq : nat -> A) => forall k : nat, forall l : nat, l <= k -> P l seq)) as [seq Hseq].
   { exists seq.
     apply reformulate_final_prop_strong; exact Hseq.
   }
@@ -181,11 +181,11 @@ Qed.
 Lemma reformulate_step_prop_index {Q : nat -> Prop} :
   (forall (k : nat) (n : nat -> nat),
     (forall l : nat, l <= k -> Q (n l)) -> (forall l : nat, l < k -> n l < n (l + 1)) ->
-    {n_kplus1 : nat | Q n_kplus1 /\ n k < n_kplus1})
+    sig (fun (n_kplus1 : nat) => Q n_kplus1 /\ n k < n_kplus1))
     ->
   (forall (k : nat) (n : nat -> nat),
     (forall l : nat, l <= k -> index_seq_prop_family Q l n) ->
-    {n_kplus1 : nat | forall l : nat, l <= k + 1 -> index_seq_prop_family Q l (const_seq_from n_kplus1 (k + 1) n)}).
+    sig (fun (n_kplus1 : nat) => forall l : nat, l <= k + 1 -> index_seq_prop_family Q l (const_seq_from n_kplus1 (k + 1) n))).
 Proof.
   intros Hstep k n H.
   assert (forall l : nat, l <= k -> Q (n l)) as H1.
@@ -226,15 +226,15 @@ Proof.
         -- assert False by lia; contradiction.
 Qed.
 
-
+Waterproof Disable Filter Errors.
 Theorem strong_ind_index_seq_with_prop {Q : nat -> Prop}
-  (H0 : {n_0 : nat | Q n_0})
+  (H0 : sig (fun (n_0 : nat) => Q n_0))
   (Hstep : forall (k : nat) (n : nat -> nat),
     (forall l : nat, l <= k -> Q (n l)) -> (forall l : nat, l < k -> n l < n (l + 1)) ->
-    {n_kplus1 : nat | Q n_kplus1 /\ n k < n_kplus1})
-  : {n : nat -> nat | is_index_seq n /\ forall k : nat, Q (n k)}.
+    sig (fun (n_kplus1 : nat) => Q n_kplus1 /\ n k < n_kplus1))
+  : sig (fun (n : nat -> nat) => is_index_seq n /\ forall k : nat, Q (n k)).
 Proof.
-  enough {n : nat -> nat | forall k : nat, index_seq_prop_family Q k n} as [n Hn].
+  enough (sig (fun (n : nat -> nat) => forall k : nat, index_seq_prop_family Q k n)) as [n Hn].
   { exists n.
     apply reformulate_final_prop_index.
     exact Hn.
@@ -275,12 +275,12 @@ Theorem classic_strong_ind_index_seq_with_prop {Q : nat -> Prop}
   : exists n : nat -> nat, is_index_seq n /\ forall k : nat, Q (n k).
 Proof.
   destruct H0 as [n0 Hn0].
-  assert {n0 | Q n0} as H0sig by (exists n0; exact Hn0).
+  assert (sig (fun n0 => Q n0)) as H0sig by (exists n0; exact Hn0).
   (* Transform Hstep using choice such that the existence statement is at the start so it can be destructed. *)
   pose (help_with_choice Hstep) as Hstep2.
   destruct Hstep2 as [f Hf].
   (* Use strong version to prove existence statement. *)
-  enough {n : nat -> nat | is_index_seq n /\ (forall k : nat, Q (n k))} as [n Hn].
+  enough (sig (fun (n : nat -> nat) => is_index_seq n /\ (forall k : nat, Q (n k)))) as [n Hn].
   { exists n; exact Hn. }
   apply (strong_ind_index_seq_with_prop H0sig).
   (* Use transformed Hstep to prove strong Hstep condition. *)

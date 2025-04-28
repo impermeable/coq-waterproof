@@ -131,9 +131,7 @@ Proof.
       Take x ∈ A.
       We conclude that (x ≤ m).
     }
-    (* FIXME: Should this notation be exists?*)
-    By completeness it holds that ({M | is_lub A M}).
-    Locate "{".
+    By completeness it holds that (@sig _ (fun M : R => is_lub A M)).
     Obtain such an M.
     It holds that ((M is an upper bound for A) ∧
       (∀ L : ℝ, L is an upper bound for A ⇒ M ≤ L)).
