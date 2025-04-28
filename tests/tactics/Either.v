@@ -53,7 +53,7 @@ Goal forall x : R, exists n : nat, INR(n) > x.
     Fail Either (x <= 1) or (x > 2).
 Abort.
 
-Local Lemma sumbool_comm (A B : Prop) : {A} + {B} -> {B} + {A}.
+Local Lemma sumbool_comm (A B : Prop) : sumbool A B -> sumbool B A.
 Proof.
   intro H.
   induction H.
@@ -149,7 +149,7 @@ Waterproof Disable Automation RealsAndIntegers.
 
 Waterproof Enable Automation ClassicalEpsilon.
 
-Goal {A} + {~A}.
+Goal sumbool A (~A).
 Either (A) or (~A).
 * Case (A).
   left.
@@ -159,7 +159,7 @@ Either (A) or (~A).
   assumption.
 Abort.
 
-Goal forall P Q : Prop, P \/ Q -> {P} + {Q}.
+Goal forall P Q : Prop, P \/ Q -> sumbool P Q.
 Proof.
 intros P Q H.
 Either (P) or (Q).
@@ -182,7 +182,7 @@ Hypothesis P_dec : P \/ ~P.
 
 (** Test 12: without loading additional databases, we should not be able to get informative excluded middle from decidability *)
 
-Goal {P} + {~P}.
+Goal sumbool P (~P).
 Proof.
 Fail Either (P) or (~P).
 Abort.

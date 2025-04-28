@@ -55,8 +55,7 @@ Notation "A ∪ B" :=
 Notation "A \ B" :=
   (Setminus _ A B) (at level 45) : subset_scope.
 
-(* Notation "x ∈ A" :=
-  (In _ A x) (at level 50). *)
+Notation "x ∈ A" := (subset_in A x) (at level 70, no associativity) : type_scope.
 
 Notation "x ∉ A" :=
   (~ In _ A x) (at level 50) : subset_scope.
@@ -80,6 +79,10 @@ Notation " [ n ] " :=
   (fun (x : nat) ↦ x < n) : subset_scope.
 
 Notation "𝒫( X )" := (Power_set _ X) : subset_scope.
+
+Notation "{ x ∈ X | P }" := (fun x => x ∈ X ∧ P) (x binder).
+
+Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 45).
 
 (* Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope. *)
 
@@ -142,8 +145,6 @@ Notation "< y" :=  (lt_op y) (at level 69, y at next level) : pred_for_subset_sc
 Notation "≤ y" :=  (le_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "> y" :=  (gt_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "≥ y" :=  (ge_op y) (at level 69, y at next level) : pred_for_subset_scope.
-
-Notation "x ∈ A" := (subset_in A x) (at level 70, no associativity) : type_scope.
 
 Notation "x ≥ y" := (ge_op y x) (at level 70, no associativity, only printing) : subset_scope.
 Notation "x > y" := (gt_op y x) (at level 70, no associativity, only printing) : subset_scope.
