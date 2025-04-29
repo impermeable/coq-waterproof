@@ -197,8 +197,8 @@ Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(lconstr) :=
   guarantee_stated_goal_matches target_goal;
   conclude false.
 
+(* TODO: Remove hack after update to 7.18 and replace with Pcoq.set_keyword_state call *)
 Notation "[ ( % @ < x 'we'" := x (at level 0, only parsing).
-
 
 (**
   Finish proving a goal using automation.
