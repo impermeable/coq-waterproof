@@ -37,6 +37,7 @@ Waterproof Enable Automation RealsAndIntegers.
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
 #[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
+Waterproof Disable Filter Errors.
 Open Scope R_scope.
 
 Lemma sigma_split_v2 (a : ℕ → ℝ) (k  l M : ℕ) :

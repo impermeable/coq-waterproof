@@ -78,7 +78,7 @@ Proof.
     Assume that ∀ m : ℕ, ∀ N : ℕ, (g m N ≥ N)%nat as (i).
     We need to show that ∀ k ∈ ℕ, (create_seq g k < create_seq g (S k))%nat.
     Take k ∈ ℕ.
-    By (i) it holds that g (S k) (S (create_seq g k)) ≥ S(create_seq g k)%nat.
+    By (i) it holds that (g (S k) (S (create_seq g k)) ≥ S(create_seq g k))%nat.
     We conclude that & create_seq g k < g (S k) (S (create_seq g k)) = create_seq g (S k)%nat.
 Qed.
 
@@ -123,7 +123,7 @@ Proof.
       We need to show that for all M : ℕ, P(m, a (g(m, M))).
       Take M : ℕ.
       By (i) it holds that (M ≤ g m M)%nat ∧ P m (a (g m M)) as (ii).
-      Because (ii) both M ≤ g m M%nat and (P m (a (g m M))) hold.
+      Because (ii) both (M ≤ g m M)%nat and P m (a (g m M)) hold.
       We conclude that P m (a (g m M)).
 Qed.
 
@@ -237,8 +237,8 @@ Proof.
     We need to show that
       (∀ k ∈ ℕ, (seq_of_max g k ≤ seq_of_max g (S k))%nat).
     Take k ∈ ℕ.
-    We need to show that seq_of_max g k ≤ Nat.max (g (S k)) (seq_of_max g k)%nat.
-    We conclude that seq_of_max g k ≤ Nat.max (g (S k)) (seq_of_max g k)%nat.
+    We need to show that (seq_of_max g k ≤ Nat.max (g (S k)) (seq_of_max g k))%nat.
+    We conclude that (seq_of_max g k ≤ Nat.max (g (S k)) (seq_of_max g k))%nat.
 Qed.
 
 
@@ -249,12 +249,12 @@ Proof.
     - We need to show that (g(0) ≤ seq_of_max(g, 0))%nat.
       We need to show that (g 0 ≤ g 0)%nat.
       We conclude that (g 0 ≤ g 0)%nat.
-    - We need to show that g(S n) ≤
+    - We need to show that (g(S n) ≤
         (fix seq_of_max (f : ℕ ⇨ ℕ) (l : ℕ) {struct l} : ℕ :=
           match l with
           | 0 => f(0)
           | S k => Nat.max(f(l), seq_of_max(f, k))
-          end)(g, S n)%nat.
+          end)(g, S n))%nat.
       It holds that (n + 1 = S n)%nat.
       It suffices to show that (g(n) ≤ seq_of_max(g, n))%nat.
       We conclude that (g(n) ≤ seq_of_max(g, n))%nat.

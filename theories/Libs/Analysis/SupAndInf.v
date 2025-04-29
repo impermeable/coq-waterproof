@@ -121,8 +121,8 @@ Proof.
     Assume that A is bounded from above as (i).
     It holds that ∃ M ∈ ℝ, is_upper_bound A M as (ii).
     We claim that there exists x : ℝ, A x.
-    { Choose a. We conclude that A a. }
-    We claim that bound A. (* TODO: make this a separate lemma. *)
+    { Choose (a). We conclude that A a. }
+    We claim that (bound A). (* TODO: make this a separate lemma. *)
     {
       Obtain M according to (ii).
       We need to show that ∃ m : ℝ, ∀ x : ℝ, x ∈ A -> x ≤ m.
@@ -134,7 +134,7 @@ Proof.
     Obtain such an M.
     It holds that (M is an upper bound for A) ∧
       (∀ L : ℝ, L is an upper bound for A ⇒ M ≤ L).
-    Choose M.
+    Choose (M).
     * Indeed, M ∈ ℝ.
     * We need to show that (M is an upper bound for A) ∧
         ∀ L ∈ ℝ, L is an upper bound for A ⇒ M ≤ L.
@@ -536,7 +536,7 @@ Proof.
     By (i) it holds that there exists a : ℝ, (A a) ∧ M - ε1 < a.
     Obtain such an a. It holds that (A a) ∧ (M - ε1 < a) as (ii).
     Because (ii) both A a and M - ε1 < a hold.
-    Choose a.
+    Choose (a).
     + Indeed, a ∈ A.
     + We conclude that & L = M - (M - L) = M - ε1 < a.
   * We conclude that K ∈ ℝ.
@@ -558,7 +558,7 @@ Proof.
     It holds that ε1 > 0.
     By (i) it holds that there exists a : ℝ, (A a) ∧ m + ε1 > a.
     Obtain such an a. It holds that (A a) ∧ (m + ε1 > a) as (ii).
-    Choose a.
+    Choose (a).
     - Indeed, a ∈ A.
     - We conclude that & a < m + ε1 = m + L - m = L.
   * We conclude that K ∈ ℝ.
