@@ -151,8 +151,8 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   end.
 
 (* TODO: Remove hack after update to 7.18 and replace with Pcoq.set_keyword_state call *)
-Notation "[ ( % @ < x 'and'" := x (at level -1, only parsing).
-Notation "[ ( % @ < x 'as'" := x (at level -1, only parsing).
+Notation "[ ( % @ < x 'and'" := x (at level 0, only parsing).
+Notation "[ ( % @ < x 'as'" := x (at level 0, only parsing).
 
 (**
   Version with type checking.
