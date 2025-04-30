@@ -104,6 +104,7 @@ theories/Libs/Analysis/SubsequencesMetric.v
 theories/Libs/Analysis/StrongInductionIndexSequence.v
 theories/Libs/Analysis/Subsequences.v
 theories/Libs/Analysis/SupAndInf.v
+theories/Libs/Sets.v
 
 # Coq-Waterproof tests
 
@@ -158,3 +159,4 @@ tests/util/TypeCorrector.v
 ## Libs
 tests/libs/Negation.v
 tests/libs/Analysis/StrongInductionIndexSequence.v
+tests/libs/Sets.v
