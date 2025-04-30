@@ -182,9 +182,10 @@ Proof.
 unfold subset_in, conv, as_subset; exact I.
 Qed.
 
-Notation "{ x ∈ X | P }" := (fun x => x ∈ X ∧ P) (x binder).
+Notation "{ x ∈ X | P }" := (fun x => subset_in X x ∧ P) (x binder, X at next level) : subset_scope.
 
-Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 44).
+Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 0, x at level 99, y at level 99) : subset_scope.
+
 
 Open Scope subset_scope.
 
