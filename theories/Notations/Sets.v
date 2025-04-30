@@ -17,6 +17,7 @@
 (******************************************************************************)
 
 Require Import Sets.Ensembles.
+Require Import Sets.Powerset.
 
 Require Import Notations.Common.
 
@@ -24,14 +25,15 @@ Set Auto Template Polymorphism.
 
 (* Record subset (X : Type) := as_subset { pred :> X -> Prop }.*)
 
-Definition subset (X : Type) := X -> Prop.
+Declare Scope subset_scope.
+
+Notation "'subset' X " := (Ensemble X) (at level 20).
+
 Definition as_subset (X : Type) (Q : X -> Prop) := Q.
 
 Definition subset_type {X : Type} (A : subset X) := X.
 
 Definition subset_in {X : Type} (A : subset X) (x : X) := A x.
-
-Declare Scope ensemble_scope.
 
 Notation "'set_of_subsets' U" :=
   (Ensemble (Ensemble U)) (at level 50).
@@ -39,36 +41,46 @@ Notation "'set_of_subsets' U" :=
 Definition empty {U} := Empty_set U.
 Definition full {U} := Full_set U.
 Notation "∅" :=
-  (empty).
+  (empty) : subset_scope.
 
 Notation "'Ω'" :=
-  (full) (at level 0).
+  (full) (at level 0) : subset_scope.
 
 Notation "A ∩ B" :=
-  (Intersection _ A B) (at level 45).
+  (Intersection _ A B) (at level 45) : subset_scope.
 
 Notation "A ∪ B" :=
-  (Union _ A B) (at level 45).
+  (Union _ A B) (at level 45) : subset_scope.
 
 Notation "A \ B" :=
-  (Setminus _ A B) (at level 45).
+  (Setminus _ A B) (at level 45) : subset_scope.
 
-(* Notation "x ∈ A" :=
-  (In _ A x) (at level 50). *)
 
 Notation "x ∉ A" :=
-  (~ In _ A x) (at level 50).
+  (~ In _ A x) (at level 50) : subset_scope.
 
 Notation "A ⊂ B" :=
-  (Included _ A B) (at level 45).
+  (Included _ A B) (at level 45) : subset_scope.
 
 Notation "A 'and' B 'are' 'disjoint'" :=
-  (Disjoint _ A B) (at level 50).
+  (Disjoint _ A B) (at level 50) : subset_scope.
+
+Notation "A 'is' 'empty'" :=
+  (forall a : _, ~ In _ A a) (at level 45) : subset_scope.
+
+Notation "A 'is' 'inhabited'" :=
+  (exists a : _, In _ A a) (at level 45) : subset_scope.
 
 Notation "｛ x : T | P ｝" :=
-  (fun (x : T) ↦ P) (x at level 99) : ensemble_scope.
+  (fun (x : T) ↦ P) (x at level 99) : subset_scope.
 
-Declare Scope subset_scope.
+Notation " [ n ] " :=
+  (fun (x : nat) ↦ x < n) : subset_scope.
+
+Notation "𝒫( X )" := (Power_set _ X) : subset_scope.
+
+
+
 (* Notation "x : A" := ((pred _ A) x) (at level 70, no associativity) : subset_scope. *)
 
 Definition conv (T : Type) : T -> Prop := (fun x : T => True).
@@ -131,8 +143,7 @@ Notation "≤ y" :=  (le_op y) (at level 69, y at next level) : pred_for_subset_
 Notation "> y" :=  (gt_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "≥ y" :=  (ge_op y) (at level 69, y at next level) : pred_for_subset_scope.
 
-Notation "x ∈ A" := (subset_in A x) (at level 70, no associativity) : type_scope.
-
+Notation "x ∈ A" := (subset_in A x) (at level 69, no associativity) : type_scope.
 Notation "x ≥ y" := (ge_op y x) (at level 70, no associativity, only printing) : subset_scope.
 Notation "x > y" := (gt_op y x) (at level 70, no associativity, only printing) : subset_scope.
 Notation "x ≤ y" := (le_op y x) (at level 70, no associativity, only printing) : subset_scope.
@@ -170,6 +181,11 @@ Lemma mem_subset_full_set {T : Type} (x : T) : (x ∈ T).
 Proof.
 unfold subset_in, conv, as_subset; exact I.
 Qed.
+
+Notation "{ x ∈ X | P }" := (fun x => subset_in X x ∧ P) (x binder, X at next level) : subset_scope.
+
+Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 0, x at level 99, y at level 99) : subset_scope.
+
 
 Open Scope subset_scope.
 
