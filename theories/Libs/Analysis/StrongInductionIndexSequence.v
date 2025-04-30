@@ -226,7 +226,6 @@ Proof.
         -- assert False by lia; contradiction.
 Qed.
 
-Waterproof Disable Filter Errors.
 Theorem strong_ind_index_seq_with_prop {Q : nat -> Prop}
   (H0 : sig (fun (n_0 : nat) => Q n_0))
   (Hstep : forall (k : nat) (n : nat -> nat),

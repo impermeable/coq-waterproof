@@ -30,7 +30,6 @@ Require Import Notations.Sets.
 Open Scope R_scope.
 
 Waterproof Enable Automation RealsAndIntegers.
-Waterproof Disable Filter Errors.
 
 Open Scope subset_scope.
 Definition is_upper_bound (A : subset ℝ) (M : ℝ) :=
