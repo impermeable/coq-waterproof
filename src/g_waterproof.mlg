@@ -39,6 +39,20 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND OneStepAutomationEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "One-Step" "Automation" ] ->
+    {
+      one_step_automation := true
+    }
+END
+
+VERNAC COMMAND EXTEND OneStepAutomationDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "One-Step" "Automation" ] ->
+    {
+      one_step_automation := false
+    }
+END
+
 VERNAC COMMAND EXTEND AutomationDebugEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Debug" "Automation" ] ->
     {

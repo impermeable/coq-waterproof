@@ -32,6 +32,11 @@ open Wp_rewrite
 let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
 
 (**
+  Is one step automation enabled ? 
+*)
+let one_step_automation: bool ref = Summary.ref ~name:"one_step_automation" false
+
+(**
   Do we want to debug the automation ?   
 *)
 let automation_debug : bool ref = Summary.ref ~name:"automation_debug" false
@@ -83,6 +88,8 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     begin
       if shield && !automation_shield then 
         automation_routine 3 lems (get_current_databases Shorten)
+      else if !one_step_automation then
+        automation_routine 2 lems (get_current_databases database_type)
       else
         automation_routine depth lems (get_current_databases database_type)
     end
