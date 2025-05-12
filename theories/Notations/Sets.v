@@ -34,7 +34,7 @@ Definition subset_in {X : Type} (A : subset X) (x : X) := A x.
 Declare Scope ensemble_scope.
 
 Notation "'set_of_subsets' U" :=
-  (Ensemble (Ensemble U)) (at level 50).
+  (subset (subset U)) (at level 50).
 
 Definition empty {U} := Empty_set U.
 Definition full {U} := Full_set U.
@@ -64,9 +64,6 @@ Notation "A ⊂ B" :=
 
 Notation "A 'and' B 'are' 'disjoint'" :=
   (Disjoint _ A B) (at level 50).
-
-Notation "A 'is' 'empty'" :=
-  (forall a : _, ~ In _ A a) (at level 45).
 
 Notation "A 'is' 'inhabited'" :=
   (exists a : _, In _ A a) (at level 45).
@@ -202,3 +199,6 @@ Qed.
 
 Close Scope subset_scope.
 Close Scope R_scope.
+
+Notation "A 'is' 'empty'" :=
+  (¬ (∃ x, x ∈ A)) (at level 45).

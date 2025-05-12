@@ -28,6 +28,7 @@ Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
 Require Import Notations.Sets.
+Require Import Coq.Sets.Ensembles.
 
 Local Ltac2 too_many_of_type_message (t : constr) :=
   concat_list [of_string "Tried to introduce too many variables of type ";
@@ -161,6 +162,7 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
       let possibly_coerced_type :=
         lazy_match! Constr.type type with
         | subset _ => type
+        | Ensemble _ => type
         | _ -> Prop => type
         | _ => get_coerced_type type
         end in
