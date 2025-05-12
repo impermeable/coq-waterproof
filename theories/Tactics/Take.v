@@ -27,6 +27,7 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
+Require Import Coq.Sets.Ensembles.
 Require Import Notations.Sets.
 Require Import Coq.Sets.Ensembles.
 

@@ -34,6 +34,7 @@ Require Import Libs.Negation.
 Require Import Libs.Reals.
 Require Import Libs.Logic.InformativeEpsilon.
 Require Import Libs.Logic.ConstructiveLogic.
+Require Import Libs.Sets.
 
 (** * Waterproof core *)
 
@@ -481,6 +482,9 @@ Create HintDb wp_sets.
 
   #[export] Hint Resolve left_in_closed_open : wp_sets.
   #[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
+  #[export] Hint Extern 1 => apply power_set_characterization : wp_sets.
+  #[export] Hint Extern 1 => apply empty_set_characterization : wp_sets.
+  #[export] Hint Extern 1 => apply Extensionality_Ensembles : wp_sets.
 
 (** * Intuition *)
 
