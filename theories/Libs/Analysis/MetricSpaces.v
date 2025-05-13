@@ -44,7 +44,7 @@ Definition dist_positive :
   ∀ x ∈ X, ∀ y ∈ X, dist X x y ≥ 0.
 Proof.
   Take x, y ∈ X.
-  By dist_pos we conclude that (dist X x y ≥ 0).
+  By dist_pos we conclude that dist X x y ≥ 0.
 Qed.
 
 Definition dist_non_degenerate :
@@ -52,7 +52,7 @@ Definition dist_non_degenerate :
   (dist X x y = 0) ⇒ (x = y).
 Proof.
   Take x, y ∈ X.
-  By (proj1(_,_,(dist_refl X x y))) we conclude that (dist X x y = 0 ⇨ x = y).
+  By (proj1(_,_,(dist_refl X x y))) we conclude that dist X x y = 0 ⇨ x = y.
 Defined.
 
 Definition dist_symmetric :
@@ -60,7 +60,7 @@ Definition dist_symmetric :
   dist X x y = dist X y x.
 Proof.
   Take x, y ∈ X.
-  By dist_sym we conclude that (dist X x y = dist X y x).
+  By dist_sym we conclude that dist X x y = dist X y x.
 Qed.
 
 Definition dist_triangle_inequality :
@@ -68,13 +68,13 @@ Definition dist_triangle_inequality :
   dist X x z ≤ dist X x y + dist X y z.
 Proof.
   Take x, y, z ∈ X.
-  By (dist_tri X) we conclude that (dist X x z ≤ dist X x y + dist X y z).
+  By (dist_tri X) we conclude that dist X x z ≤ dist X x y + dist X y z.
 Qed.
 
 Definition dist_reflexive : ∀ x ∈ X, dist X x x = 0.
 Proof.
   Take x ∈ X.
-  By (proj2(_, _, (dist_refl X x x))) we conclude that (dist X x x = 0).
+  By (proj2(_, _, (dist_refl X x x))) we conclude that dist X x x = 0.
 Defined.
 
 End Definitions.

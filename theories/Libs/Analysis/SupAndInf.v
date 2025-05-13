@@ -54,7 +54,7 @@ Lemma bdd_above_bound_iff (A : subset ℝ) :
 Proof.
   unfold is_bounded_above, bound.
   By (exists_exists_in_iff) we conclude that
-    ((∃ M ∈ R, is_upper_bound A M) <-> ∃ m : ℝ, Raxioms.is_upper_bound A m).
+    (∃ M ∈ R, is_upper_bound A M) <-> ∃ m : ℝ, Raxioms.is_upper_bound A m.
 Qed.
 
 Lemma is_sup_is_lub_iff (A : subset ℝ) (M : ℝ) :
