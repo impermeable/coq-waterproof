@@ -50,7 +50,7 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) /\ (B /\ C) -> (A /\ C).
     intros A B C.
-    Fail such that A and B and B /\ C.
+    Fail such that A, B and B /\ C.
     (*assert_hyp_has_type @a constr:(A).
     assert_hyp_has_type @b constr:(B).
     assert_hyp_has_type @bc constr:(B /\ C).*)
