@@ -173,21 +173,17 @@ Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option))
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("(", ident, ")")))) 
-  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("(", ident, ")"))), ",")))),
-  "and", seq(lconstr, opt(seq("(", ident, ")"))))) )
+Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")")))) 
+  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+  "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
 := assume (parse_natural_language_listing x1 x2).
 
-(* Goal forall n, n = 1 /\ n = 2 -> False.
-  intros n.
-  Assume that (n = 1 /\ n = 2) (i), (1=10) (j), (2=2) and (0=0) (star).
-Abort.   *)
 
 
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("(", ident, ")")))) 
-  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("(", ident, ")"))), ",")))),
-  "and", seq(lconstr, opt(seq("(", ident, ")"))))) )
+Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")")))) 
+  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+  "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
 := assume (parse_natural_language_listing x1 x2).

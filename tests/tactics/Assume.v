@@ -82,7 +82,7 @@ Abort.
 *)
 Goal forall A B C D E F G: Prop, (A /\ B) -> (B /\ C) -> (C /\ D) -> (D /\ E) -> (E /\ F) -> (F /\ G).
   intros A B C D E F G.
-  Assume that (A /\ B) (i), (B /\ C), (C /\ D), (D /\ E) (ii) and (E /\ F).
+  Assume that A /\ B as (i), B /\ C, C /\ D, D /\ E as (ii) and E /\ F.
   assert_hyp_has_type @i '(A /\ B).
   assert_hyp_has_type @ii '(D /\ E).
 Abort.
