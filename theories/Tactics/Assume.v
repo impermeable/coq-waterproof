@@ -150,13 +150,16 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
   end.
 
+(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
+Notation "[ ( % @ < x 'and'" := x (at level 0, only parsing).
+Notation "[ ( % @ < x 'as'" := x (at level 0, only parsing).
 
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "Assume" "that" x(list1(seq(lconstr, opt(seq("as", "(", ident, ")"))), "and")) := assume x.
 
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "such" "that" x(list1(seq(lconstr, opt(seq("as", "(", ident, ")"))), "and")) := assume x.

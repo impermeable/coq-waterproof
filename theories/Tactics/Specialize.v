@@ -481,7 +481,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_constr), ","))
-    "in" "(" in_hyp(constr) ")" :=
+Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_lconstr), ","))
+    "in" in_hyp(lconstr) :=
   panic_if_goal_wrapped ();
   wp_specialize' var_choice_list in_hyp.
