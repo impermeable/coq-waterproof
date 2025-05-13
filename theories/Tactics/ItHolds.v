@@ -132,7 +132,7 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
   HelpNewHyp.suggest_how_to_use claim label.
 
 
-(* TODO: Remove hack after update to 7.18 and replace with Pcoq.set_keyword_state call *)
+(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
 Notation "[ ( % @ < x 'it'" := x (at level 0, only parsing).
 
 (**
