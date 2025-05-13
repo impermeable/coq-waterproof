@@ -46,15 +46,15 @@ Definition is_continuous_in (f : R → R) (a : R) :=
 Lemma every_point_in_R_acc_point_R (a : R) :
   is_accumulation_point a.
 Proof.
-  We need to show that (∀ r > 0, ∃ x ∈ R, 0 < | x - a | < r).
+  We need to show that ∀ r > 0, ∃ x ∈ R, 0 < | x - a | < r.
   Take r > 0.
-  Choose x := (a + r/2).
-  * Indeed, (x ∈ ℝ).
-  * We need to show that (0 < | x - a | < r).
+  Choose x := a + r/2.
+  * Indeed, x ∈ ℝ.
+  * We need to show that 0 < | x - a | < r.
     unfold gt_op, R_gt_type in *.
-    It holds that (| x - a | < r).
-    It holds that (| x - a | > 0).
-    We conclude that (0 < | x - a | < r).
+    It holds that | x - a | < r.
+    It holds that | x - a | > 0.
+    We conclude that 0 < | x - a | < r.
 Qed.
 
 Theorem alt_char_continuity (h : R → R) (a : R) :
@@ -62,40 +62,40 @@ Theorem alt_char_continuity (h : R → R) (a : R) :
       (∀ x ∈ R, 0 < | x - a | < δ ⇒ | h(x) - h(a) | < ε).
 Proof.
   We show both directions.
-  * We need to show that (is_continuous_in(h, a) ⇨ ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
-      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε).
-    Assume that (is_continuous_in h a).
-    Either ((is_accumulation_point a) ∧ (limit_in_point h a (h a))) or (is_isolated_point a).
-    + Case ((is_accumulation_point a) ∧ (limit_in_point h a (h a))).
+  * We need to show that is_continuous_in(h, a) ⇨ ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
+      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε.
+    Assume that is_continuous_in h a.
+    Either is_accumulation_point a ∧ limit_in_point h a (h a) or is_isolated_point a.
+    + Case is_accumulation_point a ∧ limit_in_point h a (h a).
       Take ε > 0.
-      It holds that (∃ δ1 > 0, ∀ x ∈ R,
-          (0 < |x - a| < δ1) ⇒ (|(h x) - (h a)| < ε)).
+      It holds that ∃ δ1 > 0, ∀ x ∈ R,
+          (0 < |x - a| < δ1) ⇒ (|(h x) - (h a)| < ε).
       Obtain such a δ1.
-      Choose δ := (δ1).
-      - Indeed, (δ > 0).
-      - We conclude that (∀ x ∈ ℝ,
-          0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε).
+      Choose δ := δ1.
+      - Indeed, δ > 0.
+      - We conclude that ∀ x ∈ ℝ,
+          0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε.
     + Case (is_isolated_point a).
-      It holds that (∃ ε > 0, ∀ x ∈ ℝ, |x - a| = 0 ∨ ε ≤ |x - a|).
+      It holds that ∃ ε > 0, ∀ x ∈ ℝ, |x - a| = 0 ∨ ε ≤ |x - a|.
       Obtain such an ε.
-      It holds that (ε > 0).
-      Define z := (a + ε / 2).
-      It holds that (|z - a| = 0 \/ ε ≤ | z - a |) (ii).
+      It holds that ε > 0.
+      Define z := a + ε / 2.
+      It holds that |z - a| = 0 \/ ε ≤ | z - a | as (ii).
       destruct ii.
-      - It holds that (| z - a | > 0).
+      - It holds that | z - a | > 0.
         Contradiction.
-      - It holds that (| z - a| < ε).
+      - It holds that | z - a| < ε.
         Contradiction.
-  * We need to show that ((∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
-      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) ⇨ is_continuous_in(h, a)).
-    Assume that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
- 0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) .
+  * We need to show that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
+      0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) ⇨ is_continuous_in(h, a).
+    Assume that ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
+ 0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε .
     unfold is_continuous_in.
-    We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
-    It suffices to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ).
+    We need to show that is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a).
+    It suffices to show that is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)).
     We show both statements.
-    + By (every_point_in_R_acc_point_R) we conclude that (is_accumulation_point a).
-    + We conclude that (limit_in_point(h, a, h a)).
+    + By every_point_in_R_acc_point_R we conclude that is_accumulation_point a.
+    + We conclude that limit_in_point(h, a, h a).
 Qed.
 
 #[export] Hint Resolve -> alt_char_continuity : wp_reals.
