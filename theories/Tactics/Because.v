@@ -25,7 +25,7 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
-(* TODO: Remove hack after update to 7.18 and replace with Pcoq.set_keyword_state call *)
+(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
 Notation "[ ( % @ < x 'hold'" := x (at level 0, only parsing).
 Notation "[ ( % @ < x 'holds'" := x (at level 0, only parsing).
 
