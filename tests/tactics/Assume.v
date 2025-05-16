@@ -78,27 +78,36 @@ Goal forall A B C: Prop, (A /\ B) -> (B /\ C) -> (A /\ C).
     assert_hyp_has_type @i constr:(B /\ C).
 Abort.
 
-(** * Test 8: assume too many hypotheses.
+(** * Test 8: multiple hypotheses, assume separately using a single tactic.
+*)
+Goal forall A B C D E F G: Prop, (A /\ B) -> (B /\ C) -> (C /\ D) -> (D /\ E) -> (E /\ F) -> (F /\ G).
+  intros A B C D E F G.
+  Assume that A /\ B as (i), B /\ C, C /\ D, D /\ E as (ii) and E /\ F.
+  assert_hyp_has_type @i '(A /\ B).
+  assert_hyp_has_type @ii '(D /\ E).
+Abort.
+
+(** * Test 9: assume too many hypotheses.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (A /\ C).
     intros A B C.
     Fail Assume that A /\ B and B /\ C.
 Abort.
 
-(** * Test 9: assume wrong hypothesis.
+(** * Test 10: assume wrong hypothesis.
 *)
 Goal forall A B C: Prop, (A /\ B) -> (A /\ C).
     intros A B C.
     Fail Assume that A /\ C.
 Abort.
 
-(** * Test 10: assume when there is nothing to assume.)
+(** * Test 11: assume when there is nothing to assume.)
 *)
 Goal exists n, n > 0.
   Fail Assume that 0 = 0 as (i).
 Abort.
 
-(** * Test 11: assume a negated expression.)
+(** * Test 12: assume a negated expression.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
@@ -106,7 +115,7 @@ Goal forall P : Prop, not (not (not P)) -> not P.
   Assume that P.
 Abort.
 
-(** * Test 12: assume the wrong negated expression.)
+(** * Test 13: assume the wrong negated expression.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
@@ -114,7 +123,7 @@ Goal forall P : Prop, not (not (not P)) -> not P.
   Fail Assume that (not P).
 Abort.
 
-(** * Test 13: assume something after negated expression.)
+(** * Test 14: assume something after negated expression.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
@@ -122,20 +131,20 @@ Goal forall P : Prop, not (not (not P)) -> not P.
   Fail Assume that P and 0 = 0.
 Abort.
 
-(** * Test 14: assume something and negated expression in one go.)
+(** * Test 15: assume something and negated expression in one go.)
 *)
 Goal forall P : Prop, not (not (not P)) -> not P.
   intro P.
   Assume that not (not (not P)) and P.
 Abort.
 
-(** * Test 15: should reject trying to construct a map.
+(** * Test 16: should reject trying to construct a map.
 *)
 Goal nat -> nat.
   Fail Assume that nat (n).
 Abort.
 
-(** * Test 16: should reject trying to construct a map.
+(** * Test 17: should reject trying to construct a map.
 *)
 Goal (0 = 0) -> nat -> nat.
   Fail Assume that 0 = 0 and nat.
@@ -143,7 +152,7 @@ Goal (0 = 0) -> nat -> nat.
   Fail Assume that nat.
 Abort.
 
-(** * Test 17: should correctly handle boolean goal
+(** * Test 18: should correctly handle boolean goal
 *)
 Goal is_true true -> (0 = 0).
 Proof.
