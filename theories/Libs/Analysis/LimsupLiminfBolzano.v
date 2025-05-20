@@ -40,7 +40,7 @@ Open Scope R_scope.
 Definition lim_sup_bdd (a : ℕ → ℝ)
                        (pr1 : has_ub a)
                        (pr2 : has_lb (sequence_ub a pr1))
-                      : {l : ℝ | converges_to(sequence_ub(a, pr1), l)}.
+                      : @sig _ (fun (l : ℝ) => converges_to(sequence_ub(a, pr1), l)).
 Proof.
 set (H := decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) (pr2)).
 destruct H as [l wl].
