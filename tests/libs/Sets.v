@@ -32,3 +32,19 @@ Proof.
     It holds that (∀ x ∈ X, x ∈ Y).
     We conclude that (x ∈ Y).
 Qed.
+
+Waterproof Enable Automation Intuition.
+(* Waterproof Enable Automation RealsAndIntegers. *)
+
+Waterproof Enable Debug Automation.
+(* Test 2: Performance regression test *)
+Set Default Timeout 5.
+Lemma exercise_2_1_32b (E : subset nat) (p : nat → Prop) : E is empty ⇒ (¬ ∃ x ∈ E, p(x)). 
+Proof.
+    Assume that (E is empty).
+    Assume that (∃ x ∈ E, p(x)). 
+    Obtain such x.
+    (* clear _H0. *)
+    (* clear _H1. *)
+    Contradiction.
+Qed.
