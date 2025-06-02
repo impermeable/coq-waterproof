@@ -33,18 +33,15 @@ Proof.
     We conclude that (x ∈ Y).
 Qed.
 
-Waterproof Enable Automation Intuition.
-(* Waterproof Enable Automation RealsAndIntegers. *)
-
-Waterproof Enable Debug Automation.
-(* Test 2: Performance regression test *)
-Set Default Timeout 5.
+(* Test 2: Integration test. 
+   This could be turned into a performance test by removing the `It holds that`,
+   enabling automation for Intuition and RealsAndIntegers, and setting a suitable timeout.
+*)
 Lemma exercise_2_1_32b (E : subset nat) (p : nat → Prop) : E is empty ⇒ (¬ ∃ x ∈ E, p(x)). 
 Proof.
     Assume that (E is empty).
     Assume that (∃ x ∈ E, p(x)). 
     Obtain such x.
-    (* clear _H0. *)
-    (* clear _H1. *)
+    It holds that (x ∈ E).
     Contradiction.
 Qed.
