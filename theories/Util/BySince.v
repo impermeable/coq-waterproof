@@ -36,10 +36,8 @@ Require Import Util.Init.
 Require Import Util.TypeCorrector.
 Require Import Notations.Sets.
 
-Local Ltac2 get_type (x: constr) : constr := eval unfold type_of in (type_of $x).
-
 Local Ltac2 check_if_not_reference (x : constr) :=
-  let type_x := get_type x in
+  let type_x := Constr.type x in
   match! type_x with
   | Prop => ()
   | Set => ()
@@ -54,7 +52,7 @@ Local Ltac2 check_if_not_statement (x : constr) :=
     [of_string "Cannot use statement "; of_constr x; of_string " with `By`.
 Try `Since "; of_constr x; of_string " ...` instead."]
   in
-  let type_x := get_type x in
+  let type_x := Constr.type x in
   match! type_x with
   | Prop => throw err_msg
   | Set => throw err_msg
@@ -96,11 +94,10 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
       by_tactic cause)
     with
     | Val _ => clear $id_cause
-    | Err (FailedToUse h) =>
-      let type_h := (get_type h) in
+    | Err (FailedToUse _) =>
       clear $id_cause;
       throw (concat_list
-        [of_string "Could not verify this follows from "; of_constr type_h; of_string "."])
+        [of_string "Could not verify this follows from "; of_constr claimed_cause; of_string "."])
     | Err exn => clear $id_cause; Control.zero exn
     end
   end.
@@ -136,8 +133,8 @@ Ltac2 wrapper_core_by_tactic (by_tactic : constr -> unit) (xtr_lemma : constr) :
     else (None, xtr_lemma) in
   match Control.case (fun () => by_tactic aux_lemma) with
   | Val _ => ()
-  | Err (FailedToUse h) => throw (concat_list
-      [of_string "Could not verify this follows from "; of_constr h; of_string "."])
+  | Err (FailedToUse _) => throw (concat_list
+      [of_string "Could not verify this follows from "; of_constr xtr_lemma; of_string "."])
   | Err exn => Control.zero exn
   end;
   match opt_id with
