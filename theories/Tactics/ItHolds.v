@@ -25,7 +25,7 @@ Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
-Require Import Util.Since.
+Require Import Util.BySince.
 Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 Require Import Waterprove.

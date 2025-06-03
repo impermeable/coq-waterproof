@@ -16,6 +16,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
+
+(**
+Shared code for the 'Since ...' and 'By ...' prefix clauses for tactics like 'It holds that ...' or 'We conclude that ...'
+*)
+
+
+
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
