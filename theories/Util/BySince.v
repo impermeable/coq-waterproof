@@ -42,6 +42,7 @@ Local Ltac2 check_if_not_reference (x : constr) :=
   | Prop => ()
   | Set => ()
   | Type => ()
+  | bool => ()
   | _ => throw (concat_list
         [of_string "Cannot use reference "; of_constr x; of_string " with `Since`.
 Try `By "; of_constr x; of_string " ...` instead."])
@@ -57,6 +58,7 @@ Try `Since "; of_constr x; of_string " ...` instead."]
   | Prop => throw err_msg
   | Set => throw err_msg
   | Type => throw err_msg
+  | bool => throw err_msg
   | _ => ()
   end.
 
@@ -70,10 +72,10 @@ Try `Since "; of_constr x; of_string " ...` instead."]
 *)
 
 Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
-  (* Wrap in is_true if needed *)
-  let claimed_cause := correct_type_by_wrapping claimed_cause in
   (* first, check if [claimed_cause] is a statement. *)
   check_if_not_reference claimed_cause;
+  (* Wrap in is_true if needed *)
+  let claimed_cause := correct_type_by_wrapping claimed_cause in
 
   let id_cause := Fresh.in_goal @_temp in
   (* attempt to prove [claimed_cause]*)
