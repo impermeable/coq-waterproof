@@ -177,32 +177,33 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     Code results in wrong error if done inside repeated match.. *)
   match label with | None => () | Some label => try_out_label label end;
 
-  match! goal with
-  | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
-    let h_constr := Control.hyp h in
-    (* sanity check "h = h_spec" *)
-    if check_constr_equal h_constr h_spec
-      then ()
-      else fail;
-    let w := match label with
-      | None => Fresh.fresh (Fresh.Free.of_goal ()) @_H
-      | Some label => label
-      end in
-    if check_constr_equal s claim
-      then
+  lazy_match! goal with
+  | [_ : ?s |- StateHyp.Wrapper ?s _ _] =>
+    if Bool.neg (check_constr_equal s claim) then
+      throw (of_string "Wrong statement specified.")
+    else 
+      match! goal with
+      | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
+        let h_constr := Control.hyp h in
+        (* sanity check "h = h_spec" *)
+        if check_constr_equal h_constr h_spec then ()
+          else fail;
+        let w := match label with
+          | None => Fresh.fresh (Fresh.Free.of_goal ()) @_H
+          | Some label => label
+          end in
         match Control.case (fun () => assert $claim as $w by exact $h_constr) with
-        | Val _ =>  (* If claims are definitionally equal, go with the
-                  version that is supplied as argument to "It holds that ..." *)
+        | Val _ =>  
           apply (StateHyp.wrap $s);
           Std.clear [h]
         | Err exn => print (of_string "Exception occurred"); print (of_exn exn)
         end
-      else throw (of_string "Wrong statement specified.")
-    (* rename ident generated in specialize with user-specified label*)
-    (* match label with
-    | None => ()
-    | Some label => Std.rename [(w, label)]
-    end *)
+      (* rename ident generated in specialize with user-specified label*)
+      (* match label with
+      | None => ()
+      | Some label => Std.rename [(w, label)]
+      end *)
+      end
   | [|- _] =>
     panic_if_goal_wrapped ();
     wp_assert claim label false

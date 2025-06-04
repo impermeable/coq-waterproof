@@ -38,7 +38,7 @@ Require Import Notations.Sets.
 
 Local Ltac2 check_if_not_reference (x : constr) :=
   let type_x := Constr.type x in
-  match! type_x with
+  lazy_match! type_x with
   | Prop => ()
   | Set => ()
   | Type => ()
@@ -54,7 +54,7 @@ Local Ltac2 check_if_not_statement (x : constr) :=
 Try `Since "; of_constr x; of_string " ...` instead."]
   in
   let type_x := Constr.type x in
-  match! type_x with
+  lazy_match! type_x with
   | Prop => throw err_msg
   | Set => throw err_msg
   | Type => throw err_msg
