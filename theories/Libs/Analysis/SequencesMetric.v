@@ -18,13 +18,13 @@
 
 From Stdlib Require Import Reals.Reals.
 
-Require Import Automation.
-Require Import Libs.Negation.
-Require Import Notations.Common.
-Require Import Notations.Reals.
-Require Import Notations.Sets.
-Require Import Chains.
-Require Import Tactics.
+From Waterproof Require Import Automation.
+From Waterproof Require Import Libs.Negation.
+From Waterproof Require Import Notations.Common.
+From Waterproof Require Import Notations.Reals.
+From Waterproof Require Import Notations.Sets.
+From Waterproof Require Import Chains.
+From Waterproof Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 

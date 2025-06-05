@@ -22,14 +22,14 @@ From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import ClassicalChoice.
 
-Require Import Automation.
-Require Import Libs.Analysis.Sequences.
-Require Import Libs.Analysis.Subsequences.
-Require Import Notations.Common.
-Require Import Notations.Reals.
-Require Import Notations.Sets.
-Require Import Chains.
-Require Import Tactics.
+From Waterproof Require Import Automation.
+From Waterproof Require Import Libs.Analysis.Sequences.
+From Waterproof Require Import Libs.Analysis.Subsequences.
+From Waterproof Require Import Notations.Common.
+From Waterproof Require Import Notations.Reals.
+From Waterproof Require Import Notations.Sets.
+From Waterproof Require Import Chains.
+From Waterproof Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 

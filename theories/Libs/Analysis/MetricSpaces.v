@@ -20,13 +20,13 @@ From Stdlib Require Import Reals.Reals.
 From Stdlib Require Import Reals.ROrderedType.
 From Stdlib Require Import micromega.Lra.
 
-Require Import Tactics.
-Require Import Automation.
-Require Import Libs.Reals.
-Require Import Notations.Common.
-Require Import Notations.Reals.
-Require Import Notations.Sets.
-Require Import Chains.
+From Waterproof Require Import Tactics.
+From Waterproof Require Import Automation.
+From Waterproof Require Import Libs.Reals.
+From Waterproof Require Import Notations.Common.
+From Waterproof Require Import Notations.Reals.
+From Waterproof Require Import Notations.Sets.
+From Waterproof Require Import Chains.
 
 Waterproof Enable Automation RealsAndIntegers.
 

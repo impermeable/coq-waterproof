@@ -19,14 +19,14 @@
 From Stdlib Require Import ZArith.
 From Stdlib Require Import Reals.Reals.
 
-Require Import Automation.
-Require Import Libs.Analysis.MetricSpaces.
-Require Import Libs.Analysis.SequencesMetric.
-Require Import Notations.Common.
-Require Import Notations.Reals.
-Require Import Notations.Sets.
-Require Import Chains.
-Require Import Tactics.
+From Waterproof Require Import Automation.
+From Waterproof Require Import Libs.Analysis.MetricSpaces.
+From Waterproof Require Import Libs.Analysis.SequencesMetric.
+From Waterproof Require Import Notations.Common.
+From Waterproof Require Import Notations.Reals.
+From Waterproof Require Import Notations.Sets.
+From Waterproof Require Import Chains.
+From Waterproof Require Import Tactics.
 
 Waterproof Enable Automation RealsAndIntegers.
 
