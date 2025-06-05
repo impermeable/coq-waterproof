@@ -20,7 +20,7 @@ From Stdlib Require Import Lra.
 From Stdlib Require Import Reals.Reals.
 From Stdlib Require Import ROrderedType.
 
-Require Import Notations.
+From Waterproof Require Import Notations.
 
 Local Open Scope R_scope.
 
