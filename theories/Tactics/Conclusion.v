@@ -23,7 +23,7 @@ Require Import Notations.Sets.
 Require Import Chains.Inequalities.
 Require Import Util.Goals.
 Require Import Util.Init.
-Require Import Util.Since.
+Require Import Util.BySince.
 Require Import Waterprove.
 Require Import MessagesToUser.
 Require Import Util.TypeCorrector.

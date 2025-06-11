@@ -255,12 +255,18 @@ Proof.
   Since A -> B it holds that B.
 Abort.
 
+Waterproof Enable Redirect Errors.
+
 (* Test 16: 'Since ...' with reference fails. *)
 Goal A -> False.
 Proof.
   intro H.
-  Fail Since f it holds that B.
+  assert_fails_with_string (fun () => Since f it holds that B)
+  "Cannot use reference f with `Since`.
+Try `By f ...` instead.".
 Abort.
+
+Waterproof Disable Redirect Errors.
 
 
 (** Tests for workaround occuring anomalies in [_rwaterprove]. *)
