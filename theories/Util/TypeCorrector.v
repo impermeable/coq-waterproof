@@ -27,7 +27,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
 (** Ensures that the type of [t] can be used in type matching or asserting. *)
 Ltac2 correct_type_by_wrapping (t: constr): constr :=
   let type_t := Constr.type t in
-  match! type_t with
+  lazy_match! type_t with
     | Prop => t
     | Set => t 
     | Type => t

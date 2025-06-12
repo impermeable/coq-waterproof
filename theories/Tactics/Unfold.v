@@ -205,9 +205,9 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
   For an example of how to used [unfold_in_statement] to unfold notations,
   see [tests/tactics/Unfold.v] *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ","))
-  x(opt(seq("in", constr))) :=
+  x(opt(seq("in", lconstr))) :=
   wp_unfold (eval_unfold targets) None true x.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) x(opt(seq("in", constr))) :=
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) x(opt(seq("in", lconstr))) :=
   wp_unfold (eval_unfold targets) None false x.

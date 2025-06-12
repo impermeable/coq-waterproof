@@ -138,10 +138,10 @@ Local Ltac2 to_verify (t : constr) :=
   Optional string keywords do need to have a name, even though the parser will not populate this name.
   (That's why it reads "that(opt('that'))" instead of "opt('that')".
 *)
-Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(constr) := to_show t.
+Ltac2 Notation "We" "need" "to" "show" that(opt("that")) colon(opt(":")) t(lconstr) := to_show t.
 
-Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(constr) := to_show t.
+Ltac2 Notation "To" "show" that(opt("that")) colon(opt(":")) t(lconstr) := to_show t.
 
-Ltac2 Notation "We" "need" "to" "verify" that(opt("that")) colon(opt(":")) t(constr) := to_verify t.
+Ltac2 Notation "We" "need" "to" "verify" that(opt("that")) colon(opt(":")) t(lconstr) := to_verify t.
 
-Ltac2 Notation "To" "verify" colon(opt(":")) t(constr) := to_verify t.
+Ltac2 Notation "To" "verify" colon(opt(":")) t(lconstr) := to_verify t.

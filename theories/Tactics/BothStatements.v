@@ -103,11 +103,11 @@ Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
   end.
 
 
-Ltac2 Notation "We" "show" "both" s(constr) "and" t(constr) :=
+Ltac2 Notation "We" "show" "both" s(lconstr) "and" t(lconstr) :=
   panic_if_goal_wrapped ();
   both_directions_and_with_types s t.
 
-Ltac2 Notation "We" "prove" "both" s(constr) "and" t(constr) :=
+Ltac2 Notation "We" "prove" "both" s(lconstr) "and" t(lconstr) :=
   panic_if_goal_wrapped ();
   both_directions_and_with_types s t.
 

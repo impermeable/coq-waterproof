@@ -150,13 +150,40 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
   end.
 
+(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
+Notation "[ ( % @ < x 'and'" := x (at level 0, only parsing).
+Notation "[ ( % @ < x 'as'" := x (at level 0, only parsing).
+
+
+(**
+  Parses input from Ltac2 notation of the form 'A (i), B, C, D (ii), E and F', 
+  see tactic notation specifications below.
+  Returns a single list with the user's input (e.g. the above becomes [A (i); B; C; D (ii); E; F]).
+*)
+Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option)) 
+  (x2 : ((((constr * (ident option)) list) option) * (constr * (ident option))) option) 
+  : (constr * (ident option)) list :=
+  match x2 with 
+  | Some (Some x2, x3)  => List.append (x1 :: x2) [x3]
+  | Some (None   , x3)  => [x1; x3]
+  | None                => [x1]
+  end.
+
 
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")")))) 
+  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+  "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
+:= assume (parse_natural_language_listing x1 x2).
+
+
 
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x(list1(seq(constr, opt(seq("(", ident, ")"))), "and")) := assume x.
+Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")")))) 
+  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+  "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
+:= assume (parse_natural_language_listing x1 x2).

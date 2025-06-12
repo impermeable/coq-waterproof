@@ -70,7 +70,7 @@ Qed.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    We show both (n + 1 = n + 1) and (n = n).
+    We show both n + 1 = n + 1 and n = n.
     reflexivity.
     reflexivity.
 Qed.
@@ -80,7 +80,7 @@ Qed.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    Fail We show both (n = n) and (n + 2 = n + 2).
+    Fail We show both n = n and n + 2 = n + 2.
 Abort.
 
 
@@ -88,7 +88,7 @@ Abort.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    Fail We show both (n + 2 = n + 2) and (n + 1 = n + 1).
+    Fail We show both n + 2 = n + 2 and n + 1 = n + 1.
 Abort.
 
 
@@ -96,7 +96,7 @@ Abort.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    Fail We show both (n + 2 = n + 2) and (n = n).
+    Fail We show both n + 2 = n + 2 and n = n.
 Abort.
 
 
@@ -104,7 +104,7 @@ Abort.
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
     intro n.
-    Fail We show both (n + 2 = n + 2) and (n +3 = n + 3).
+    Fail We show both n + 2 = n + 2 and n +3 = n + 3.
 Abort.
 
 Goal forall a b : bool, is_true a -> is_true b -> is_true a /\ is_true b.
