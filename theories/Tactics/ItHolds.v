@@ -25,7 +25,7 @@ Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.Init.
-Require Import Util.Since.
+Require Import Util.BySince.
 Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 Require Import Waterprove.
@@ -132,6 +132,9 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
   HelpNewHyp.suggest_how_to_use claim label.
 
 
+(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
+Notation "[ ( % @ < x 'it'" := x (at level 0, only parsing).
+
 (**
   Attempts to assert a claim and proves it automatically using a specified lemma,
   this lemma has to be used.
@@ -146,11 +149,11 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
     - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-Ltac2 Notation "By" xtr_lemma(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "By" xtr_lemma(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_by claim label xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(constr) "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
 
@@ -174,38 +177,39 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     Code results in wrong error if done inside repeated match.. *)
   match label with | None => () | Some label => try_out_label label end;
 
-  match! goal with
-  | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
-    let h_constr := Control.hyp h in
-    (* sanity check "h = h_spec" *)
-    if check_constr_equal h_constr h_spec
-      then ()
-      else fail;
-    let w := match label with
-      | None => Fresh.fresh (Fresh.Free.of_goal ()) @_H
-      | Some label => label
-      end in
-    if check_constr_equal s claim
-      then
+  lazy_match! goal with
+  | [_ : ?s |- StateHyp.Wrapper ?s _ _] =>
+    if Bool.neg (check_constr_equal s claim) then
+      throw (of_string "Wrong statement specified.")
+    else 
+      match! goal with
+      | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
+        let h_constr := Control.hyp h in
+        (* sanity check "h = h_spec" *)
+        if check_constr_equal h_constr h_spec then ()
+          else fail;
+        let w := match label with
+          | None => Fresh.fresh (Fresh.Free.of_goal ()) @_H
+          | Some label => label
+          end in
         match Control.case (fun () => assert $claim as $w by exact $h_constr) with
-        | Val _ =>  (* If claims are definitionally equal, go with the
-                  version that is supplied as argument to "It holds that ..." *)
+        | Val _ =>  
           apply (StateHyp.wrap $s);
           Std.clear [h]
         | Err exn => print (of_string "Exception occurred"); print (of_exn exn)
         end
-      else throw (of_string "Wrong statement specified.")
-    (* rename ident generated in specialize with user-specified label*)
-    (* match label with
-    | None => ()
-    | Some label => Std.rename [(w, label)]
-    end *)
+      (* rename ident generated in specialize with user-specified label*)
+      (* match label with
+      | None => ()
+      | Some label => Std.rename [(w, label)]
+      end *)
+      end
   | [|- _] =>
     panic_if_goal_wrapped ();
     wp_assert claim label false
   end.
 
-Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")")))  :=
+Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
   wp_assert_with_unwrap claim label.
 
 
@@ -223,6 +227,6 @@ Ltac2 Notation "It" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))
     - [Please come back later to provide an actual proof of [claim].], always.
 *)
 
-Ltac2 Notation "By" "magic" "it" "holds" "that" claim(constr) label(opt(seq("(", ident, ")"))) :=
+Ltac2 Notation "By" "magic" "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert claim label true.

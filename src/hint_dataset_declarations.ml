@@ -113,7 +113,7 @@ let reals_and_integers: hint_dataset = {
 
 let sets: hint_dataset = {
   name = "Sets";
-  main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_integers"; "wp_negation_int"];
+  main_databases: hint_db_name list = ["arith"; "zarith"; "wp_core"; "wp_integers"; "wp_negation_int"; "wp_sets"];
   decidability_databases: hint_db_name list = ["nocore"; "wp_decidability_nat"];
   shorten_databases: hint_db_name list = ["wp_core"; "wp_negation_int"];
 }

@@ -16,32 +16,17 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Ltac2.Message.
+(** This module registers two new bullet behaviors available for use in
+Waterproof. With
 
-Require Import Coq.Reals.Reals.
+Set Bullet Behavior "Waterproof Strict Subproofs".
 
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Automation.
-Require Import Waterproof.Tactics.
-Require Import Waterproof.Util.Assertions.
+one basically gets the default bullet behavior, with slightly different
+suggestion and error messages.
 
-(** Test 0: This should work just fine *)
-Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
-    intro n.
-    Define m := n.
-Abort.
+With
 
+Set Bullet Behavior "Waterproof Relaxed Subproofs".
 
-(** Test 1: This should also work *)
-Goal (0 = 0) -> forall n : nat, ((n = n) \/ (n + 1 = n + 1)).
-    intros h n.
-    Fail Define h := n.
-    Define m := n.
-Abort.
-
-(** Test 2: Complex expression without parens *)
-Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
-    intro n.
-    Define m := n + 1.
-Abort.
+it doesn't matter which exact bullets one uses in a particular place: they
+all function the same. *)

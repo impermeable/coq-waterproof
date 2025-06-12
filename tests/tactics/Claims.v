@@ -29,7 +29,7 @@ Require Import Waterproof.Util.Assertions.
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
     intro n.
-    We claim that (n = n).
+    We claim that n = n.
     { reflexivity. }
 Abort.
 
@@ -38,7 +38,7 @@ Abort.
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
     intro n.
-    We claim that (n = n) (i).
+    We claim that n = n as (i).
     { reflexivity. }
 Abort.
 
