@@ -21,7 +21,7 @@ Require Import Ltac2.Message.
 
 Require Import Util.Init.
 Require Import Util.Goals.
-Require Import Util.Since.
+Require Import Util.BySince.
 Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 Require Import Waterprove.
@@ -77,19 +77,19 @@ Local Ltac2 wp_enough_by_admit (claim : constr) :=
     of_string " it suffices to show that ";
     of_constr claim]).
 
-Ltac2 Notation "It" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+Ltac2 Notation "It" "suffices" "to" "show" that(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough statement.
 
 
-Ltac2 Notation "By" xtr_lemma(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+Ltac2 Notation "By" xtr_lemma(lconstr) "it" "suffices" "to" "show" that(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough_by statement xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(constr) "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+Ltac2 Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" that(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough_since statement xtr_claim.
 
-Ltac2 Notation "By" "magic" "it" "suffices" "to" "show" that(opt("that")) statement(constr) :=
+Ltac2 Notation "By" "magic" "it" "suffices" "to" "show" that(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough_by_admit statement.

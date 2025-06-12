@@ -139,7 +139,7 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
     Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
 
-Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_constr) :=
+Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_lconstr) :=
   panic_if_goal_wrapped ();
   match s with
     | None => choose_variable_in_exists_no_renaming t

@@ -19,6 +19,8 @@
 open Pp
 open Feedback
 
+let filter_errors = Summary.ref ~name:"filter_errors" true
+
 let wp_debug_log = Summary.ref ~name:"wp_debug_log" []
 let wp_info_log = Summary.ref ~name:"wp_info_log" []
 let wp_notice_log = Summary.ref ~name:"wp_notice_log" []
@@ -159,3 +161,23 @@ let get_last_warning () : Pp.t option Proofview.tactic =
     match !(feedback_log Warning) with
     | [] -> None
     | hd :: tl -> Some hd
+
+let wp_error_handler (e : exn) : Pp.t option =
+  if !filter_errors then
+    (match e with
+    | CErrors.UserError pps ->
+        let str_rep = Pp.string_of_ppcmds pps in
+        if (Str.string_match (Str.regexp "Expected a single focused goal *") str_rep 0) then
+          Some (Pp.str "Write a bullet point (e.g. \"-\") or curly brace \"{\" in front of this sentence. This will start a subproof. In case you decide to insert a curly brace, after completing the subproof, write a space and curly brace after the last sentence of the subproof. \" }\"")
+        else
+          if (Str.string_match (Str.regexp "Syntax error*") str_rep 0) then
+            Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood and whether all words are spelled correctly. Check for instance correct use of parentheses. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
+          else
+            None
+    | Gramlib.Stream.Error s -> Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood. Check for instance whether all parentheses match and whether all words are spelled correctly. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
+      (* This error changes in a later version to Gramlib.Grammer.Error *)
+    | CErrors.Timeout -> Some (Pp.str "Timeout: Waterproof could not find a proof in the allocated time. Consider making a smaller step.")
+    | _ -> None)
+  else None
+
+let () = CErrors.register_handler wp_error_handler
