@@ -31,9 +31,9 @@ Waterproof Enable Redirect Feedback.
 Goal forall n : nat, (n = n).
 Proof.
     We use induction on n.
-    - Fail We first show the base case (2 = 2).
-      We first show the base case (0 = 0).
-      Fail We first show the base case (1 = 1).
+    - Fail We first show the base case 2 = 2.
+      We first show the base case 0 = 0.
+      Fail We first show the base case 1 = 1.
       reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
@@ -48,9 +48,9 @@ Proof.
     assert_feedback_with_string
     (fun () => We use induction on k) Warning
     "Expected variable name n0 instead of k.".
-    - Fail We first show the base case (2 = 2).
-      We first show the base case  (0 = 0).
-      Fail We first show the base case (1 = 1).
+    - Fail We first show the base case 2 = 2.
+      We first show the base case  0 = 0.
+      Fail We first show the base case 1 = 1.
       reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
@@ -75,11 +75,11 @@ Open Scope subset_scope.
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
 We use induction on n.
-* We first show the base case (0 >= 0).
-  We conclude that (0 >= 0).
+* We first show the base case 0 >= 0.
+  We conclude that 0 >= 0.
 * We now show the induction step.
   Take n ∈ nat.
-  Assume that (n >= 0).
+  Assume that n >= 0.
   We need to show that (n + 1 >= 0).
 Abort.
 

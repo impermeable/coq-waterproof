@@ -64,7 +64,7 @@ Waterproof Enable Redirect Errors.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
-    assert_feedback_with_string (fun () => We conclude that (1+1 = 2)) Warning
+    assert_feedback_with_string (fun () => We conclude that 1+1 = 2) Warning
 "The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
@@ -75,7 +75,7 @@ Qed.
 Lemma test_we_conclude_4: forall A: Prop, (A \/ ~A  -> True).
 Proof.
     intros A h.
-    We conclude that (True).
+    We conclude that True.
 Qed.
 
 (** * Test 5
@@ -189,9 +189,8 @@ Goal A -> B.
 Proof.
   intro H.
   pose f.
-  Since (A -> B) we conclude that B.
+  Since A -> B we conclude that B.
 Abort.
-
 
 (** * Example for the SUM.
     Somewhat more realistic context.
@@ -306,5 +305,5 @@ Qed.
 Goal (is_true true).
 Proof.
   It holds that (true).
-  Since (true) we conclude that (true).
+  Since true we conclude that true.
 Qed.
