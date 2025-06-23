@@ -174,8 +174,7 @@ let wp_error_handler (e : exn) : Pp.t option =
             Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood and whether all words are spelled correctly. Check for instance correct use of parentheses. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
           else
             None
-    | Gramlib.Stream.Error s -> Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood. Check for instance whether all parentheses match and whether all words are spelled correctly. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
-      (* This error changes in a later version to Gramlib.Grammer.Error *)
+    | Gramlib.Grammar.Error s -> Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood. Check for instance whether all parentheses match and whether all words are spelled correctly. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
     | CErrors.Timeout -> Some (Pp.str "Timeout: Waterproof could not find a proof in the allocated time. Consider making a smaller step.")
     | _ -> None)
   else None
