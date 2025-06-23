@@ -241,6 +241,6 @@ Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c opt
   end.
 
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
-  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), constr), "and")) :=
+  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), lconstr), "and")) :=
   panic_if_goal_wrapped ();
   take x.

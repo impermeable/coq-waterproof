@@ -112,17 +112,17 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" x(opt(seq(
 (** Hints *)
 Lemma zero_in_interval_closed_zero_open_one : (0 ∈ [0,1)).
 Proof.
-  We need to show that (0 <= 0 /\ 0 < 1).
-  We show both (0 <= 0) and (0 < 1).
-  - We conclude that (0 <= 0).
-  - We conclude that (0 < 1).
+  We need to show that 0 <= 0 /\ 0 < 1.
+  We show both 0 <= 0 and 0 < 1.
+  - We conclude that 0 <= 0.
+  - We conclude that 0 < 1.
 Qed.
 #[export] Hint Resolve zero_in_interval_closed_zero_open_one : wp_reals.
 
 Lemma one_in_complement_interval_closed_zero_open_one : (1 ∈ ℝ \ [0,1)).
 Proof.
-  We need to show that (~ ((0 <= 1) /\ (1 < 1))).
-  We conclude that (¬ 0 <= 1 < 1).
+  We need to show that ~ ((0 <= 1) /\ (1 < 1)).
+  We conclude that ¬ 0 <= 1 < 1.
 Qed.
 
 #[export] Hint Resolve one_in_complement_interval_closed_zero_open_one : wp_reals.
@@ -131,15 +131,15 @@ Qed.
 
 Lemma not_in_compl_implies_in (A : subset ℝ) (x : ℝ) : (¬ x ∈ ℝ\A) -> (x ∈ A).
 Proof.
-  Assume that (¬ x ∈ ℝ\A).
-  It holds that (¬ ¬ x ∈ A).
-  We conclude that (x ∈ A).
+  Assume that ¬ x ∈ ℝ\A.
+  It holds that ¬ ¬ x ∈ A.
+  We conclude that x ∈ A.
 Qed.
 
 Lemma in_implies_not_in_compl (A : subset R) (x : R) : (x ∈ A) -> (¬ x ∈ ℝ\A).
 Proof.
-  Assume that (x ∈ A).
-  We conclude that (¬ x ∈ ℝ\A).
+  Assume that x ∈ A.
+  We conclude that ¬ x ∈ ℝ\A.
 Qed.
 
 #[export] Hint Resolve not_in_compl_implies_in : wp_negation_reals.

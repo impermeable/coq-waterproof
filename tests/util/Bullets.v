@@ -16,32 +16,68 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Ltac2.Message.
+From Waterproof Require Import Tactics.
+From Waterproof Require Import Notations.Common.
 
-Require Import Coq.Reals.Reals.
+Set Default Goal Selector "!".
 
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Automation.
-Require Import Waterproof.Tactics.
-Require Import Waterproof.Util.Assertions.
+Local Parameter A : Prop.
+Local Parameter w : A.
+Set Bullet Behavior "Waterproof Relaxed Subproofs".
 
-(** Test 0: This should work just fine *)
-Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
-    intro n.
-    Define m := n.
-Abort.
+Goal (A ∧ A ∧ A ∧ A).
+Proof.
+repeat split.
+- exact w.
+- exact w.
+- exact w.
+- exact w.
+Qed.
 
+Goal (True ∧ True) ∧ (True ∧ True).
+Proof.
++++ split.
+-- {split.
+  * + -- exact I.
+  * exact I. }
+-- split.
+  -- + -- exact I.
+  -- exact I.
+Qed.
 
-(** Test 1: This should also work *)
-Goal (0 = 0) -> forall n : nat, ((n = n) \/ (n + 1 = n + 1)).
-    intros h n.
-    Fail Define h := n.
-    Define m := n.
-Abort.
+Goal (A ∧ A) ∧ (A ∧ A) ∧ (A ∧ A ∧ A).
+Proof.
+split.
+{ - split.
+    - exact w.
+    - exact w. }
+split.
++ split.
+  Fail exact w.
+  - exact w.
+  * exact w.
++ split.
+  { exact w. }
+  - split.
+    { exact w. }
+    exact w.
+Qed.
 
-(** Test 2: Complex expression without parens *)
-Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
-    intro n.
-    Define m := n + 1.
-Abort.
+Set Bullet Behavior "Waterproof Strict Subproofs".
+Goal (A ∧ A) ∧ (A ∧ A) ∧ (A ∧ A ∧ A).
+Proof.
+split.
+{ - split.
+    + exact w.
+    + exact w. }
+split.
++ split.
+  Fail exact w.
+  - exact w.
+  - exact w.
++ split.
+  { exact w. }
+  * split.
+    { exact w. }
+    exact w.
+Qed.
