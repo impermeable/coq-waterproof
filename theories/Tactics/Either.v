@@ -121,9 +121,6 @@ Ltac2 either_or (t1:constr) (t2:constr) :=
     then either_or_prop t1 t2
     else either_or_type t1 t2. 
 
-(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
-Notation "[ ( % @ < x 'or'" := x (at level 0, only parsing).
-
 Ltac2 Notation "Either" t1(lconstr) "or" t2(lconstr) := 
   panic_if_goal_wrapped ();
   either_or t1 t2.
