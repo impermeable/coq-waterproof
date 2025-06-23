@@ -68,6 +68,26 @@ let () = add_scope "open_lconstr" (fun arg ->
 (* End of hack *)
 }
 
+(* Add any words that occur right after mathematical expressions as keywords *)
+(* Doing this enables parsing the mathematical expressions without parentheses *)
+(* The cost of this is that these words are no longer allowed to be variables *)
+{
+let () = Pcoq.set_keyword_state (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    CLexer.add_keyword (Pcoq.get_keyword_state()) "and"
+    ) "as")
+    ) "hold")
+    ) "holds")
+    ) "it")
+    ) "or")
+    ) "we")
+    )
+}
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
     {
