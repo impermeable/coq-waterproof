@@ -65,13 +65,13 @@ Notation "A ⊂ B" :=
 (* Purposefully not formulated as `A and B are disjoint`, because that conflicts with
    Assume A and B. in case A and B can be interpreted as subsets. *)
 Notation "A 'is' 'disjoint' 'from' B" :=
-  (Disjoint _ A B) (at level 50).
+  (Disjoint _ A B) (at level 69) : subset_scope.
 
 Notation "A 'is' 'empty'" :=
-  (forall a : _, ~ In _ A a) (at level 45) : subset_scope.
+  (forall a : _, ~ In _ A a) (at level 69) : subset_scope.
 
 Notation "A 'is' 'inhabited'" :=
-  (exists a : _, In _ A a) (at level 45) : subset_scope.
+  (exists a : _, In _ A a) (at level 69) : subset_scope.
 
 
 Notation "｛ x : T | P ｝" :=
