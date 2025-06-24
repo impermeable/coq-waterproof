@@ -16,8 +16,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
-
 Require Export Tactics.Assume.
 Require Export Tactics.Because.
 Require Export Tactics.BothDirections.

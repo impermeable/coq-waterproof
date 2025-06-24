@@ -18,6 +18,7 @@
 
 From Stdlib Require Import Reals.Reals.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Tactics.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Negation.
@@ -34,7 +35,6 @@ Open Scope subset_scope.
 (** Hints *)
 
 (** TODO: move these lemmas somewhere else *)
-
 Lemma aux1 (n m : ℕ) : (n = m) ⇒ |m - n| = |n - n|.
 Proof.
   Assume that (n = m).
@@ -68,7 +68,9 @@ Qed.
 Lemma nat_not_equal_dist_larger_one (n m : ℕ) : (n ≠ m) -> (1 ≤ | m - n |).
 Proof.
   Assume that (n ≠ m).
-  assert (n > m ∨ n < m)%nat as i by (apply Nat.lt_gt_cases; auto).
+  Set Default Proof Mode "Ltac2".
+  ltac2: assert (n > m ∨ n < m)%nat as i by (apply Nat.lt_gt_cases; auto).
+  Set Default Proof Mode "Waterproof".
   Because (i) either (n > m)%nat or (n < m)%nat holds.
   + Case (n > m)%nat.
     It holds that (| n - m | = | m - n | ).
@@ -85,7 +87,7 @@ Proof.
 Assume that (0 <  | n - m | ).
 Either (n = m)%nat or (~(n= m))%nat.
 + Case (n = m)%nat.
-  It holds that (| m - n| = 0).
+  It holds that ((| m - n| = 0)).
   Contradiction.
 + Case (~(n = m)).
   We conclude that (~(n = m)).
@@ -162,7 +164,7 @@ Proof.
       0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
     We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
     It suffices to show that (is_isolated_point a).
-    unfold is_isolated_point.
+    ltac2: unfold is_isolated_point.
     We need to show that (∃ ε > 0, (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
     Choose ε := (1/2).
     - Indeed, (ε > 0).

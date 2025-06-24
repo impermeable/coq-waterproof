@@ -220,10 +220,10 @@ Close Scope subset_scope.
 
 Close Scope R_scope.
 
-Require Import Ltac2.Ltac2.
+
+From Ltac2 Require Import Ltac2.
 
 (** Tactic to deal with Rabs Rmin Rmax *)
-
 Ltac2 crush_R_abs_min_max () :=
   unfold Rdist in *;
   unfold Rabs in *;

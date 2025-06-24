@@ -21,6 +21,7 @@ From Stdlib Require Import Lra.
 From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Analysis.Sequences.
 From Waterproof Require Import Libs.Analysis.Subsequences.
@@ -42,18 +43,18 @@ Definition lim_sup_bdd (a : ℕ → ℝ)
                        (pr2 : has_lb (sequence_ub a pr1))
                       : {l : ℝ | converges_to(sequence_ub(a, pr1), l)}.
 Proof.
-set (H := decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) (pr2)).
-destruct H as [l wl].
-exists l.
-apply convergence_equivalence; assumption.
+ltac2: set (H := decreasing_cv (sequence_ub a pr1) (Wn_decreasing a pr1) (pr2)).
+ltac2: destruct H as [l wl].
+ltac2: exists l.
+ltac2: (apply convergence_equivalence; assumption).
 Defined.
 
 Lemma lim_const_min_1_over_n_plus_1 (x : ℝ) :
   converges_to (fun (n : ℕ) ↦ x - 1 / (INR n + 1)) x.
 Proof.
     It holds that (x = x - 0) (i).
-    rewrite (i) at 1.
-    apply convergence_minus with
+    ltac2:rewrite (i) at 1.
+    ltac2:apply convergence_minus with
       (a := fun (n : ℕ) ↦ x)
       (b := fun (n : ℕ) ↦ 1 / (INR n + 1))
       (m := x)
@@ -77,12 +78,12 @@ Proof.
       We conclude that (N₀ <= k)%nat.
     - We need to show that (a k > proj1_sig(_,_,lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
       We claim that (proj1_sig(_,_,lim_sup_bdd a (i) (ii)) ≤ sequence_ub a (i) N₀).
-      { destruct (lim_sup_bdd a (i) (ii)).
-        simpl.
+      { ltac2: destruct (lim_sup_bdd a (i) (ii)).
+        ltac2: simpl.
         By Wn_decreasing it holds that (Un_decreasing (sequence_ub a (i))).
-        apply decreasing_ineq.
-        * assumption.
-        * apply convergence_equivalence; assumption.
+        ltac2: apply decreasing_ineq.
+        * ltac2: assumption.
+        * ltac2: (apply convergence_equivalence; assumption).
       }
       Because (iii) both (n ≥ N₀)%nat and
         (a n > sequence_ub a i N₀ - 1 / (m + 1)) hold.
@@ -95,7 +96,7 @@ Lemma exists_subseq_to_limsup_bdd (a : ℕ → ℝ) (i : has_ub a) (ii : has_lb 
     ∃ n : ℕ → ℕ, is_index_seq n ∧ ∀ k : ℕ, a (n k) > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (INR(k) + 1).
 Proof.
   (* TODO: notation for apply with parameters *)
-  apply exists_good_subseq with (P := fun (m : ℕ) (y :ℝ) ↦ y > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1) ).
+  ltac2: apply exists_good_subseq with (P := fun (m : ℕ) (y :ℝ) ↦ y > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (INR(m) + 1) ).
   Take m, N₀ : nat.
   By exists_almost_lim_sup we conclude that (there exists k : ℕ, (N₀ ≤ k)%nat
     ∧ a k > proj1_sig(_, _, lim_sup_bdd a (i) (ii)) - 1 / (m + 1)).
@@ -110,7 +111,7 @@ Proof.
       (a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (N₀ + k)%nat), maj_ss a N₀ (i)) in a0)).
     Define ii := (ub_to_lub (fun (k : ℕ) ↦ a (N₀ +k)%nat) (maj_ss a N₀ (i))).
     We need to show that (a(n) ≤ (let (a0, _) := ii in a0)).
-    clear _defeq.
+    ltac2: clear _defeq.
     Obtain such an l. It holds that
       (is_lub (EUn (fun (k : ℕ) ↦ a (N₀ +k)%nat)) l).
     It holds that (Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), l)
@@ -165,7 +166,7 @@ Proof.
         By (v) we conclude that (is_index_seq n).
       * We need to show that (converges_to (fun k ↦ a(n(k)), L)).
       (** TODO: an equivalent to "apply with" would be nice here *)
-      apply (squeeze_theorem (fun (k : ℕ) ↦ L - 1 / (INR k + 1))
+      ltac2: apply (squeeze_theorem (fun (k : ℕ) ↦ L - 1 / (INR k + 1))
         (fun (k : ℕ) ↦ (a (n k)))
         (sequence_ub a (i))).
       + (* apply squeeze_theorem with (c := sequence_ub a (i))
@@ -237,7 +238,7 @@ Proof.
     (* By sequence_ub_bds it holds that (a (n N₀) ≤ L). *)
     We claim that (a (n N₀) ≤ L).
     {
-      apply sequence_ub_bds.
+      ltac2: apply sequence_ub_bds.
       We conclude that ((n(N₀) ≥ m)%nat).
     }
     Contradiction.
@@ -259,14 +260,14 @@ Proof.
       By acc_pt_bds_seq_ub it holds that (∀ m : ℕ, x ≤ sequence_ub a (i) m).
       Define iii := (lim_sup_bdd a (i) (ii)).
       We need to show that (x ≤ proj1_sig (_,_,iii)).
-      clear _defeq.
-      Obtain such an l. simpl.
+      ltac2: clear _defeq.
+      Obtain such an l. ltac2: simpl.
       By (low_bd_seq_is_low_bd_lim (sequence_ub a (i)))
           it holds that (l ≥ x).
       We conclude that (x ≤ l).
     - We need to show that (for all b : ℝ, Raxioms.is_upper_bound (is_seq_acc_pt a) b
         ⇨ proj1_sig (_,_,lim_sup_bdd a (i) (ii)) ≤ b).
-      Take b : ℝ; such that (Raxioms.is_upper_bound (is_seq_acc_pt a) b).
+      Take b : ℝ. such that (Raxioms.is_upper_bound (is_seq_acc_pt a) b).
       It holds that (for all x : ℝ, is_seq_acc_pt a x ⇨ x ≤ b).
       It holds that (for all x : ℝ,
         (∃ n : ℕ ⇨ ℕ, is_index_seq n ∧ converges_to (fun k ↦ a(n(k)), x)) ⇨ x ≤ b) (iii).
@@ -287,10 +288,10 @@ Proof.
     By classic it holds that (P \/ ~P) (i).
     Because (i) either P or (¬P) holds.
     - Case P.
-      left.
-      assumption.
+      ltac2: left.
+      ltac2: assumption.
     - Case (¬P).
-      right.
+      ltac2: right.
       It holds that (~ ∃ N ∈ ℕ, (∀ k ≥ N, (a k < L)%R)%nat) (ii).
       We conclude that (∀ m ∈ ℕ, (∃ n ≥ m, (a(n) ≥ L)%R)%nat).
 Qed.

@@ -16,11 +16,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 
 Require Export Util.Goals.
 Require Import Util.MessagesToUser.
-
 
 (**
   Split the proof of an if and only if statement into both of its directions, wraps both resulting goals in a [StateGoal.Wrapper].

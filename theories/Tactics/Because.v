@@ -16,8 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
+
 Local Ltac2 concat_list (ls : message list) : message :=
 List.fold_right concat ls (of_string "").
 

@@ -22,6 +22,7 @@ From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import ClassicalChoice.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Tactics.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Reals.
@@ -86,7 +87,7 @@ Proof. (* hide proof *)
   We show both directions.
   * We need to show that (a ⟶ q ⇒ Un_cv a q).
     Assume that (a ⟶ q) (i).
-    unfold Un_cv.
+    ltac2: unfold Un_cv.
     To show : (∀ ε1 > 0,
        ∃ N2 : ℕ,
        ∀ n ≥ N2, ｜a(n) - q｜ < ε1).
@@ -141,7 +142,7 @@ Proof.
         By INR_IZR_INZ it holds that (INR k = IZR (Z.of_nat k)).
         (* TODO: better solution *)
         We claim that (IZR (up x) = IZR (Z.of_nat k)).
-        { rewrite (ii). reflexivity. }
+        { ltac2: rewrite (ii). ltac2: reflexivity. }
         We need to show that (x < k).
         We conclude that (& x < up x = Z.of_nat k = k).
 Qed.
@@ -186,6 +187,7 @@ Qed.
 
 (* Some limit theorems *)
 
+Set Default Proof Mode "Ltac2".
 Lemma convergence_plus (a b : ℕ → ℝ) (m l : ℝ) :
   converges_to a m ⇒ converges_to b l ⇒
     converges_to (fun n ↦ a n + b n) (m + l).
@@ -218,6 +220,7 @@ Proof.
   enough (Un_cv (opp_seq a) (-m)) by (apply convergence_equivalence; assumption).
   apply CV_opp; assumption.
 Qed.
+Set Default Proof Mode "Waterproof".
 
 (** ** A simple limit
 
@@ -275,12 +278,12 @@ Proof.
     By lim_d_0 it holds that (converges_to d 0).
     We claim that (Un_cv d 0).
     {
-      apply convergence_equivalence; assumption.
+      ltac2: (apply convergence_equivalence; assumption).
     }
     By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
     We claim that (converges_to (opp_seq d) (-0)).
     {
-      apply convergence_equivalence; assumption.
+      ltac2: (apply convergence_equivalence; assumption).
     }
     It holds that ( Un_cv (fun n ↦ -d(n), -0)).
     It holds that ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
@@ -362,10 +365,10 @@ Proof.
   { (* FIXME, this should work *)
     (* By upp_bd_seq_is_upp_bd_lim it suffices to show that
       (∀ (n : nat) ∈ ℕ, b n ≤ - M).*)
-    apply (upp_bd_seq_is_upp_bd_lim b).
+    ltac2: apply (upp_bd_seq_is_upp_bd_lim b).
     * Take n ∈ ℕ.
       We conclude that (& b n = - a n <= -M).
-    * assumption.
+    * ltac2: assumption.
   }
   We conclude that (L >= M).
 Qed.

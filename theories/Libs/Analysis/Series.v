@@ -22,6 +22,7 @@ From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import ClassicalChoice.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Analysis.Sequences.
 From Waterproof Require Import Notations.Common.
@@ -47,7 +48,7 @@ Proof.
     (k < l)%nat and (l ≤ M)%nat.
   It holds that (l = S (l - 1)%nat) (i).
   (* TODO: It suffices to show that (sigma a k Nn = sigma a k (l - 1) + sigma a (S (l - 1)) Nn).*)
-  rewrite (i) at 2.
+  ltac2: rewrite (i) at 2.
   By sigma_split it suffices to show that (k <= l - 1 < M)%nat.
   We show both (k <= l - 1)%nat and (l - 1 < M)%nat.
   - We conclude that (k ≤ l - 1)%nat.
@@ -108,7 +109,7 @@ Proof.
           We conclude that (k < l <= n)%nat.
       }
       (* TODO: find way of dealing with the case when coq cannot find parameters for apply ...*)
-      apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn).
+      ltac2: apply conv_evt_eq_seq with (a := fun Nn ↦ sigma a k (l-1) + sigma a l Nn).
       + By (x) we conclude that (evt_eq_sequences (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), fun Nn ↦ (sigma a k Nn))).
       + (*TODO: fix  We conclude that ((Nn) ↦ (sigma a k (l - 1) + sigma a l Nn)). *)
         We need to show that (converges_to (fun Nn ↦ (sigma a k (l - 1) + sigma a l Nn), sigma a k (l - 1) + L)).
@@ -126,18 +127,18 @@ Proof.
         * Indeed, (M ∈ ℕ).
         * We need to show that (for all n, (n ≥ M)%nat
             ⇨ sigma(a, k, n) - sigma(a, k, (M - 1)%nat) = sigma(a, M, n)).
-          Take n : ℕ; such that (n ≥ M)%nat.
+          Take n : ℕ. such that (n ≥ M)%nat.
           It suffices to show that
             (sigma a k n = sigma a k (M - 1)%nat + sigma a l n).
-          apply sigma_split_v2.
+          ltac2: apply sigma_split_v2.
           - We conclude that (k < l)%nat.
           - We conclude that (l <= n)%nat.
       }
-      apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
+      ltac2: apply conv_evt_eq_seq with (a := fun n ↦ sigma a k n - sigma a k (l-1)) (b := fun n ↦ sigma a l n).
       + By (iii) we conclude that (evt_eq_sequences (fun n ↦ (sigma a k n - sigma a k (l - 1)), fun n ↦ (sigma a l n))).
       + We need to show that (converges_to (fun N ↦ (sigma a k N - sigma a k (l - 1)), L)).
         It holds that ((sigma a k (l - 1) + L - sigma a k (l - 1)) = L) (iv).
-        rewrite <- (iv). (* TODO come up with some notation for this (meaning transport)*)
+        ltac2: rewrite <- (iv). (* TODO come up with some notation for this (meaning transport)*)
         By (ii) we conclude that (converges_to (fun N ↦ (sigma a k N - sigma a k (l - 1)), sigma a k (l - 1) + L - sigma a k (l - 1))).
 Qed.
 

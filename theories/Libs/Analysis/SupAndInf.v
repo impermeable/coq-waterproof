@@ -20,6 +20,7 @@ From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import Reals.Reals.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Tactics.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Notations.Common.
@@ -46,17 +47,18 @@ Definition is_sup (A : subset R) (M : ℝ) :=
 Lemma is_upper_bound_Raxioms_is_upper_bound_iff (A : subset ℝ) (M : ℝ) :
   is_upper_bound A M <-> Raxioms.is_upper_bound A M.
 Proof.
-  reflexivity.
+  ltac2: reflexivity.
 Qed.
 
 Lemma bdd_above_bound_iff (A : subset ℝ) :
   is_bounded_above A <-> bound A.
 Proof.
-  unfold is_bounded_above, bound.
+  ltac2: unfold is_bounded_above, bound.
   By (exists_exists_in_iff) we conclude that
     ((∃ M ∈ R, is_upper_bound A M) <-> ∃ m : ℝ, Raxioms.is_upper_bound A m).
 Qed.
 
+Set Default Proof Mode "Ltac2".
 Lemma is_sup_is_lub_iff (A : subset ℝ) (M : ℝ) :
   is_lub A M <-> is_sup A M.
 Proof.
@@ -74,6 +76,7 @@ Proof.
       apply H2.
       apply mem_subset_full_set.
 Qed.
+Set Default Proof Mode "Waterproof".
 
 (* Implement notations for these concepts. *)
 Notation "M 'is' 'the' '_supremum_' 'of' A" := (is_sup A M) (at level 69).
@@ -148,7 +151,7 @@ Qed.
 Lemma R_complete_unsealed : ∀ (A : ℝ → Prop), ∀ (a : ℝ),
   a ∈ A ⇒ (A is bounded from above) ⇒
   exists M : R, M ∈ R ∧ M is the supremum of A.
-exact R_complete.
+ltac2: exact R_complete.
 Qed.
 
 (**
@@ -255,7 +258,7 @@ Proof.
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
+      ltac2: exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-a)).
     Define b := (-a).
@@ -278,7 +281,7 @@ Proof.
     { It holds that (--a = a) (ii).
       It holds that (A a) (iii).
       (* TODO: We conclude that (--a ∈ A). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
+      ltac2: exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-a)).
     Define b := (-a).
@@ -355,7 +358,7 @@ Proof.
     { It holds that (--z = z) (ii).
       It holds that (A z) (iii).
       (* TODO: We conclude that (--z ∈ A). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
+      ltac2: exact (eq_ind_r(_,_,A,(iii),_,(ii))).
     }
     It holds that ((set_opp A) (-z)) (iv).
     It holds that (B (-z)).
@@ -527,9 +530,9 @@ Proof.
   Take A : (ℝ → Prop) and M ∈ ℝ.
   Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a) (i).
   Take K ∈ ℝ.
-  apply if_almost_maximizer_then_every_upp_bd_larger.
+  ltac2: apply if_almost_maximizer_then_every_upp_bd_larger.
   * We conclude that (M ∈ ℝ).
-  * Take L : ℝ; such that (L < M).
+  * Take L : ℝ. such that (L < M).
     It holds that (M - L > 0).
     Define ε1 := (M - L).
     It holds that (ε1 > 0).
@@ -550,9 +553,9 @@ Proof.
   Take A : (ℝ → Prop) and m ∈ ℝ.
   Assume that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a) (i).
   Take K ∈ ℝ.
-  apply if_almost_minimizer_then_every_low_bd_smaller.
+  ltac2: apply if_almost_minimizer_then_every_low_bd_smaller.
   * We conclude that (m ∈ ℝ).
-  * Take L : ℝ; such that (L > m).
+  * Take L : ℝ. such that (L > m).
     It holds that (L - m > 0).
     Define ε1 := (L - m).
     It holds that (ε1 > 0).
@@ -572,10 +575,10 @@ Proof.
     Take A : (ℝ → Prop).
     Take M ∈ ℝ.
     Assume that (is_sup A M).
-    Take ε : ℝ; such that (ε > 0).
+    Take ε : ℝ. such that (ε > 0).
     It holds that (M - ε < M).
     (** TODO: fix this *)
-    apply exists_almost_maximizer with (L := M- ε) (M := M).
+    ltac2: apply exists_almost_maximizer with (L := M- ε) (M := M).
     - We conclude that (M ∈ ℝ).
     - We conclude that (is_sup A M).
     - We conclude that (M - ε < M).
@@ -589,10 +592,10 @@ Proof.
     Take A : (ℝ → Prop).
     Take m ∈ ℝ.
     Assume that (is_inf A m).
-    Take ε : ℝ; such that (ε > 0).
+    Take ε : ℝ. such that (ε > 0).
     It holds that (m + ε > m).
     (** TODO: fix this *)
-    apply exists_almost_minimizer with (L := m + ε) (m := m).
+    ltac2: apply exists_almost_minimizer with (L := m + ε) (m := m).
     - We conclude that (m ∈ ℝ).
     - We conclude that (is_inf A m).
     - We conclude that (m + ε > m).
@@ -626,7 +629,7 @@ Proof.
       It follows that (is_upper_bound A M).
 
     + We need to show that (for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a ).
-      apply exists_almost_maximizer_ε.
+      ltac2: apply exists_almost_maximizer_ε.
       * We conclude that (M ∈ ℝ).
       * We conclude that (M is the supremum of A).
 
@@ -649,7 +652,7 @@ Proof.
       By (ii) we conclude that (is_upper_bound A M).
     + We need to show that (∀ M0 ∈ ℝ, is_upper_bound A M0 ⇨ M ≤ M0).
       Take M0 ∈ ℝ.
-      apply if_almost_maximizer_ε_then_every_upp_bd_larger.
+      ltac2: apply if_almost_maximizer_ε_then_every_upp_bd_larger.
       * We conclude that (M ∈ ℝ).
       * By (iii) we conclude that (∀ ε > 0, ∃ a ∈ A, M - ε < a).
       * We conclude that (M0 ∈ ℝ).
@@ -730,7 +733,7 @@ Proof.
         We claim that (A M).
         { It holds that (A a) (iii).
           (* TODO: We conclude that (A M). should work *)
-      exact (eq_ind_r(_,_,A,(iii),_,(ii))).
+          ltac2: exact (eq_ind_r(_,_,A,(iii),_,(ii))).
         }
         Contradiction.
       }
@@ -768,11 +771,11 @@ Proof.
       there exists k : ℕ, a k > (let (a0, _) := ub_to_lub a (i) in a0) - ε).
     Define lub_a_prf := (ub_to_lub a (i)).
     We need to show that (∀ ε > 0, ∃ k, a(k) > (let (a0, _) := lub_a_prf in a0) - ε).
-    clear _defeq. Obtain such an l.
+    ltac2: clear _defeq. Obtain such an l.
     Take ε > 0.
     We claim that (is_sup (EUn a) l).
     {
-      apply is_sup_is_lub_iff; assumption.
+      ltac2: (apply is_sup_is_lub_iff; assumption).
     }
     By exists_almost_maximizer_ε it holds that (∃ y : ℝ, (EUn a) y ∧ y > l - ε).
     Obtain such a y. It holds that ((EUn a) y ∧ y > l - ε) (iv).
@@ -780,7 +783,7 @@ Proof.
     It holds that (there exists n : ℕ , y = a n).
     Obtain such an n.
     Choose k := n.
-    simpl.
+    ltac2: simpl.
     We need to show that (l - ε < a n).
     We conclude that (& l - ε < y = a n).
 Qed.
@@ -792,7 +795,7 @@ Proof.
     Take a : (ℕ → ℝ).
     Assume that (has_ub a).
     Take m : ℕ.
-    apply seq_ex_almost_maximizer_ε.
+    ltac2: apply seq_ex_almost_maximizer_ε.
     (** We need to show that $1/(m+1) > 0$.*)
     It holds that (0 < m + 1)%R.
     We conclude that (1 / (m+1) > 0).

@@ -18,6 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Require Import Waterproof.
 
 Require Import Util.Constr.
 Require Import Util.MessagesToUser.

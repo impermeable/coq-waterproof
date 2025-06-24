@@ -22,9 +22,8 @@ From Stdlib Require Import Arith.Compare.
 From Stdlib Require Import ClassicalChoice.
 From Stdlib Require Import ChoiceFacts.
 
-Require Export Libs.Analysis.SubsequencesMetric.
-
 Require Import Notations.Sets.
+Require Import Libs.Analysis.SubsequencesMetric.
 
 Section Construction.
 
@@ -326,8 +325,9 @@ End StrongInductionIndexSequence.
 (** Warning: we don't (yet) know how to specify dummy variables in existence statements,
   so the use of the letters 'n' and 'k' in the tactics is hard-coded.  *)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
+
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
