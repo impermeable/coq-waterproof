@@ -18,6 +18,7 @@
 
 From Stdlib Require Import Reals.Reals.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Notations.Common.
 From Waterproof Require Import Notations.Reals.
 From Waterproof Require Import Notations.Sets.
@@ -51,7 +52,7 @@ Proof.
   Choose x := (a + r/2).
   * Indeed, (x ∈ ℝ).
   * We need to show that (0 < | x - a | < r).
-    unfold gt_op, R_gt_type in *.
+    ltac2: unfold gt_op, R_gt_type in *.
     It holds that (| x - a | < r).
     It holds that (| x - a | > 0).
     We conclude that (0 < | x - a | < r).
@@ -81,7 +82,7 @@ Proof.
       It holds that (ε > 0).
       Define z := (a + ε / 2).
       It holds that (|z - a| = 0 \/ ε ≤ | z - a |) (ii).
-      destruct ii.
+      ltac2: destruct ii.
       - It holds that (| z - a | > 0).
         Contradiction.
       - It holds that (| z - a| < ε).
@@ -90,7 +91,7 @@ Proof.
       0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) ⇨ is_continuous_in(h, a)).
     Assume that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℝ,
  0 < |x - a| < δ ⇨ |h(x) - h(a)| < ε) .
-    unfold is_continuous_in.
+    ltac2: unfold is_continuous_in.
     We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
     It suffices to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ).
     We show both statements.

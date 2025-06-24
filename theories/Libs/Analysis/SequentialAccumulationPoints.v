@@ -22,6 +22,7 @@ From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import ClassicalChoice.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Analysis.Sequences.
 From Waterproof Require Import Libs.Analysis.Subsequences.
@@ -60,7 +61,7 @@ Proof.
   (*FIXME*)
   (* By (upp_bd_seq_is_upp_bd_lim (fun k => a (n k))) it suffices to show that
     (∀ k ∈ nat, (a (n k) <= M)).*)
-  enough (∀ k ∈ nat, (a (n k) <= M)) by (
+  ltac2: enough (∀ k ∈ nat, (a (n k) <= M)) by (
   apply (upp_bd_seq_is_upp_bd_lim (fun k ↦ a (n k))); assumption).
   We claim that (for all k : ℕ, (a k) ≤ M) (v).
   { It holds that (for all x0 : ℝ, EUn a x0 ⇨ x0 ≤ M).

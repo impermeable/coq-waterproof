@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -29,6 +29,9 @@ Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
 Require Import Notations.Sets.
+
+(* This file is in Ltac2 style *)
+Set Default Proof Mode "Ltac2".
 
 (* Lemma to write Sn in goal induction step as n+1. *)
 Lemma Sn_eq_nplus1 : forall n, S n = n + 1.

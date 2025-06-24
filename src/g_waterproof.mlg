@@ -21,10 +21,58 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 {
 open Exceptions
 open Waterprove
+open Vernacextend
+open G_vernac
+open Ltac2_plugin
+open Ltac2_plugin.G_ltac2
 
 let waterproof_version : string = "2.2.0+dev"
+
+let wp_command_entry = Procq.Entry.make "waterproof_command"
+let wp_tactic_entry = Procq.Entry.make "waterproof_tactic"
+let _wp_tactic_entry = wp_tactic_entry
+
+let () = Hashtbl.add Tac2entries.hack_table_entry (Names.Id.of_string "waterproof_tactic") wp_tactic_entry
+
+let _ : Pvernac.proof_mode = Pvernac.register_proof_mode "Waterproof"
+    (ProofMode {
+        command_entry = wp_command_entry;
+        wit_tactic_expr = Tac2env.wit_ltac2_tac;
+        tactic_expr_entry = wp_tactic_entry;
+      })
+
+(* Duplicated with g_ltac2 *)
+let pr_ltac2expr e = Tac2print.pr_rawexpr_gen E5 ~avoid:Names.Id.Set.empty e
+
+
+
 }
 
+VERNAC ARGUMENT EXTEND wp_tactic_entry
+PRINTED BY { pr_ltac2expr }
+| [ _wp_tactic_entry(e) ] -> { e }
+END
+
+VERNAC { wp_command_entry } EXTEND VernacLtac2Alt
+| ![proof] [ ltac2_selector_opt(g) wp_tactic_entry(t) ltac2_use_default(with_end_tac) ] =>
+  { classify_as_proofstep } -> { fun ~pstate ->
+    Tac2entries.call ~pstate g ~with_end_tac t
+  }
+| ![proof] [ "par" ":" wp_tactic_entry(t) ltac2_use_default(with_end_tac) ] =>
+  { classify_as_proofstep } -> { fun ~pstate ->
+    Tac2entries.call_par ~pstate ~with_end_tac t
+  }
+END
+
+GRAMMAR EXTEND Gram
+  GLOBAL: wp_command_entry;
+  wp_command_entry: TOP
+    [ [ p = subprf -> { Vernacexpr.VernacSynPure p }
+      | g = OPT toplevel_selector; p = subprf_with_selector -> { Vernacexpr.VernacSynPure (p g) }
+      ] ];
+END
+
+(* Rest of waterproof *)
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
     {

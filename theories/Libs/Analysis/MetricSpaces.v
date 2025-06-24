@@ -20,6 +20,7 @@ From Stdlib Require Import Reals.Reals.
 From Stdlib Require Import Reals.ROrderedType.
 From Stdlib Require Import micromega.Lra.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Tactics.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Reals.
@@ -39,7 +40,6 @@ Context (X : Metric_Space).
 (* Definition metric_to_base := Base. *)
 
 Coercion Base : Metric_Space >-> Sortclass.
-
 Definition dist_positive :
   ∀ x ∈ X, ∀ y ∈ X, dist X x y ≥ 0.
 Proof.
@@ -53,7 +53,7 @@ Definition dist_non_degenerate :
 Proof.
   Take x, y ∈ X.
   Assume that (dist X x y = 0).
-  pose (proj1(_, _, (dist_refl X x y))) as i.
+  ltac2: pose (proj1(_, _, (dist_refl X x y))) as i.
   By (i) we conclude that (x = y).
 Defined.
 
@@ -76,7 +76,7 @@ Qed.
 Definition dist_reflexive : ∀ x ∈ X, dist X x x = 0.
 Proof.
   Take x ∈ X.
-  pose (proj2(_, _, (dist_refl X x x))) as i.
+  ltac2: pose (proj2(_, _, (dist_refl X x x))) as i.
   By (i) we conclude that (dist X x x = 0).
 Defined.
 
@@ -95,10 +95,9 @@ Assume that (d_discrete_R x y = 0).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
   By Req_true we conclude that (Reqb x y = true).
-
 + Case (x ≠ y).
   It holds that ((if Reqb(x, y) then 0 else 3) = 0) (i).
-  rewrite (Req_false x y H) in i.
+  ltac2: rewrite (Req_false x y H) in i.
   Contradiction.
 Qed.
 
@@ -109,7 +108,7 @@ Assume that (d_discrete_R x y = 3).
 It holds that ( (if Reqb x y then 0 else 3) = 3) (i).
 Either (x = y) or (x ≠ y).
 + Case (x = y).
-  rewrite (Req_true x y H) in i.
+  ltac2: rewrite (Req_true x y H) in i.
   It holds that (0 ≠ 3).
   Contradiction.
 + Case (x ≠ y).

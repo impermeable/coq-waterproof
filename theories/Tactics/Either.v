@@ -16,14 +16,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-From Ltac2 Require Import Ltac2.
-
+Require Import Waterproof.
 Require Import Util.Constr.
 Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 Require Import Waterprove.
+
+(* This file is in Ltac2 style *)
+Set Default Proof Mode "Ltac2".
 
 (* Switch order of decidable goal. *)
 Local Lemma sumbool_comm (A B : Prop) : {A} + {B} -> {B} + {A}.

@@ -18,12 +18,13 @@
 
 Require Import Ltac2.Ltac2.
 
+Require Import Waterproof.
 Require Import Util.Constr.
 Require Import Util.Goals.
 
 Require Import Waterproof.Tactics.Help.
 
-Local Ltac2 my_assert (t:constr) (id:ident option) := 
+Local Ltac2 my_assert (t:constr) (id:ident option) :=
   (* Fixed by fixing the ltac2_assert *)
   match id with
     | None =>

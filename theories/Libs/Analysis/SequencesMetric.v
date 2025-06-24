@@ -18,6 +18,7 @@
 
 From Stdlib Require Import Reals.Reals.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Negation.
 From Waterproof Require Import Notations.Common.
@@ -71,6 +72,6 @@ We conclude that (a (n - k + k) = a n)%nat.
 Qed.
 
 #[export] Hint Resolve relation_shift : wp_integers.
-#[export] Hint Extern 1 (_ = _) => (rewrite relation_shift) : wp_integers.
+#[export] Hint Extern 1 (_ = _) => ltac2:(rewrite relation_shift) : wp_integers.
 
 Close Scope R_scope.
