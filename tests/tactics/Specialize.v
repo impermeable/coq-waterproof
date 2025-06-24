@@ -32,7 +32,7 @@ Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
 Use n := 3 in (H).
-It holds that (3 = 3).
+It holds that 3 = 3.
 Abort.
 
 (** Test 1: This should fail as the wrong variable name is chosen. *)
@@ -66,7 +66,7 @@ Local Parameter F_identity : forall n : nat, F n = n.
 Goal True.
 Proof.
 Fail It holds that (F 3 = 3).
-Use n := (5) in (F_identity).
+Use n := 5 in F_identity.
 It holds that (F 5 = 5).
 Abort.
 
@@ -82,7 +82,7 @@ Abort.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 intro H.
-Use n := 3 in (H).
+Use n := 3 in H.
 ltac1:(rename H into HH).   (* test for hypohtesis without producing output *)
 Abort.
 
@@ -90,7 +90,7 @@ Abort.
 Goal (forall n m : nat, n = m) -> False.
 Proof.
 intro H.
-Use n := 3, m := 4 in (H).
+Use n := 3, m := 4 in H.
 It holds that (3 = 4).
 Abort.
 
@@ -115,7 +115,7 @@ Proof.
 intro H.
 assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a.".
-It holds that (forall b c : nat, ?a? + b + c = 0) (i).
+It holds that (forall b c : nat, ?a? + b + c = 0) as (i).
 Abort.
 
 (** Test 8 : use multiple placeholders as variable names *)
@@ -149,7 +149,7 @@ Proof.
 intro H.
 ltac1:(evar (e : nat)).
 Use a := (?e + _) in (H).
-It holds that (forall b : nat, ?e + ?a? + b = 0) (i).
+It holds that (forall b : nat, ?e + ?a? + b = 0) as (i).
 Abort.
 
 (** Test 12 : use an earlier introduced evar *)
@@ -157,7 +157,7 @@ Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
 intro H.
 Use a := _ in (H).
-It holds that (forall b : nat, ?a? + b = 0) (i).
+It holds that (forall b : nat, ?a? + b = 0) as (i).
 Use b := ?a? in (i).
 It holds that (?a? + ?a? = 0).
 Abort.
@@ -313,7 +313,7 @@ Abort.
 Goal ∀ y ∈ B, (∀ x ∈ B, x = 0) -> y = 0.
 Proof.
 Take y ∈ B.
-Assume that (∀ x ∈ B, x = 0) (i).
+Assume that (∀ x ∈ B, x = 0) as (i).
 Use x := y in (i).
 * Indeed, (y ∈ B).
 * Fail We conclude that (y = 0). (* TODO: fix this? *)
@@ -406,6 +406,14 @@ Proof.
   Fail Qed. (* Cannot close proof. *)
 Abort.
 
+
+(** Test 28: Choose should allow complex expression without parens. *)
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Use n := 3 + 1 in H.
+It holds that 4 = 4.
+Abort.
 Close Scope subset_scope.
 
 (** Test 28 : Test that helper variable has been removed *)
