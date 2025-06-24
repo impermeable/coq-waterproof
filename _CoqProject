@@ -4,6 +4,8 @@
 src/META.coq-waterproof
 -R theories/ Waterproof
 -R _build/default/theories/ Waterproof
+-I _build/install/default/lib/coq-waterproof/plugin
+-I _build/install/default/lib/
 -R ../_build/default/coq-waterproof/theories/ Waterproof
 -I ../_build/install/default/lib/coq-waterproof/plugin
 -I ../_build/install/default/lib/
