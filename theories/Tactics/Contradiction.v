@@ -61,14 +61,14 @@ Ltac2 contra () :=
     - Throws an error if no hypohteses, or if last hypothesis cannot be negated.
 *)
 
-Ltac2 contradiction () := 
+Ltac2 contradiction () :=
   lazy_match! goal with
   | [ id_h : _ |- _ ] =>
     let h := Control.hyp id_h in
     let prop_h := get_type h in
     let id_contra := Fresh.in_goal @_Hcontra in
     lazy_match! prop_h with
-    | ~ ?p => 
+    | ~ ?p =>
       (* Try to find a proof of p *)
       match Control.case (fun () =>
         assert $p as $id_contra by
@@ -87,7 +87,7 @@ Ltac2 contradiction () :=
       match Control.case (fun () =>
         assert (~ $p) as $id_contra)
       with
-      | Err exn => throw (concat_list
+      | Err _ => throw (concat_list
         [of_string "Previous statement cannot be negated."])
       | Val _ =>
         match Control.case (fun () => Control.focus 1 1 (fun () =>
@@ -108,10 +108,10 @@ Ltac2 contradiction () :=
 
 Ltac2 Notation "We" "argue" "by" "contradiction" := contra ().
 
-Ltac2 Notation "Contradiction" := 
+Ltac2 Notation "Contradiction" :=
   panic_if_goal_wrapped ();
   contradiction ().
 
-Ltac2 Notation "↯" := 
+Ltac2 Notation "↯" :=
   panic_if_goal_wrapped ();
   contradiction ().

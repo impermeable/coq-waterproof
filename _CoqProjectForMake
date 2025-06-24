@@ -17,6 +17,8 @@ src/waterprove.ml
 src/waterprove.mli
 src/wp_auto.ml
 src/wp_auto.mli
+src/wp_bullets.ml
+src/wp_bullets.mli
 src/wp_eauto.ml
 src/wp_eauto.mli
 src/wp_evars.ml
@@ -76,7 +78,7 @@ theories/Util/Evars.v
 theories/Util/Goals.v
 theories/Util/Hypothesis.v
 theories/Util/Init.v
-theories/Util/Since.v
+theories/Util/BySince.v
 theories/Util/MessagesToUser.v
 theories/Util/TypeCorrector.v
 
@@ -102,6 +104,7 @@ theories/Libs/Analysis/SubsequencesMetric.v
 theories/Libs/Analysis/StrongInductionIndexSequence.v
 theories/Libs/Analysis/Subsequences.v
 theories/Libs/Analysis/SupAndInf.v
+theories/Libs/Sets.v
 
 # Coq-Waterproof tests
 
@@ -156,3 +159,4 @@ tests/util/TypeCorrector.v
 ## Libs
 tests/libs/Negation.v
 tests/libs/Analysis/StrongInductionIndexSequence.v
+tests/libs/Sets.v

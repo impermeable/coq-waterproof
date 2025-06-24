@@ -126,10 +126,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
 
-  let hyps := List.map (fun (i, def, t) => t) (Control.hyps ()) in
+  let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
   let unfolded_hyps := List.map unfold_method hyps in
   let only_unfolded_hyps :=
-    List.map (fun (uh, h) => uh) (
+    List.map (fun (uh, _) => uh) (
       List.filter_out (fun (uh, h) => Constr.equal uh h) (
         List.combine unfolded_hyps hyps
       )
@@ -205,9 +205,9 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
   For an example of how to used [unfold_in_statement] to unfold notations,
   see [tests/tactics/Unfold.v] *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ","))
-  x(opt(seq("in", constr))) :=
+  x(opt(seq("in", lconstr))) :=
   wp_unfold (eval_unfold targets) None true x.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) x(opt(seq("in", constr))) :=
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) x(opt(seq("in", lconstr))) :=
   wp_unfold (eval_unfold targets) None false x.

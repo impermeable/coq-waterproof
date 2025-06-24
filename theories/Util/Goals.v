@@ -231,7 +231,7 @@ Ltac2 case (t:constr) :=
     | [|- _] => throw (of_string "No need to specify case.")
   end.
 
-Ltac2 Notation "Case" t(constr) := case t.
+Ltac2 Notation "Case" t(lconstr) := case t.
 
 (**
   A goal to remind the reader to go back to an earlier

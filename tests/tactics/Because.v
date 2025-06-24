@@ -28,28 +28,28 @@ Require Import Waterproof.Util.Assertions.
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     intro i.
-    Because (i) both (n = n) and (n + 1 = n + 1) hold.
+    Because (i) both n = n and n + 1 = n + 1 hold.
 Abort.
 
 (** Test 1: This should work, test first prop labeled. *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     intro i.
-    Because (i) both (n = n) (ii) and (n + 1 = n + 1).
+    Because (i) both n = n as (ii) and n + 1 = n + 1.
 Abort.
 
 (** Test 2: This should work, test second prop labeled. *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     intro i.
-    Because (i) both (n = n) and (n + 1 = n + 1) (ii) hold.
+    Because (i) both n = n and n + 1 = n + 1 as (ii) hold.
 Abort.
 
 (** Test 3: This should work, test both props labeled. *)
 Goal forall n : nat, ( ( (n = n) /\ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro n.
     intro i.
-    Because (i) both (n = n) (ii) and (n + 1 = n + 1) (iii) hold.
+    Because (i) both n = n as (ii) and n + 1 = n + 1 as (iii) hold.
 Abort.
 
 
@@ -78,7 +78,7 @@ Goal forall n : nat, ( ( (n = n) \/ (n + 1 = n + 1) ) -> (n + 1 = n + 1)).
     intro i.
     Fail Because (i) either (n = 0) (ii) or (n+1 = n+1) (iii) holds.
     Fail Because (i) either (n = n) (ii) or (n+1 = 0) (iii) holds.
-    Because (i) either (n = n) (ii) or (n+1 = n+1) (iii).
+    Because (i) either (n = n) as (ii) or (n+1 = n+1) as (iii).
     - Case (n = n).
       admit.
     - Case (n+1 = n+1).

@@ -154,14 +154,13 @@ Ltac2 obtain_seq_according_to (vars : ident list) (hyp) :=
     | _ => pre_og_type
     end in
   lazy_match! og_type with
-  | ex  ?pred => ()
-  | sig ?pred => ()
+  | ex  _ => ()
+  | sig _ => ()
   | _ => throw (concat_list
     [of_string "Can only obtain variables from 'there exists...' statements."])
   end;
   assert $pre_og_type as $prop_label;
   Control.focus 1 1 (fun () => exact $og_term);
-  let h := Control.hyp hyp in
   List.iter
     (fun var =>
       panic_ident_Qed var;
@@ -195,9 +194,9 @@ Ltac2 obtain_according_to_last (vars : ident list) :=
       | _ => pre_type_h
       end in
     lazy_match! type_h with
-    | ex  ?pred =>
+    | ex  _ =>
       obtain_seq_according_to vars id_h
-    | sig ?pred => obtain_seq_according_to vars id_h
+    | sig _ => obtain_seq_according_to vars id_h
     | _ => throw (of_string
       "Previous statement is not of the form 'there exists ...'.")
     end
@@ -205,7 +204,7 @@ Ltac2 obtain_according_to_last (vars : ident list) :=
     "No statement to obtain variable from.")
   end.
 
-Ltac2 Notation "Obtain" "such" a(opt("a")) an(opt("an"))
+Ltac2 Notation "Obtain" "such" _(opt("a")) _(opt("an"))
     vars(list1(ident, ",")) :=
   panic_if_goal_wrapped ();
   obtain_according_to_last vars.

@@ -54,13 +54,13 @@ Qed.
 Lemma Rabs_m_lt_n (m n : ℕ) : (m < n)%nat -> 1 <= | n - m |.
 Proof.
   Assume that (m < n)%nat.
-  It holds that (m <= n).
-  It holds that ( | n - m | = n - m).
+  It holds that m <= n.
+  It holds that | n - m | = n - m.
   It holds that (m + 1 <= n)%nat.
   It holds that (INR m + INR 1 = INR (m + 1)%nat).
-  It holds that ((m + 1)%nat <= n).
-  It holds that (& INR m + INR 1 = INR (m + 1)%nat <= n).
-  We conclude that (1 <= | n - m |).
+  It holds that (m + 1)%nat <= n.
+  It holds that & INR m + INR 1 = INR (m + 1)%nat <= n.
+  We conclude that 1 <= | n - m |.
 Qed.
 
 #[export] Hint Resolve Rabs_m_lt_n : wp_reals.
@@ -71,24 +71,24 @@ Proof.
   assert (n > m ∨ n < m)%nat as i by (apply Nat.lt_gt_cases; auto).
   Because (i) either (n > m)%nat or (n < m)%nat holds.
   + Case (n > m)%nat.
-    It holds that (| n - m | = | m - n | ).
-    It holds that (1 <= | n - m |).
-    We conclude that (1 <= | m - n |).
+    It holds that | n - m | = | m - n |.
+    It holds that 1 <= | n - m |.
+    We conclude that 1 <= | m - n |.
   + Case (m > n)%nat.
-    We conclude that (1 <= | m - n |).
+    We conclude that 1 <= | m - n |.
 Qed.
 #[export] Hint Resolve nat_not_equal_dist_larger_one : wp_reals.
 
 Lemma nat_dist_larger_zero_not_equal (n m : nat) :
   0 < | n - m | -> ~(n = m).
 Proof.
-Assume that (0 <  | n - m | ).
+Assume that 0 <  | n - m |.
 Either (n = m)%nat or (~(n= m))%nat.
 + Case (n = m)%nat.
-  It holds that (| m - n| = 0).
+  It holds that | m - n| = 0.
   Contradiction.
-+ Case (~(n = m)).
-  We conclude that (~(n = m)).
++ Case ~(n = m).
+  We conclude that ~(n = m).
 Qed.
 #[export] Hint Resolve nat_dist_larger_zero_not_equal : wp_reals.
 
@@ -96,18 +96,18 @@ Lemma nat_dist_less_than_one_iff_equal (n m : ℕ) :
   (n = m) <-> (| m - n | < 1).
 Proof.
   We show both directions.
-  - We need to show that (n = m ⇨ |m - n| < 1).
-    Assume that (n = m).
+  - We need to show that n = m ⇨ |m - n| < 1.
+    Assume that n = m.
     We argue by contradiction.
-    Assume that (~ | m - n | < 1).
-    It holds that (1 <= | m - n|).
-    It holds that (~(n=m)).
+    Assume that ~ | m - n | < 1.
+    It holds that 1 <= | m - n|.
+    It holds that ~(n=m).
     Contradiction.
-  - We need to show that (| m - n | < 1 -> n = m).
-    Assume that (| m - n| < 1).
+  - We need to show that | m - n | < 1 -> n = m.
+    Assume that | m - n| < 1.
     We argue by contradiction.
-    Assume that (~ (n = m)).
-    It holds that (1 <= | m - n|).
+    Assume that ~ (n = m).
+    It holds that 1 <= | m - n|.
     Contradiction.
 Qed.
 
@@ -137,45 +137,45 @@ Theorem alt_char_continuity (h : ℕ → X) (a : ℕ) :
       (∀ x ∈ ℕ, 0 < | x - a | < δ ⇒ dist X (h(x)) (h(a)) < ε).
 Proof.
   We show both directions.
-  * We need to show that (is_continuous_in(h, a) ⇨
+  * We need to show that is_continuous_in(h, a) ⇨
       ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
-        0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
-    Assume that (is_continuous_in h a).
+        0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε.
+    Assume that is_continuous_in h a.
     Take ε : R.
-    Assume that (ε > 0).
-    Choose δ := (1/2).
-    - Indeed, (δ > 0).
-    - We need to show that (∀ x ∈ ℕ,
-        0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
+    Assume that ε > 0.
+    Choose δ := 1/2.
+    - Indeed, δ > 0.
+    - We need to show that ∀ x ∈ ℕ,
+        0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε.
       Take x ∈ nat.
-      Assume that (0 < | x - a | < δ).
-      Either (x = a) or (~(x=a)).
-      + Case (x = a).
-        It holds that (| x - a | = 0).
+      Assume that 0 < | x - a | < δ.
+      Either x = a or ~(x=a).
+      + Case x = a.
+        It holds that | x - a | = 0.
         Contradiction.
-      + Case (~(x = a)).
-        It holds that (1 ≤ | x - a |).
+      + Case ~(x = a).
+        It holds that 1 ≤ | x - a |.
         Contradiction.
-  * We need to show that ((∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
-      0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε) ⇨ is_continuous_in(h, a)).
-    Assume that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
-      0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε).
-    We need to show that (is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a)).
-    It suffices to show that (is_isolated_point a).
+  * We need to show that (∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
+      0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε) ⇨ is_continuous_in(h, a).
+    Assume that ∀ ε > 0, ∃ δ > 0, ∀ x ∈ ℕ,
+      0 < |x - a| < δ ⇨ dist(X, h(x), h(a)) < ε.
+    We need to show that is_accumulation_point(a) ∧ limit_in_point(h, a, h(a)) ∨ is_isolated_point(a).
+    It suffices to show that is_isolated_point a.
     unfold is_isolated_point.
-    We need to show that (∃ ε > 0, (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|)).
-    Choose ε := (1/2).
-    - Indeed, (ε > 0).
-    - We need to show that (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
+    We need to show that ∃ ε > 0, (∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|).
+    Choose ε := 1/2.
+    - Indeed, ε > 0.
+    - We need to show that ∀ n ∈ ℕ, |n - a| = 0 ∨ ε ≤ |n - a|.
       Take n : nat.
-      Either (n = a) or (~(n=a)).
-      + Case (n = a).
-        It suffices to show that (|n - a| = 0).
-        We conclude that (|n - a| = 0).
-      + Case (~(n=a)).
-        It suffices to show that ((1/2) ≤ | n - a |).
-        It holds that (1 ≤ | n - a |).
-        We conclude that (1/2 ≤ | n - a | ).
+      Either n = a or ~(n=a).
+      + Case n = a.
+        It suffices to show that |n - a| = 0.
+        We conclude that |n - a| = 0.
+      + Case ~(n=a).
+        It suffices to show that (1/2) ≤ | n - a |.
+        It holds that 1 ≤ | n - a |.
+        We conclude that 1/2 ≤ | n - a |.
 Qed.
 
 End metricspace.
@@ -184,9 +184,9 @@ End metricspace.
 #[export] Hint Resolve <- alt_char_continuity : wp_reals.
 
 (** Notations *)
-Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).
+Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 69).
 
-Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 68, only parsing).
+Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 69, only parsing).
 
 Local Ltac2 unfold_acc_point (statement : constr) := eval unfold is_accumulation_point in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation" "point" x(opt(seq("in", constr))) :=
@@ -195,9 +195,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "accumulation" "point" x(opt(seq
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation" "point" x(opt(seq("in", constr))) :=
   wp_unfold unfold_acc_point (Some "accumulation point") false x.
 
-Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 68).
+Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 69).
 
-Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 68, only parsing).
+Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 69, only parsing).
 
 Local Ltac2 unfold_isol_point (statement : constr) := eval unfold is_isolated_point in $statement.
 
@@ -206,9 +206,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "isolated" "point" x(opt(seq("in
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "isolated" "point" x(opt(seq("in", constr))) :=
   wp_unfold unfold_isol_point (Some "isolated point") false x.
 
-Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68).
+Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 69).
 
-Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 68, only parsing).
+Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point _ f a L) (at level 69, only parsing).
 
 Local Ltac2 unfold_lim_in_point (statement : constr) := eval unfold limit_in_point in $statement.
 
@@ -218,9 +218,9 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "limit" x(opt(seq("
   wp_unfold unfold_lim_in_point (Some "limit") false x.
 
 
-Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in _ f a) (at level 68).
+Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in _ f a) (at level 69).
 
-Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in _ f a)  (at level 68, only parsing).
+Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in _ f a)  (at level 69, only parsing).
 
 Local Ltac2 unfold_is_cont (statement : constr) := eval unfold is_continuous_in in $statement.
 
