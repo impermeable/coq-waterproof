@@ -122,17 +122,18 @@ Abort.
 Goal False.
 Proof.
   assert_feedback_with_strings
-  (fun () => It holds that (∀ n > 2, n = n) (i)) Info
+  (fun () => It holds that ∀ n > 2, n = n as (i)) Info
 ["To use (∀ n > 2, n = n), use";
 "    Use ... := (...) in (i)."].
 Abort.
 
 (** Test 9: By ... it holds that, no label. *)
-Goal False.
+Goal True -> False.
 Proof.
   (** TODO: is this consistent with the statement
       without the by clause and with the since clause? *)
-  By I it holds that (forall n : nat, True).
+  intro i.
+  By i it holds that (forall n : nat, True).
 Abort.
 
 (** Test 10: Since ... it holds that, no label. *)
@@ -162,7 +163,7 @@ Abort.
 Goal (∀ n > 3, n = n) -> False.
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (∀ n > 3, n = n) (i))
+  (fun () => Assume that ∀ n > 3, n = n as (i))
   Info
 ["To use (∀ n > 3, n = n), use";
 "    Use ... := (...) in (i)."].
@@ -172,7 +173,7 @@ Abort.
 Goal not (∀ n ≥ 4, n = n).
 Proof.
   assert_feedback_with_strings
-  (fun () => Assume that (∀ n ≥ 4, n = n))
+  (fun () => Assume that ∀ n ≥ 4, n = n)
   Info
 ["To use (∀ n ≥ 4, n = n), use";
 "    Use ... := (...) in (...)."].
@@ -195,7 +196,7 @@ Abort.
 Goal (forall n : nat, n = n) -> False.
 Proof.
   assert_feedback_with_strings
-  (fun () => We claim that (forall n : nat, n = n) (i))
+  (fun () => We claim that (forall n : nat, n = n) as (i))
   Info
 ["After proving (∀ n, n = n), use it with";
 "    Use ... := (...) in (i)."].
