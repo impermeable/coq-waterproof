@@ -44,7 +44,7 @@ Definition dist_positive :
   ∀ x ∈ X, ∀ y ∈ X, dist X x y ≥ 0.
 Proof.
   Take x, y ∈ X.
-  By dist_pos we conclude that (dist X x y ≥ 0).
+  By dist_pos we conclude that dist X x y ≥ 0.
 Qed.
 
 Definition dist_non_degenerate :
@@ -52,9 +52,9 @@ Definition dist_non_degenerate :
   (dist X x y = 0) ⇒ (x = y).
 Proof.
   Take x, y ∈ X.
-  Assume that (dist X x y = 0).
+  Assume that dist X x y = 0.
   pose (proj1(_, _, (dist_refl X x y))) as i.
-  By (i) we conclude that (x = y).
+  By (i) we conclude that x = y.
 Defined.
 
 Definition dist_symmetric :
@@ -62,7 +62,7 @@ Definition dist_symmetric :
   dist X x y = dist X y x.
 Proof.
   Take x, y ∈ X.
-  By dist_sym we conclude that (dist X x y = dist X y x).
+  By dist_sym we conclude that dist X x y = dist X y x.
 Qed.
 
 Definition dist_triangle_inequality :
@@ -70,14 +70,14 @@ Definition dist_triangle_inequality :
   dist X x z ≤ dist X x y + dist X y z.
 Proof.
   Take x, y, z ∈ X.
-  By (dist_tri) we conclude that (dist X x z ≤ dist X x y + dist X y z).
+  By (dist_tri) we conclude that dist X x z ≤ dist X x y + dist X y z.
 Qed.
 
 Definition dist_reflexive : ∀ x ∈ X, dist X x x = 0.
 Proof.
   Take x ∈ X.
   pose (proj2(_, _, (dist_refl X x x))) as i.
-  By (i) we conclude that (dist X x x = 0).
+  By (i) we conclude that dist X x x = 0.
 Defined.
 
 End Definitions.
@@ -91,13 +91,13 @@ Lemma d'_eq_0 : forall x y : ℝ,
   d_discrete_R x y = 0 -> (Reqb x y) = true.
 Proof.
 Take x, y : ℝ.
-Assume that (d_discrete_R x y = 0).
-Either (x = y) or (x ≠ y).
-+ Case (x = y).
-  By Req_true we conclude that (Reqb x y = true).
+Assume that d_discrete_R x y = 0.
+Either x = y or x ≠ y.
++ Case x = y.
+  By Req_true we conclude that Reqb x y = true.
 
-+ Case (x ≠ y).
-  It holds that ((if Reqb(x, y) then 0 else 3) = 0) (i).
++ Case x ≠ y.
+  It holds that (if Reqb(x, y) then 0 else 3) = 0 as (i).
   rewrite (Req_false x y H) in i.
   Contradiction.
 Qed.
@@ -105,15 +105,15 @@ Qed.
 Lemma d'_eq_3 : forall x y : ℝ, d_discrete_R x y = 3 -> (Reqb x y) = false.
 Proof.
 Take x, y : ℝ.
-Assume that (d_discrete_R x y = 3).
-It holds that ( (if Reqb x y then 0 else 3) = 3) (i).
-Either (x = y) or (x ≠ y).
-+ Case (x = y).
+Assume that d_discrete_R x y = 3.
+It holds that (if Reqb x y then 0 else 3) = 3 as (i).
+Either x = y or x ≠ y.
++ Case x = y.
   rewrite (Req_true x y H) in i.
-  It holds that (0 ≠ 3).
+  It holds that 0 ≠ 3.
   Contradiction.
-+ Case (x ≠ y).
-  By Req_false we conclude that (Reqb x y = false).
++ Case x ≠ y.
+  By Req_false we conclude that Reqb x y = false.
 Qed.
 
 #[export] Hint Resolve d'_eq_0 : wp_reals.

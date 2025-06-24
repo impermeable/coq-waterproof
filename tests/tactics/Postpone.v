@@ -33,15 +33,15 @@ Waterproof Enable Redirect Feedback.
 (** Test 0: old notation still works. *)
 Goal (0 = 0).
 Proof.
-  By I it holds that (True) (H1).
+  By I it holds that (True) as (H1).
 Abort.
 
 (** Test 1: postpone proof of claim. Claim added to hypotheses, warning raised. *)
 Goal (0 = 0).
 Proof.
-  assert_feedback_with_string (fun () => By magic it holds that (False) (H2)) Warning
+  assert_feedback_with_string (fun () => By magic it holds that (False) as (H2)) Warning
 "Please come back later to provide an actual proof of False.".
-  assert_feedback_with_string (fun () => By magic it holds that (0 = 1) (H3)) Warning
+  assert_feedback_with_string (fun () => By magic it holds that 0 = 1 as (H3)) Warning
 "Please come back later to provide an actual proof of (0 = 1).".
 Abort.
 

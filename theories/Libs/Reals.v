@@ -155,7 +155,7 @@ Qed.
 
 (** ** Lemmas to write e.g. <<{r1 ≤ r2} + {r2 < r1}>> *)
 
-Lemma Rlt_ge_dec : forall r1 r2, {r1 < r2} + {r1 >= r2}.
+Lemma Rlt_ge_dec : forall r1 r2, sumbool (r1 < r2) (r1 >= r2).
 Proof.
   intros.
   destruct (total_order_T r1 r2).
@@ -165,7 +165,7 @@ Proof.
   exact (right (Rle_ge r2 r1 (Rlt_le r2 r1 r))).
 Qed.
 
-Lemma Rle_ge_dec : forall r1 r2, {r1 <= r2} + {~ r2 >= r1}.
+Lemma Rle_ge_dec : forall r1 r2, sumbool (r1 <= r2) (~ r2 >= r1).
 Proof.
   intros.
   destruct (total_order_T r1 r2).
@@ -175,7 +175,7 @@ Proof.
   apply (right (Rlt_not_ge r2 r1 r)).
 Qed.
 
-Lemma Rge_le_dec : forall r1 r2, {r1 >= r2} + {~ r2 <= r1}.
+Lemma Rge_le_dec : forall r1 r2, sumbool (r1 >= r2) (~ r2 <= r1).
 Proof.
   intros.
   destruct (total_order_T r1 r2).
@@ -188,7 +188,7 @@ Qed.
 
 (** ** Lemmas to split e.g. <<{r1 <= r2}>> into <<{r1 < r2} + {r1 = r2}>> *)
 
-Lemma Rge_lt_or_eq_dec : forall r1 r2, (r1 >= r2) -> {r2 < r1} + {r1 = r2}.
+Lemma Rge_lt_or_eq_dec : forall r1 r2, (r1 >= r2) -> sumbool (r2 < r1) (r1 = r2).
 Proof.
   intros.
   destruct (total_order_T r2 r1).
