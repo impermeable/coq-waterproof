@@ -25,6 +25,26 @@ open Waterprove
 let waterproof_version : string = "2.2.0+dev"
 }
 
+(* Add any words that occur right after mathematical expressions as keywords *)
+(* Doing this enables parsing the mathematical expressions without parentheses *)
+(* The cost of this is that these words are no longer allowed to be variables *)
+{
+let () = Pcoq.set_keyword_state (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    CLexer.add_keyword (Pcoq.get_keyword_state()) "and"
+    ) "as")
+    ) "hold")
+    ) "holds")
+    ) "it")
+    ) "or")
+    ) "we")
+    )
+}
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
     {
@@ -36,6 +56,20 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
     {
       automation_shield := false
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Filter" "Errors" ] ->
+    {
+      filter_errors := true
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Filter" "Errors" ] ->
+    {
+      filter_errors := false
     }
 END
 
