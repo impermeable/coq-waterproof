@@ -27,7 +27,7 @@ Require Import Util.Goals.
 Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
-Require Import Coq.Sets.Ensembles.
+Require Import Stdlib.Sets.Ensembles.
 Require Import Notations.Sets.
 
 Local Ltac2 too_many_of_type_message (t : constr) :=
