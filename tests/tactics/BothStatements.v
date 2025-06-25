@@ -28,24 +28,24 @@ Require Import Waterproof.Util.Assertions.
 (** Test 0: This should work *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     We show both statements.
     - We need to show (n = n).
-      reflexivity.
+      ltac2: reflexivity.
     - We need to show (n+1 = n+1).
-      reflexivity.
+      ltac2: reflexivity.
 Qed.
 
 
 (** Test 1: This should also work *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     We prove both statements.
     - We need to show (n = n).
-      reflexivity.
+      ltac2: reflexivity.
     - We need to show (n+1 = n+1).
-    reflexivity.
+    ltac2: reflexivity.
 Qed.
 
 
@@ -59,27 +59,27 @@ Abort.
 (** Test 3: This should also work *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     We show both (n = n) and (n + 1 = n + 1).
-    reflexivity.
-    reflexivity.
+    ltac2: reflexivity.
+    ltac2: reflexivity.
 Qed.
 
 
 (** Test 4: This should also work just fine, the order has to be swapped. *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     We show both (n + 1 = n + 1) and (n = n).
-    reflexivity.
-    reflexivity.
+    ltac2: reflexivity.
+    ltac2: reflexivity.
 Qed.
 
 
 (** Test 5: This should print that the second statement is not what is needed to be shown *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     Fail We show both (n = n) and (n + 2 = n + 2).
 Abort.
 
@@ -87,7 +87,7 @@ Abort.
 (** Test 6: This should print that the first statement is not what is needed to be shown *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     Fail We show both (n + 2 = n + 2) and (n + 1 = n + 1).
 Abort.
 
@@ -95,7 +95,7 @@ Abort.
 (** Test 7: This should print that one of the statements is not what is needed to be shown *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     Fail We show both (n + 2 = n + 2) and (n = n).
 Abort.
 
@@ -103,15 +103,15 @@ Abort.
 (** Test 8: This should raise an error: that none of the statemets are what is needed to be shown *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
 Proof.
-    intro n.
+    ltac2: intro n.
     Fail We show both (n + 2 = n + 2) and (n +3 = n + 3).
 Abort.
 
 Goal forall a b : bool, is_true a -> is_true b -> is_true a /\ is_true b.
-    intros a b.
-    intros Ha Hb.
+    ltac2: intros a b.
+    ltac2: intros Ha Hb.
     We show both statements.
     - We need to show that (a).
-      exact Ha.
+      ltac2: exact Ha.
     - We conclude that (b).
 Qed.

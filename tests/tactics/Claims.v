@@ -28,30 +28,30 @@ Require Import Waterproof.Util.Assertions.
             it is proven. *)
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
-    intro n.
+    ltac2: intro n.
     We claim that (n = n).
-    { reflexivity. }
+    { ltac2: reflexivity. }
 Abort.
 
 (** Test 1: This should introduce a new subgoal, that n = n, named i after
             it is proven. *)
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
-    intro n.
+    ltac2: intro n.
     We claim that (n = n) (i).
-    { reflexivity. }
+    { ltac2: reflexivity. }
 Abort.
 
 (** Test 2: This should work with a boolean statement *)
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
-  intro n.
+  ltac2: intro n.
   We claim that (true).
 Abort.
 
 (** Test 3: This should work with a boolean statement *)
 Goal forall n : nat, exists m : nat, (n = m).
 Proof.
-  intro n.
+  ltac2: intro n.
   We claim that (orb false true).
 Abort.
