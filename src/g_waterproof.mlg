@@ -32,7 +32,9 @@ let wp_command_entry = Procq.Entry.make "waterproof_command"
 let wp_tactic_entry = Procq.Entry.make "waterproof_tactic"
 let _wp_tactic_entry = wp_tactic_entry
 
-let () = Hashtbl.add Tac2entries.hack_table_entry (Names.Id.of_string "waterproof_tactic") wp_tactic_entry
+let wp_entry_name = Names.Id.of_string "waterproof_tactic"
+
+let () = Hashtbl.add Tac2entries.hack_table_entry wp_entry_name wp_tactic_entry
 
 let _ : Pvernac.proof_mode = Pvernac.register_proof_mode "Waterproof"
     (ProofMode {
