@@ -8,7 +8,7 @@ Proof.
     We conclude that (0 = 0). 
 Abort.
 
-
+Print Grammar waterproof_tactic.
 (* Test 1: Missing capital letter at beginning *)
 Goal 0 = 0.
 Proof.
@@ -30,7 +30,7 @@ Abort.
 (* Test 4: Missing letter in third word *)
 Goal 0 = 0.
 Proof.
-    We conclude tht 0 = 0.
+    We conclude tht (0 = 0).
 Abort.
 
 (* Test 5: Spelling error in first word *)
@@ -54,7 +54,7 @@ Abort.
 (* Test 8: Spelling error after expression *)
 Goal 0 = 0.
 Proof.
-    Either 0 > 1 ar 0 ≤ 1.
+    Either (0 > 1) ar (0 ≤ 1).
 Abort.
 
 (* Test 9: Missing first word *)

@@ -56,13 +56,13 @@ PRINTED BY { pr_ltac2expr }
 END
 
 VERNAC { wp_command_entry } EXTEND VernacLtac2Alt
-| ![proof] [ ltac2_selector_opt(g) wp_tactic_entry(t) ltac2_use_default(with_end_tac) ] =>
+| ![proof] [ ltac2_selector_opt(g) wp_tactic_entry(t) "." ] =>
   { classify_as_proofstep } -> { fun ~pstate ->
-    Tac2entries.call ~pstate g ~with_end_tac t
+    Tac2entries.call ~pstate g ~with_end_tac:false t
   }
-| ![proof] [ "par" ":" wp_tactic_entry(t) ltac2_use_default(with_end_tac) ] =>
+| ![proof] [ "par" ":" wp_tactic_entry(t) "." ] =>
   { classify_as_proofstep } -> { fun ~pstate ->
-    Tac2entries.call_par ~pstate ~with_end_tac t
+    Tac2entries.call_par ~pstate ~with_end_tac:false t
   }
 END
 
