@@ -118,6 +118,16 @@ Proof.
     Assume that (a ⊂ A).
 Abort.
 
+Print Grammar waterproof_tactic.
+
+(* Test 19: Misspelling second word after expr *)
+Goal (0 = 0) -> True.
+Proof.
+    Assume that (0 = 0) (i).
+    By (i) it holds tht (1 = 1).
+Abort.
+
+
 
 
 
