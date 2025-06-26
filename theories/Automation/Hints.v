@@ -35,6 +35,7 @@ Require Import Libs.Reals.
 Require Import Libs.Logic.InformativeEpsilon.
 Require Import Libs.Logic.ConstructiveLogic.
 Require Import Libs.Sets.
+Require Import Libs.Integers.Dividability.
 
 (** * Waterproof core *)
 
@@ -365,7 +366,8 @@ Create HintDb wp_integers.
   #[export] Hint Extern 1 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
   #[export] Hint Extern 1 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
   #[export] Hint Extern 1 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
-
+  #[export] Hint Resolve divide_char : wp_integers.
+  #[export] Hint Resolve divide_char_inv : wp_integers.
 
 (** * Integer negation *)
 
@@ -492,3 +494,11 @@ Create HintDb wp_sets.
 Create HintDb wp_intuition.
 
   #[export] Hint Extern 8 => intuition (auto 2 with core): wp_intuition.
+
+Create HintDb wp_prop_logic.
+
+  #[export] Hint Extern 1 => eapply proj1; eassumption : wp_logic.
+  #[export] Hint Extern 1 => eapply proj2; eassumption : wp_logic.
+  #[export] Hint Extern 1 => apply conj; assumption : wp_logic.
+  #[export] Hint Extern 1 => apply or_introl; assumption : wp_logic.
+  #[export] Hint Extern 1 => apply or_intror; assumption : wp_logic.
