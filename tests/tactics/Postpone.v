@@ -39,9 +39,9 @@ Abort.
 (** Test 1: postpone proof of claim. Claim added to hypotheses, warning raised. *)
 Goal (0 = 0).
 Proof.
-  assert_feedback_with_string (fun () => By magic it holds that (False) (H2)) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: By magic it holds that (False) (H2)) Warning
 "Please come back later to provide an actual proof of False.".
-  assert_feedback_with_string (fun () => By magic it holds that (0 = 1) (H3)) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: By magic it holds that (0 = 1) (H3)) Warning
 "Please come back later to provide an actual proof of (0 = 1).".
 Abort.
 
@@ -56,12 +56,12 @@ Abort.
 (** Test 3: postpone proof of conclusion. Raises warning. *)
 Goal (0 = 1).
 Proof.
-  assert_feedback_with_string (fun () => By magic we conclude that (0 = 1)) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: By magic we conclude that (0 = 1)) Warning
 "Please come back later to provide an actual proof of (0 = 1).".
 Abort.
 
 Goal False.
-  assert_feedback_with_string (fun () => By magic it suffices to show that (True)) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: By magic it suffices to show that (True)) Warning
 "Please come back later to prove that it suffices to show that True".
 Abort.
 
@@ -69,6 +69,6 @@ Abort.
 Goal True.
 Proof.
   By magic we conclude that (True).
-  Fail (). (* No remaining goals. *)
+  Fail ltac2: (). (* No remaining goals. *)
   Fail Qed. (* Some goals given up. *)
 Abort.

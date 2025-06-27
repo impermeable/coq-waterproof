@@ -64,7 +64,7 @@ Waterproof Enable Redirect Errors.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
-    assert_feedback_with_string (fun () => We conclude that (1+1 = 2)) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: We conclude that (1+1 = 2)) Warning
 "The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
@@ -124,7 +124,7 @@ Qed.
 *)
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
-    assert_feedback_with_string (fun () => We conclude that (2 = 2)) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: We conclude that (2 = 2)) Warning
 "The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
@@ -139,8 +139,8 @@ Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
     ltac2: assert (useless: 1 = 1).
     ltac2: reflexivity.
-    assert_fails_with_string
-    (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
+    ltac2: assert_fails_with_string
+    (fun () => wp: By test_by_we_conclude_1 we conclude that (1 < 2))
 "Could not verify this follows from test_by_we_conclude_1.".
 Abort.
 

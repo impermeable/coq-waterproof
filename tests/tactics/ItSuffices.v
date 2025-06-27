@@ -40,7 +40,7 @@ Proof.
   It suffices to show that (x = 1).
   (* Old goal should have been proven by the above,
     now the assumption used remains to be proven.*)
-  assert_goal_is constr:(x=1).
+  ltac2: assert_goal_is constr:(x=1).
 Abort.
 
 (** * Test 2
@@ -50,7 +50,7 @@ Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
   ltac2: intros A B.
   (* Clearly this statement isn't helpful in proving the goal! *)
-  ltac2: let result () := By (f_increasing) it suffices to show that (1 + 1 = 2) in
+  ltac2: let result () := wp: By (f_increasing) it suffices to show that (1 + 1 = 2) in
   assert_raises_error result.
 Abort.
 
@@ -59,7 +59,7 @@ Local Parameter f_increasing : forall m n : nat, m <= n -> f m <= f n.
 
 Lemma test_it_suffices_3: f 1 <= f 2.
   By f_increasing it suffices to show that (1 <= 2).
-  assert_goal_is constr:(1 <= 2).
+  ltac2: assert_goal_is constr:(1 <= 2).
 Abort.
 
 (** * Test 2

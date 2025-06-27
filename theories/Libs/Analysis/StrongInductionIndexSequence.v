@@ -16,6 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+Require Import Waterproof.Waterproof.
 From Stdlib Require Import Lia.
 From Stdlib Require Import Arith.
 From Stdlib Require Import Arith.Compare.
@@ -53,26 +54,26 @@ Fixpoint ind_seq_of_seq_and_prop (k : nat) : {seq : nat -> A | P k seq} :=
 
 Definition ind_seq_with_prop : {seq : nat -> A | forall k : nat, P k seq}.
 Proof.
-  set ind_seq_of_seq_and_prop as seq_of_seq.
-  exists (fun k => proj1_sig (seq_of_seq k) k). (* take the diagonal *)
-  intro k.
-  apply (HypP _ (proj1_sig (seq_of_seq k))).
+  ltac2: set ind_seq_of_seq_and_prop as seq_of_seq.
+  ltac2: exists (fun k => proj1_sig (seq_of_seq k) k). (* take the diagonal *)
+  ltac2: intro k.
+  ltac2: apply (HypP _ (proj1_sig (seq_of_seq k))).
   - (* k-th sequence matches diagonal sequence for first k terms *)
-    intros l Hl.
-    induction k.
-    + assert (l = 0) as l_eq_0 by lia. (* l <= 0 implies l = 0 *)
-      rewrite l_eq_0; reflexivity.
-    + simpl; unfold const_seq_from.
-      destruct (lt_dec l (S k)) as [l_lt_Sk | not_l_lt_Sk].
-      * apply IHk; lia.
-      * assert (l = S k) as l_eq_Sk by lia.
-        rewrite l_eq_Sk.
-        simpl; unfold const_seq_from.
-        destruct (lt_dec (S k) (S k)) as [Sk_lt_Sk | not_Sk_lt_Sk].
-        -- assert (con : False) by lia; contradiction.
-        -- reflexivity.
+    ltac2: intros l Hl.
+    ltac2: induction k.
+    + ltac2: (assert (l = 0) as l_eq_0 by ltac1: (lia)). (* l <= 0 implies l = 0 *)
+      ltac2: (rewrite l_eq_0; reflexivity).
+    + ltac2: (simpl; unfold const_seq_from).
+      ltac2: destruct (lt_dec l (S k)) as [l_lt_Sk | not_l_lt_Sk].
+      * ltac2: (apply IHk; ltac1: (lia)).
+      * ltac2: assert (l = S k) as l_eq_Sk by ltac1: (lia).
+        ltac2: rewrite l_eq_Sk.
+        ltac2: (simpl; unfold const_seq_from).
+        ltac2: destruct (lt_dec (S k) (S k)) as [Sk_lt_Sk | not_Sk_lt_Sk].
+        -- ltac2: (assert (con : False) by ltac1:(lia); ltac1:(contradiction)).
+        -- ltac2: reflexivity.
   - (* k-th sequence satisfies k-th property *)
-    exact (proj2_sig (seq_of_seq k)).
+    ltac2: exact (proj2_sig (seq_of_seq k)).
 Defined.
 
 End Construction.
@@ -84,27 +85,27 @@ Section StrongInduction.
 Lemma quant_over_start_dep_only_on_start {A : Type} {P : nat -> (nat -> A) -> Prop} :
   dep_only_on_start P -> dep_only_on_start (fun (k : nat) (seq : nat -> A) => forall l : nat, l <= k -> P l seq).
 Proof.
-  intros HypP k b c start_b_eq_c Hb l l_le_k.
-  apply (HypP _ b).
-  - intros i i_le_l.
-    apply start_b_eq_c; lia.
-  - apply Hb; assumption.
+  ltac2: intros HypP k b c start_b_eq_c Hb l l_le_k.
+  ltac2: apply (HypP _ b).
+  - ltac2: intros i i_le_l.
+    ltac2: (apply start_b_eq_c; ltac1:(lia)).
+  - ltac2: (apply Hb; assumption).
 Qed.
 
 Lemma reformulate_base_prop_strong {A : Type} (P : nat -> (nat -> A) -> Prop) (seq : nat -> A) :
   (P 0 seq) -> (forall l : nat, l <= 0 -> P l seq).
 Proof.
-  intros H0 l l_le_0.
-  assert (l = 0) as l_eq_0 by lia.
-  rewrite l_eq_0; exact H0.
+  ltac2: intros H0 l l_le_0.
+  ltac2: assert (l = 0) as l_eq_0 by ltac1:(lia).
+  ltac2: (rewrite l_eq_0; exact H0).
 Qed.
 
 Lemma reformulate_final_prop_strong {A : Type} (P : nat -> (nat -> A) -> Prop) (seq : nat -> A) :
   (forall k : nat, forall l : nat, l <= k -> P l seq) -> (forall k : nat, P k seq).
 Proof.
-  intros H k.
-  assert (k <= k) as k_le_k by lia.
-  exact (H k k k_le_k).
+  ltac2: intros H k.
+  ltac2: assert (k <= k) as k_le_k by ltac1:(lia).
+  ltac2: exact (H k k k_le_k).
 Qed.
 
 
@@ -114,13 +115,13 @@ Theorem strong_ind_seq_with_prop {A : Type} {P : nat -> (nat -> A) -> Prop} (Hyp
     (forall l : nat, l <= k -> P l prev) -> {a : A | forall l : nat, l <= (S k) -> P l (const_seq_from a (S k) prev)})
   : {seq : nat -> A | forall k : nat, P k seq}.
 Proof.
-  enough {seq : nat -> A | forall k : nat, forall l : nat, l <= k -> P l seq} as [seq Hseq].
-  { exists seq.
-    apply reformulate_final_prop_strong; exact Hseq.
+  ltac2: enough {seq : nat -> A | forall k : nat, forall l : nat, l <= k -> P l seq} as [seq Hseq].
+  { ltac2: exists seq.
+    ltac2: (apply reformulate_final_prop_strong; exact Hseq).
   }
-  apply (ind_seq_with_prop (quant_over_start_dep_only_on_start HypP) a0).
-  - apply reformulate_base_prop_strong; exact H0.
-  - exact Hstep.
+  ltac2: apply (ind_seq_with_prop (quant_over_start_dep_only_on_start HypP) a0).
+  - ltac2: (apply reformulate_base_prop_strong; exact H0).
+  - ltac2: exact Hstep.
 Defined.
 
 End StrongInduction.
@@ -140,41 +141,42 @@ Definition index_seq_prop_family (Q : nat -> Prop) (k : nat) (n : nat -> nat) :=
 Lemma dep_only_on_start_index_seq_prop_family (Q : nat -> Prop) :
   dep_only_on_start (index_seq_prop_family Q).
 Proof.
-  intros k b c b_eq_c_start Hb.
-  induction k.
-  - simpl.
-    assert (0 <= 0) as O_le_O by lia.
-    rewrite <- (b_eq_c_start 0 O_le_O).
-    exact Hb.
-  - simpl.
-    assert (k + 1 <= S k) as kplus1_le_Sk by lia.
-    rewrite <- (b_eq_c_start (k + 1) kplus1_le_Sk).
-    assert (k <= S k) as k_le_Sk by lia.
-    rewrite <- (b_eq_c_start k k_le_Sk).
-    exact Hb.
+  ltac2: intros k b c b_eq_c_start Hb.
+  ltac2: induction k.
+  - ltac2: simpl.
+    ltac2: assert (0 <= 0) as O_le_O by ltac1:(lia).
+    ltac2: rewrite <- (b_eq_c_start 0 O_le_O).
+    ltac2: exact Hb.
+  - ltac2: simpl.
+    ltac2: assert (k + 1 <= S k) as kplus1_le_Sk by ltac1:(lia).
+    ltac2: rewrite <- (b_eq_c_start (k + 1) kplus1_le_Sk).
+    ltac2: assert (k <= S k) as k_le_Sk by ltac1:(lia).
+    ltac2: rewrite <- (b_eq_c_start k k_le_Sk).
+    ltac2: exact Hb.
 Qed.
 
 
 Lemma reformulate_base_prop_index {Q : nat -> Prop} (n : nat -> nat) (k : nat) :
   Q k -> index_seq_prop_family Q 0 (const_seq k).
 Proof.
-  intro Hk.
-  simpl. unfold const_seq.
-  exact Hk.
+  ltac2: intro Hk.
+  ltac2: simpl. 
+  ltac2: unfold const_seq.
+  ltac2: exact Hk.
 Qed.
 
 
 Lemma reformulate_final_prop_index {Q : nat -> Prop} {n : nat -> nat} :
   (forall k : nat, index_seq_prop_family Q k n) -> is_index_seq n /\ forall k : nat, Q (n k).
 Proof.
-  intro H.
-  split.
-  - intros k Hk.
-    exact (proj2 (H (S k))).
-  - induction k.
-    + exact (H O).
-    + assert (S k = k + 1) as Sk_eq_kplus1 by lia; rewrite Sk_eq_kplus1.
-      exact (proj1 (H (S k))).
+  ltac2: intro H.
+  ltac2: split.
+  - ltac2: intros k Hk.
+    ltac2: exact (proj2 (H (S k))).
+  - ltac2: induction k.
+    + ltac2: exact (H O).
+    + ltac2: (assert (S k = k + 1) as Sk_eq_kplus1 by ltac1:(lia); rewrite Sk_eq_kplus1).
+      ltac2: exact (proj1 (H (S k))).
 Qed.
 
 Lemma reformulate_step_prop_index {Q : nat -> Prop} :
@@ -186,43 +188,43 @@ Lemma reformulate_step_prop_index {Q : nat -> Prop} :
     (forall l : nat, l <= k -> index_seq_prop_family Q l n) ->
     {n_kplus1 : nat | forall l : nat, l <= k + 1 -> index_seq_prop_family Q l (const_seq_from n_kplus1 (k + 1) n)}).
 Proof.
-  intros Hstep k n H.
-  assert (forall l : nat, l <= k -> Q (n l)) as H1.
-  { intros l le_k.
-    induction l.
-    - apply (H 0 le_k).
-    - assert (S l = l + 1) as Sl_eq_lplus1 by lia; rewrite Sl_eq_lplus1.
-      apply (proj1 (H (S l) le_k)).
+  ltac2: intros Hstep k n H.
+  ltac2: assert (forall l : nat, l <= k -> Q (n l)) as H1.
+  { ltac2: intros l le_k.
+    ltac2: induction l.
+    - ltac2: apply (H 0 le_k).
+    - ltac2: (assert (S l = l + 1) as Sl_eq_lplus1 by ltac1:(lia); rewrite Sl_eq_lplus1).
+      ltac2: apply (proj1 (H (S l) le_k)).
   }
-  assert (forall l : nat, l < k -> n l < n (l + 1)) as H2.
-  { intros l lt_k.
-    apply (proj2 (H (S l) lt_k)).
+  ltac2: assert (forall l : nat, l < k -> n l < n (l + 1)) as H2.
+  { ltac2: intros l lt_k.
+    ltac2: apply (proj2 (H (S l) lt_k)).
   }
-  destruct (Hstep k n H1 H2) as [n_kplus1 Hn_kplus1].
-  exists n_kplus1.
-  intros l le_kplus1.
-  induction l.
-  - simpl; unfold const_seq_from.
-    destruct (lt_dec 0 (k + 1)) as [O_lt_kplus1 | not_O_lt_kplus1].
-    + assert (0 <= k) as O_le_k by lia.
-      exact (H1 0 O_le_k).
-    + exact (proj1 Hn_kplus1).
-  - simpl; unfold const_seq_from.
-    destruct (lt_dec (l + 1) (k + 1)) as [lplus1_lt_kplus1 | not_lplus1_lt_kplus1].
-    + split.
-      * assert (l + 1 <= k) as lplus1_le_k by lia.
-        exact (H1 (l + 1) lplus1_le_k).
-      * destruct (lt_dec l (k + 1)) as [l_lt_kplus1 | not_l_lt_kplus1].
-        -- assert (S l <= k) as Sl_le_k by lia.
-           exact (proj2 (H (S l) Sl_le_k)).
-        -- assert False by lia; contradiction.
-    + split.
-      * exact (proj1 Hn_kplus1).
-      * destruct (lt_dec l (k + 1)) as [l_lt_kplus1 | not_l_lt_kplus1].
-        -- assert (l = k) as l_eq_k by lia.
-           rewrite l_eq_k.
-           exact (proj2 Hn_kplus1).
-        -- assert False by lia; contradiction.
+  ltac2: destruct (Hstep k n H1 H2) as [n_kplus1 Hn_kplus1].
+  ltac2: exists n_kplus1.
+  ltac2: intros l le_kplus1.
+  ltac2: induction l.
+  - ltac2: (simpl; unfold const_seq_from).
+    ltac2: destruct (lt_dec 0 (k + 1)) as [O_lt_kplus1 | not_O_lt_kplus1].
+    + ltac2: (assert (0 <= k) as O_le_k by ltac1:(lia)).
+      ltac2: exact (H1 0 O_le_k).
+    + ltac2: exact (proj1 Hn_kplus1).
+  - ltac2:(simpl; unfold const_seq_from).
+    ltac2: destruct (lt_dec (l + 1) (k + 1)) as [lplus1_lt_kplus1 | not_lplus1_lt_kplus1].
+    + ltac2: split.
+      * ltac2: assert (l + 1 <= k) as lplus1_le_k by ltac1:(lia).
+        ltac2: exact (H1 (l + 1) lplus1_le_k).
+      * ltac2: destruct (lt_dec l (k + 1)) as [l_lt_kplus1 | not_l_lt_kplus1].
+        -- ltac2: assert (S l <= k) as Sl_le_k by ltac1:(lia).
+           ltac2: exact (proj2 (H (S l) Sl_le_k)).
+        -- ltac2: (assert False by ltac1:(lia); ltac1:(contradiction)).
+    + ltac2: split.
+      * ltac2: exact (proj1 Hn_kplus1).
+      * ltac2: destruct (lt_dec l (k + 1)) as [l_lt_kplus1 | not_l_lt_kplus1].
+        -- ltac2: assert (l = k) as l_eq_k by ltac1:(lia).
+           ltac2: rewrite l_eq_k.
+           ltac2: exact (proj2 Hn_kplus1).
+        -- ltac2: (assert False by ltac1:(lia); ltac1:(contradiction)).
 Qed.
 
 
@@ -233,19 +235,19 @@ Theorem strong_ind_index_seq_with_prop {Q : nat -> Prop}
     {n_kplus1 : nat | Q n_kplus1 /\ n k < n_kplus1})
   : {n : nat -> nat | is_index_seq n /\ forall k : nat, Q (n k)}.
 Proof.
-  enough {n : nat -> nat | forall k : nat, index_seq_prop_family Q k n} as [n Hn].
-  { exists n.
-    apply reformulate_final_prop_index.
-    exact Hn.
+  ltac2: enough {n : nat -> nat | forall k : nat, index_seq_prop_family Q k n} as [n Hn].
+  { ltac2: exists n.
+    ltac2: apply reformulate_final_prop_index.
+    ltac2: exact Hn.
   }
-  destruct H0 as [n0 Hn0].
-  apply (strong_ind_seq_with_prop (dep_only_on_start_index_seq_prop_family Q) n0).
-  - apply (reformulate_base_prop_index (const_seq n0)).
-    exact Hn0.
-  - intro k.
-    assert (S k = k + 1) as Sk_eq_kplus1 by lia; rewrite Sk_eq_kplus1.
-    apply reformulate_step_prop_index.
-    apply Hstep.
+  ltac2: destruct H0 as [n0 Hn0].
+  ltac2: apply (strong_ind_seq_with_prop (dep_only_on_start_index_seq_prop_family Q) n0).
+  - ltac2: apply (reformulate_base_prop_index (const_seq n0)).
+    ltac2: exact Hn0.
+  - ltac2: intro k.
+    ltac2: (assert (S k = k + 1) as Sk_eq_kplus1 by ltac1:(lia); rewrite Sk_eq_kplus1).
+    ltac2: apply reformulate_step_prop_index.
+    ltac2: apply Hstep.
 Qed.
 
 
@@ -255,15 +257,15 @@ Lemma help_with_choice {A B C : Type} {D E : A -> B -> Prop} {P : A -> B -> C ->
   (forall (a : A) (b : B), D a b -> E a b-> exists c : C, P a b c) ->
   (exists f : forall (a : A) (b : B), D a b -> E a b -> C, forall (a : A) (b : B) (d : D a b) (e : E a b), P a b (f a b d e)).
 Proof.
-  intro H.
-  apply (dep_choice _ _ (fun a f => forall (b : B) (d : D a b) (e : E a b), P a b (f b d e))).
-  intro a.
-  apply (dep_choice _ _ (fun b f => forall (d : D a b) (e : E a b), P a b (f d e))).
-  intro b.
-  apply (choice (fun d f => forall (e : E a b), P a b (f e))).
-  intro d.
-  apply (choice (fun e c => P a b c)).
-  apply (H a b d).
+  ltac2: intro H.
+  ltac2: apply (dep_choice _ _ (fun a f => forall (b : B) (d : D a b) (e : E a b), P a b (f b d e))).
+  ltac2: intro a.
+  ltac2: apply (dep_choice _ _ (fun b f => forall (d : D a b) (e : E a b), P a b (f d e))).
+  ltac2: intro b.
+  ltac2: apply (choice (fun d f => forall (e : E a b), P a b (f e))).
+  ltac2: intro d.
+  ltac2: apply (choice (fun e c => P a b c)).
+  ltac2: apply (H a b d).
 Qed.
 
 Theorem classic_strong_ind_index_seq_with_prop {Q : nat -> Prop}
@@ -273,19 +275,19 @@ Theorem classic_strong_ind_index_seq_with_prop {Q : nat -> Prop}
     exists n_kplus1 : nat, Q n_kplus1 /\ n k < n_kplus1)
   : exists n : nat -> nat, is_index_seq n /\ forall k : nat, Q (n k).
 Proof.
-  destruct H0 as [n0 Hn0].
-  assert {n0 | Q n0} as H0sig by (exists n0; exact Hn0).
+  ltac2: destruct H0 as [n0 Hn0].
+  ltac2: assert {n0 | Q n0} as H0sig by (exists n0; exact Hn0).
   (* Transform Hstep using choice such that the existence statement is at the start so it can be destructed. *)
-  pose (help_with_choice Hstep) as Hstep2.
-  destruct Hstep2 as [f Hf].
+  ltac2: pose (help_with_choice Hstep) as Hstep2.
+  ltac2: destruct Hstep2 as [f Hf].
   (* Use strong version to prove existence statement. *)
-  enough {n : nat -> nat | is_index_seq n /\ (forall k : nat, Q (n k))} as [n Hn].
-  { exists n; exact Hn. }
-  apply (strong_ind_index_seq_with_prop H0sig).
+  ltac2: enough {n : nat -> nat | is_index_seq n /\ (forall k : nat, Q (n k))} as [n Hn].
+  { ltac2: (exists n; exact Hn). }
+  ltac2: apply (strong_ind_index_seq_with_prop H0sig).
   (* Use transformed Hstep to prove strong Hstep condition. *)
-  intros k n H1 H2.
-  exists (f k n H1 H2).
-  apply Hf.
+  ltac2: intros k n H1 H2.
+  ltac2: exists (f k n H1 H2).
+  ltac2: apply Hf.
 Qed.
 
 Open Scope subset_scope.
@@ -297,25 +299,29 @@ Theorem classic_strong_ind_index_seq_with_prop_with_element_notation {Q : nat ->
     ∃ n_kplus1 ∈ nat, Q n_kplus1 /\ n k < n_kplus1)
   : ∃ n index sequence, ∀ k ∈ nat, Q (n k).
 Proof.
-  enough (exists n : nat -> nat, is_index_seq n /\ forall k : nat, Q (n k)) as H.
-  + destruct H as [n0 Hn0].
-    exists n0.
-    split.
-      * exact (proj1 Hn0).
-      * intros k Hk.
-        apply (proj2 Hn0).
-  + apply classic_strong_ind_index_seq_with_prop.
-    - destruct H0 as [n0 Hn0].
-      exists n0.
-      exact (proj2 Hn0).
-    - intros k n H1 H2.
-      enough ( ∃ n_kplus1 ∈ nat, Q n_kplus1 /\ n k < n_kplus1) as H.
-      * destruct H as [n_kplus1 Hn_kplus1].
-        exists n_kplus1.
-        exact (proj2 Hn_kplus1).
-      * apply Hstep.
-        ++ intros l Hl. unfold le_op, nat_le_type in Hl. apply H1; assumption.
-        ++ intros l Hl. unfold lt_op, nat_lt_type in Hl. apply H2; assumption.
+  ltac2: enough (exists n : nat -> nat, is_index_seq n /\ forall k : nat, Q (n k)) as H.
+  + ltac2: destruct H as [n0 Hn0].
+    ltac2: exists n0.
+    ltac2: split.
+      * ltac2: exact (proj1 Hn0).
+      * ltac2: intros k Hk.
+        ltac2: apply (proj2 Hn0).
+  + ltac2: apply classic_strong_ind_index_seq_with_prop.
+    - ltac2: destruct H0 as [n0 Hn0].
+      ltac2: exists n0.
+      ltac2: exact (proj2 Hn0).
+    - ltac2: intros k n H1 H2.
+      ltac2: enough ( ∃ n_kplus1 ∈ nat, Q n_kplus1 /\ n k < n_kplus1) as H.
+      * ltac2: destruct H as [n_kplus1 Hn_kplus1].
+        ltac2: exists n_kplus1.
+        ltac2: exact (proj2 Hn_kplus1).
+      * ltac2: apply Hstep.
+        ++ ltac2: intros l Hl. 
+           ltac2: unfold le_op, nat_le_type in Hl. 
+           ltac2: (apply H1; assumption).
+        ++ ltac2: intros l Hl. 
+           ltac2: unfold lt_op, nat_lt_type in Hl. 
+           ltac2: (apply H2; assumption).
 Qed.
 
 End StrongInductionIndexSequence.

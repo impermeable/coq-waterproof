@@ -45,8 +45,8 @@ Qed.
 Goal (0 = 0) -> forall n : nat, (n = n).
 Proof.
     ltac2: intro n.
-    assert_feedback_with_string
-    (fun () => We use induction on k) Warning
+    ltac2: assert_feedback_with_string
+    (fun () => wp: We use induction on k) Warning
     "Expected variable name n0 instead of k.".
     - Fail We first show the base case (2 = 2).
       We first show the base case  (0 = 0).

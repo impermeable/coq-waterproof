@@ -24,6 +24,11 @@ From Ltac2 Require Export Ltac2.
 
 Declare ML Module "coq-waterproof.plugin".
 
+
+(* Reverse escape hatch *)
+Ltac2 Notation "wp:" x(waterproof_tactic) := x.
+
+
 (* This tells Rocq to use the Waterproof tactic mode when in a proof. *)
 #[export] Set Default Proof Mode "Waterproof".
 

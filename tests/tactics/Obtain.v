@@ -142,7 +142,7 @@ Abort.
 Goal (exists n : nat, n = 0)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_string (fun () => Obtain such an m) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Obtain such an m) Warning
 "Expected variable name n instead of m.".
 Abort.
 
@@ -150,7 +150,7 @@ Abort.
 Goal (exists n m: nat, n = m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_strings (fun () => Obtain such k, l) Warning
+  ltac2: assert_feedback_with_strings (fun () => wp: Obtain such k, l) Warning
 ["Expected variable name n instead of k.";
 "Expected variable name m instead of l."].
 Abort.
@@ -160,7 +160,7 @@ Abort.
 Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_strings (fun () => Obtain such an n, k) Warning
+  ltac2: assert_feedback_with_strings (fun () => wp: Obtain such an n, k) Warning
 ["Expected variable name m instead of k."].
 Abort.
 
@@ -169,14 +169,14 @@ Goal (exists n : nat, n = 0)%nat -> True.
 Proof.
   ltac2: intro H.
   ltac2: set (n := 3).
-  assert_no_feedback (fun () => Obtain n0 according to (H)) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Obtain n0 according to (H)) Warning.
 Abort.
 
 (** Test 16: obtain when wrongly using a previous variable *)
 Goal (exists n m : nat, n = m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_strings (fun () => Obtain such m, m0) Warning
+  ltac2: assert_feedback_with_strings (fun () => wp: Obtain such m, m0) Warning
 ["Expected variable name n instead of m."].
 Abort.
 
@@ -194,7 +194,7 @@ Waterproof Enable Redirect Errors.
 Goal (exists n m : nat, n = m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_fails_with_string (fun () => Obtain such n, m, k)
+  ltac2: assert_fails_with_string (fun () => wp: Obtain such n, m, k)
 "Couldn't obtain k.
 There aren't enough variables to obtain.".
 Abort.
@@ -211,7 +211,7 @@ Abort.
 (** Test 21: The indicated statement is not a "there exists..." statement*)
 Goal (forall n : nat, n = 0)%nat -> True.
   ltac2: intro H.
-  assert_fails_with_string (fun () => Obtain n according to (H))
+  ltac2: assert_fails_with_string (fun () => wp: Obtain n according to (H))
 "Can only obtain variables from 'there exists...' statements.".
 Abort.
 
@@ -222,7 +222,7 @@ Abort.
 Goal (exists n : nat, n = 0)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_string (fun () => Obtain such an m) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Obtain such an m) Warning
 "Expected variable name n instead of m.".
 Abort.
 
@@ -230,7 +230,7 @@ Abort.
 Goal (exists n m: nat, n = m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_strings (fun () => Obtain such k, l) Warning
+  ltac2: assert_feedback_with_strings (fun () => wp: Obtain such k, l) Warning
 ["Expected variable name n instead of k.";
 "Expected variable name m instead of l."].
 Abort.
@@ -240,7 +240,7 @@ Abort.
 Goal (exists n m k l : nat, n + k + 1 = l + m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_strings (fun () => Obtain such an n, k) Warning
+  ltac2: assert_feedback_with_strings (fun () => wp: Obtain such an n, k) Warning
 ["Expected variable name m instead of k."].
 Abort.
 
@@ -249,14 +249,14 @@ Goal (exists n : nat, n = 0)%nat -> True.
 Proof.
   ltac2: intro H.
   ltac2: set (n := 3).
-  assert_no_feedback (fun () => Obtain n0 according to (H)) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Obtain n0 according to (H)) Warning.
 Abort.
 
 (** Test 16: obtain when wrongly using a previous variable *)
 Goal (exists n m : nat, n = m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_feedback_with_strings (fun () => Obtain such m, m0) Warning
+  ltac2: assert_feedback_with_strings (fun () => wp: Obtain such m, m0) Warning
 ["Expected variable name n instead of m."].
 Abort.
 
@@ -274,7 +274,7 @@ Waterproof Enable Redirect Errors.
 Goal (exists n m : nat, n = m)%nat -> True.
 Proof.
   ltac2: intro H.
-  assert_fails_with_string (fun () => Obtain such n, m, k)
+  ltac2: assert_fails_with_string (fun () => wp: Obtain such n, m, k)
 "Couldn't obtain k.
 There aren't enough variables to obtain.".
 Abort.
@@ -291,7 +291,7 @@ Abort.
 (** Test 21: The indicated statement is not a "there exists..." statement*)
 Goal (forall n : nat, n = 0)%nat -> True.
   ltac2: intro H.
-  assert_fails_with_string (fun () => Obtain n according to (H))
+  ltac2: assert_fails_with_string (fun () => wp: Obtain n according to (H))
 "Can only obtain variables from 'there exists...' statements.".
 Abort.
 

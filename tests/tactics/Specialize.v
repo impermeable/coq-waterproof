@@ -38,7 +38,7 @@ Abort.
 Goal (forall n : nat, n = n) -> True.
 Proof.
 ltac2: intro H.
-assert_feedback_with_strings (fun () => Use m := (3) in (H)) Warning
+ltac2: assert_feedback_with_strings (fun () => wp: Use m := (3) in (H)) Warning
 ["Expected variable name n instead of m."].
 Abort.
 
@@ -55,7 +55,7 @@ Goal (forall n : nat, n = n) -> True.
 Proof.
 ltac2: intro H.
 Use n := (3) in (H).
-Fail exact I.
+Fail ltac2: exact I.
 Abort.
 
 (** It should be possible to use an outside lemma *)
@@ -97,7 +97,7 @@ Abort.
 Goal (forall n m : nat, n = m) -> False.
 Proof.
 ltac2: intro H.
-assert_feedback_with_strings (fun () => Use m := 4, n := 3 in (H)) Warning
+ltac2: assert_feedback_with_strings (fun () => wp: Use m := 4, n := 3 in (H)) Warning
 ["Expected variable name n instead of m.";
 "Expected variable name m instead of n."]. (* as expected :) *)
 It holds that (4 = 3).
@@ -112,7 +112,7 @@ Abort.
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 ltac2: intro H.
-assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
+ltac2: assert_feedback_with_string (fun () => wp: Use a := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a.".
 It holds that (forall b c : nat, ?a? + b + c = 0) (i).
 Abort.
@@ -121,7 +121,7 @@ Abort.
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
 ltac2: intro H.
-assert_feedback_with_string (fun () => Use a := _, b := _, c := _ in (H)) Warning
+ltac2: assert_feedback_with_string (fun () => wp: Use a := _, b := _, c := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a, b, c.".
 It holds that (?a? + ?b? + ?c? = 0).
 Abort.
@@ -196,7 +196,7 @@ Abort.
 Goal (∀ x ∈ B, x = 0) -> True.
 Proof.
 ltac2: intro H.
-assert_feedback_with_strings (fun () => Use x := _ in (H)) Warning
+ltac2: assert_feedback_with_strings (fun () => wp: Use x := _ in (H)) Warning
 ["Please come back to this line later to make a definite choice for x."].
 * We need to verify that (?x? ∈ B).
   ltac2: Control.shelve ().
@@ -237,7 +237,7 @@ Abort.
 Goal (∀ x ∈ B, ∀ y : nat, ∀ z ∈ D, 1 = 1 -> x = y + z) -> True.
 Proof.
 ltac2: intro H.
-assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
+ltac2: assert_feedback_with_strings (fun () => wp: Use x := _, y := _, z := _ in (H))
   Warning
 ["Please come back to this line later to make a definite choice for x, y, z."].
 * We need to verify that (?x? ∈ B).
@@ -329,7 +329,7 @@ Goal (∀ y > 0%nat, INR(y) = 0) -> True.
 Proof.
 ltac2: intro i.
 Use y := 2%nat in (i).
-* assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (gt 2 0)).
+* ltac2: assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (gt 2 0)).
   Indeed, ((2 > 0)%nat).
 * It holds that (INR 2 = 0).
   ltac2: exact I.
@@ -341,7 +341,7 @@ Goal (∀ y < 3%nat, INR(y) = 0) -> True.
 Proof.
 ltac2: intro i.
 Use y := 2%nat in (i).
-* assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (lt 2 3)).
+* ltac2: assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (lt 2 3)).
   Indeed, ((2 < 3)%nat).
 * It holds that (INR 2 = 0).
   ltac2: exact I.
@@ -353,7 +353,7 @@ Goal (∀ y ≤ 3%nat, INR(y) = 0) -> True.
 Proof.
 ltac2: intro i.
 Use y := 2%nat in (i).
-* assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (le 2 3)).
+* ltac2: assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (le 2 3)).
   Indeed, ((2 <= 3)%nat).
 * It holds that (INR 2 = 0).
   ltac2: exact I.

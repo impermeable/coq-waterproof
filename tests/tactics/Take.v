@@ -34,7 +34,7 @@ Waterproof Enable Redirect Feedback.
 
 (** Test 1: Also this should work fine, but with a warning *)
 Goal forall n : nat, n <= 2*n.
-    assert_feedback_with_string (fun () => Take x : nat) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: Take x : nat) Warning
 "Expected variable name n instead of x.".
 Abort.
 
@@ -82,8 +82,8 @@ Abort.
 (** Test 6: Two sets of multiple variables of the same type,
     but with different names *)
 Goal forall (n m k: nat) (b1 b2: bool), Nat.odd (n + m + k) = andb b1 b2.
-    assert_feedback_with_strings
-    (fun () => Take a, b, c : nat and d, e: bool) Warning
+    ltac2: assert_feedback_with_strings
+    (fun () => wp: Take a, b, c : nat and d, e: bool) Warning
 [
 "Expected variable name n instead of a.";
 "Expected variable name m instead of b.";
@@ -111,7 +111,7 @@ Abort.
     *)
 Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
-    assert_fails_with_string (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool)
+    ltac2: assert_fails_with_string (fun() => wp: Take a, b, c, d, e, f, g : nat and a, h: bool)
 "Internal err:(a is already used.)".
 Abort.
 
@@ -149,7 +149,7 @@ Abort.
 
 (** Test 14: Warn on using a different variable name *)
 Goal forall n : nat, n = n.
-  assert_feedback_with_string (fun () => Take m : nat) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Take m : nat) Warning
 "Expected variable name n instead of m.".
 Abort.
 
@@ -158,7 +158,7 @@ Abort.
 Goal forall n : nat, n = n.
 Proof.
   ltac2: set (n := 1).
-  assert_feedback_with_string (fun () => Take m : nat) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Take m : nat) Warning
 "Expected variable name n0 instead of m.".
 Abort.
 
@@ -173,9 +173,9 @@ Abort.
 (** Test 17: Warn on using different variable name *)
 Goal forall m n : nat, n = m.
 Proof.
-  assert_feedback_with_string (fun () => Take n : nat) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Take n : nat) Warning
 "Expected variable name m instead of n.".
-  assert_no_feedback (fun () => Take n0 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take n0 : nat) Warning.
 Abort.
 
 (** Test 18: Warn on using different variable name *)
@@ -183,8 +183,8 @@ Goal forall m n : nat, n = m.
 Proof.
   ltac2: set (m := 3).
   ltac2: set (n := 4).
-  assert_no_feedback (fun () => Take m0 : nat) Warning.
-  assert_no_feedback (fun () => Take n0 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take m0 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take n0 : nat) Warning.
 Abort.
 
 (** Test 19: If a statement reuses a same binder name, and
@@ -193,13 +193,13 @@ Abort.
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
   Take n : nat.
-  assert_no_feedback (fun () => Take n0 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take n0 : nat) Warning.
 Abort.
 
 (** Test 20: Fail when twice the same variable is introduced *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
-  assert_feedback_with_string (fun () => assert_fails_with_string (fun () => Take n, n : nat)
+  ltac2: assert_feedback_with_string (fun () => assert_fails_with_string (fun () => wp: Take n, n : nat)
 "Internal err:(n is already used.)") (*This should produce an error ... *)
 Warning
 "Expected variable name n0 instead of n.". (* ... and also produce a warning *)
@@ -209,14 +209,14 @@ Abort.
     (although in the expected order) *)
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
-  assert_no_feedback (fun () => Take n, n0 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take n, n0 : nat) Warning.
 Abort.
 
 (** Test 22: It should be possible to provide fresh variable names
     (although in the expected order) case with 3 variables *)
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
-  assert_no_feedback (fun () => Take n, n0, n1 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take n, n0, n1 : nat) Warning.
 Abort.
 
 (** Test 23: It should  be possible to provide fresh variable names
@@ -225,7 +225,7 @@ Abort.
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
   ltac2: (set (n := 1)).
-  assert_no_feedback (fun () => Take n0, n1, n2 : nat) Warning.
+  ltac2: assert_no_feedback (fun () => wp: Take n0, n1, n2 : nat) Warning.
 Abort.
 
 Require Import Waterproof.Notations.Sets.
@@ -309,7 +309,7 @@ Waterproof Enable Redirect Errors.
 
 (** Test 32, Use take with the wrong symbol *)
 Goal ∀ n > 3, n = 0.
-assert_fails_with_string (fun () => Take n < 3)
+ltac2: assert_fails_with_string (fun () => wp: Take n < 3)
 "The condition (n < 3) does not correspond to the expected condition (n > 3)".
 Abort.
 

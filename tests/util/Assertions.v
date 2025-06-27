@@ -30,24 +30,24 @@ Waterproof Enable Redirect Errors.
 
 (** ** Test for a warning *)
 Goal True.
-assert_feedback_with_string (fun () => warn (Message.of_string "Send a first warning.")) Warning "Send a first warning.".
+ltac2: assert_feedback_with_string (fun () => warn (Message.of_string "Send a first warning.")) Warning "Send a first warning.".
 Abort.
 
 (** ** Test if a warning is really thrown (and not just the last item in the log is compared) *)
 Goal True.
-warn (Message.of_string "Send a warning.").
-assert_fails_with_string (fun () => assert_feedback_with_string (fun () => ()) Warning "Send a warning.")
+ltac2: warn (Message.of_string "Send a warning.").
+ltac2: assert_fails_with_string (fun () => assert_feedback_with_string (fun () => ()) Warning "Send a warning.")
 "The tactic was expected to warn 1 times, but it warned 0 times.".
 Abort.
 
 (** ** Test asserting for a failure with a given string *)
 Goal True.
-assert_fails_with_string (fun () => throw (Message.of_string "This error _should_ be raised.")) "This error _should_ be raised.".
+ltac2: assert_fails_with_string (fun () => throw (Message.of_string "This error _should_ be raised.")) "This error _should_ be raised.".
 Abort.
 
 (** ** Test of the error message of the assert_fails_with_string tactic itself *)
 Goal True.
-assert_fails_with_string
+ltac2: assert_fails_with_string
   (fun () => assert_fails_with_string (fun () => throw (Message.of_string "foo")) "bar")
 "The tactic failed, but with an unexpected error message. Expected:
 bar
@@ -57,7 +57,7 @@ Abort.
 
 (** ** Test of the error message of the assert_warns_with_string tactic *)
 Goal True.
-assert_fails_with_string
+ltac2: assert_fails_with_string
   (fun () => assert_feedback_with_string (fun () => warn (Message.of_string "foo")) Warning "bar")
 "The feedback message is not as expected. Expected:
 bar
@@ -66,13 +66,13 @@ foo".
 Abort.
 
 Goal True.
-assert_feedback_with_string (fun () => warn (Message.of_string "warning
+ltac2: assert_feedback_with_string (fun () => warn (Message.of_string "warning
 with line break")) Warning "warning
 with line break".
 Abort.
 
 Goal True.
-assert_feedback_with_strings (fun () =>
+ltac2: assert_feedback_with_strings (fun () =>
   warn (Message.of_string "first warning");
   warn (Message.of_string "second warning"))
   Warning

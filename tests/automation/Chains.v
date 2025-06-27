@@ -31,52 +31,52 @@ Local Parameter a b c : X.
 (* Test 1: first equality does not hold. *)
 Goal (& a = b = c).
 Proof.
-  Fail waterprove 5 true Main. (* Expected: unable to find proof (a = b) *)
+  Fail ltac2: waterprove 5 true Main. (* Expected: unable to find proof (a = b) *)
 Abort.
 
 (* Test 2: last equality does not hold.  *)
 Goal (a = b) -> (& a = b = c).
 Proof.
-  intro p.
-  Fail waterprove 5 true Main. (* Expected: unable to find proof (b = c) *)
+  ltac2: intro p.
+  Fail ltac2: waterprove 5 true Main. (* Expected: unable to find proof (b = c) *)
 Abort.
 
 (** Test restricted automation. *)
 #[local] Parameter P : Prop.
 #[local] Parameter h : P -> a = b.
-#[local] Hint Extern 1 => symmetry : core.
+#[local] Hint Extern 1 => ltac2: symmetry : core.
 
 (* Test 3: fails without extra lemma. *)
 Goal P -> (& a = b = b = b = b = a).
 Proof.
-  intro H.
-  Fail waterprove 5 true Main.
+  ltac2: intro H.
+  Fail ltac2: waterprove 5 true Main.
 Abort.
 
 (* Test 4: extra lemma has to be used in first equality. *)
 Goal P -> (& a = b = b = b = b = b).
 Proof.
-  intro H.
-  rwaterprove 5 true Main constr:(h).
+  ltac2: intro H.
+  ltac2: rwaterprove 5 true Main constr:(h).
 Abort.
 
 (* Test 5: extra lemma has to be used in last equality. *)
 Goal P -> (& b = b = b = b = b = a).
 Proof.
-  intro H.
-  rwaterprove 5 true Main constr:(h).
+  ltac2: intro H.
+  ltac2: rwaterprove 5 true Main constr:(h).
 Abort.
 
 (* Test 6: extra lemma has to be used in 2nd and 2nd-to-last equality. *)
 Goal P -> (& b = b = a = b = b = a = a).
 Proof.
-  intro H.
-  rwaterprove 5 true Main constr:(h).
+  ltac2: intro H.
+  ltac2: rwaterprove 5 true Main constr:(h).
 Abort.
 
 (* Test 7: Fails if extra lemma is never used. *)
 Goal P -> (P -> b = c) -> (& b = b = c = b = b = c = c).
 Proof.
-  intros H1 H2.
-  Fail rwaterprove 5 true Main constr:(h).
+  ltac2: intros H1 H2.
+  Fail ltac2: rwaterprove 5 true Main constr:(h).
 Abort.

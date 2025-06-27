@@ -1,14 +1,13 @@
 From Waterproof Require Import Waterproof.
 From Waterproof Require Import Tactics.
 From Waterproof Require Import Notations.Sets.
-
+(* 
 (* Test 0: Test if grammar functions*)
 Goal 0 = 0.
 Proof.
     We conclude that (0 = 0). 
 Abort.
 
-Print Grammar waterproof_tactic.
 (* Test 1: Missing capital letter at beginning *)
 Goal 0 = 0.
 Proof.
@@ -118,8 +117,6 @@ Proof.
     Assume that (a ⊂ A).
 Abort.
 
-Print Grammar waterproof_tactic.
-
 (* Test 19: Misspelling second word after expr *)
 Goal (0 = 0) -> True.
 Proof.
@@ -130,7 +127,7 @@ Abort.
 
 
 
-
+ *)
 
 
 

@@ -36,7 +36,7 @@ Definition foo : nat := 0.
   to remove the line after use. *)
 Goal foo = 1.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo)
@@ -52,7 +52,7 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   ltac2: intros.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo)
@@ -69,7 +69,7 @@ Abort.
     to remove the line after use. *)
 Goal False.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo in (foo = 4))
@@ -84,7 +84,7 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   ltac2: intros.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo in (foo = 1))
@@ -99,7 +99,7 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   ltac2: intros.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo in (foo = 0))
@@ -121,7 +121,7 @@ Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr)))
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   ltac2: intros.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo)
@@ -137,7 +137,7 @@ Abort.
 (* Test 7: fails to unfold term in statment without term. *)
 Goal False.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of foo)
@@ -214,8 +214,8 @@ Lemma example :
     ⇔
   (a is _bounded above_ ∧ a is _bounded below_).
 Proof.
-assert_feedback_with_strings (fun () =>
-  assert_fails_with_string (fun () => Expand the definition of bounded above in
+ltac2: assert_feedback_with_strings (fun () =>
+  assert_fails_with_string (fun () => wp: Expand the definition of bounded above in
   (a is _bounded above_)) "Remove this line in the final version of your proof.")
   Notice
 ["Result:";"(∃ M ∈ ℝ, ∀ n ∈ ℕ, (a(n) ≤ M)%R)"].

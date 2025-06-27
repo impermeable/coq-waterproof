@@ -63,7 +63,7 @@ Abort.
 
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
-    ltac2: (assert_feedback_with_string_n (fun () => Choose n := (_)) Warning
+    ltac2: (assert_feedback_with_string (fun () => wp: Choose n := (_)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
 (n = ?n?)."])).
@@ -71,7 +71,7 @@ Abort.
 
 (** Test 6: Choose a named evar *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_feedback_with_string (fun () => Choose n := (?[m])) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: Choose n := (?[m])) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
 (n = ?m)."]).
@@ -79,37 +79,37 @@ Abort.
 
 (** Test 7: Choose a blank check that blank was renamed *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_feedback_with_string (fun () => Choose n := (_)) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: Choose n := (_)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
 (n = ?n?)."]).
-    assert (?n = 0).
+    ltac2: assert (?n = 0).
 Abort.
 
 (** Test 8: Choose a more complicated blank and check that renaming took place,
     by reformulating the goal in terms of the new named evars. *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_feedback_with_string (fun () => Choose n := (_ + _ + _)) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: Choose n := (_ + _ + _)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
 (n = ?n? + ?n0? + ?n1?)."]).
-    change (?n? + ?n0? + ?n1? + 1 = ?n? + ?n0? + ?n1? + 1).
+    ltac2: change (?n? + ?n0? + ?n1? + 1 = ?n? + ?n0? + ?n1? + 1).
 Abort.
 Require Import Waterproof.Util.Evars.
 (** Test 9: Choose a blank without specifying the name of the variable *)
 Goal exists n : nat, n + 1 = n + 1.
-  assert_feedback_with_string (fun () => Choose (_)) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Choose (_)) Warning
 "Please come back later to make a definite choice.".
-  change (?n? + 1 = ?n? + 1).
+  ltac2: change (?n? + 1 = ?n? + 1).
 Abort.
 
 (** Test 10: Choose a blank if binder has no name *)
 Goal exists _ : nat, True.
 Proof.
-  assert_feedback_with_string (fun () => Choose (_)) Warning
+  ltac2: assert_feedback_with_string (fun () => wp: Choose (_)) Warning
 "Please come back later to make a definite choice.".
   (* In this case, the blank evar should be renamed to `x` *)
-  assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
+  ltac2: assert (?x = 0). (* This checks if ?x exists and can be referred to. *)
 Abort.
 
 (** ** Tests about choosing different variable names *)
@@ -117,7 +117,7 @@ Abort.
 (** Test 11: Warn on different variable name *)
 Goal exists n : nat, n + 1 = n + 1.
 Proof.
-    assert_feedback_with_strings (fun () => Choose m := 1) Warning
+    ltac2: assert_feedback_with_strings (fun () => wp: Choose m := 1) Warning
 ["Expected variable name n instead of m."].
 Abort.
 
@@ -125,8 +125,8 @@ Abort.
     because of an already existing definition. *)
 Goal exists n : nat, n + 1 = n + 1.
 Proof.
-    set (n := 3).
-    assert_no_feedback (fun () => Choose n0 := 2) Warning.
+    ltac2: set (n := 3).
+    ltac2: assert_no_feedback (fun () => wp: Choose n0 := 2) Warning.
 Abort.
 
 Open Scope subset_scope.
@@ -149,7 +149,7 @@ Open Scope R_scope.
 Goal ∃ n ≥ 0%nat, INR(n) = 3.
 Proof.
   Choose n := 3%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (ge n 0)).
+  * ltac2: assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (ge n 0)).
     Indeed, ((n ≥ 0)%nat).
   * We need to show that (INR(n) = 3).
 Abort.
@@ -158,7 +158,7 @@ Abort.
 Goal ∃ n < 4%nat, INR(n) = 3.
 Proof.
   Choose n := 2%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n < 4)%nat).
+  * ltac2: assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n < 4)%nat).
     Indeed, ((n < 4)%nat).
   * We need to show that (INR(n) = 3).
 Abort.
@@ -167,7 +167,7 @@ Abort.
 Goal ∃ n ≤ 4%nat, INR(n) = 3.
 Proof.
   Choose n := 3%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n ≤ 4)%nat).
+  * ltac2: assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n ≤ 4)%nat).
     Indeed, (n ≤ 4)%nat.
   * We need to show that (INR(n) = 3).
 Abort.
@@ -177,7 +177,7 @@ Abort.
 Goal ∃ n ≤ 4, n = 3.
 Proof.
   Choose n := 3.
-  let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  ltac2: let s := Message.to_string (Message.of_constr (Control.goal ())) in
   assert_string_equal s (String.concat ""
  ["(Add the following line to the proof:
  ";"
@@ -204,7 +204,7 @@ Proof.
 Choose n := _.
 { Indeed, (n ≥ 0). }
 * We conclude that (True).
-Fail (). (* no such goal *)
+Fail ltac2: (). (* no such goal *)
 Fail Qed. (* there are goals given up *)
 Abort.
 
@@ -218,7 +218,7 @@ Proof.
 Choose n := _.
 * Fail Indeed, (n < 1).
   We need to verify that (n < 1).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * We need to show that (3 = n).
   Fail We conclude that (3 = n).
 Abort.
