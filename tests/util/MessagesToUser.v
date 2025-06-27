@@ -31,7 +31,7 @@ Waterproof Enable Redirect Errors.
 Waterproof Enable Hypothesis Help.
 
 Goal False.
-assert_is_true (get_print_hypothesis_flag ()).
+ltac2: assert_is_true (get_print_hypothesis_flag ()).
 Abort.
 
 (** Test whether disabling the hypothesis flag works.
@@ -39,7 +39,7 @@ Abort.
 Waterproof Disable Hypothesis Help.
 
 Goal False.
-assert_is_false (get_print_hypothesis_flag ()).
+ltac2: assert_is_false (get_print_hypothesis_flag ()).
 Abort.
 
 

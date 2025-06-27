@@ -32,7 +32,7 @@ Parameter t : typeT.
 Lemma test : 0 = 0.
 Proof.
   (* The statement (0 = 0) has type Prop so nothing should happen and resulting type should be Prop. *)
-  let res := correct_type_by_wrapping constr:(0 = 0) in (
+  ltac2: let res := correct_type_by_wrapping constr:(0 = 0) in (
     match! Constr.type res with 
     | Prop => ()
     | _ => throw ( Message.of_string "Expected resulting type to be Prop." )
@@ -44,7 +44,7 @@ Proof.
   ).
 
   (* The statement 'true' has type bool so this should get wrapped in 'is_true (true)' which has type Prop. *)
-  let res := correct_type_by_wrapping constr:(true) in (
+  ltac2: let res := correct_type_by_wrapping constr:(true) in (
     match! Constr.type res with 
     | Prop => ()
     | _ => throw ( Message.of_string "Expected resulting type to be Prop." )
@@ -56,7 +56,7 @@ Proof.
   ).
 
   (* The statement 'true = true' has type Prop so nothing should happen and resulting type should be Prop. *)
-  let res := correct_type_by_wrapping constr:(true = true) in (
+  ltac2: let res := correct_type_by_wrapping constr:(true = true) in (
     match! Constr.type res with
     | Prop => ()
     | _ => throw ( Message.of_string "Expected resulting type to be Prop." )
@@ -68,7 +68,7 @@ Proof.
   ).
 
   (* setS has type Set which should not change *)
-  let res := correct_type_by_wrapping constr:(setS) in (
+  ltac2: let res := correct_type_by_wrapping constr:(setS) in (
     match! Constr.type res with
     | Set => ()
     | _ => throw ( Message.of_string "Expected resulting type to be Set." )
@@ -80,7 +80,7 @@ Proof.
   ).
 
   (* typeT has type Type which should not change *)
-  let res := correct_type_by_wrapping constr:(typeT) in (
+  ltac2: let res := correct_type_by_wrapping constr:(typeT) in (
     match! Constr.type res with
     | Type => ()
     | _ => throw ( Message.of_string "Expected resulting type to be Type." )

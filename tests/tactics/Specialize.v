@@ -16,8 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Ltac2.Message.
+Require Import Waterproof.Waterproof.
 
 Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
@@ -30,7 +29,7 @@ Waterproof Enable Redirect Feedback.
 (** Test 0: This should be the expected behavior. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := 3 in (H).
 It holds that (3 = 3).
 Abort.
@@ -38,7 +37,7 @@ Abort.
 (** Test 1: This should fail as the wrong variable name is chosen. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 assert_feedback_with_strings (fun () => Use m := (3) in (H)) Warning
 ["Expected variable name n instead of m."].
 Abort.
@@ -46,7 +45,7 @@ Abort.
 (** Test 2: This should fail because the wrong goal is specified. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := (3) in (H).
 Fail It holds that (True).
 Abort.
@@ -54,7 +53,7 @@ Abort.
 (** Test 3: This should fail because first the wrapper needs to be resolved. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := (3) in (H).
 Fail exact I.
 Abort.
@@ -81,15 +80,15 @@ Abort.
 (** Test 5: original universal quantifier hypohtesis left unchanged. *)
 Goal (forall n : nat, n = n) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := 3 in (H).
-ltac1:(rename H into HH).   (* test for hypohtesis without producing output *)
+ltac2: ltac1:(rename H into HH).   (* test for hypohtesis without producing output *)
 Abort.
 
 (** Test 6: multiple variable specifications  *)
 Goal (forall n m : nat, n = m) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := 3, m := 4 in (H).
 It holds that (3 = 4).
 Abort.
@@ -97,7 +96,7 @@ Abort.
 (** Test 7: multiple variable specifications, different order  *)
 Goal (forall n m : nat, n = m) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 assert_feedback_with_strings (fun () => Use m := 4, n := 3 in (H)) Warning
 ["Expected variable name n instead of m.";
 "Expected variable name m instead of n."]. (* as expected :) *)
@@ -112,7 +111,7 @@ Abort.
 (** Test 8 : use a placeholder as variable name *)
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 assert_feedback_with_string (fun () => Use a := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a.".
 It holds that (forall b c : nat, ?a? + b + c = 0) (i).
@@ -121,7 +120,7 @@ Abort.
 (** Test 8 : use multiple placeholders as variable names *)
 Goal (forall a b c : nat, a + b + c = 0) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 assert_feedback_with_string (fun () => Use a := _, b := _, c := _ in (H)) Warning
 "Please come back to this line later to make a definite choice for a, b, c.".
 It holds that (?a? + ?b? + ?c? = 0).
@@ -130,7 +129,7 @@ Abort.
 (** Test 9 : use named placeholder: then renaming shouldn't happen *)
 Goal (forall a : nat, a = 0) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 Use a := ?[b] in (H).
 Fail It holds that (?a = 0).
 Abort.
@@ -138,7 +137,7 @@ Abort.
 (** Test 10 : use named placeholder, continue with name of placeholder *)
 Goal (forall a : nat, a = 0) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 Use a := (?[b] : nat) in (H).
 It holds that (?b = 0).
 Abort.
@@ -146,8 +145,8 @@ Abort.
 (** Test 11 : use an already existing evar *)
 Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
-intro H.
-ltac1:(evar (e : nat)).
+ltac2: intro H.
+ltac2: ltac1:(evar (e : nat)).
 Use a := (?e + _) in (H).
 It holds that (forall b : nat, ?e + ?a? + b = 0) (i).
 Abort.
@@ -155,7 +154,7 @@ Abort.
 (** Test 12 : use an earlier introduced evar *)
 Goal (forall a b : nat, a + b = 0) -> False.
 Proof.
-intro H.
+ltac2: intro H.
 Use a := _ in (H).
 It holds that (forall b : nat, ?a? + b = 0) (i).
 Use b := ?a? in (i).
@@ -185,10 +184,10 @@ Open Scope subset_scope.
 (** Test 14 : Specialize a variable in a set. *)
 Goal (∀ n ∈ B, n = 0) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := 3 in (H).
 { We need to verify that (3 ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 }
 It holds that (3 = 0).
 Abort.
@@ -196,11 +195,11 @@ Abort.
 (** Test 15 : Choose a blank for a variable in a set *)
 Goal (∀ x ∈ B, x = 0) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 assert_feedback_with_strings (fun () => Use x := _ in (H)) Warning
 ["Please come back to this line later to make a definite choice for x."].
 * We need to verify that (?x? ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (?x? = 0).
 Abort.
 
@@ -210,10 +209,10 @@ Goal (∀ x ∈ B, 9 = 9 -> 3 = 3 ->
   True -> forall y : nat, x ∈ B -> 2 = 2 -> 1 = 1 ->
   forall z : nat, z ∈ D -> x = y + z) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use x := 5 in (H).
 * We need to verify that (5 ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (9 = 9 -> 3 = 3 -> True ->
   ∀ y, 5 ∈ B -> 2 = 2 -> 1 = 1 -> ∀ z, z ∈ D -> 5 = y + z).
 Abort.
@@ -223,12 +222,12 @@ Abort.
 Goal (∀ x ∈ B, ∀ y ∈ D, 2 = 2 -> 1 = 1 ->
   forall z : nat, z ∈ D -> x = y + z) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use x := 2, y := 3 in (H).
 * We need to verify that (2 ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * We need to verify that (3 ∈ D).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (2 = 2 -> 1 = 1 ->
     ∀ z, z ∈ D -> 2 = 3 + z).
 Abort.
@@ -237,26 +236,26 @@ Abort.
   with multiple implications *)
 Goal (∀ x ∈ B, ∀ y : nat, ∀ z ∈ D, 1 = 1 -> x = y + z) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 assert_feedback_with_strings (fun () => Use x := _, y := _, z := _ in (H))
   Warning
 ["Please come back to this line later to make a definite choice for x, y, z."].
 * We need to verify that (?x? ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * We need to verify that (?z? ∈ D).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (1 = 1 -> ?x? = ?y? + ?z?).
 Abort.
 
 (** Test 19: have a set that depends on an earlier set*)
 Goal (∀ x ∈ B, ∀ y ∈ as_subset _ (fun z => z > x), True) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use x := 2, y := 3 in (H).
 * We need to verify that (2 ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * We need to verify that (3 ∈ as_subset _ (fun z => z > 2) ).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (True).
 Abort.
 
@@ -284,11 +283,11 @@ Ltac2 Set test_insertion := fun () => ().*)
 
 Goal (∀ x ∈ B, True) -> True.
 Proof.
-intro H.
-set (x := 2).
+ltac2: intro H.
+ltac2: set (x := 2).
 Use x := 4 in (H).
 * We need to verify that (4 ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (True).
 Abort.
 
@@ -297,15 +296,15 @@ Abort.
 
 Goal (∀ x ∈ B, forall x0 : nat, ∀ x1 ∈ D, x = x0 + x1) -> True.
 Proof.
-intro H.
-set (x := 2).
-set (x0 := 3).
-set (x1 := 4).
+ltac2: intro H.
+ltac2: set (x := 2).
+ltac2: set (x0 := 3).
+ltac2: set (x1 := 4).
 Use x := 5, x0 := 6, x1 := 7 in (H).
 * We need to verify that (5 ∈ B).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * We need to verify that (7 ∈ D).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 * It holds that (5 = 6 + 7).
 Abort.
 
@@ -328,43 +327,43 @@ Open Scope R_scope.
 
 Goal (∀ y > 0%nat, INR(y) = 0) -> True.
 Proof.
-intro i.
+ltac2: intro i.
 Use y := 2%nat in (i).
 * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (gt 2 0)).
   Indeed, ((2 > 0)%nat).
 * It holds that (INR 2 = 0).
-  exact I.
+  ltac2: exact I.
 Qed.
 
 (** Test 23 : Choose a natural number less than another natural number, but in R_scope. *)
 
 Goal (∀ y < 3%nat, INR(y) = 0) -> True.
 Proof.
-intro i.
+ltac2: intro i.
 Use y := 2%nat in (i).
 * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (lt 2 3)).
   Indeed, ((2 < 3)%nat).
 * It holds that (INR 2 = 0).
-  exact I.
+  ltac2: exact I.
 Qed.
 
 (** Test 24 : Choose a natural number less than another natural number, but in R_scope. *)
 
 Goal (∀ y ≤ 3%nat, INR(y) = 0) -> True.
 Proof.
-intro i.
+ltac2: intro i.
 Use y := 2%nat in (i).
 * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (le 2 3)).
   Indeed, ((2 <= 3)%nat).
 * It holds that (INR 2 = 0).
-  exact I.
+  ltac2: exact I.
 Qed.
 
 (** Test 25 : Test notation in wrapper. *)
 Goal (∀ y ≤ 3, y = 0) -> True.
-intro i.
+ltac2: intro i.
 Use y := 2 in (i).
-let s := Message.to_string (Message.of_constr (Control.goal ())) in
+ltac2: let s := Message.to_string (Message.of_constr (Control.goal ())) in
 assert_string_equal s (String.concat ""
  ["(Add the following line to the proof:
  ";"
@@ -386,23 +385,23 @@ Waterproof Enable Automation RealsAndIntegers.
 
 Goal (∀ x > 2, x = 0) -> True.
 Proof.
-intro i.
+ltac2: intro i.
 Use x := _ in (i).
 * Fail Indeed, (?x? > 2).
   We need to verify that (?x? > 2).
-  Control.shelve ().
+  ltac2: Control.shelve ().
 Abort.
 
 (** Test 27 : Fail to close proof is blank is left in proof. *)
 
 Goal (∀ y ≥ 0, True) -> True.
 Proof.
-  intro H.
+  ltac2: intro H.
   Use y := _ in (H).
   { Indeed, ((?y? >= 0)). }
   It holds that (True).
   We conclude that (True).
-  Fail ().  (* No goals remaining. *)
+  Fail ltac2: ().  (* No goals remaining. *)
   Fail Qed. (* Cannot close proof. *)
 Abort.
 
@@ -412,7 +411,7 @@ Close Scope subset_scope.
 
 Goal (forall n : nat, n = n) -> True.
 Proof.
-intro H.
+ltac2: intro H.
 Use n := 3 in (H).
-Fail assert (n = 0).
+Fail ltac2: assert (n = 0).
 Abort.

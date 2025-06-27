@@ -39,7 +39,7 @@ Abort.
 (** Test 1 : Only suggest to follow advice in goal if goal is wrapped
   or [False] (i.e. prove contradiction). *)
 Goal (forall n : nat, n = n) -> False.
-  intros.
+  ltac2: intros.
   assert_feedback_with_string (fun () => Help) Info
 "Follow the advice in the goal window.".
 Abort.
@@ -53,7 +53,7 @@ Abort.
 
 (** Test 3 : Only suggest to solve directly if goal can be shown automatically. *)
 Goal (forall n : nat, n = n) -> True.
-  intros.
+  ltac2: intros.
   assert_feedback_with_string (fun () => Help) Info
 "The goal can be shown immediately, use
     We conclude that (...).".
@@ -61,7 +61,7 @@ Abort.
 
 (** Test 4 : Report \forall hypotheses if available. *)
 Goal (∀ n ∈ nat, n = n) -> (∀ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
@@ -74,7 +74,7 @@ Abort.
 
 (** Test 5 : Report \exists hypotheses if available. *)
 Goal (∃ n ∈ nat, n = n) -> (∃ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
@@ -87,7 +87,7 @@ Abort.
 
 (** Test 6 : Report \forall and \exists hypotheses if available. *)
 Goal (∀ n ∈ nat, n = n) -> (∃ m ∈ nat, m = 0) -> (0 = 1).
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings (fun () => Help) Info
 ["No direct hint available.
 Does the goal contain a definition that can be expanded?";
@@ -232,7 +232,7 @@ Abort.
 (** Test 19: Help on an assumption *)
 Goal ∀ x > 3, x < 2 -> x > 6.
 Proof.
-intros x Hx.
+ltac2: intros x Hx.
 assert_feedback_with_strings (fun () => Help) Info
 [String.concat "" ["The goal is to show an implication (⇒).
 Assume the premise "; "

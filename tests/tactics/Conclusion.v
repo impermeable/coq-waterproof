@@ -35,7 +35,7 @@ Waterproof Enable Automation RealsAndIntegers.
 Open Scope R_scope.
 Lemma zero_lt_one: 0 < 1.
 Proof.
-    ltac1:(lra).
+    ltac2: ltac1:(lra).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -74,7 +74,7 @@ Qed.
 *)
 Lemma test_we_conclude_4: forall A: Prop, (A \/ ~A  -> True).
 Proof.
-    intros A h.
+    ltac2: intros A h.
     We conclude that (True).
 Qed.
 
@@ -112,8 +112,8 @@ Qed.
 *)
 Lemma test_by_we_conclude_1: (1 = 2) -> (2 = 1).
 Proof.
-    intros h.
-    apply eq_sym in h. (* Rewrite h as (2 = 1) using symmetry of "="*)
+    ltac2: intros h.
+    ltac2: apply eq_sym in h. (* Rewrite h as (2 = 1) using symmetry of "="*)
     By h we conclude that (2 = 1).
 Qed.
 
@@ -137,8 +137,8 @@ Qed.
 *)
 Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
-    assert (useless: 1 = 1).
-    reflexivity.
+    ltac2: assert (useless: 1 = 1).
+    ltac2: reflexivity.
     assert_fails_with_string
     (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
 "Could not verify this follows from test_by_we_conclude_1.".
@@ -149,22 +149,22 @@ Abort.
 #[local] Parameter A B : Prop.
 #[local] Parameter f : A -> B.
 Goal A -> B.
-  intro H.
+  ltac2: intro H.
   Fail We conclude that B.
 Abort.
 
 (* Test 7: able to show that goal with means required for proof. *)
 Goal A -> B.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   We conclude that B.
 Qed.
 
 (* Test 8: able to show goal with additional lemma. *)
 Goal A -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   By f we conclude that B.
 Qed.
 
@@ -177,8 +177,8 @@ Abort.
 
 (* Test 10: unable to show goal with superfluous lemma. *)
 Goal A -> B.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Fail By g we conclude that B.
 Abort.
 
@@ -187,8 +187,8 @@ Abort.
   For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
 Goal A -> B.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Since (A -> B) we conclude that B.
 Abort.
 
@@ -204,9 +204,9 @@ Inductive even : nat -> Prop :=
 
 Lemma sum_example_by_we_conclude: forall x:nat, x = 2 -> even x.
 Proof.
-    intros x h.
-    rewrite h. (* Change the goal to "even 2"*)
-    apply evenS. (* Change the goal to "even 0"*)
+    ltac2: intros x h.
+    ltac2: rewrite h. (* Change the goal to "even 2"*)
+    ltac2: apply evenS. (* Change the goal to "even 0"*)
     By even0 we conclude that (even 0).
 Qed.
 
@@ -225,13 +225,13 @@ Qed.
 
 
 Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
-intro eps.
-intro eps_gt_0.
-assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
-cbn; repeat split.
-auto with wp_core wp_reals.
-auto with wp_reals.
-auto with wp_core wp_reals.
+ltac2: intro eps.
+ltac2: intro eps_gt_0.
+ltac2: assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
+ltac2: (cbn; repeat split).
+ltac2: auto with wp_core wp_reals.
+ltac2: auto with wp_reals.
+ltac2: auto with wp_core wp_reals.
 Qed.
 
 Close Scope R_scope.
@@ -281,13 +281,13 @@ Lemma test_induction :
   forall F : nat -> nat, (forall k : nat, (F(k+1) = F(k))%nat) ->
     forall k : nat, (F(k) = F(0))%nat.
 Proof.
-  intros F H.
+  ltac2: intros F H.
   We use induction on k.
   * We first show the base case (F(0%nat) = F(0%nat)).
     We conclude that (F(0) = F(0))%nat.
   * We now show the induction step.
-    intro k.
-    intro H1.
+    ltac2: intro k.
+    ltac2: intro H1.
     We conclude that (& F(k+1) = F(k) = F(0))%nat.
 Qed.
 

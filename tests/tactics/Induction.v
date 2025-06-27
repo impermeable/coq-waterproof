@@ -34,28 +34,28 @@ Proof.
     - Fail We first show the base case (2 = 2).
       We first show the base case (0 = 0).
       Fail We first show the base case (1 = 1).
-      reflexivity.
+      ltac2: reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
-      intros n IHn.
-      reflexivity.
+      ltac2: intros n IHn.
+      ltac2: reflexivity.
 Qed.
 
 (** Test 1: This should work fine *)
 Goal (0 = 0) -> forall n : nat, (n = n).
 Proof.
-    intro n.
+    ltac2: intro n.
     assert_feedback_with_string
     (fun () => We use induction on k) Warning
     "Expected variable name n0 instead of k.".
     - Fail We first show the base case (2 = 2).
       We first show the base case  (0 = 0).
       Fail We first show the base case (1 = 1).
-      reflexivity.
+      ltac2: reflexivity.
     - We now show the induction step.
       Fail We now show the induction step.
-      intros k IHk.
-      reflexivity.
+      ltac2: intros k IHk.
+      ltac2: reflexivity.
 Qed.
 
 (* Test 2: throws error if variable name is 'Qed'
@@ -91,10 +91,10 @@ Abort.
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
 Take n ∈ nat.
-induction n.
-* change (0 >= 0).
+ltac2: induction n.
+* ltac2: change (0 >= 0).
   We conclude that (0 >= 0).
-* change (S n >= 0).
+* ltac2: change (S n >= 0).
 Abort.
 
 (* Test 5: Induction on a variable quantified by
@@ -105,23 +105,23 @@ Abort.
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
 Take n : nat.
-induction n.
-* change (0 ∈ nat -> 0 >= 0).
-  Control.shelve ().
-* change (S n ∈ nat -> S n >= 0).
+ltac2: induction n.
+* ltac2: change (0 ∈ nat -> 0 >= 0).
+  ltac2: Control.shelve ().
+* ltac2: change (S n ∈ nat -> S n >= 0).
 Abort.
 
 (* Test 6: test notation in wrapper *)
 Goal ∀ n ∈ nat, n >= 0.
 Proof.
 We use induction on n.
-* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+* ltac2: let s := Message.to_string (Message.of_constr (Control.goal ())) in
   assert_string_equal s 
  "(Add the following line to the proof:
  
  - We first show the base case (0 >= 0).)".
-  Control.shelve ().
-* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+  ltac2: Control.shelve ().
+* ltac2: let s := Message.to_string (Message.of_constr (Control.goal ())) in
   assert_string_equal s 
  "(Add the following line to the proof:
  

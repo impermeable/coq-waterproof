@@ -30,28 +30,28 @@ From Stdlib Require Import Lia.
 
 Goal  ∀ n : ℕ -> ℕ, (∀ k : ℕ, (n (k + 1) > n k)%nat) ⇒
     ∀ k : ℕ, (n k ≥ k)%nat.
-  intro n.
-  intro H.
-  induction k as [| k IHk].
-  - solve [auto with wp_integers zarith].
-  - assert (H1 : S k = k + 1) by (auto with wp_integers zarith).
-    rewrite H1.
-    assert (H2 : n (k + 1) > n k) by (auto with wp_integers zarith).
-    auto with wp_integers zarith.
+  ltac2: intro n.
+  ltac2: intro H.
+  ltac2: induction k as [| k IHk].
+  - ltac2: solve [auto with wp_integers zarith].
+  - ltac2: assert (H1 : S k = k + 1) by (auto with wp_integers zarith).
+    ltac2: rewrite H1.
+    ltac2: assert (H2 : n (k + 1) > n k) by (auto with wp_integers zarith).
+    ltac2: auto with wp_integers zarith.
 Qed.
 
 Goal (& 3 < 4 <= 5).
-  cbn; repeat split; solve [ltac1:(auto with wp_core wp_integers)].
+  ltac2: (cbn; repeat split; solve [ltac1:(auto with wp_core wp_integers)]).
 Qed.
 
 Goal (& 3 = 3 = 3).
-  cbn; repeat split; solve [auto with wp_core wp_integers].
+  ltac2: (cbn; repeat split; solve [auto with wp_core wp_integers]).
 Qed.
 
 (* Test 1: check if terms of a subset can be coerced to terms of the underlying set (here: [R]). *)
 Goal forall x : nat, (& x < 5 = 2 + 3) -> (x < 5).
-  intro x.
-  intro H.
-  simpl_ineq_chains ().
-  solve [auto with wp_integers zarith].
+  ltac2: intro x.
+  ltac2: intro H.
+  ltac2: simpl_ineq_chains ().
+  ltac2: solve [auto with wp_integers zarith].
 Qed.

@@ -35,7 +35,7 @@ Proof.
   To show that (1 = 1).
   To show that : (1 = 1).
   To show : (1 = 1).
-  reflexivity.
+  ltac2: reflexivity.
 Qed.
 
 
@@ -47,7 +47,7 @@ Lemma with_function_definition: double 2 = 4.
 Proof.
   We need to show (double 2 = 4).
   We need to show (2*2 = 4).
-  trivial.
+  ltac2: trivial.
 Qed.
 
 
@@ -55,13 +55,13 @@ Qed.
 Lemma two_is_two: 2 = 2.
 Proof.
   Fail We need to show (0 = 2).
-  reflexivity.
+  ltac2: reflexivity.
 Qed.
 
 (** Fourth test: We need to show should handle a boolean statement *)
 Goal forall a b: bool, is_true (orb a b).
 Proof.
-  intros a b.
+  ltac2: intros a b.
   We need to show (orb a b).
   We need to show (if a then true else b).
 Abort.
@@ -69,6 +69,6 @@ Abort.
 (** Fifth test: Test wrong goal with boolean statement *)
 Goal forall a b: bool, is_true (orb a b).
 Proof.
-  intros a b.
+  ltac2: intros a b.
   Fail We need to show that (andb a b).
 Abort.

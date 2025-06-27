@@ -16,8 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Ltac2.Message.
+Require Import Waterproof.
 Ltac2 Type exn ::=  [ Inner
                     | FailedToUse (constr)
                     | FailedToProve (constr) ].

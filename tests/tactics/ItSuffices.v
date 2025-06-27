@@ -36,7 +36,7 @@ Open Scope nat_scope.
 *)
 Lemma test_it_suffices_1: forall x:nat, x>0 /\ x < 2 -> x = S (0).
 Proof.
-  intros x.
+  ltac2: intros x.
   It suffices to show that (x = 1).
   (* Old goal should have been proven by the above,
     now the assumption used remains to be proven.*)
@@ -48,9 +48,9 @@ Abort.
 *)
 Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
-  intros A B.
+  ltac2: intros A B.
   (* Clearly this statement isn't helpful in proving the goal! *)
-  let result () := By (f_increasing) it suffices to show that (1 + 1 = 2) in
+  ltac2: let result () := By (f_increasing) it suffices to show that (1 + 1 = 2) in
   assert_raises_error result.
 Abort.
 
@@ -67,7 +67,7 @@ Abort.
 *)
 Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
-  intros A B.
+  ltac2: intros A B.
   (* Clearly this statement isn't helpful in proving the goal! *)
   Fail By (f_increasing) it suffices to show that (1 + 1 = 2).
 Abort.
@@ -83,7 +83,7 @@ Abort.
 (* Test 6: able to show that goal is enough if it implies current goal. *)
 Goal B.
 Proof.
-  pose g.
+  ltac2: pose g.
   It suffices to show that A.
 Abort.
 
@@ -102,7 +102,7 @@ Abort.
 
 (* Test 9: unable to show goal if lemma is superfluous. *)
 Goal B.
-  pose g.
+  ltac2: pose g.
   Fail By h it suffices to show that A.
 Abort.
 
@@ -110,7 +110,7 @@ Abort.
 (* Test 10: 'Since ...' works. For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
 Goal B.
 Proof.
-  pose g.
+  ltac2: pose g.
   Since (A -> B) it suffices to show that A.
 Abort.
 
@@ -118,14 +118,14 @@ Parameter b : bool.
 (* Test 11: "It suffices" works with a boolean statement *)
 Goal ((is_true b) -> B) -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   Since (is_true b -> B) it suffices to show that (b).
 Abort.
 
 (* Test 12: "It suffices" works with a boolean statement *)
 Goal ((is_true b) -> B) -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   It suffices to show that (b).
 Abort.
 
@@ -133,7 +133,7 @@ Abort.
   clause *)
 Goal ((is_true b) -> B) -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   It holds that (true).
   Since (true) it suffices to show that (b).
 Abort.

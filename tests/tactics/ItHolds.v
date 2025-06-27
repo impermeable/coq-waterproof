@@ -16,8 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Ltac2.Message.
+Require Import Waterproof.Waterproof.
 From Stdlib Require Import Reals.Reals.
 From Stdlib Require Import Lra.
 
@@ -34,7 +33,7 @@ Waterproof Enable Automation RealsAndIntegers.
 Local Open Scope R_scope.
 Lemma zero_lt_one: 0 < 1.
 Proof.
-    ltac1:(lra).
+    ltac2: ltac1:(lra).
 Qed.
 
 (* This axiom does not make sense,
@@ -44,7 +43,7 @@ Local Parameter x_var : R.
 Local Parameter H_x_is_10 : x_var = 10.
 Lemma x_is_10 : x_var = 10.
 Proof.
-  exact H_x_is_10.
+  ltac2: exact H_x_is_10.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -96,7 +95,7 @@ Abort.
 Lemma test_it_holds_1: 0 = 0.
 Proof.
     It holds that (True) (i).
-    assert_hyp_has_type @i constr:(True).
+    ltac2: assert_hyp_has_type @i constr:(True).
 Abort.
 
 
@@ -120,18 +119,18 @@ Inductive even : nat -> Prop :=
 
 Lemma it_holds_example: forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.
-    intros x h.
+    ltac2: intros x h.
     It holds that (x = 2) (i).
-    rewrite (i). (* Change the goal to "even 2"*)
-    apply evenS. (* Change the goal to "even 0"*)
-    apply even0.
+    ltac2: rewrite (i). (* Change the goal to "even 2"*)
+    ltac2: apply evenS. (* Change the goal to "even 0"*)
+    ltac2: apply even0.
 Qed.
 
 
 (* Test 4: Check what error is thrown when a hypothesis identifier is already in use.*)
 Goal forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.
-    intros x h.
+    ltac2: intros x h.
     Fail It holds that (x = 2) (h).
     It holds that (x = 2) (i).
 Abort.
@@ -144,24 +143,24 @@ Abort.
 (* Test 5: regular check that assertion works. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   It holds that B.
 Abort.
 
 (* Test 6: check that assertion works with label *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   It holds that B (i).
 Abort.
 
 (* Test 7: check that assertion fails with label that is already used. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Fail It holds that B (H).
 Abort.
 
@@ -170,21 +169,21 @@ Abort.
  *)
 Goal A -> False.
 Proof.
-intro H.
+ltac2: intro H.
 Fail It holds that B (H).
 Abort.
 
 (* Test 8: 'By ...' succeeds if additional lemma is needed for proof assertion. *)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   By f it holds that B.
 Abort.
 (* Test 8b: also when lemma is included in local hypotheses. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   By f it holds that B.
 Abort.
 
@@ -198,8 +197,8 @@ Abort.
 #[local] Parameter g : B -> A.
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Fail By g it holds that B.
 Abort.
 
@@ -208,15 +207,15 @@ Abort.
 (* Note that no additional hypotheses are added by the Since-tactic. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Since (A -> B) it holds that B.
 Abort.
 
 (* Test 12: 'Since ...' fails if claimed cause is not proven previously. *)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Fail Since (A -> B) it holds that B.
 Abort.
 
@@ -238,7 +237,7 @@ Abort.
 #[local] Hint Resolve f : core.
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Since (A -> B) it holds that B.
 Abort.
 
@@ -250,7 +249,7 @@ Abort.
 (* Test 15: 'By ...' with statement fails.*)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Fail By (A -> B) it holds that B.
   Since (A -> B) it holds that B.
 Abort.
@@ -258,7 +257,7 @@ Abort.
 (* Test 16: 'Since ...' with reference fails. *)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Fail Since f it holds that B.
 Abort.
 
@@ -267,7 +266,7 @@ Abort.
 (* Test 17: impossible goal with use of lemma in hypotheses. *)
 Goal False.
 Proof.
-  assert (A -> B) as f' by admit.
+  ltac2: assert (A -> B) as f' by admit.
   Fail By (f') it holds that B.
 Abort.
 
@@ -275,9 +274,9 @@ Abort.
 #[local] Parameter C : Prop.
 Goal A -> False.
 Proof.
-  intro H.
-  assert (A -> B) as f' by admit.
-  assert (B -> C) as g' by admit.
+  ltac2: intro H.
+  ltac2: assert (A -> B) as f' by admit.
+  ltac2: assert (B -> C) as g' by admit.
   By g' it holds that C.
 Abort.
 
@@ -302,7 +301,7 @@ Abort.
 (* Fails without workaround in [Waterprove._rwaterprove]. *)
 Goal A -> (A -> B) -> B.
 Proof.
-  intros Ha Hf.
+  ltac2: intros Ha Hf.
   By Ha it holds that B.
 Abort.
 
@@ -319,7 +318,7 @@ Goal 1 < 2.
 Proof.
   It holds that (orb true false).
   Since (orb true false) it holds that (1 < 2).
-  assumption.
+  ltac2: assumption.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -329,10 +328,10 @@ Open Scope subset_scope.
 (** Test 23: Test whether wrapper for specialize works *)
 Goal (∀ x ≥ 5, True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   Use x := 6 in (H1).
   * We need to verify that (6 >= 5).
-    Control.shelve ().
+    ltac2: Control.shelve ().
   * It holds that (True) (i).
 Abort.
 

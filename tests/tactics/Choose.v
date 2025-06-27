@@ -63,10 +63,10 @@ Abort.
 
 (** Test 5: Choose a blank *)
 Goal exists n : nat, n + 1 = n + 1.
-    assert_feedback_with_string (fun () => Choose n := (_)) Warning
+    ltac2: (assert_feedback_with_string_n (fun () => Choose n := (_)) Warning
 (String.concat "" ["Please come back later to make a definitive choice for n.
 For now you can use that "; "
-(n = ?n?)."]).
+(n = ?n?)."])).
 Abort.
 
 (** Test 6: Choose a named evar *)

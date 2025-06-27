@@ -51,7 +51,7 @@ Abort.
     to remove the line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
@@ -83,7 +83,7 @@ Abort.
     throws an error suggesting to remove the line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
@@ -98,7 +98,7 @@ Abort.
     throws an error suggesting to remove the line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
@@ -120,7 +120,7 @@ Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr)))
     to remove line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
+  ltac2: intros.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
@@ -155,21 +155,21 @@ Abort.
 (* Test 8: unfold term in hypotheses and goal without throwing an error. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
-  _internal_ Expand the definition of foo.
+  ltac2: intros.
+  ltac2: _internal_ Expand the definition of foo.
 Abort.
 
 (* Test 9: unfold fails to unfold term if no statement with term. *)
 Goal False.
 Proof.
-  _internal_ Expand the definition of foo.
+  ltac2: _internal_ Expand the definition of foo.
 Abort.
 
 (* Test 10: outdated format (for format used by Waterproof editor, for now) *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
-  _internal_ Expand the definition of foo in (foo = 5).
+  ltac2: intros.
+  ltac2: _internal_ Expand the definition of foo in (foo = 5).
 Abort.
 
 (** Framework version:  *)
@@ -180,7 +180,7 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" x(opt(seq("i
 (* Test 11: unfold term in hypotheses and goals. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
+  ltac2: intros.
   _internal_ Expand the definition of foo2.
 Abort.
 
@@ -193,7 +193,7 @@ Abort.
 (* Test 13: outdated format (for format used by Waterproof editor, for now) *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
+  ltac2: intros.
   _internal_ Expand the definition of foo2 in (foo = 8).
 Abort.
 

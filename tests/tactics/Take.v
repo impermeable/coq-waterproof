@@ -157,7 +157,7 @@ Abort.
     visually been renamed. *)
 Goal forall n : nat, n = n.
 Proof.
-  set (n := 1).
+  ltac2: set (n := 1).
   assert_feedback_with_string (fun () => Take m : nat) Warning
 "Expected variable name n0 instead of m.".
 Abort.
@@ -166,7 +166,7 @@ Abort.
     internally, the binder name stays the same) *)
 Goal forall n : nat, n = n.
 Proof.
-  set (n := 1).
+  ltac2: set (n := 1).
   Take n0 : nat. (* This should produce no warning. *)
 Abort.
 
@@ -181,8 +181,8 @@ Abort.
 (** Test 18: Warn on using different variable name *)
 Goal forall m n : nat, n = m.
 Proof.
-  set (m := 3).
-  set (n := 4).
+  ltac2: set (m := 3).
+  ltac2: set (n := 4).
   assert_no_feedback (fun () => Take m0 : nat) Warning.
   assert_no_feedback (fun () => Take n0 : nat) Warning.
 Abort.
@@ -224,7 +224,7 @@ Abort.
     variable has been defined with the same name. *)
 Goal forall n : nat, forall n : nat, forall n : nat, n = n.
 Proof.
-  (set (n := 1)).
+  ltac2: (set (n := 1)).
   assert_no_feedback (fun () => Take n0, n1, n2 : nat) Warning.
 Abort.
 
@@ -238,16 +238,16 @@ Open Scope subset_scope.
 (** Test 24: Take from a set *)
 Goal ∀ n ∈ B, n = 0.
   Take n ∈ B.
-  assert (n ∈ B) by assumption.
+  ltac2: assert (n ∈ B) by assumption.
 Abort.
 
 (** Test 25, Take multiple variables from a set *)
 Goal ∀ k ∈ B, ∀ l ∈ B, ∀ m ∈ B, ∀ n ∈ B, k + l + m + n = 0.
   Take k, l, m, n ∈ B.
-  assert (k ∈ B) by assumption.
-  assert (l ∈ B) by assumption.
-  assert (m ∈ B) by assumption.
-  assert (n ∈ B) by assumption.
+  ltac2: assert (k ∈ B) by assumption.
+  ltac2: assert (l ∈ B) by assumption.
+  ltac2: assert (m ∈ B) by assumption.
+  ltac2: assert (n ∈ B) by assumption.
 Abort.
 
 
@@ -288,21 +288,21 @@ Abort.
 Goal ∀ n > 3%nat, Rplus n n = 0.
 Proof.
 Take n > 3%nat.
-assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(gt n 3).
+ltac2: assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(gt n 3).
 Abort.
 
 (** Test 30, Take with an lt in nat, but in R_scope *)
 Goal ∀ n < 3%nat, INR(n) = 0.
 Proof.
 Take n < 3%nat.
-assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(lt n 3).
+ltac2: assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(lt n 3).
 Abort.
 
 (** Test 31, Take with an lt in nat, but in R_scope *)
 Goal ∀ n ≤ 3%nat, INR(n) = 0.
 Proof.
 Take n ≤ 3%nat.
-assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(le n 3).
+ltac2: assert_constr_equal (Constr.type (Control.hyp @_H)) constr:(le n 3).
 Abort.
 
 Waterproof Enable Redirect Errors.
@@ -317,12 +317,12 @@ Abort.
 Goal ∀ n > 3, n = 0.
 Proof.
 Take n : R.
-assert_constr_equal (Constr.type constr:(n)) constr:(R).
+ltac2: assert_constr_equal (Constr.type constr:(n)) constr:(R).
 Abort.
 
 (** Test 33, Check that subset type is simplified when using Take with > *)
 Goal ∀ n > 3, n = 0.
 Proof.
 Take n > 3.
-assert_constr_equal (Constr.type constr:(n)) constr:(R).
+ltac2: assert_constr_equal (Constr.type constr:(n)) constr:(R).
 Abort.
