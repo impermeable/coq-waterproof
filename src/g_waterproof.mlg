@@ -23,8 +23,23 @@ open Exceptions
 open Waterprove
 
 let waterproof_version : string = "2.2.0+dev"
+
 }
 
+(* Add any words that occur right after mathematical expressions as keywords *)
+(* Doing this enables parsing the mathematical expressions without parentheses *)
+(* The cost of this is that these words are no longer allowed to be variables *)
+{
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "and")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "as")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "hold")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "holds")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "it")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "or")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "we")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "and")) 
+
+}
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
     {
@@ -36,6 +51,20 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
     {
       automation_shield := false
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Filter" "Errors" ] ->
+    {
+      filter_errors := true
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Filter" "Errors" ] ->
+    {
+      filter_errors := false
     }
 END
 

@@ -84,31 +84,31 @@ Lemma convergence_equivalence (a : ℕ → ℝ) (q : ℝ) :
   a ⟶ q ⇔ Un_cv a q.
 Proof. (* hide proof *)
   We show both directions.
-  * We need to show that (a ⟶ q ⇒ Un_cv a q).
-    Assume that (a ⟶ q) (i).
+  * We need to show that a ⟶ q ⇒ Un_cv a q.
+    Assume that a ⟶ q as (i).
     unfold Un_cv.
-    To show : (∀ ε1 > 0,
+    To show : ∀ ε1 > 0,
        ∃ N2 : ℕ,
-       ∀ n ≥ N2, ｜a(n) - q｜ < ε1).
+       ∀ n ≥ N2, ｜a(n) - q｜ < ε1.
     Take ε1 > 0.
     By (i) it holds that
-      (∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε1)%R)%nat).
+      ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε1)%R)%nat.
     Obtain such an N1.
     Choose N2 := N1.
     Take n ≥ N2.
-    We conclude that (｜a(n) - q｜ < ε1).
-  * We need to show that (Un_cv a q ⇒ a ⟶ q).
-    Assume that (Un_cv a q) (ii).
-    To show : (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat).
+    We conclude that ｜a(n) - q｜ < ε1.
+  * We need to show that Un_cv a q ⇒ a ⟶ q.
+    Assume that Un_cv a q as (ii).
+    To show : ∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat.
     Take ε > 0.
-    By (ii) it holds that ( ∃ N2 : ℕ,
-       ∀ n ≥ N2, ｜a(n) - q｜ < ε).
+    By (ii) it holds that  ∃ N2 : ℕ,
+       ∀ n ≥ N2, ｜a(n) - q｜ < ε.
     Obtain such an N2.
     Choose N1 := N2.
-    - Indeed, (N1 ∈ ℕ).
-    - We need to show that ((∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat).
+    - Indeed, N1 ∈ ℕ.
+    - We need to show that (∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat.
       Take n ≥ N1.
-      We conclude that (｜a(n) - q｜ < ε).
+      We conclude that ｜a(n) - q｜ < ε.
 Qed.
 
 (** ## Preparation for a simple limit*)
@@ -116,34 +116,34 @@ Lemma archimed_mod :
   ∀ x ∈ ℝ, ∃ n ∈ ℕ, INR(n) > x.
 Proof.
     Take x ∈ ℝ.
-    Either (x <= 0) or (0 < x).
-    - Case (x <= 0).
+    Either x <= 0 or 0 < x.
+    - Case x <= 0.
       Choose n := 1%nat.
-      + Indeed, (n ∈ ℕ).
-      + We need to show that (n > x).
-        We claim that (INR 1 > INR 0).
-        { We need to show that ( 1 > 0 ).
-          We conclude that (1 > 0).
+      + Indeed, n ∈ ℕ.
+      + We need to show that n > x.
+        We claim that INR 1 > INR 0.
+        { We need to show that 1 > 0 .
+          We conclude that 1 > 0.
         }
-        It holds that (x <= INR 0).
-        We conclude that (n > x).
-    - Case (0 < x).
-      By archimed it holds that (IZR( up x) > x ∧ IZR( up x ) - x ≤ 1).
-      It holds that (IZR( up x ) > x).
-      It holds that (0 < IZR( up x )).
+        It holds that x <= INR 0.
+        We conclude that n > x.
+    - Case 0 < x.
+      By archimed it holds that IZR( up x) > x ∧ IZR( up x ) - x ≤ 1.
+      It holds that IZR( up x ) > x.
+      It holds that 0 < IZR( up x ).
       By lt_0_IZR it holds that (0 < up x)%Z.
       It holds that (0 <= up x)%Z.
-      By IZN it holds that (∃ k : ℕ, up x = Z.of_nat k).
-      Obtain such a k. It holds that (up x = Z.of_nat k) (ii).
+      By IZN it holds that ∃ k : ℕ, up x = Z.of_nat k.
+      Obtain such a k. It holds that up x = Z.of_nat k as (ii).
       Choose n := k.
-      + Indeed, (n ∈ ℕ).
-      + We need to show that (INR k > x).
-        By INR_IZR_INZ it holds that (INR k = IZR (Z.of_nat k)).
+      + Indeed, n ∈ ℕ.
+      + We need to show that INR k > x.
+        By INR_IZR_INZ it holds that INR k = IZR (Z.of_nat k).
         (* TODO: better solution *)
-        We claim that (IZR (up x) = IZR (Z.of_nat k)).
+        We claim that IZR (up x) = IZR (Z.of_nat k).
         { rewrite (ii). reflexivity. }
-        We need to show that (x < k).
-        We conclude that (& x < up x = Z.of_nat k = k).
+        We need to show that x < k.
+        We conclude that & x < up x = Z.of_nat k = k.
 Qed.
 
 (** Next, we introduce eventually equal sequences, and show that they converge to the same limit.*)
@@ -153,21 +153,21 @@ Definition evt_eq_sequences (a b : ℕ → ℝ) :=
 Lemma conv_evt_eq_seq (a b : ℕ → ℝ) (l : ℝ) :
    (evt_eq_sequences a b) ⇒ (a ⟶ l) ⇒ (b ⟶ l).
 Proof.
-  Assume that (evt_eq_sequences a b) (i) and (a ⟶ l).
-  To show : (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat).
+  Assume that evt_eq_sequences a b as (i) and a ⟶ l.
+  To show : ∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat.
   Take ε > 0.
   It holds that
-    (∃ N1 ∈ ℕ,  for all n : ℕ, (n ≥ N1)%nat ⇨ |a n - l| < ε).
+    ∃ N1 ∈ ℕ,  for all n : ℕ, (n ≥ N1)%nat ⇨ |a n - l| < ε.
   Obtain such an N1.
   By (i) it holds that
-    (∃ K ∈ ℕ, for all n : ℕ, (n ≥ K)%nat ⇨ a n = b n).
+    ∃ K ∈ ℕ, for all n : ℕ, (n ≥ K)%nat ⇨ a n = b n.
   Obtain such a K.
-  Choose N2 := (Nat.max N1 K).
-  * Indeed, (N2 ∈ ℕ).
-  * We need to show that ((∀ n ≥ N2, (｜b(n) - l｜ < ε)%R)%nat).
+  Choose N2 := Nat.max N1 K.
+  * Indeed, N2 ∈ ℕ.
+  * We need to show that (∀ n ≥ N2, (｜b(n) - l｜ < ε)%R)%nat.
     Take n ≥ N2.
-    It holds that (b n = a n).
-    We conclude that (& |b n - l| = |a n - l| < ε).
+    It holds that b n = a n.
+    We conclude that & |b n - l| = |a n - l| < ε.
 Qed.
 
 (** From this, it is fairly easy to prove that sequences that are exactly the same also converge to the same limit.
@@ -176,12 +176,12 @@ We do this by first using the lemma, and then proving that the sequences are ind
 Lemma eq_seq_conv_to_same_lim (a : ℕ → ℝ) (b : ℕ → ℝ) (l : ℝ) :
   (∀ n ∈ ℕ, a n = b n) ⇒ a ⟶ l ⇒ b ⟶ l.
 Proof.
-  Assume that (∀ n ∈ ℕ, a n = b n).
+  Assume that ∀ n ∈ ℕ, a n = b n.
   By conv_evt_eq_seq
-    it suffices to show that (∃ k ∈ ℕ, ∀ n ≥ k, (a n = b n)%R)%nat.
+    it suffices to show that ∃ k ∈ ℕ, ∀ n ≥ k, (a n = b n)%R%nat.
   Choose k := O.
-  * Indeed, (k ∈ ℕ).
-  * We conclude that ((∀ n ≥ k, a(n) = b(n))%nat).
+  * Indeed, k ∈ ℕ.
+  * We conclude that (∀ n ≥ k, a(n) = b(n))%nat.
 Qed.
 
 (* Some limit theorems *)
@@ -228,15 +228,15 @@ Definition constant_sequence (c : ℝ) := fun (n : ℕ) ↦ c.
 Lemma lim_const_seq (c : ℝ) :
   constant_sequence c ⟶ c.
 Proof.
-  Define s := (constant_sequence c).
-  To show: (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜s(n) - c｜ < ε)%R)%nat).
+  Define s := constant_sequence c.
+  To show: ∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜s(n) - c｜ < ε)%R)%nat.
   Take ε > 0.
   Choose N1 := O.
-  * Indeed, (N1 ∈ ℕ).
-  * We need to show that ((∀ n ≥ N1, (｜s(n) - c｜ < ε)%R)%nat).
+  * Indeed, N1 ∈ ℕ.
+  * We need to show that (∀ n ≥ N1, (｜s(n) - c｜ < ε)%R)%nat.
     Take n ≥ N1.
-    It holds that (s n = c).
-    We conclude that (& |s n - c| = | c - c | = |0| = 0 < ε).
+    It holds that s n = c.
+    We conclude that & |s n - c| = | c - c | = |0| = 0 < ε.
 Qed.
 
 (** *** **Another simple limit**
@@ -253,40 +253,40 @@ Definition d := fun (n : ℕ) ↦ 1 / (n + 1).
 Lemma lim_d_0 : converges_to d 0.
 Proof.
   To show :
-      (∀ ε > 0, ∃ N1 ∈ ℕ, ∀ n ≥ N1, ｜d(n) - 0｜ < ε).
+      ∀ ε > 0, ∃ N1 ∈ ℕ, ∀ n ≥ N1, ｜d(n) - 0｜ < ε.
     Take ε > 0.
-    By archimed_mod it holds that (∃ n1 ∈ ℕ, n1 > / ε).
+    By archimed_mod it holds that ∃ n1 ∈ ℕ, n1 > / ε.
     Obtain such an n1. Choose N1 := n1.
-    * Indeed, (N1 ∈ ℕ).
-    * We need to show that (∀ n ≥ N1, ｜d(n) - 0｜ < ε).
+    * Indeed, N1 ∈ ℕ.
+    * We need to show that ∀ n ≥ N1, ｜d(n) - 0｜ < ε.
       Take n ≥ N1.
-      It suffices to show that (-ε < 1 / (n + 1) - 0 < ε).
-      We show both (-ε < 1 / (n + 1) - 0) and (1 / (n + 1) - 0 < ε).
-      - It holds that (0 < n + 1). (* n + 1 > 0 is difficult?*)
-        We conclude that (& -ε < 0 < / (n + 1) = 1 / (n + 1) - 0).
-      - We claim that (/ ε < n + 1).
-        { We conclude that (& / ε < n1 <= n <= n + 1). }
-        We conclude that (& 1 / (n + 1) - 0 = / (n + 1) < / / ε = ε).
+      It suffices to show that -ε < 1 / (n + 1) - 0 < ε.
+      We show both -ε < 1 / (n + 1) - 0 and 1 / (n + 1) - 0 < ε.
+      - It holds that 0 < n + 1. (* n + 1 > 0 is difficult?*)
+        We conclude that & -ε < 0 < / (n + 1) = 1 / (n + 1) - 0.
+      - We claim that / ε < n + 1.
+        { We conclude that & / ε < n1 <= n <= n + 1. }
+        We conclude that & 1 / (n + 1) - 0 = / (n + 1) < / / ε = ε.
 Qed.
 
 Lemma min_1_over_n_plus_1_to_0 :
   converges_to (fun (n : ℕ) ↦ - (1 / (INR(n) + 1))) 0.
 Proof.
-    By lim_d_0 it holds that (converges_to d 0).
-    We claim that (Un_cv d 0).
+    By lim_d_0 it holds that converges_to d 0.
+    We claim that Un_cv d 0.
     {
       apply convergence_equivalence; assumption.
     }
-    By (CV_opp) it holds that (Un_cv (opp_seq d) (-0)) (i).
-    We claim that (converges_to (opp_seq d) (-0)).
+    By CV_opp it holds that Un_cv (opp_seq d) (-0) as (i).
+    We claim that converges_to (opp_seq d) (-0).
     {
       apply convergence_equivalence; assumption.
     }
-    It holds that ( Un_cv (fun n ↦ -d(n), -0)).
-    It holds that ( Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
-    It holds that (0 = -0).
-    It suffices to show that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
-    By (i) we conclude that (Un_cv (fun n ↦ -(1 / (n + 1)), -0)).
+    It holds that  Un_cv (fun n ↦ -d(n), -0).
+    It holds that  Un_cv (fun n ↦ -(1 / (n + 1)), -0).
+    It holds that 0 = -0.
+    It suffices to show that Un_cv (fun n ↦ -(1 / (n + 1)), -0).
+    By (i) we conclude that Un_cv (fun n ↦ -(1 / (n + 1)), -0).
 Qed.
 
 (** ** The squeeze theorem*)
@@ -294,114 +294,114 @@ Theorem squeeze_theorem (a : ℕ → ℝ) (b : ℕ → ℝ) (c : ℕ → ℝ) (l
     (∀ n ∈ ℕ, a n ≤ b n ∧ b n ≤ c n) ⇒
       a ⟶ l ⇒ c ⟶ l ⇒ b ⟶ l.
 Proof.
-  Assume that (∀ n ∈ ℕ, a n ≤ b n ∧ b n ≤ c n) and (a ⟶ l).
-  Assume that (c ⟶ l).
-  To show: (∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat).
+  Assume that ∀ n ∈ ℕ, a n ≤ b n ∧ b n ≤ c n and a ⟶ l.
+  Assume that c ⟶ l.
+  To show: ∀ ε > 0, ∃ N1 ∈ ℕ, (∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat.
   Take ε > 0.
-  It holds that (∃ Na ∈ ℕ, ∀ n : ℕ, (n ≥ Na)%nat ⇒ |a n - l| < ε).
+  It holds that ∃ Na ∈ ℕ, ∀ n : ℕ, (n ≥ Na)%nat ⇒ |a n - l| < ε.
   Obtain such an Na.
-  It holds that (∃ Nc ∈ ℕ, ∀ n : ℕ, (n ≥ Nc)%nat ⇒ |c n - l| < ε).
+  It holds that ∃ Nc ∈ ℕ, ∀ n : ℕ, (n ≥ Nc)%nat ⇒ |c n - l| < ε.
   Obtain such an Nc.
-  Choose N1 := (Nat.max Na Nc).
-  * Indeed, (N1 ∈ ℕ).
-  * We need to show that ((∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat).
+  Choose N1 := Nat.max Na Nc.
+  * Indeed, N1 ∈ ℕ.
+  * We need to show that (∀ n ≥ N1, (｜b(n) - l｜ < ε)%R)%nat.
     Take n ≥ N1.
-    We claim that (-ε < a n - l).
+    We claim that -ε < a n - l.
     { It holds that (n ≥ Na)%nat.
-      It holds that (R_dist (a n) l < ε) (iii).
-      By Rabs_def2 it holds that (a n - l < ε /\ -ε < a n - l).
-      We conclude that (-ε < a n - l).
+      It holds that R_dist (a n) l < ε as (iii).
+      By Rabs_def2 it holds that a n - l < ε /\ -ε < a n - l.
+      We conclude that -ε < a n - l.
     }
-    We claim that (c n - l < ε).
+    We claim that c n - l < ε.
     { It holds that (n ≥ Nc)%nat.
-      It holds that (R_dist (c n) l < ε) (iii).
-      By Rabs_def2 it holds that (c n - l < ε /\ -ε < c n - l).
-      We conclude that (c n - l < ε).
+      It holds that R_dist (c n) l < ε as (iii).
+      By Rabs_def2 it holds that c n - l < ε /\ -ε < c n - l.
+      We conclude that c n - l < ε.
     }
-    It suffices to show that (-ε < b n - l < ε).
-    It holds that (a n ≤ b n ∧ b n ≤ c n).
-    We show both (- ε < b n - l) and ( b n - l < ε).
-    - We conclude that (& - ε < a n - l <= b n - l).
-    - We conclude that (& b n - l <= c n - l < ε).
+    It suffices to show that -ε < b n - l < ε.
+    It holds that a n ≤ b n ∧ b n ≤ c n.
+    We show both - ε < b n - l and  b n - l < ε.
+    - We conclude that & - ε < a n - l <= b n - l.
+    - We conclude that & b n - l <= c n - l < ε.
 Qed.
 
 Lemma upp_bd_seq_is_upp_bd_lim (a : ℕ → ℝ) (L M: ℝ) :
   (∀ n ∈ ℕ, a n ≤ M) ⇒ (converges_to a L) ⇒ L ≤ M.
 Proof.
-  Assume that (∀ n ∈ ℕ, (a n) ≤ M).
-  Assume that (converges_to a L) (i).
-  By Rle_or_lt it holds that (L ≤ M ∨ M < L) (ii).
-  Because (ii) either (L ≤ M) or (M < L) holds.
-  - Case (L ≤ M).
-    It follows that (L ≤ M).
-  - Case (M < L).
-    Define ε := (L-M).
-    It holds that (ε > 0).
-    It holds that (for all eps : ℝ, eps > 0
+  Assume that ∀ n ∈ ℕ, (a n) ≤ M.
+  Assume that converges_to a L as (i).
+  By Rle_or_lt it holds that L ≤ M ∨ M < L as (ii).
+  Because (ii) either L ≤ M or M < L holds.
+  - Case L ≤ M.
+    It follows that L ≤ M.
+  - Case M < L.
+    Define ε := L-M.
+    It holds that ε > 0.
+    It holds that for all eps : ℝ, eps > 0
       ⇨ ∃ N ∈ ℕ, for all n : ℕ, (n ≥ N)%nat
-      ⇨ ｜ a n - L ｜ < eps).
-    It holds that (∃ Nn ∈ ℕ, ∀n : ℕ, (n ≥ Nn)%nat ⇒ R_dist (a n) L < ε).
+      ⇨ ｜ a n - L ｜ < eps.
+    It holds that ∃ Nn ∈ ℕ, ∀n : ℕ, (n ≥ Nn)%nat ⇒ R_dist (a n) L < ε.
     Obtain such an Nn.
-    It holds that (|a(Nn) - L| < ε).
-    By Rabs_def2 it holds that (a Nn - L < ε ∧ (- ε < a Nn - L)).
-    It holds that (- ε < a Nn - L).
-    It holds that (a Nn ≤ M).
-    It holds that (- (L - M) < a Nn - L).
-    It follows that (L ≤ M).
+    It holds that |a(Nn) - L| < ε.
+    By Rabs_def2 it holds that a Nn - L < ε ∧ (- ε < a Nn - L).
+    It holds that - ε < a Nn - L.
+    It holds that a Nn ≤ M.
+    It holds that - (L - M) < a Nn - L.
+    It follows that L ≤ M.
 Qed.
 
 Lemma low_bd_seq_is_low_bd_lim (a : ℕ → ℝ) (L M: ℝ) :
   (∀ n ∈ ℕ, a n ≥ M) ⇒ (converges_to a L) ⇒ L ≥ M.
 Proof.
-  Assume that (∀ n ∈ ℕ, a n ≥ M).
-  Define b := (opp_seq a).
-  Assume that (converges_to a L).
-  It holds that (b = (fun n => - a n)).
-  By convergence_opp it holds that (converges_to b (-L)).
-  We claim that (-L ≤ -M).
+  Assume that ∀ n ∈ ℕ, a n ≥ M.
+  Define b := opp_seq a.
+  Assume that converges_to a L.
+  It holds that b = (fun n => - a n).
+  By convergence_opp it holds that converges_to b (-L).
+  We claim that -L ≤ -M.
   { (* FIXME, this should work *)
     (* By upp_bd_seq_is_upp_bd_lim it suffices to show that
       (∀ (n : nat) ∈ ℕ, b n ≤ - M).*)
     apply (upp_bd_seq_is_upp_bd_lim b).
     * Take n ∈ ℕ.
-      We conclude that (& b n = - a n <= -M).
+      We conclude that & b n = - a n <= -M.
     * assumption.
   }
-  We conclude that (L >= M).
+  We conclude that L >= M.
 Qed.
 
 (** ** Order and limits*)
 Lemma seq_ordered_lim_ordered (a b: ℕ → ℝ) (m l : ℝ) :
   converges_to a m ⇒ converges_to b l ⇒ (∀ n ∈ ℕ, a n ≤ b n) ⇒ m ≤ l.
 Proof.
-  Assume that (converges_to a m) and (converges_to b l).
-  Assume that (∀ n ∈ ℕ, a n ≤ b n).
+  Assume that converges_to a m and converges_to b l.
+  Assume that ∀ n ∈ ℕ, a n ≤ b n.
   We argue by contradiction.
-  Assume that (~ m <= l).
-  It holds that (l < m).
-  Define ε := ((m - l)/2).
-  It holds that (ε > 0).
-  It holds that (for all eps : ℝ, eps > 0
+  Assume that ~ m <= l.
+  It holds that l < m.
+  Define ε := (m - l)/2.
+  It holds that ε > 0.
+  It holds that for all eps : ℝ, eps > 0
     ⇨ ∃ N ∈ ℕ, for all n : ℕ, (n ≥ N)%nat
-    ⇨ ｜ a n - m ｜ < eps).
-  It holds that (for all eps : ℝ, eps > 0
+    ⇨ ｜ a n - m ｜ < eps.
+  It holds that for all eps : ℝ, eps > 0
     ⇨ ∃ N ∈ ℕ, for all n : ℕ, (n ≥ N)%nat
-    ⇨ ｜ b n - l ｜ < eps).
-  It holds that (∃ N1 ∈ ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ | (a n) - m | < ε).
+    ⇨ ｜ b n - l ｜ < eps.
+  It holds that ∃ N1 ∈ ℕ, ∀ n : ℕ, (n ≥ N1)%nat ⇒ | (a n) - m | < ε.
   Obtain such an N1.
-  It holds that (∃ N2 ∈ ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ | (b n) - l | < ε).
+  It holds that ∃ N2 ∈ ℕ, ∀ n : ℕ, (n ≥ N2)%nat ⇒ | (b n) - l | < ε.
   Obtain such an N2.
-  Define N3 := (Nat.max N1 N2).
-  We claim that (b N3 < a N3).
+  Define N3 := Nat.max N1 N2.
+  We claim that b N3 < a N3.
   {
-    It holds that (|b(N3) - l| < ε).
-    It holds that (|a(N3) - m| < ε).
-    By Rabs_def2 it holds that (a N3 - m < ε ∧ - ε < a N3 - m).
-    By Rabs_def2 it holds that (b N3 - l < ε ∧ - ε < b N3 - l).
-    We conclude that (& b N3 < l + ε = l + (m - l)/2
-                          = m - (m - l)/2 = m - ε < a N3).
+    It holds that |b(N3) - l| < ε.
+    It holds that |a(N3) - m| < ε.
+    By Rabs_def2 it holds that a N3 - m < ε ∧ - ε < a N3 - m.
+    By Rabs_def2 it holds that b N3 - l < ε ∧ - ε < b N3 - l.
+    We conclude that & b N3 < l + ε = l + (m - l)/2
+                          = m - (m - l)/2 = m - ε < a N3.
   }
-  It holds that (a N3 <= b N3).
+  It holds that a N3 <= b N3.
   Contradiction.
 Qed.
 
@@ -425,50 +425,49 @@ Lemma is_bounded_equivalence (a : ℕ → ℝ) :
   is_bounded a ⇔ is_bounded_equivalent a.
 Proof.
 We show both directions.
-- We need to show that (is_bounded a ⇨ is_bounded_equivalent a).
-  Assume that (is_bounded a).
-  It holds that (∃ q ∈ R,
-    ∃ M1 > 0, (∀ n ∈ ℕ, | a n - q | ≤ M1)).
+- We need to show that is_bounded a ⇨ is_bounded_equivalent a.
+  Assume that is_bounded a.
+  It holds that ∃ q ∈ R,
+    ∃ M1 > 0, (∀ n ∈ ℕ, | a n - q | ≤ M1).
   Obtain such a q.
-  It holds that (there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)).
+  It holds that there exists M1 : R, M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1).
   Obtain such an M1.
-  It holds that (M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1)) (i).
-  Because (i) both (M1 > 0) and
-    (for all n : ℕ, | a n - q | ≤ M1).
-  We need to show that (∃ M > 0, (∀ n ∈ ℕ, | a n | ≤ M)).
-  Choose M := (M1 + |q|).
-  + We need to verify that (M > 0).
-    It holds that (0 ≤ |q|).
-    It suffices to show that (0 <= M).
-    We conclude that (& 0 <= (M1 + |q|) = M).
+  It holds that M1 > 0 ∧ (for all n : ℕ, | a n - q | ≤ M1) as (i).
+  Because (i) both M1 > 0 and
+    for all n : ℕ, | a n - q | ≤ M1.
+  We need to show that ∃ M > 0, (∀ n ∈ ℕ, | a n | ≤ M).
+  Choose M := M1 + |q|.
+  + We need to verify that M > 0.
+    It holds that 0 ≤ |q|.
+    It suffices to show that 0 <= M.
+    We conclude that & 0 <= (M1 + |q|) = M.
 
-  + We need to show that (∀ n ∈ ℕ, | a n | ≤ M ).
+  + We need to show that ∀ n ∈ ℕ, | a n | ≤ M .
     Take n ∈ ℕ.
-    By Rabs_triang it holds that (|a n - q + q| ≤ |a n - q| + |q|).
-    We conclude that (& |a n| = |a n - q + q|
-                              <= (|a n - q| + |q|) <= (M1 + |q|) = M).
+    By Rabs_triang it holds that |a n - q + q| ≤ |a n - q| + |q|.
+    We conclude that & |a n| = |a n - q + q|
+                              <= (|a n - q| + |q|) <= (M1 + |q|) = M.
 
-- We need to show that (
-    is_bounded_equivalent a ⇨ is_bounded a).
-  Assume that (∃ M1 > 0, ∀ n ∈ ℕ, |a n| ≤ M1).
+- We need to show that 
+    is_bounded_equivalent a ⇨ is_bounded a.
+  Assume that ∃ M1 > 0, ∀ n ∈ ℕ, |a n| ≤ M1.
   Obtain such an M1. It holds that
-    (M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1) (i).
-  Because (i) both (M1 > 0) and
-  (for all n : ℕ, | a n | ≤ M1) hold.
+    M1 > 0 ∧ ∀ n : ℕ, |a n| ≤ M1 as (i).
+  Because (i) both M1 > 0 and
+  for all n : ℕ, | a n | ≤ M1 hold.
   (* Expand the definition of is_bounded. *)
-  We need to show that (
+  We need to show that 
     ∃ q ∈ ℝ, ∃ M > 0, (∀ n ∈ ℕ,
-    | a n - q | ≤ M)
-    ).
+    | a n - q | ≤ M).
   Choose q := 0.
-  + Indeed, (q ∈ ℝ).
-  + We need to show that (∃ M > q, ∀ n ∈ ℕ, |a(n) - q| ≤ M).
+  + Indeed, q ∈ ℝ.
+  + We need to show that ∃ M > q, ∀ n ∈ ℕ, |a(n) - q| ≤ M.
     Choose M := M1.
-    * Indeed, (M > q).
-    * We need to show that (
-        ∀ n ∈ ℕ, | a n - q | ≤ M ).
+    * Indeed, M > q.
+    * We need to show that 
+        ∀ n ∈ ℕ, | a n - q | ≤ M.
     Take n ∈ ℕ.
-    We conclude that (& |a n - q| = |a n| <= M).
+    We conclude that & |a n - q| = |a n| <= M.
 Qed.
 
 (** Definitions sequence bounded from above and below *)
