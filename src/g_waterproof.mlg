@@ -22,7 +22,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
-let waterproof_version : string = "2.2.0+dev"
+let waterproof_version : string = "2.2.0+9.0"
 }
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF

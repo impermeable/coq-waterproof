@@ -1,6 +1,6 @@
 # Change log for the coq-waterproof library
 
-## Version 2.2.0+dev
+## Version 2.2.0+9.0
 
 - Allow for standard math notation
 - No longer automatically replace terms introduced by choose in the goal
@@ -20,7 +20,7 @@
 - Add custom version of the specialize tactic
 - Allow for boolean statements in tactics
 
-## Version 2.1.1+dev
+## Version 2.1.1+9.0
 
 - Compatibility with Coq dev
 - Compatibility with earlier OCaml compilers

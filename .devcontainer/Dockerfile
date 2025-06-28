@@ -1,5 +1,5 @@
-FROM coqorg/coq:8.20-ocaml-4.14-flambda
+FROM rocq/rocq-prover:9.0-ocaml-4.14-flambda
 
 RUN opam update; \
-    opam install coq-lsp.0.2.0+8.20 -y; \
+    opam install coq-lsp.0.2.2+9.0 -y; \
     opam install ocaml-lsp-server -y
