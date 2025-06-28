@@ -16,24 +16,17 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Util.Init.
-Require Import Util.MessagesToUser.
+(** This module registers two new bullet behaviors available for use in
+Waterproof. With
 
-From Ltac2 Require Import Ltac2 Message.
+Set Bullet Behavior "Waterproof Strict Subproofs".
 
-Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat ls (of_string "").
+one basically gets the default bullet behavior, with slightly different
+suggestion and error messages.
 
-(** Ensures that the type of [t] can be used in type matching or asserting. *)
-Ltac2 correct_type_by_wrapping (t: constr): constr :=
-  let type_t := Constr.type t in
-  lazy_match! type_t with
-    | Prop => t
-    | Set => t 
-    | Type => t
-    | bool => constr:(is_true $t)
-    | _ => throw (concat_list [
-      of_string "Expected a term with type in ['Prop', 'Set', 'Type', 'bool'], but got a term of type '";
-      of_constr type_t; 
-      of_string "' instead."]); constr:(tt)
-  end.
+With
+
+Set Bullet Behavior "Waterproof Relaxed Subproofs".
+
+it doesn't matter which exact bullets one uses in a particular place: they
+all function the same. *)

@@ -87,7 +87,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo in (foo = 1))
+  (fun () => Expand the definition of foo in foo = 1)
 "Remove this line in the final version of your proof.")
   Info
 ["Replace line with:";
@@ -102,7 +102,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo in (foo = 0))
+  (fun () => Expand the definition of foo in foo = 0)
 "Remove this line in the final version of your proof.")
   Info
 ["Replace line with:";
@@ -169,7 +169,7 @@ Abort.
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
-  _internal_ Expand the definition of foo in (foo = 5).
+  _internal_ Expand the definition of foo in foo = 5.
 Abort.
 
 (** Framework version:  *)

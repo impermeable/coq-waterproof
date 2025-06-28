@@ -17,6 +17,11 @@
 (******************************************************************************)
 
 (**
+  A flag that determines whether Waterproof should filter errors
+*)
+val filter_errors : bool ref
+
+(**
   A rudimentary feedback log
 *)
 val feedback_log : Feedback.level -> Pp.t list ref
@@ -74,7 +79,7 @@ type wexn =
 *)
 val throw : ?info:Exninfo.info -> wexn -> 'a
 
-(** 
+(**
   Sends a warning
 *)
 val warn :

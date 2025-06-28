@@ -232,6 +232,8 @@ Require Import Waterproof.Notations.Sets.
 
 Local Parameter A : nat -> Prop.
 Definition B := as_subset _ A.
+Local Parameter C : nat -> Prop.
+Definition D := as_subset _ C.
 
 (** ** Tests for taking from sets *)
 Open Scope subset_scope.
@@ -249,7 +251,6 @@ Goal ∀ k ∈ B, ∀ l ∈ B, ∀ m ∈ B, ∀ n ∈ B, k + l + m + n = 0.
   assert (m ∈ B) by assumption.
   assert (n ∈ B) by assumption.
 Abort.
-
 
 Close Scope subset_scope.
 
@@ -325,4 +326,20 @@ Goal ∀ n > 3, n = 0.
 Proof.
 Take n > 3.
 assert_constr_equal (Constr.type constr:(n)) constr:(R).
+Abort.
+
+(** Test 34, Check that take can be used with complex expression without parens **)
+Goal ∀ n > 2 + 1, n = 0.
+Proof.
+Take n > 2 + 1.
+assert_constr_equal (Constr.type constr:(n)) constr:(R).
+Abort.
+
+(** Test 35, Check that take can be used with ∈ and complex expression without parens **)
+
+Definition const_nat (_ : nat) : Type := nat.
+
+Goal ∀ m ∈ nat, ∀ n ∈ nat, ∀ k ∈ nat, ∀ l ∈ nat, ∀ j ∈ nat, True.
+Proof.
+Take m, n ∈ const_nat 0 and k, l ∈ const_nat 1 and j ∈ const_nat 2.
 Abort.
