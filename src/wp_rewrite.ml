@@ -204,7 +204,7 @@ end
 (** Type of rewrite databases *)
 type rewrite_db = {
   rdb_hintdn : HintDN.t;
-  rdb_order : int KNmap.t;
+  rdb_order : int KerName.Map.t;
   rdb_maxuid : int;
 }
 
@@ -216,7 +216,7 @@ type hypinfo = {
 (** Empty rewrite database *)
 let empty_rewrite_db = {
   rdb_hintdn = HintDN.empty;
-  rdb_order = KNmap.empty;
+  rdb_order = KerName.Map.empty;
   rdb_maxuid = 0;
 }
 
@@ -258,7 +258,7 @@ let decompose_applied_relation (env: Environ.env) (sigma: Evd.evar_map) (c: cons
 let add_rew_rules (rewrite_database: rewrite_db) (rew_rules: rew_rule list): rewrite_db =
   List.fold_left (fun accu r -> {
     rdb_hintdn = HintDN.add r.rew_pat r accu.rdb_hintdn;
-    rdb_order = KNmap.add r.rew_id accu.rdb_maxuid accu.rdb_order;
+    rdb_order = KerName.Map.add r.rew_id accu.rdb_maxuid accu.rdb_order;
     rdb_maxuid = accu.rdb_maxuid + 1;
   }) rewrite_database rew_rules
 
@@ -274,7 +274,7 @@ end
 module RewriteDatabaseTactics = TypedTactics(RewriteDatabase)
 
 let find_rewrites (rewrite_database: rewrite_db): rew_rule list =
-  let sort r1 r2 = Int.compare (KNmap.find r2.rew_id rewrite_database.rdb_order) (KNmap.find r1.rew_id rewrite_database.rdb_order) in
+  let sort r1 r2 = Int.compare (KerName.Map.find r2.rew_id rewrite_database.rdb_order) (KerName.Map.find r1.rew_id rewrite_database.rdb_order) in
   List.sort sort (HintDN.find_all rewrite_database.rdb_hintdn)
 
 (** Applies all the rules of one hint rewrite database *)
