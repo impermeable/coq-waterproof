@@ -491,7 +491,7 @@ Create HintDb wp_sets.
   #[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
   #[export] Hint Resolve power_set_characterization : wp_sets.
   #[export] Hint Resolve power_set_characterization_alt : wp_sets.
-  #[export] Hint Resolve empty_set_characterization : wp_sets.
+  #[export] Hint Extern 1 => apply empty_set_characterization; eassumption : wp_sets.
   #[export] Hint Resolve Extensionality_Ensembles : wp_sets.
 
 (** * Intuition *)
