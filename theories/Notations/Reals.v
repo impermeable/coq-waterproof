@@ -75,6 +75,10 @@ Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))): R_scope.
 Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))): R_scope.
 Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))): R_scope.
 
+Definition is_rational (q : ℝ) : Prop := ∃n ∈ ℤ, ∃m ∈ ℤ, 0 ≠ m ∧ q = n/m.
+
+Notation "q 'is' 'rational'" := (is_rational q) (at level 70).
+
 Close Scope subset_scope.
 Close Scope nat_scope.
 Close Scope R_scope.

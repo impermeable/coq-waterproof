@@ -21,3 +21,13 @@ Proof.
     exists z.
     exact hz.
 Qed.
+
+Definition remainder (n q r : ℤ) : Prop := ∃m ∈ ℤ, n = q * m + r.
+
+Lemma remainder_tactic (n q r m : ℤ) (h : n = q * m + r) : remainder n q r.
+Proof.
+    exists m.
+    split.
+    unfold conv; unfold subset_in; trivial.
+    exact h.
+Qed.

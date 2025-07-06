@@ -22,6 +22,8 @@ Require Import Reals.ROrderedType.
 
 Require Import Notations.
 
+Require Export Libs.Reals.Rational.
+
 Local Open Scope R_scope.
 
 (** * Lemmas linking reals and booleans *)

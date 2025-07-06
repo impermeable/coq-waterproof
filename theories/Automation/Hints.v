@@ -35,8 +35,7 @@ Require Import Libs.Reals.
 Require Import Libs.Logic.InformativeEpsilon.
 Require Import Libs.Logic.ConstructiveLogic.
 Require Import Libs.Sets.
-Require Import Libs.Integers.Dividability.
-Require Import Libs.Integers.Even.
+Require Import Libs.Integers.
 
 (** * Waterproof core *)
 
@@ -370,6 +369,12 @@ Create HintDb wp_integers.
   #[export] Hint Resolve divide_char : wp_integers.
   #[export] Hint Resolve divide_char_inv : wp_integers.
   #[export] Hint Resolve even_tactic : wp_integers.
+  #[export] Hint Resolve Zeven_char : wp_integers.
+  #[export] Hint Extern 3 => apply Zeven_char_inv; assumption : wp_integers.
+  #[export] Hint Resolve Zodd_char : wp_integers.
+  #[export] Hint Extern 3 => apply Zodd_char_inv; assumption : wp_integers.
+  #[export] Hint Resolve perfect_square_tactic : wp_integers.
+  #[export] Hint Resolve remainder_tactic : wp_integers.
 
 Create HintDb wp_decidability_integers.
   #[export] Hint Resolve Zeven_odd_dec : wp_decidability_integers.
@@ -475,6 +480,8 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
   #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
+
+  #[export] Hint Resolve rational_tactic : wp_reals.
 
 (** * Real number negation *)
 
