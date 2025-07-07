@@ -34,7 +34,7 @@ Ltac2 Notation "wp:" x(waterproof_tactic) := x.
 
 (* This tells Ltac2 Notation to put new parsing rules in the
    waterproof non-terminal symbol. *)
-#[export] Set Ltac2 Default Notation Entry "waterproof_tactic".
+#[export] Set Ltac2 Default Notation Entry "Waterproof.Waterproof.waterproof_tactic".
 
 #[export] Set Ltac2 Default Notation Entry Level 5.
 

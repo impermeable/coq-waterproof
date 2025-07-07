@@ -29,12 +29,22 @@ open Ltac2_plugin.G_ltac2
 let waterproof_version : string = "2.2.0+dev"
 
 let wp_command_entry = Procq.Entry.make "waterproof_command"
-let wp_tactic_entry = Procq.Entry.make "waterproof_tactic"
-let _wp_tactic_entry = wp_tactic_entry
 
+(* The actual custom entry is not yet created at plugin linking time
+   and may be re-created at summary unfreeze time, but we need a truly
+   global entry to use in VERNAC EXTEND.
+
+   To solve this we use indirection: the global entry calls a dynamic
+   parser which looks up the custom entry. *)
 let wp_entry_name = Names.Id.of_string "waterproof_tactic"
 
-let () = Hashtbl.add Tac2entries.hack_table_entry wp_entry_name wp_tactic_entry
+let parse_wp_tactic _kwstate strm =
+  let entry = Tac2entries.CustomTab.of_path (Libnames.add_path_suffix (Libnames.path_of_string "Waterproof.Waterproof") wp_entry_name) in
+  let entry = Tac2entries.find_custom_entry entry in
+  Procq.Entry.parse_token_stream entry strm
+
+let wp_tactic_entry = Procq.Entry.of_parser "waterproof_tactic" { parser_fun = parse_wp_tactic }
+let _wp_tactic_entry = wp_tactic_entry
 
 let _ : Pvernac.proof_mode = Pvernac.register_proof_mode "Waterproof"
     (ProofMode {
@@ -46,6 +56,8 @@ let _ : Pvernac.proof_mode = Pvernac.register_proof_mode "Waterproof"
 (* Duplicated with g_ltac2 *)
 let pr_ltac2expr e = Tac2print.pr_rawexpr_gen E5 ~avoid:Names.Id.Set.empty e
 
+let () = "coq-waterproof.plugin" |> Mltop.declare_cache_obj @@ fun () ->
+  Tac2entries.register_custom_entry (CAst.make wp_entry_name)
 
 
 }
