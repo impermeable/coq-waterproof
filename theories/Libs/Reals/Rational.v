@@ -4,18 +4,23 @@ Require Import Notations.Reals.
 
 Require Import Coq.Reals.Reals.
 
-Open Scope R_scope.
+Require Import Libs.Reals.Integer.
 
-Lemma rational_tactic (q : ℝ) (n m : ℤ) : 0 ≠ m ∧ q = n/m ⇒ q is rational.
+Open Scope R_scope.
+Open Scope subset_scope.
+
+Definition is_rational (q : ℝ) : Prop := ∃n ∈ Z_in_R, ∃m ∈ Z_in_R, 0 ≠ m ∧ q = n/m.
+
+Lemma rational_tactic (q : ℝ) (n m : R) (hn : n ∈ Z_in_R) (hm : m ∈ Z_in_R) 
+    : 0 ≠ m ∧ q = n/m ⇒ is_rational q.
 Proof.
     intros [h1 h2].
     exists n.
     split.
-    unfold conv; unfold subset_in; trivial.
-    unfold seal.
+    exact hn.
     exists m.
     split.
-    unfold conv; unfold subset_in; trivial.
+    exact hm.
     split.
     exact h1.
     exact h2.

@@ -23,6 +23,7 @@ Require Import Reals.ROrderedType.
 Require Import Notations.
 
 Require Export Libs.Reals.Rational.
+Require Export Libs.Reals.Integer.
 
 Local Open Scope R_scope.
 
