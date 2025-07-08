@@ -482,7 +482,14 @@ Create HintDb wp_reals.
 
   #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
 
-  #[export] Hint Resolve rational_tactic : wp_reals.
+  #[export] Hint Resolve plus_Z_in_R : wp_reals.
+  #[export] Hint Resolve minus_Z_in_R : wp_reals.
+  #[export] Hint Resolve mult_Z_in_R : wp_reals.
+
+  #[export] Hint Extern 1 => eapply rational_tactic; eauto : wp_reals.
+
+  #[export] Hint Resolve plus_frac : wp_reals.
+  #[export] Hint Resolve min_frac : wp_reals.
 
 (** * Real number negation *)
 

@@ -7,7 +7,7 @@ Definition Z_in_R : subset R := fun r => exists z : Z, IZR z = r.
 
 Open Scope R_scope.
 
-Lemma add_Z_in_R (n m : R) : n ∈ Z_in_R ⇒ m ∈ Z_in_R ⇒ (n + m) ∈ Z_in_R.
+Lemma plus_Z_in_R (n m : R) : n ∈ Z_in_R ⇒ m ∈ Z_in_R ⇒ (n + m) ∈ Z_in_R.
 Proof.
     intros [n' hn'] [m' hm'].
     exists (n' + m')%Z.
@@ -27,7 +27,7 @@ Proof.
     reflexivity.
 Qed.
 
-Lemma mul_Z_in_R (n m : R) : n ∈ Z_in_R ⇒ m ∈ Z_in_R ⇒ (n * m) ∈ Z_in_R.
+Lemma mult_Z_in_R (n m : R) : n ∈ Z_in_R ⇒ m ∈ Z_in_R ⇒ (n * m) ∈ Z_in_R.
 Proof.
     intros [n' hn'] [m' hm'].
     exists (n' * m')%Z.
