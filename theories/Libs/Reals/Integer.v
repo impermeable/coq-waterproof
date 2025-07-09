@@ -36,3 +36,21 @@ Proof.
     rewrite hm'.
     reflexivity.
 Qed.
+
+Lemma zero_Z_in_R : 0 ∈ Z_in_R.
+Proof.
+    exists 0%Z.
+    reflexivity.
+Qed.
+
+Lemma one_Z_in_R : 1 ∈ Z_in_R.
+Proof.
+    exists 1%Z.
+    reflexivity.
+Qed.
+
+Lemma two_Z_in_R : 2 ∈ Z_in_R.
+Proof.
+    exists 2%Z.
+    reflexivity.
+Qed.

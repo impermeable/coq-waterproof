@@ -24,6 +24,7 @@ Require Import Notations.
 
 Require Export Libs.Reals.Rational.
 Require Export Libs.Reals.Integer.
+Require Export Libs.Reals.RealInequalities.
 
 Local Open Scope R_scope.
 

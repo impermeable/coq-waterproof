@@ -369,11 +369,12 @@ Create HintDb wp_integers.
   #[export] Hint Resolve divide_char : wp_integers.
   #[export] Hint Resolve divide_char_inv : wp_integers.
   #[export] Hint Resolve even_tactic : wp_integers.
-  #[export] Hint Resolve odd_tactic : wp_integers.
+  #[export] Hint Extern 1 => eapply odd_tactic : wp_integers.
   #[export] Hint Resolve Zeven_char : wp_integers.
   #[export] Hint Extern 3 => apply Zeven_char_inv; assumption : wp_integers.
   #[export] Hint Resolve Zodd_char : wp_integers.
   #[export] Hint Extern 3 => apply Zodd_char_inv; assumption : wp_integers.
+  #[export] Hint Resolve not_even_and_odd : wp_integers.
   #[export] Hint Resolve perfect_square_tactic : wp_integers.
   #[export] Hint Resolve remainder_tactic : wp_integers.
 
@@ -402,7 +403,7 @@ Create HintDb wp_reals.
 
   #[export] Hint Extern 1 (pred R _ _) => simpl; lra : wp_reals.
 
-  #[export] Hint Extern 1 ( @eq R _ _ ) => field : wp_reals.
+  #[export] Hint Extern 2 ( @eq R _ _ ) => field : wp_reals.
 
   #[export] Hint Extern 1 ( Rle _ _ ) => lra : wp_reals.
   #[export] Hint Extern 1 ( Rge _ _ ) => lra : wp_reals.
@@ -480,6 +481,8 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rplus_lt_compat : wp_reals.
   #[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
+  #[export] Hint Resolve mult_neq_zero : wp_reals.
+
   #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
 
   #[export] Hint Resolve plus_Z_in_R : wp_reals.
@@ -490,6 +493,7 @@ Create HintDb wp_reals.
 
   #[export] Hint Resolve plus_frac : wp_reals.
   #[export] Hint Resolve min_frac : wp_reals.
+  #[export] Hint Resolve Rdivid_ineq_interchange : wp_reals.
 
 (** * Real number negation *)
 
