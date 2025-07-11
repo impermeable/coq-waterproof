@@ -32,8 +32,7 @@ Require Import Notations.Sets.
 Require Import Chains.
 Require Import Libs.Negation.
 Require Import Libs.Reals.
-Require Import Libs.Logic.InformativeEpsilon.
-Require Import Libs.Logic.ConstructiveLogic.
+Require Import Libs.Logic.
 Require Import Libs.Sets.
 Require Import Libs.Integers.
 
@@ -369,17 +368,19 @@ Create HintDb wp_integers.
   #[export] Hint Resolve divide_char : wp_integers.
   #[export] Hint Resolve divide_char_inv : wp_integers.
   #[export] Hint Resolve even_tactic : wp_integers.
-  #[export] Hint Extern 1 => eapply odd_tactic : wp_integers.
+  #[export] Hint Resolve odd_tactic : wp_integers.
   #[export] Hint Resolve Zeven_char : wp_integers.
   #[export] Hint Extern 3 => apply Zeven_char_inv; assumption : wp_integers.
   #[export] Hint Resolve Zodd_char : wp_integers.
   #[export] Hint Extern 3 => apply Zodd_char_inv; assumption : wp_integers.
   #[export] Hint Resolve not_even_and_odd : wp_integers.
+  #[export] Hint Resolve square : wp_integers.
   #[export] Hint Resolve perfect_square_tactic : wp_integers.
   #[export] Hint Resolve remainder_tactic : wp_integers.
 
 Create HintDb wp_decidability_integers.
   #[export] Hint Resolve Zeven_odd_dec : wp_decidability_integers.
+
 
 (** * Integer negation *)
 
@@ -521,8 +522,12 @@ Create HintDb wp_intuition.
 
 Create HintDb wp_prop_logic.
 
-  #[export] Hint Extern 1 => eapply proj1; eassumption : wp_logic.
-  #[export] Hint Extern 1 => eapply proj2; eassumption : wp_logic.
-  #[export] Hint Extern 1 => apply conj; assumption : wp_logic.
-  #[export] Hint Extern 1 => apply or_introl; assumption : wp_logic.
-  #[export] Hint Extern 1 => apply or_intror; assumption : wp_logic.
+  #[export] Hint Extern 1 => eapply proj1; eassumption : wp_prop_logic.
+  #[export] Hint Extern 1 => eapply proj2; eassumption : wp_prop_logic.
+  #[export] Hint Extern 1 => apply conj; assumption : wp_prop_logic.
+  #[export] Hint Extern 1 => apply or_introl; assumption : wp_prop_logic.
+  #[export] Hint Extern 1 => apply or_intror; assumption : wp_prop_logic.
+
+Create HintDb wp_first_order_logic.
+
+  #[export] Hint Extern 1 => apply alternative_char_unique_exists : wp_first_order_logic.
