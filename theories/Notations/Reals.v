@@ -74,7 +74,8 @@ Notation "[ a , b ]" := (as_subset R (fun x => (a <= x <= b))): R_scope.
 Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))): R_scope.
 Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))): R_scope.
 Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))): R_scope.
-
+Notation "( a , ∞)" := (as_subset R (fun x => (a < x))): R_scope.
+Notation "[ a , ∞)" := (as_subset R (fun x => (a ≤ x))): R_scope.
 
 Close Scope subset_scope.
 Close Scope nat_scope.

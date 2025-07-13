@@ -1,6 +1,8 @@
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 
+Require Export Libs.Sets.Operations.
+
 Open Scope subset_scope.
 
 Lemma power_set_characterization {U : Type} (X : subset U) (Y : subset U):

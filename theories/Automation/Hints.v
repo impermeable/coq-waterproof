@@ -514,6 +514,16 @@ Create HintDb wp_sets.
   #[export] Hint Extern 1 => apply empty_set_characterization; eassumption : wp_sets.
   #[export] Hint Resolve Extensionality_Ensembles : wp_sets.
 
+  #[export] Hint Resolve Closed : wp_sets.
+  #[export] Hint Resolve Open : wp_sets.
+  #[export] Hint Resolve Closed_Open : wp_sets.
+  #[export] Hint Resolve Open_Closed : wp_sets.
+
+  #[export] Hint Extern 1 => apply intersection_characterization; assumption : wp_sets.
+  #[export] Hint Extern 1 => apply intersection_characterization_left; assumption : wp_sets.
+  #[export] Hint Extern 1 => apply union_characterization; assumption : wp_sets.
+  #[export] Hint Extern 1 => apply union_characterization_left; assumption : wp_sets.
+
 (** * Intuition *)
 
 Create HintDb wp_intuition.

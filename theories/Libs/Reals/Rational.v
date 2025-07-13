@@ -11,6 +11,8 @@ Open Scope subset_scope.
 
 Definition is_rational (q : ℝ) : Prop := ∃n ∈ Z_in_R, ∃m ∈ Z_in_R, 0 ≠ m ∧ q = n/m.
 
+Definition Q_in_R : subset ℝ := fun y => exists x, Q2R(x) = y.
+
 Lemma rational_tactic (q : ℝ) (n m : R) (h : 0 ≠ m ∧ q = n/m) (hn : n ∈ Z_in_R) (hm : m ∈ Z_in_R) 
     : is_rational q.
 Proof.
