@@ -404,7 +404,7 @@ Create HintDb wp_reals.
 
   #[export] Hint Extern 1 (pred R _ _) => simpl; lra : wp_reals.
 
-  #[export] Hint Extern 2 ( @eq R _ _ ) => field : wp_reals.
+  #[export] Hint Extern 1 ( @eq R _ _ ) => field : wp_reals.
 
   #[export] Hint Extern 1 ( Rle _ _ ) => lra : wp_reals.
   #[export] Hint Extern 1 ( Rge _ _ ) => lra : wp_reals.
@@ -500,7 +500,7 @@ Create HintDb wp_reals.
 
 Create HintDb wp_negation_reals.
 
-  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
+  #[export] Hint Extern 3 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
 
 
 (** * Sets *)
