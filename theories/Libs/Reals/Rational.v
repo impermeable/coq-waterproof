@@ -25,16 +25,44 @@ Proof.
     exact h.
 Qed.
 
-Lemma plus_frac (a b c d : ℝ) (hb : b ≠ 0) (hd : d ≠ 0) 
-    : a/b + c/d = (a*d + b*c)/(b*d).
+Lemma plus_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d) 
+    : a/b + c/d = (a*d + c*b)/(b*d).
 Proof.
+    assert (b ≠ 0) as hb2.
+    {
+        intro hb2.
+        rewrite hb2 in hb.
+        apply hb.
+        reflexivity.
+    }
+    assert (d ≠ 0) as hd2.
+    {
+        intro hd2.
+        rewrite hd2 in hd.
+        apply hd.
+        reflexivity.
+    }
     field.
     split; assumption.
 Qed.
 
-Lemma min_frac (a b c d : ℝ) (hb : b ≠ 0) (hd : d ≠ 0) 
-    : a/b - c/d = (a*d - b*c)/(b*d).
+Lemma min_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d) 
+    : a/b - c/d = (a*d - c*b)/(b*d).
 Proof.
+    assert (b ≠ 0) as hb2.
+    {
+        intro hb2.
+        rewrite hb2 in hb.
+        apply hb.
+        reflexivity.
+    }
+    assert (d ≠ 0) as hd2.
+    {
+        intro hd2.
+        rewrite hd2 in hd.
+        apply hd.
+        reflexivity.
+    }
     field.
     split; assumption.
 Qed.
