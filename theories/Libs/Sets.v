@@ -2,6 +2,7 @@ Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 
 Require Export Libs.Sets.Operations.
+Require Export Libs.Sets.IndexedOperations.
 
 Open Scope subset_scope.
 

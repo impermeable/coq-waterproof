@@ -54,3 +54,24 @@ Proof.
     exists 2%Z.
     reflexivity.
 Qed.
+
+Lemma INR_1 : INR(1%nat) = 1.
+Proof.
+    reflexivity.
+Qed.
+
+Lemma INR_0 : INR(0%nat) = 0.
+Proof.
+    reflexivity.
+Qed.
+
+Lemma ge_zero_gt_one (n : nat) : (INR n > 0) -> INR n >= 1.
+Proof.
+    rewrite <-INR_1.
+    rewrite <-INR_0.
+    intro h.
+    apply Rle_ge.
+    apply le_INR.
+    apply INR_lt in h.
+    exact h.
+Qed.

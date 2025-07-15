@@ -490,11 +490,18 @@ Create HintDb wp_reals.
   #[export] Hint Resolve minus_Z_in_R : wp_reals.
   #[export] Hint Resolve mult_Z_in_R : wp_reals.
 
+  #[export] Hint Extern 1 => rewrite INR_0 : wp_reals.
+  #[export] Hint Extern 1 => rewrite INR_1 : wp_reals.
+  #[export] Hint Resolve ge_zero_gt_one : wp_reals.
+  #[export] Hint Extern 1 => apply le_INR : wp_reals.
+
   #[export] Hint Extern 1 => eapply rational_tactic; eauto : wp_reals.
 
   #[export] Hint Resolve plus_frac : wp_reals.
   #[export] Hint Resolve min_frac : wp_reals.
   #[export] Hint Resolve Rdivid_ineq_interchange : wp_reals.
+
+  #[export] Hint Resolve archimedN_tactic : wp_reals.
 
 (** * Real number negation *)
 
@@ -523,6 +530,12 @@ Create HintDb wp_sets.
   #[export] Hint Extern 1 => apply intersection_characterization_left; assumption : wp_sets.
   #[export] Hint Extern 1 => apply union_characterization; assumption : wp_sets.
   #[export] Hint Extern 1 => apply union_characterization_left; assumption : wp_sets.
+
+  #[export] Hint Extern 1 => eapply index_intersection_elim; eassumption : wp_sets.
+  #[export] Hint Extern 2 => eapply index_intersection_elim_left; eassumption : wp_sets.
+
+  #[export] Hint Extern 1 => eapply index_union_elim; eassumption : wp_sets.
+  #[export] Hint Extern 2 => eapply index_union_elim_left; eassumption : wp_sets.
 
 (** * Intuition *)
 
