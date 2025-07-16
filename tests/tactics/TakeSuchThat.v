@@ -38,7 +38,7 @@ Require Import Waterproof.Util.Assertions.
 *)
 Goal forall A B C: Prop, (A /\ B) /\ (B /\ C) -> (A /\ C).
     intros A B C.
-    Fail such that (A /\ B) and (B /\ C).
+    Fail such that A /\ B and B /\ C.
     (*assert_hyp_has_type @ab constr:(A /\ B).
     assert_hyp_has_type @bc constr:(B /\ C).*)
 Abort.
@@ -50,7 +50,7 @@ Abort.
 *)
 Goal forall A B C: Prop, (A /\ B) /\ (B /\ C) -> (A /\ C).
     intros A B C.
-    Fail such that A and B and (B /\ C).
+    Fail such that A, B and B /\ C.
     (*assert_hyp_has_type @a constr:(A).
     assert_hyp_has_type @b constr:(B).
     assert_hyp_has_type @bc constr:(B /\ C).*)
@@ -58,12 +58,12 @@ Abort.
 
 Goal forall n, n = 1 -> n <> 2.
     intros n.
-    such that (n = 1).
+    such that n = 1.
 Abort.
 
 Goal forall x:nat, (x > 1) -> (x > 0).
 Proof.
-    Take x : nat; such that (x > 1) (i).
+    Take x : nat; such that x > 1 as (i).
     assert_hyp_has_type @x constr:(nat).
     assert_hyp_has_type @i constr:(x > 1).
 Abort.

@@ -27,14 +27,14 @@ Require Import Waterproof.Util.Assertions.
 (** First test: test all syntax variants **)
 Lemma one_is_one: 1 = 1.
 Proof.
-  We need to show (1 = 1).
-  We need to show that (1 = 1).
-  We need to show : (1 = 1).
-  We need to show that : (1 = 1).
-  To show (1 = 1).
-  To show that (1 = 1).
-  To show that : (1 = 1).
-  To show : (1 = 1).
+  We need to show 1 = 1.
+  We need to show that 1 = 1.
+  We need to show : 1 = 1.
+  We need to show that : 1 = 1.
+  To show 1 = 1.
+  To show that 1 = 1.
+  To show that : 1 = 1.
+  To show : 1 = 1.
   reflexivity.
 Qed.
 
