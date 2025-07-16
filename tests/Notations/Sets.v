@@ -50,3 +50,15 @@ Abort.
 (* Combine the coercion ... *)
 Goal ∀ x ∈ nat, Rplus x x = x.
 Abort.
+
+(* Set builder and interval notation *)
+Goal {x ∈ ℝ | x^2 ≤ 1} = [-1,1].
+Abort.
+
+(* Half-open intervals*)
+Goal (0, 1] = [1, 2).
+Abort.
+
+(* Symmetric intervals *)
+Goal [0, 1] = (0, 1).
+Abort.
