@@ -225,3 +225,11 @@ Choose n := _.
 * We need to show that (3 = n).
   Fail We conclude that (3 = n).
 Abort.
+
+(** Test 21: This should be able to choose an expression without parens *)
+Goal forall n : nat, exists m : nat, n + 1 = m.
+Proof.
+  intros.
+  Choose m := n + 1.
+  reflexivity.
+Qed.
