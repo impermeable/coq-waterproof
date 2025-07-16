@@ -23,6 +23,49 @@ open Exceptions
 open Waterprove
 
 let waterproof_version : string = "2.2.0+8.17"
+
+(* The code below is a hack to patch in (open_)lconstr into Ltac2 *)
+(* It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 *)
+let add_scope s f =
+  Ltac2_plugin.Tac2entries.register_scope (Names.Id.of_string s) f
+
+let rec pr_scope =
+  let open Ltac2_plugin.Tac2expr in
+  let open CAst in function
+    | SexprStr {v=s; _} -> Pp.qstring s
+    | SexprInt {v=n; _} -> Pp.int n
+    | SexprRec (_, {v=na; _}, args) ->
+      let na = match na with
+        | None -> Pp.str "_"
+        | Some id -> Names.Id.print id
+      in
+      Pp.(na ++ str "(" ++ prlist_with_sep (fun () -> str ", ") pr_scope args ++ str ")")
+
+let scope_fail s args =
+  let open Pp in
+  let args = str "(" ++ prlist_with_sep (fun () -> str ", ") pr_scope args ++ str ")" in
+  CErrors.user_err (str "Invalid arguments " ++ args ++ str " in scope " ++ str s)
+
+let () = add_scope "lconstr" (fun arg ->
+  let delimiters = List.map (function
+      | Ltac2_plugin.Tac2expr.SexprRec (_, { v = Some s; _ }, []) -> s
+      | _ -> scope_fail "lconstr" arg)
+      arg
+  in
+  let act e = Ltac2_plugin.Tac2quote.of_constr ~delimiters e in
+  Ltac2_plugin.Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
+  )
+
+let () = add_scope "open_lconstr" (fun arg ->
+  let delimiters = List.map (function
+      | Ltac2_plugin.Tac2expr.SexprRec (_, { v = Some s; _ }, []) -> s
+      | _ -> scope_fail "open_.constr" arg)
+      arg
+  in
+  let act e = Ltac2_plugin.Tac2quote.of_open_constr ~delimiters e in
+  Ltac2_plugin.Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
+  )
+(* End of hack *)
 }
 
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
@@ -36,6 +79,20 @@ VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
     {
       automation_shield := false
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsEnableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Enable" "Filter" "Errors" ] ->
+    {
+      filter_errors := true
+    }
+END
+
+VERNAC COMMAND EXTEND FilterErrorsDisableSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Disable" "Filter" "Errors" ] ->
+    {
+      filter_errors := false
     }
 END
 
