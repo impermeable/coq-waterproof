@@ -16,24 +16,68 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Util.Init.
-Require Import Util.MessagesToUser.
+From Waterproof Require Import Tactics.
+From Waterproof Require Import Notations.Common.
 
-From Ltac2 Require Import Ltac2 Message.
+Set Default Goal Selector "!".
 
-Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat ls (of_string "").
+Local Parameter A : Prop.
+Local Parameter w : A.
+Set Bullet Behavior "Waterproof Relaxed Subproofs".
 
-(** Ensures that the type of [t] can be used in type matching or asserting. *)
-Ltac2 correct_type_by_wrapping (t: constr): constr :=
-  let type_t := Constr.type t in
-  lazy_match! type_t with
-    | Prop => t
-    | Set => t 
-    | Type => t
-    | bool => constr:(is_true $t)
-    | _ => throw (concat_list [
-      of_string "Expected a term with type in ['Prop', 'Set', 'Type', 'bool'], but got a term of type '";
-      of_constr type_t; 
-      of_string "' instead."]); constr:(tt)
-  end.
+Goal (A ∧ A ∧ A ∧ A).
+Proof.
+repeat split.
+- exact w.
+- exact w.
+- exact w.
+- exact w.
+Qed.
+
+Goal (True ∧ True) ∧ (True ∧ True).
+Proof.
++++ split.
+-- {split.
+  * + -- exact I.
+  * exact I. }
+-- split.
+  -- + -- exact I.
+  -- exact I.
+Qed.
+
+Goal (A ∧ A) ∧ (A ∧ A) ∧ (A ∧ A ∧ A).
+Proof.
+split.
+{ - split.
+    - exact w.
+    - exact w. }
+split.
++ split.
+  Fail exact w.
+  - exact w.
+  * exact w.
++ split.
+  { exact w. }
+  - split.
+    { exact w. }
+    exact w.
+Qed.
+
+Set Bullet Behavior "Waterproof Strict Subproofs".
+Goal (A ∧ A) ∧ (A ∧ A) ∧ (A ∧ A ∧ A).
+Proof.
+split.
+{ - split.
+    + exact w.
+    + exact w. }
+split.
++ split.
+  Fail exact w.
+  - exact w.
+  - exact w.
++ split.
+  { exact w. }
+  * split.
+    { exact w. }
+    exact w.
+Qed.

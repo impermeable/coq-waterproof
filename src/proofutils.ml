@@ -139,7 +139,7 @@ let tclLOG (pp: Environ.env -> Evd.evar_map -> Pp.t * Pp.t) (tac: trace tactic) 
         tclEVARMAP >>= fun sigma ->
         let (hint, src) = pp env sigma in
         let trace = begin match exn with
-          | SearchBound trace ->  trace 
+          | SearchBound trace ->  trace
           | _ -> no_trace
         end in tclZERO ~info (SearchBound (merge_traces trace @@ singleton_trace false hint src))
     )
@@ -165,7 +165,7 @@ let trace_check_used (must_use: t list) (trace: trace): trace tactic =
 *)
 let tclOrElse0 (tac: trace tactic) (f: trace -> trace tactic): trace tactic =
   TraceTactics.typedIndependant @@
-  tclORELSE tac 
+  tclORELSE tac
     begin fun (e, info) -> match e with
       | SearchBound trace -> f trace
       | _ -> f no_trace
@@ -178,12 +178,12 @@ let tclTraceOrElse (tac1: trace tactic) (tac2: trace tactic): trace tactic =
   tclOrElse0 tac1 @@ fun trace1 -> tac2 >>= fun trace2 -> tclUNIT @@ merge_traces (failed trace1) trace2
 
 (**
-  Rewrite of {! Tacticals.tclTraceFirst} with [trace tactic] with a merge of traces of failed tactics 
+  Rewrite of {! Tacticals.tclTraceFirst} with [trace tactic] with a merge of traces of failed tactics
 *)
-let tclTraceFirst (tacs: trace tactic list): trace tactic = 
+let tclTraceFirst (tacs: trace tactic list): trace tactic =
   let rec aux (tacs: trace tactic list) (failed_trace: trace): trace tactic = match tacs with
     | [] -> let info = Exninfo.reify () in tclZERO ~info (SearchBound failed_trace)
-    | tac::rest -> 
+    | tac::rest ->
       tclOrElse0 tac @@ fun trace1 ->
         aux rest { failed_trace with trace = List.append (failed trace1).trace failed_trace.trace  }
   in aux tacs no_trace
@@ -191,7 +191,7 @@ let tclTraceFirst (tacs: trace tactic list): trace tactic =
 (**
   Rewrite of Coq's hint printer to keep only the necessary parts
 *)
-let pr_hint (env: Environ.env) (sigma: Evd.evar_map) (h: FullHint.t) = 
+let pr_hint (env: Environ.env) (sigma: Evd.evar_map) (h: FullHint.t) =
   let pr_hint_elt env sigma h = Printer.pr_econstr_env env sigma (snd @@ hint_as_term h) in
   match FullHint.repr h with
     | Res_pf c -> pr_hint_elt env sigma c

@@ -30,7 +30,7 @@ jobs:
         uses: coq-community/docker-coq-action@v1
         with:
           opam_file: 'coq-waterproof.opam'
-          custom_image: 'coqorg/coq:dev-ocaml-4.14.2-flambda'
+          custom_image: 'rocq/rocq-prover:dev-ocaml-4.14.2-flambda'
           before_script: |
             startGroup "Install dependencies"
               sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev

@@ -121,7 +121,7 @@ Ltac2 either_or (t1:constr) (t2:constr) :=
     then either_or_prop t1 t2
     else either_or_type t1 t2.
 
-Ltac2 Notation "Either" t1(constr) "or" t2(constr) :=
+Ltac2 Notation "Either" t1(lconstr) "or" t2(lconstr) := 
   panic_if_goal_wrapped ();
   either_or t1 t2.
 
@@ -288,6 +288,6 @@ Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
       else either_or_or_type t1 t2 t3
   end.
 
-Ltac2 Notation "Either" t1(constr) "," t2(constr) "or" t3(constr) :=
+Ltac2 Notation "Either" t1(lconstr) "," t2(lconstr) "or" t3(lconstr) := 
   panic_if_goal_wrapped ();
   either_or_or t1 t2 t3.

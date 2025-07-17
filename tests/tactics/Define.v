@@ -39,3 +39,9 @@ Goal (0 = 0) -> forall n : nat, ((n = n) \/ (n + 1 = n + 1)).
     Fail Define h := n.
     Define m := n.
 Abort.
+
+(** Test 2: Complex expression without parens *)
+Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
+    intro n.
+    Define m := n + 1.
+Abort.
