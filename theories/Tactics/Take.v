@@ -48,7 +48,22 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
     of_string " instead of "; of_constr t; of_string "."].
 
 Local Ltac2 expected_different_condition_message (e : constr) (expected : constr) :=
-  concat_list [of_string "The condition " ; of_constr e; of_string " does not correspond to the expected condition "; of_constr expected].
+  let simplified_e := (eval cbn in $e) in
+  concat_list [of_string "The provided condition " ; of_constr simplified_e;
+  of_string " does not correspond to the expected condition in the for-all statement"; of_constr expected].
+
+Local Ltac2 expected_el_message (e : constr) (z : ident) (expected_rhs : constr) :=
+  let simplified_e := (eval cbn in $e) in
+  concat_list [of_string "The provided condition " ;
+  of_ident z; of_string " ∈ "; of_constr expected_rhs;
+  of_string " does not correspond to the expected ";
+  of_string "condition in the for-all statement "; of_constr simplified_e ].
+
+Local Ltac2 expected_col_not_el_message (z : ident) (provided_rhs : constr)
+  (expected_rhs : constr) :=
+  concat_list [of_string "The provided condition " ; of_ident z; of_string " ∈ ";
+  of_constr provided_rhs; of_string " does not correspond to the expected condition in the for-all statement ";
+  of_ident z; of_string " : "; of_constr expected_rhs ].
 
 Ltac2 Type TakeKind :=
   [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe | TakeNone ].
@@ -104,7 +119,7 @@ Local Ltac2 intro_with_assum (id : ident) (rhs : constr) (tk : TakeKind) :=
   let id_c := Control.hyp id in
   let pred := pred_from_take_kind rhs tk in
   lazy_match! (Control.goal ()) with
-  | (?cond -> _) => (* FIXME: this check should be more strict *)
+  | (?cond -> _) =>
     if check_constr_equal constr:($pred $id_c) cond then
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
       intro $w;
@@ -143,7 +158,8 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
   | _ => throw (could_not_introduce_no_forall_message id)
   end;
   match tk with
-  | TakeCol =>
+  | (* User uses Take ... : ... notation *)
+    TakeCol =>
     let type := rhs in
     lazy_match! (Control.goal ()) with
       | (forall _ : ?u, _) =>
@@ -153,7 +169,10 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
         else throw (too_many_of_type_message type)
       | _ => throw (could_not_introduce_no_forall_message id)
       end
-  | TakeEl =>
+  | (* User uses Take ... ∈ ... notation. This requires separate
+       treatment due to the difficulties with coercions with the
+       sets on the right-hand side. *)
+    TakeEl =>
     let type := rhs in
     intro $id;
     unfold subset_type in $id;
@@ -179,9 +198,13 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
       else
         throw (expected_different_condition_message constr:($v ∈ $set_in_cond)
           constr:($id_c ∈ $rhs))
-    | _ => throw (expected_implication_message id)
+    | (?v -> _) =>
+        throw (expected_el_message constr:($v) id rhs)
+    | _ =>
+      throw (expected_col_not_el_message id rhs (Constr.type id_c))
     end
-  | _ => intro_with_assum id rhs tk
+  | (* User uses one of the other notations: separate function *)
+    _ => intro_with_assum id rhs tk
   end.
 
 (**

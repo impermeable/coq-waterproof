@@ -131,46 +131,6 @@ dune build -p coq-waterproof @runtest
 
 If you use VSCode, we recommend installing the [OCaml Platform](https://marketplace.visualstudio.com/items?itemName=ocamllabs.ocaml-platform) and [Coq LSP](https://marketplace.visualstudio.com/items?itemName=ejgallego.coq-lsp) plugins.
 
-## Building with make
-
-In principle, we use **dune** to build `coq-waterproof`, but we try to
-still support building with **make** as well. Before creating a PR, it is
-recommended to check that this really works (although the CI will check for this as well). For this, both `_CoqProjectForMake`
-and `waterproof.mlpack` need to be in order, i.e. they need to contain
-the correct files, and in particular `waterproof.mlpack` needs the files
-to be in the right order.
-
-TODO: include a test that checks that all .v, .ml files are actually included in the
-`_CoqProjectForMake` file.
-
-To then compile and install, run from the project's root directory:
-```
-make
-make install
-```
-
-## Building with make (legacy method)
-
-In previous versions of coq-waterproof, before running make, one needed to run,
-from the project's root directory,
-
-```
-autoreconf -i -s
-./configure
-```
-after which one could run
-```
-make
-make install
-```
-
-One needs to have the `autoconf` ocaml libary installed. One can install this with
-```
-sudo apt-get update
-sudo apt-get install autoconf
-```
-or equivalent for non-Debian/Ubuntu based environments
-
 ## Making Ocaml functions available from Ltac2: Using the foreign function interface (ffi)
 
 One can make Ocaml functions available for use in Ltac2 by using the
