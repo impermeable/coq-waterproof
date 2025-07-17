@@ -287,7 +287,6 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
   Generates the {! wp_auto} function
 *)
 let gen_wp_auto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
-  wrap_hint_warning @@
   TraceTactics.typedGoalEnter begin fun gl ->
     let db_list =
       match dbnames with
