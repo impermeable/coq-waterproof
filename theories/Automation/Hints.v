@@ -370,6 +370,8 @@ Create HintDb wp_integers.
   #[export] Hint Resolve even_tactic : wp_integers.
   #[export] Hint Resolve odd_tactic : wp_integers.
   #[export] Hint Resolve Zeven_char : wp_integers.
+  #[export] Hint Resolve Zeven_not_Zodd : wp_integers.
+  #[export] Hint Resolve Zodd_not_Zeven : wp_integers.
   #[export] Hint Extern 3 => apply Zeven_char_inv; assumption : wp_integers.
   #[export] Hint Resolve Zodd_char : wp_integers.
   #[export] Hint Extern 3 => apply Zodd_char_inv; assumption : wp_integers.
