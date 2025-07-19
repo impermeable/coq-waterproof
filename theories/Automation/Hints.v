@@ -505,11 +505,19 @@ Create HintDb wp_reals.
 
   #[export] Hint Resolve archimedN_tactic : wp_reals.
 
+  #[export] Hint Resolve sqrt_lt_R0 : wp_reals.
+  #[export] Hint Resolve Rsqr_sqrt : wp_reals. 
+  #[export] Hint Resolve Rlt_le : wp_reals. 
+  #[export] Hint Resolve Rsqr_plus_minus : wp_reals.
+  #[export] Hint Resolve Rsqr_neg : wp_reals.
+
 (** * Real number negation *)
 
 Create HintDb wp_negation_reals.
 
-  #[export] Hint Extern 3 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
+#[export] Hint Extern 3 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
+(* Stricly speaking not about negation, but is needed in the shorten database*)
+#[export] Hint Resolve Rmult_integral : wp_negation_reals. 
 
 
 (** * Sets *)
