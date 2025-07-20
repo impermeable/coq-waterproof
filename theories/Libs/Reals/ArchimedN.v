@@ -51,3 +51,5 @@ Proof.
     unfold subset_in; unfold conv; trivial.
     exact hm.
 Qed.
+
+Notation "'the' 'Archimedean' 'property'" := archimedN_tactic (at level 30).
