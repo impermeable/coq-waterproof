@@ -22,11 +22,6 @@
 val automation_shield : bool ref
 
 (**
-  Is one step automation enabled ? 
-*)
-val one_step_automation : bool ref
-
-(**
   Do we want to debug the automation ?   
 *)
 val automation_debug : bool ref
