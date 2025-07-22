@@ -11,7 +11,7 @@ Definition square (n : Z) := n * n.
 
 Definition is_square (n : ℤ) := ∃m ∈ ℤ, m * m = n.
 
-Lemma perfect_square_tactic (n m : ℤ) (hp : n * n = m) : is_square m.
+Lemma perfect_square_of (n m : ℤ) (hp : n * n = m) : is_square m.
 Proof.
     exists n.
     split; [unfold subset_in; unfold conv; trivial |].

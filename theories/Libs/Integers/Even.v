@@ -43,7 +43,7 @@ Proof.
     exact h.
 Qed.
 
-Lemma even_tactic (n m : ℤ) (hp : 2*n = m) : Zeven m.
+Lemma even_of (n m : ℤ) (hp : 2*n = m) : Zeven m.
 Proof.
     rewrite Zeven_ex_iff.
     exists n.
@@ -51,7 +51,7 @@ Proof.
     exact hp.
 Qed.
 
-Lemma odd_tactic (n m : ℤ) (hp : 2*n + 1 = m) : Zodd m.
+Lemma odd_of (n m : ℤ) (hp : 2*n + 1 = m) : Zodd m.
 Proof.
     rewrite Zodd_ex_iff.
     exists n.

@@ -43,7 +43,7 @@ Proof.
     }
 Qed.
 
-Lemma archimedN_tactic (r : R) : ∃n ∈ nat, INR n > r.
+Lemma archimedN_exists (r : R) : ∃n ∈ nat, INR n > r.
 Proof.
     destruct (archimedN r) as [m hm].
     exists m.
@@ -52,4 +52,4 @@ Proof.
     exact hm.
 Qed.
 
-Notation "'the' 'Archimedean' 'property'" := archimedN_tactic (at level 30).
+Notation "'the' 'Archimedean' 'property'" := archimedN_exists (at level 30).

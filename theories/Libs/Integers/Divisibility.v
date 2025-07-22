@@ -24,7 +24,7 @@ Qed.
 
 Definition remainder (n q r : ℤ) : Prop := ∃m ∈ ℤ, n = q * m + r.
 
-Lemma remainder_tactic (n q r m : ℤ) (h : n = q * m + r) : remainder n q r.
+Lemma remainder_of (n q r m : ℤ) (h : n = q * m + r) : remainder n q r.
 Proof.
     exists m.
     split.

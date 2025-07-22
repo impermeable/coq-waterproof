@@ -59,14 +59,14 @@ Qed.
 (* Test 3: Testing remainder definition with concrete values *)
 Lemma test_remainder_17_5_2 : remainder 17 5 2.
 Proof.
-    apply (remainder_tactic 17 5 2 3).
+    apply (remainder_of 17 5 2 3).
     reflexivity.
 Qed.
 
 (* Test 4: Another remainder example *)
 Lemma test_remainder_23_7_2 : remainder 23 7 2.
 Proof.
-    apply (remainder_tactic 23 7 2 3).
+    apply (remainder_of 23 7 2 3).
     reflexivity.
 Qed.
 
@@ -112,7 +112,7 @@ Qed.
 (* Test 9: Remainder with unit divisor *)
 Lemma test_remainder_unit : remainder 5 1 0.
 Proof.
-    apply (remainder_tactic 5 1 0 5).
+    apply (remainder_of 5 1 0 5).
     reflexivity.
 Qed.
 
@@ -128,7 +128,7 @@ Qed.
 (* Test 11: Remainder with negative quotient *)
 Lemma test_negative_remainder : remainder (-13) 5 2.
 Proof.
-    apply (remainder_tactic (-13) 5 2 (-3)).
+    apply (remainder_of (-13) 5 2 (-3)).
     reflexivity.
 Qed.
 

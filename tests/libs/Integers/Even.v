@@ -63,17 +63,17 @@ Proof.
     We conclude that (11 = 2*m+1).
 Qed.
 
-(* Test 6: Testing even_tactic *)
-Lemma test_even_tactic : Zeven 14.
+(* Test 6: Testing even_of *)
+Lemma test_even_of : Zeven 14.
 Proof.
-    apply (even_tactic 7 14).
+    apply (even_of 7 14).
     reflexivity.
 Qed.
 
-(* Test 7: Testing odd_tactic *)
-Lemma test_odd_tactic : Zodd 15.
+(* Test 7: Testing odd_of *)
+Lemma test_odd_of : Zodd 15.
 Proof.
-    apply (odd_tactic 7 15).
+    apply (odd_of 7 15).
     reflexivity.
 Qed.
 
@@ -153,14 +153,14 @@ Qed.
 (* Test 17: Large even number test *)
 Lemma test_large_even : Zeven 1000.
 Proof.
-    apply (even_tactic 500 1000).
+    apply (even_of 500 1000).
     reflexivity.
 Qed.
 
 (* Test 18: Large odd number test *)
 Lemma test_large_odd : Zodd 1001.
 Proof.
-    apply (odd_tactic 500 1001).
+    apply (odd_of 500 1001).
     reflexivity.
 Qed.
 
