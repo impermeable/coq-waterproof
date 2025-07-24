@@ -119,9 +119,13 @@ dune build -p coq-waterproof
 
 ## Running external tests
 
-If one has symlink to a folder called `waterproof-exercises` 
-in the project root (i.e. in `coq-waterproof`), one can test coq-waterproof against all the files
-(typically exercise sheets) in `waterproof-exercises` by executing
+The `test-exercises` folder exists to facilitate external tests.
+Any `.mv` files located there, that do not end in `.notest.mv`,
+will be ran and any errors will be reported.
+
+The recommended way to use this is to symlink folders or files you want
+to be tested to any name in the `test-exercises` folder.
+
 
 ```
 dune build -p coq-waterproof @runtest
