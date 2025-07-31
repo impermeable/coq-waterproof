@@ -29,3 +29,9 @@ Proof.
     intros hempty hx.
     exact (hempty x hx).
 Qed.
+
+Lemma not_in_empty {U : Type} (x : U) : x ∉ (∅ : subset U).
+Proof.
+intro h.
+elim h.
+Qed.
