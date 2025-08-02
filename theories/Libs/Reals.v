@@ -91,6 +91,16 @@ Proof.
   apply H.
 Qed.
 
+Lemma div_non_zero : forall a b : R, a ≠ 0 -> b ≠ 0 -> a / b ≠ 0.
+Proof.
+  intros a b Ha Hb.
+  unfold Rdiv.
+  apply Rmult_integral_contrapositive_currified.
+  - exact Ha.
+  - apply Rinv_neq_0_compat.
+    exact Hb.
+Qed.
+
 Lemma Rabs_zero : forall r : R, Rabs (r - 0) = Rabs r.
 Proof.
   intros.

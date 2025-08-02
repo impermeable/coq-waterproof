@@ -27,7 +27,7 @@ if __name__ == "__main__":
     if not os.path.isdir(FOLDER):
         raise Exception(f"Could not find the folder {FOLDER}")
     for filename in glob.iglob('**/*.mv', recursive=True, root_dir=FOLDER):
-        if filename.endswith('.notest.mv'):
+        if filename.endswith('notest.mv'):
             print(f"Skipping {filename} as it is a notest file")
             continue
         print(filename)

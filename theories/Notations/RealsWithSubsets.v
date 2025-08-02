@@ -15,8 +15,6 @@ Open Scope R_scope.
 Open Scope subset_scope.
 Open Scope R2_scope.
 
-Definition is_rational (q : ℝ) : Prop := ∃n ∈ ℤ, ∃m ∈ ℤ, 0 ≠ m ∧ q = n/m.
-
 Notation "q 'is' 'rational'" := (is_rational q) (at level 70) : R2_scope.
 
 Notation "q 'is' 'irrational'" := (¬(q is rational)) (at level 70) : R2_scope.
