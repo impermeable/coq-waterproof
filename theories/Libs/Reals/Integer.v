@@ -37,6 +37,15 @@ Proof.
     reflexivity.
 Qed.
 
+Lemma neg_Z_in_R (n : R) : n ∈ Z_in_R ⇒ (-n) ∈ Z_in_R.
+Proof.
+    intros [n' hn'].
+    exists (-n')%Z.
+    rewrite opp_IZR.
+    rewrite hn'.
+    reflexivity.
+Qed.
+
 Lemma zero_Z_in_R : 0 ∈ Z_in_R.
 Proof.
     exists 0%Z.

@@ -491,13 +491,21 @@ Create HintDb wp_reals.
   #[export] Hint Resolve plus_Z_in_R : wp_reals.
   #[export] Hint Resolve minus_Z_in_R : wp_reals.
   #[export] Hint Resolve mult_Z_in_R : wp_reals.
+  #[export] Hint Resolve neg_Z_in_R : wp_reals.
 
   #[export] Hint Extern 1 => rewrite INR_0 : wp_reals.
   #[export] Hint Extern 1 => rewrite INR_1 : wp_reals.
   #[export] Hint Resolve ge_zero_gt_one : wp_reals.
   #[export] Hint Extern 1 => apply le_INR : wp_reals.
 
-  #[export] Hint Extern 1 => eapply rational_of; eauto : wp_reals.
+  #[export] Hint Extern 1 => eapply rational_of : wp_reals.
+
+  #[export] Hint Resolve int_is_rational : wp_reals.
+  #[export] Hint Resolve sum_is_rational : wp_reals.
+  #[export] Hint Resolve diff_is_rational : wp_reals.
+  #[export] Hint Resolve mult_is_rational : wp_reals.
+  #[export] Hint Resolve div_is_rational : wp_reals.
+  #[export] Hint Resolve neg_is_rational : wp_reals.
 
   #[export] Hint Resolve plus_frac : wp_reals.
   #[export] Hint Resolve min_frac : wp_reals.
