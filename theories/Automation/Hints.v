@@ -493,6 +493,9 @@ Create HintDb wp_reals.
   #[export] Hint Resolve minus_Z_in_R : wp_reals.
   #[export] Hint Resolve mult_Z_in_R : wp_reals.
   #[export] Hint Resolve neg_Z_in_R : wp_reals.
+  #[export] Hint Resolve zero_Z_in_R : wp_reals.
+  #[export] Hint Resolve one_Z_in_R : wp_reals.
+  #[export] Hint Resolve two_Z_in_R : wp_reals.
 
   #[export] Hint Extern 1 => rewrite INR_0 : wp_reals.
   #[export] Hint Extern 1 => rewrite INR_1 : wp_reals.
