@@ -73,9 +73,15 @@ Ltac2 warn (msg : message) :=
 Ltac2 get_feedback_log (lvl : FeedbackLevel) :=
   get_feedback_log_external (feedback_lvl_to_ffi lvl).
 
-Ltac2 print (msg : message) := inform msg; notice msg.
+Ltac2 info_notice (msg : message) := inform msg; notice msg.
   (* We send both here because with the right settings in coq-waterproof,
      they show up in different places in the editor. *)
+
+Ltac2 insert_msg (msg : message) := 
+  info_notice (Message.concat (Message.of_string "Hint, insert: ") msg).
+
+Ltac2 replace_msg (msg : message) := 
+  info_notice (Message.concat (Message.of_string "Hint, replace with: ") msg).
 
 (* Note, there could arise a use case for sending an error on the feedback channel without
   actually raising an error, but it could also be confusing. For now, errors are therefore

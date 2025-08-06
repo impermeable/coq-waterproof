@@ -219,16 +219,16 @@ Ltac2 print_hints () :=
 
   (* If advice is given in proof window, suggest to follow that, nothing else. *)
   if (need_to_follow_advice ())
-    then (print (of_string "Follow the advice in the goal window."))
+    then (info_notice (of_string "Follow the advice in the goal window."))
 
     else
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
-      | Val _           => print (goal_directly ())
+      | Val _           => info_notice (goal_directly ())
       | Err exn         =>
 
         (* Suggest hint to solve goal *)
-        print (goal_hint ());
+        info_notice (goal_hint ());
 
         (* Collect forall- and exists-statements *)
         let hyps := List.map (fun (i, x, t) => t) (Control.hyps ()) in
@@ -239,20 +239,20 @@ Ltac2 print_hints () :=
         if (is_empty forall_hyps)
           then ()
           else (
-            print(of_string "To use one of the ‘for all’-statements (∀)");
-            List.fold_left (fun _ h => print (concat (of_string "    ") (of_constr h))) forall_hyps ();
-            print(of_string "use");
-            print(of_string "    Use ... := (...) in (...).")
+            info_notice(of_string "To use one of the ‘for all’-statements (∀)");
+            List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps ();
+            info_notice(of_string "use");
+            info_notice(of_string "    Use ... := (...) in (...).")
           );
 
         (* Print how to use exists statements. *)
         if (is_empty exists_hyps)
           then ()
           else (
-            print(of_string "To use one of the ‘there exists’-statements (∃)");
-            List.fold_left (fun _ h => print (concat (of_string "    ") (of_constr h))) exists_hyps ();
-            print(of_string "use");
-            print(of_string "    Obtain ... according to (...).")
+            info_notice(of_string "To use one of the ‘there exists’-statements (∃)");
+            List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps ();
+            info_notice(of_string "use");
+            info_notice(of_string "    Obtain ... according to (...).")
           )
       end.
 
@@ -280,14 +280,14 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
     end
   in
   let print_forall_msg () :=
-    print (concat_list [
+    info_notice (concat_list [
         of_string "To use "; of_constr x; of_string ", use"]);
-      print (concat_list [
+      info_notice (concat_list [
         of_string "    Use ... := (...) in ("; msg_label; of_string ")."]) in
   let print_exists_msg () :=
-    print (concat_list [
+    info_notice (concat_list [
         of_string "To use "; of_constr x; of_string ", use"]);
-      print (of_string "    Obtain such a ... .") in
+      info_notice (of_string "    Obtain such a ... .") in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
@@ -321,14 +321,14 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
     end
   in
   let print_forall_msg () :=
-    print (concat_list [
+    info_notice (concat_list [
         of_string "After proving "; of_constr x; of_string ", use it with"]);
-      print (concat_list [
+      info_notice (concat_list [
         of_string "    Use ... := (...) in ("; msg_label; of_string ")."]) in
   let print_exists_msg () :=
-    print (concat_list [
+    info_notice (concat_list [
         of_string "After proving "; of_constr x; of_string ", use it with"]);
-      print (of_string "    Obtain such a ... .") in
+      info_notice (of_string "    Obtain such a ... .") in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
