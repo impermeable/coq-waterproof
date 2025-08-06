@@ -218,7 +218,7 @@ Ltac2 print_hints () :=
         if (is_empty forall_hyps)
           then ()
           else (
-            info_notice(of_string "To use one of the ‘for all’-statements (∀)");
+            info_notice(of_string "You can use one of the ‘for all’-statements (∀):");
             List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps ();
             replace_msg "Use ... := ... in ...." "Use ${0:x} := ${1:0} in (0 = 0).${2}"
           );
@@ -227,7 +227,7 @@ Ltac2 print_hints () :=
         if (is_empty exists_hyps)
           then ()
           else (
-            info_notice(of_string "To use one of the ‘there exists’-statements (∃)");
+            info_notice(of_string "You can use one of the ‘there exists’-statements (∃):");
             List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps ();
             replace_msg "Obtain ... according to ...." "Obtain ${0:0 = 0} according to ${1:0 = 0}.${2}"
           );
