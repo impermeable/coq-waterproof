@@ -106,8 +106,8 @@ Goal False.
 Proof.
   assert_feedback_with_strings
   (fun () => It holds that (∀ n ∈ nat, n = n)) Info
-["To use (∀ n ∈ nat, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ∈ nat, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 8: It holds that, label. *)
@@ -115,8 +115,8 @@ Goal False.
 Proof.
   assert_feedback_with_strings
   (fun () => It holds that ∀ n > 2, n = n as (i)) Info
-["To use (∀ n > 2, n = n), use";
-"    Use ... := (...) in (i)."].
+["To use (∀ n > 2, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 9: By ... it holds that, no label. *)
@@ -134,8 +134,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Since (True) it holds that (∀ n ≥ 4, n = n))
   Info
-["To use (∀ n ≥ 4, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ≥ 4, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 
@@ -147,8 +147,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Assume that (∀ n ∈ nat, n = n))
   Info
-["To use (∀ n ∈ nat, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ∈ nat, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 12: Assume that, label. *)
@@ -157,8 +157,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Assume that ∀ n > 3, n = n as (i))
   Info
-["To use (∀ n > 3, n = n), use";
-"    Use ... := (...) in (i)."].
+["To use (∀ n > 3, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 13: Assume negation. *)
@@ -167,8 +167,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Assume that ∀ n ≥ 4, n = n)
   Info
-["To use (∀ n ≥ 4, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ≥ 4, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 
@@ -180,8 +180,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n))
   Info
-["After proving (∀ n, n = n), use it with";
-"    Use ... := (...) in (...)."].
+["After proving (∀ n, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 15: Assume that, label. *)
@@ -190,8 +190,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n) as (i))
   Info
-["After proving (∀ n, n = n), use it with";
-"    Use ... := (...) in (i)."].
+["After proving (∀ n, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 Waterproof Disable Hypothesis Help.

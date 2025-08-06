@@ -266,27 +266,30 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   in
   let print_forall_msg () :=
     info_notice (concat_list [
-        of_string "To use "; of_constr x; of_string ", use"]);
-      info_notice (concat_list [
-        of_string "    Use ... := (...) in ("; msg_label; of_string ")."]) in
+        of_string "To use "; of_constr x; of_string ", consider:"]);
+      let template := match label with
+        | None => "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"
+        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
+      end in
+      insert_msg "Use ... := ... in ...." template in
   let print_exists_msg () :=
     info_notice (concat_list [
-        of_string "To use "; of_constr x; of_string ", use"]);
-      info_notice (of_string "    Obtain such a ... .") in
+        of_string "To use "; of_constr x; of_string ", consider:"]);
+      insert_msg "Obtain ... according to ...." "Obtain ${0:such a 0 = 0} according to ${1:0 = 0}.${2}" in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _ , _ => print_forall_msg ()
-  (* | ∀ _ > _ , _ => print_forall_msg ()
+  | ∀ _ > _ , _ => print_forall_msg ()
   | ∀ _ ≥ _, _ => print_forall_msg ()
   | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()*)
+  | ∀ _ ≤ _, _ => print_forall_msg ()
   | exists _, _ => print_exists_msg ()
   | ∃ _ _, _ => print_exists_msg ()
-  (* | ∃ _ > _, _ => print_exists_msg ()
+  | ∃ _ > _, _ => print_exists_msg ()
   | ∃ _ ≥ _, _ => print_exists_msg ()
   | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()*)
+  | ∀ _ ≤ _, _ => print_forall_msg ()
   | _ => ()
   end.
 
@@ -295,7 +298,6 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
 
   (for use in 'We claim that ...'-tactic.)
 *)
-(** TODO: Figure out if these are used? **)
 Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   if Bool.neg (get_print_hypothesis_flag ()) then ()
   else
@@ -307,23 +309,26 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   in
   let print_forall_msg () :=
     info_notice (concat_list [
-        of_string "After proving "; of_constr x; of_string ", use it with"]);
-      info_notice (concat_list [
-        of_string "    Use ... := (...) in ("; msg_label; of_string ")."]) in
+        of_string "After proving "; of_constr x; of_string ", consider:"]);
+      let template := match label with
+        | None => "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"
+        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
+      end in
+      insert_msg "Use ... := ... in ...." template in
   let print_exists_msg () :=
     info_notice (concat_list [
-        of_string "After proving "; of_constr x; of_string ", use it with"]);
-      info_notice (of_string "    Obtain such a ... .") in
+        of_string "After proving "; of_constr x; of_string ", consider:"]);
+      insert_msg "Obtain such a ...." "Obtain such a ${0:x}.${1}" in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _, _ => print_forall_msg ()
-  (* | ∀ _ > _, _ => print_forall_msg ()
-  | ∀ _ ≥ _, _ => print_forall_msg ()*)
+  | ∀ _ > _, _ => print_forall_msg ()
+  | ∀ _ ≥ _, _ => print_forall_msg ()
   | exists _, _ => print_exists_msg ()
   | ∃ _ _, _ => print_exists_msg ()
-  (* | ∃ _ > _, _ => print_exists_msg ()
-  | ∃ _ ≥ _, _ => print_exists_msg ()*)
+  | ∃ _ > _, _ => print_exists_msg ()
+  | ∃ _ ≥ _, _ => print_exists_msg ()
   | _ => ()
   end.
 
