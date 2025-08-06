@@ -1,21 +1,3 @@
-(******************************************************************************)
-(*                  This file is part of Waterproof-lib.                      *)
-(*                                                                            *)
-(*   Waterproof-lib is free software: you can redistribute it and/or modify   *)
-(*    it under the terms of the GNU General Public License as published by    *)
-(*     the Free Software Foundation, either version 3 of the License, or      *)
-(*                    (at your option) any later version.                     *)
-(*                                                                            *)
-(*     Waterproof-lib is distributed in the hope that it will be useful,      *)
-(*      but WITHOUT ANY WARRANTY; without even the implied warranty of        *)
-(*       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         *)
-(*               GNU General Public License for more details.                 *)
-(*                                                                            *)
-(*     You should have received a copy of the GNU General Public License      *)
-(*   along with Waterproof-lib. If not, see <https://www.gnu.org/licenses/>.  *)
-(*                                                                            *)
-(******************************************************************************)
-
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Option.
 
@@ -46,59 +28,51 @@ Abort.
 
 (** Test 2 : Suggest to solve directly if goal can be shown automatically. *)
 Goal True.
-  assert_feedback_with_string (fun () => Help) Info
-"The goal can be shown immediately, use
-    We conclude that (...).".
+  assert_feedback_with_strings (fun () => Help) Info
+["The goal can be shown immediately.";
+"Hint, replace with: We conclude that ...."].
 Abort.
 
 (** Test 3 : Only suggest to solve directly if goal can be shown automatically. *)
 Goal (forall n : nat, n = n) -> True.
   intros.
-  assert_feedback_with_string (fun () => Help) Info
-"The goal can be shown immediately, use
-    We conclude that (...).".
+  assert_feedback_with_strings (fun () => Help) Info
+["The goal can be shown immediately.";
+"Hint, replace with: We conclude that ...."].
 Abort.
 
 (** Test 4 : Report \forall hypotheses if available. *)
 Goal (∀ n ∈ nat, n = n) -> (∀ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
-["No direct hint available.
-Does the goal contain a definition that can be expanded?";
+[
 "To use one of the ‘for all’-statements (∀)";
 "    (∀ n ∈ nat, n = n)";
 "    (∀ m ∈ nat, m + 1 = m + 1)";
-"use";
-"    Use ... := (...) in (...)."].
+"Hint, replace with: Use ... := ... in ...."].
 Abort.
 
 (** Test 5 : Report \exists hypotheses if available. *)
 Goal (∃ n ∈ nat, n = n) -> (∃ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
-["No direct hint available.
-Does the goal contain a definition that can be expanded?";
+[
 "To use one of the ‘there exists’-statements (∃)";
 "    (∃ n ∈ nat, n = n)";
 "    (∃ m ∈ nat, m + 1 = m + 1)";
-"use";
-"    Obtain ... according to (...)."].
+"Hint, replace with: Obtain ... according to ...."].
 Abort.
 
 (** Test 6 : Report \forall and \exists hypotheses if available. *)
 Goal (∀ n ∈ nat, n = n) -> (∃ m ∈ nat, m = 0) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
-["No direct hint available.
-Does the goal contain a definition that can be expanded?";
-"To use one of the ‘for all’-statements (∀)";
+["To use one of the ‘for all’-statements (∀)";
 "    (∀ n ∈ nat, n = n)";
-"use";
-"    Use ... := (...) in (...).";
+"Hint, replace with: Use ... := ... in ....";
 "To use one of the ‘there exists’-statements (∃)";
 "    (∃ m ∈ nat, m = 0)";
-"use";
-"    Obtain ... according to (...)."].
+"Hint, replace with: Obtain ... according to ...."].
 Abort.
 
 
@@ -216,18 +190,16 @@ Abort.
 Goal ∀ x ∈ nat, x = 0.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable in nat, use
-    Take ... ∈ (...)."].
+["The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable in nat.";
+ "Hint, replace with: Take ... ∈ ...."].
 Abort.
 
 (** Test 18: Help on a there-exists goal *)
 Goal ∃ x > 3, x = 0.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable strictly larger than 3, use
-    Choose ... := (...)."].
+["The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly larger than 3.";
+ "Hint, replace with: Choose ... := ...."].
 Abort.
 
 (** Test 19: Help on an assumption *)
@@ -235,10 +207,8 @@ Goal ∀ x > 3, x < 2 -> x > 6.
 Proof.
 intros x Hx.
 assert_feedback_with_strings (fun () => Help) Info
-[String.concat "" ["The goal is to show an implication (⇒).
-Assume the premise "; "
-(x < 2), use
-    Assume that (...)."]].
+[String.concat "" ["The goal is to show an implication (⇒). Assume the premise "; "(x < 2)."];
+"Hint, replace with: Assume that ...."].
 Abort.
 
 (** Test 20: Help on forall with arbitrary predicate *)
@@ -247,16 +217,14 @@ Local Parameter B : nat -> Prop.
 Goal ∀ x B, x < 2.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable that is (a/an) B, use
-    Take ... (...)."].
+["The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable that is (a/an) B.";
+ "Hint, replace with: Take ... ...."].
 Abort.
 
 (** Test 21: Help on exists with arbitrary predicate *)
 Goal ∃ x B, x < 2.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable that is (a/an) B, use
-    Choose ... := (...)."].
+["The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) B.";
+ "Hint, replace with: Choose ... := ...."].
 Abort.

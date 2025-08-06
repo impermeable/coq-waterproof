@@ -80,9 +80,9 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       
       let print_tactic := 
         if (Int.lt 1 total_messages) then
-          insert_msg
+          fun m => insert_msg (to_string m) (to_string (concat m (of_string "${}")))
         else
-          replace_msg
+          fun m => replace_msg (to_string m) (to_string (concat m (of_string "${}"))) 
         in
       
       (* Print unfolded goal *)
