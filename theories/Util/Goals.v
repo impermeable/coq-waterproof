@@ -26,40 +26,6 @@ Require Import Util.TypeCorrector.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
-(* Local definition of insert_notice until MessagesToUser is available *)
-Local Ltac2 insert_notice (template : string) := 
-  notice (concat (of_string "Hint, insert: ") (of_string template)).
-
-(* Simplified message generation functions using only insert_notice *)
-Local Ltac2 case_wrapper_msg (case_type : constr) :=
-  insert_notice (Message.to_string (concat_list [of_string "- Case "; of_constr case_type; of_string ".${0}"])).
-
-Local Ltac2 state_goal_wrapper_msg (goal_type : constr) :=
-  insert_notice (Message.to_string (concat_list [of_string "We need to show that "; of_constr goal_type; of_string ".${0}"]));
-  insert_notice (Message.to_string (concat_list [of_string "We conclude that "; of_constr goal_type; of_string ".${0}"])).
-
-Local Ltac2 verify_goal_wrapper_msg (goal_type : constr) :=
-  insert_notice (Message.to_string (concat_list [of_string "{ Indeed, "; of_constr goal_type; of_string ". }${0}"]));
-  insert_notice (Message.to_string (concat_list [of_string "{ We need to verify that "; of_constr goal_type; of_string ". }${0}"])).
-
-Local Ltac2 state_hyp_wrapper_msg (hyp_type : constr) :=
-  insert_notice (Message.to_string (concat_list [of_string "It holds that "; of_constr hyp_type; of_string ".${0}"])).
-
-Local Ltac2 by_contradiction_wrapper_msg (assumption_type : constr) :=
-  insert_notice (Message.to_string (concat_list [of_string "Assume that "; of_constr assumption_type; of_string ".${0}"])).
-
-Local Ltac2 natural_induction_base_wrapper_msg (goal_type : constr) :=
-  insert_notice (Message.to_string (concat_list [of_string "- We first show the base case "; of_constr goal_type; of_string ".${0}"])).
-
-Local Ltac2 natural_induction_step_wrapper_msg () :=
-  insert_notice "- We now show the induction step.${0}".
-
-Local Ltac2 strong_induction_base_wrapper_msg () :=
-  insert_notice "- We first define n_0.${0}".
-
-Local Ltac2 strong_induction_step_wrapper_msg () :=
-  insert_notice "- Take k ∈ ℕ and assume n_0,...,n_k are defined.${0}".
-
 Module Case.
 
   Private Inductive Wrapper (A G : Type) : Type :=
@@ -70,7 +36,6 @@ Module Case.
 
   (* Add new function that combines wrapping with messaging *)
   Ltac2 wrap_with_message (case_type : constr) (goal_type : constr) :=
-    case_wrapper_msg case_type;
     apply (Case.wrap $case_type $goal_type).
 
 End Case.
@@ -94,7 +59,6 @@ Module NaturalInduction.
 
     (* Add new function that combines wrapping with messaging *)
     Ltac2 wrap_with_message (goal_type : constr) :=
-      natural_induction_base_wrapper_msg goal_type;
       apply (NaturalInduction.Base.wrap $goal_type).
   End Base.
 
@@ -108,7 +72,6 @@ Module NaturalInduction.
 
     (* Add new function that combines wrapping with messaging *)
     Ltac2 wrap_with_message (goal_type : constr) :=
-      natural_induction_step_wrapper_msg ();
       apply (NaturalInduction.Step.wrap $goal_type).
   End Step.
 
@@ -139,7 +102,6 @@ Module StateGoal.
 
   (* Add new function that combines wrapping with messaging *)
   Ltac2 wrap_with_message (goal_type : constr) :=
-    state_goal_wrapper_msg goal_type;
     apply (StateGoal.wrap $goal_type).
 
 End StateGoal.
@@ -161,7 +123,6 @@ Module VerifyGoal.
 
   (* Add new function that combines wrapping with messaging *)
   Ltac2 wrap_with_message (goal_type : constr) :=
-    verify_goal_wrapper_msg goal_type;
     apply (VerifyGoal.wrap $goal_type).
 
 End VerifyGoal.
@@ -184,7 +145,6 @@ Module StateHyp.
 
   (* Add new function that combines wrapping with messaging *)
   Ltac2 wrap_with_message (hyp_type : constr) (h : constr) (goal_type : constr) :=
-    state_hyp_wrapper_msg hyp_type;
     apply (StateHyp.wrap $hyp_type $h $goal_type).
 
 End StateHyp.
@@ -206,7 +166,6 @@ Module ByContradiction.
 
   (* Add new function that combines wrapping with messaging *)
   Ltac2 wrap_with_message (assumption_type : constr) (goal_type : constr) :=
-    by_contradiction_wrapper_msg assumption_type;
     apply (ByContradiction.wrap $assumption_type $goal_type).
 
 End ByContradiction.
@@ -230,7 +189,6 @@ Module StrongIndIndxSeq.
 
     (* Add new function that combines wrapping with messaging *)
     Ltac2 wrap_with_message (goal_type : constr) :=
-      strong_induction_base_wrapper_msg ();
       apply (StrongIndIndxSeq.Base.wrap $goal_type).
   End Base.
 
@@ -243,7 +201,6 @@ Module StrongIndIndxSeq.
 
     (* Add new function that combines wrapping with messaging *)
     Ltac2 wrap_with_message (goal_type : constr) :=
-      strong_induction_step_wrapper_msg ();
       apply (StrongIndIndxSeq.Step.wrap $goal_type).
   End Step.
 
