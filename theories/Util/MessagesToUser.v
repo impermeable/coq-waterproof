@@ -87,6 +87,10 @@ Ltac2 replace_msg (msg : string) (template : string) :=
   inform (Message.concat (Message.of_string "Hint, replace with: ") (Message.of_string msg));
   notice (Message.concat (Message.of_string "Hint, replace with: ") (Message.of_string template)).
 
+(* New simplified function that only takes template and uses notice *)
+Ltac2 insert_notice (template : string) := 
+  notice (Message.concat (Message.of_string "Hint, insert: ") (Message.of_string template)).
+
 (* Note, there could arise a use case for sending an error on the feedback channel without
   actually raising an error, but it could also be confusing. For now, errors are therefore
   handled through a different channel *)
