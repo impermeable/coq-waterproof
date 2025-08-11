@@ -1,6 +1,7 @@
 Require Import Notations.Common.
 Require Import Notations.Sets.
 Require Import Notations.Reals.
+Require Import Waterproof.
 
 Require Import Coq.Reals.Reals.
 
@@ -39,10 +40,6 @@ Lemma min_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d)
 Proof.
     field; split; apply not_eq_sym; assumption.
 Qed.
-
-Require Import Waterproof.
-
-Waterproof Disable Filter Errors.
 
 Lemma int_is_rational (n : ℝ) (hn : n ∈ Z_in_R) : is_rational n.
 Proof.

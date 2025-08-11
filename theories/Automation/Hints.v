@@ -486,6 +486,7 @@ Create HintDb wp_reals.
 
   #[export] Hint Resolve mult_neq_zero : wp_reals.
   #[export] Hint Resolve div_non_zero : wp_reals.
+  #[export] Hint Resolve R1_neq_R0 : wp_reals.
 
   #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
 

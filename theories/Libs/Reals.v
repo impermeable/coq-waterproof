@@ -101,6 +101,14 @@ Proof.
     exact Hb.
 Qed.
 
+Lemma div_one_neq_zero : forall x : R, x ≠ 0 -> 1 / x ≠ 0.
+Proof.
+  intros x Hx.
+  apply div_non_zero.
+  - apply R1_neq_R0.
+  - exact Hx.
+Qed.
+
 Lemma Rabs_zero : forall r : R, Rabs (r - 0) = Rabs r.
 Proof.
   intros.
