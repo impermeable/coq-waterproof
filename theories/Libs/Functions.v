@@ -32,34 +32,92 @@ Open Scope subset_scope.
 *)
 
 Definition function_image {X Y : Type} (g : X -> Y) (U : subset X) : subset Y :=
-  fun y : Y => exists x : X, x ∈ U /\ y = g x.
+  fun y : Y => ∃ x ∈ U, y = g x.
 
 (** * Basic Properties *)
 
 (** Basic lemmas: membership in image (split into two directions) *)
 Lemma in_function_image_intro {X Y : Type} (g : X -> Y) (U : subset X) (y : Y) :
-  (∃ x ∈ X, x ∈ U /\ y = g x) -> y ∈ function_image g U.
+  (∃ x ∈ U, y = g x) -> y ∈ function_image g U.
 Proof.
 intro H.
 unfold function_image.
-rewrite exists_exists_in_iff in H.
 exact H.
 Qed.
 
 Lemma in_function_image_elim {X Y : Type} (g : X -> Y) (U : subset X) (y : Y) :
-  y ∈ function_image g U -> ∃ x ∈ X, x ∈ U /\ y = g x.
+  y ∈ function_image g U -> ∃ x ∈ U, y = g x.
 Proof.
 intro H.
 unfold function_image in H.
-rewrite exists_exists_in_iff.
 exact H.
 Qed.
 
 Lemma in_function_image_iff {X Y : Type} (g : X -> Y) (U : subset X) (y : Y) :
-  y ∈ function_image g U <-> ∃ x ∈ X, x ∈ U /\ y = g x.
+  y ∈ function_image g U <-> ∃ x ∈ U, y = g x.
 Proof.
 split.
 - exact (in_function_image_elim g U y).
 - exact (in_function_image_intro g U y).
 Qed.
+
+(** * Function Preimage *)
+
+(** 
+  We formalize the notion of the preimage of a function. Given a function `f : X → Y` 
+  and a subset `V`, the preimage of `V` under `f` is the set of all values `x` such 
+  that there exists some `y ∈ V` with `f(x) = y`.
+*)
+
+Definition function_preimage {X Y : Type} (f : X -> Y) (V : subset Y) : subset X :=
+  fun x : X => ∃ y ∈ V, f x = y.
+
+(** * Basic Properties for Preimage *)
+
+(** Basic lemmas: membership in preimage (split into two directions) *)
+Lemma in_function_preimage_intro {X Y : Type} (f : X -> Y) (V : subset Y) (x : X) :
+  (∃ y ∈ V, f x = y) -> x ∈ function_preimage f V.
+Proof.
+intro H.
+unfold function_preimage.
+exact H.
+Qed.
+
+Lemma in_function_preimage_elim {X Y : Type} (f : X -> Y) (V : subset Y) (x : X) :
+  x ∈ function_preimage f V -> ∃ y ∈ V, f x = y.
+Proof.
+intro H.
+unfold function_preimage in H.
+exact H.
+Qed.
+
+Lemma in_function_preimage_iff {X Y : Type} (f : X -> Y) (V : subset Y) (x : X) :
+  x ∈ function_preimage f V <-> ∃ y ∈ V, f x = y.
+Proof.
+split.
+- exact (in_function_preimage_elim f V x).
+- exact (in_function_preimage_intro f V x).
+Qed.
+
+Lemma preimage_of_mem {X Y : Type} (f : X -> Y) (V : subset Y) (x : X) :
+  f x ∈ V -> x ∈ function_preimage f V.
+Proof.
+intro H.
+unfold function_preimage.
+exists (f x).
+split.
+- exact H.
+- reflexivity.
+Qed.
+
+Lemma mem_of_preimage {X Y : Type} (f : X -> Y) (V : subset Y) (x : X) :
+  x ∈ function_preimage f V -> f x ∈ V.
+Proof.
+intro H.
+unfold function_preimage in H.
+destruct H as [y [H_y_in_V H_fx_eq_y]].
+rewrite H_fx_eq_y.
+exact H_y_in_V.
+Qed.
+
 

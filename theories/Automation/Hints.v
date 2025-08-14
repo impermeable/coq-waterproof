@@ -565,7 +565,14 @@ Create HintDb wp_sets.
   (** * Function image hints *)
   #[export] Hint Resolve in_function_image_intro : wp_sets.
   #[export] Hint Resolve in_function_image_elim : wp_sets.
-  #[export] Hint Resolve in_function_image_iff : wp_sets.
+
+  (** * Function preimage hints *)
+  #[export] Hint Resolve in_function_preimage_intro : wp_sets.
+  #[export] Hint Resolve in_function_preimage_elim : wp_sets.
+
+  (** * Function preimage translation hints *)
+  #[export] Hint Resolve preimage_of_mem : wp_sets.
+  #[export] Hint Resolve mem_of_preimage : wp_sets.
 
 (** * Intuition *)
 
