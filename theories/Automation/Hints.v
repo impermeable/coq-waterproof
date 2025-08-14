@@ -35,6 +35,7 @@ Require Import Libs.Reals.
 Require Import Libs.Logic.
 Require Import Libs.Sets.
 Require Import Libs.Integers.
+Require Import Libs.Functions.
 
 (** * Waterproof core *)
 
@@ -560,6 +561,11 @@ Create HintDb wp_sets.
 
   #[export] Hint Extern 1 => eapply index_union_elim; eassumption : wp_sets.
   #[export] Hint Extern 2 => eapply index_union_elim_left; eassumption : wp_sets.
+
+  (** * Function image hints *)
+  #[export] Hint Resolve in_function_image_intro : wp_sets.
+  #[export] Hint Resolve in_function_image_elim : wp_sets.
+  #[export] Hint Resolve in_function_image_iff : wp_sets.
 
 (** * Intuition *)
 
