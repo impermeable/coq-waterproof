@@ -1,23 +1,4 @@
-(***********************************************************************Local Ltac2 goal_forall_le_msg (y: constLocal Ltac2 goal_exists_le_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a 'there exists'-statement (∃).
-Choose a specific variable less than or equal to "; of_constr y; of_string ", use
-    Choose ... := (...)."].
-
-Local Ltac2 goal_exists_ne_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a 'there exists'-statement (∃).
-Choose a specific variable not equal to "; of_constr y; of_string ", use
-    Choose ... := (...)."].
-
-Local Ltac2 goal_exists_pred_msg (q: constr) :=  concat_list [of_string "The goal is to show a 'for all'-statement (∀).
-Introduce an arbitrary variable less than or equal to "; of_constr y; of_string ", use
-    Take ... ≤ (...)."].
-
-Local Ltac2 goal_forall_ne_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a 'for all'-statement (∀).
-Introduce an arbitrary variable not equal to "; of_constr y; of_string ", use
-    Take ... ≠ (...)."].
-
-Local Ltac2 goal_forall_pred_msg (q: constr) :=*)
+(******************************************************************************)
 (*                  This file is part of Waterproof-lib.                      *)
 (*                                                                            *)
 (*   Waterproof-lib is free software: you can redistribute it and/or modify   *)
