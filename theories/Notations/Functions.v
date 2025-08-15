@@ -24,8 +24,8 @@ Open Scope subset_scope.
 (** * Notations for function images and preimages *)
 
 (** The notation g[U] for the image of set U under function g *)
-Notation "g [ U ]" := (function_image g U) (at level 10) : subset_scope.
+Notation "g [ U ]" := (image g U) (at level 10) : subset_scope.
 
 (** The notation f⁻¹[V] for the preimage of set V under function f *)
-Notation "f ⁻¹[ V ]" := (function_preimage f V) (at level 10) : subset_scope.
+Notation "f ⁻¹[ V ]" := (preimage f V) (at level 10) : subset_scope.
 

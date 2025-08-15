@@ -563,12 +563,12 @@ Create HintDb wp_sets.
   #[export] Hint Extern 2 => eapply index_union_elim_left; eassumption : wp_sets.
 
   (** * Function image hints *)
-  #[export] Hint Resolve in_function_image_intro : wp_sets.
-  #[export] Hint Resolve in_function_image_elim : wp_sets.
+  #[export] Hint Resolve in_image_intro : wp_sets.
+  #[export] Hint Resolve in_image_elim : wp_sets.
 
   (** * Function preimage hints *)
-  #[export] Hint Resolve in_function_preimage_intro : wp_sets.
-  #[export] Hint Resolve in_function_preimage_elim : wp_sets.
+  #[export] Hint Resolve in_preimage_intro : wp_sets.
+  #[export] Hint Resolve in_preimage_elim : wp_sets.
 
   (** * Function preimage translation hints *)
   #[export] Hint Resolve preimage_of_mem : wp_sets.
