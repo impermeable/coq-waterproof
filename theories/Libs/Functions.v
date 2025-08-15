@@ -171,5 +171,46 @@ apply H_surj.
 apply mem_subset_full_set.
 Qed.
 
+(** * Bijective Functions *)
+
+(** 
+  We formalize the notion of bijective functions. A function `f : X → Y` 
+  is bijective if it is both injective and surjective.
+  In other words, f is a one-to-one correspondence between X and Y.
+*)
+
+Definition bijective {X Y : Type} (f : X -> Y) : Prop :=
+  injective f ∧ surjective f.
+
+(** * Basic Properties of Bijective Functions *)
+
+(** If f is bijective, then f is injective *)
+Lemma bijective_is_injective {X Y : Type} (f : X -> Y) :
+  bijective f → injective f.
+Proof.
+intro H_bij.
+unfold bijective in H_bij.
+destruct H_bij as [H_inj _].
+exact H_inj.
+Qed.
+
+(** If f is bijective, then f is surjective *)
+Lemma bijective_is_surjective {X Y : Type} (f : X -> Y) :
+  bijective f → surjective f.
+Proof.
+intro H_bij.
+unfold bijective in H_bij.
+destruct H_bij as [_ H_surj].
+exact H_surj.
+Qed.
+
+(** A function is bijective if and only if it is both injective and surjective *)
+Lemma bijective_iff {X Y : Type} (f : X -> Y) :
+  bijective f ↔ (injective f ∧ surjective f).
+Proof.
+unfold bijective.
+split; intro H; exact H.
+Qed.
+
 
 

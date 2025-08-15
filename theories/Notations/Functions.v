@@ -39,3 +39,5 @@ Notation "f 'is' 'injective'" := (injective f) (at level 68) : function_scope.
 
 Notation "f 'is' 'surjective'" := (surjective f) (at level 68) : function_scope.
 
+Notation "f 'is' 'bijective'" := (bijective f) (at level 68) : function_scope.
+

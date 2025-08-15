@@ -578,6 +578,9 @@ Create HintDb wp_sets.
   (** * Function preimage translation hints *)
   #[export] Hint Resolve preimage_of_mem : wp_sets.
   #[export] Hint Resolve mem_of_preimage : wp_sets.
+  
+  #[export] Hint Resolve bijective_is_injective : wp_sets.
+  #[export] Hint Resolve bijective_is_surjective : wp_sets.
 
 (** * Intuition *)
 
