@@ -25,7 +25,6 @@ Require Import Notations.Sets.
 (** ** (In)equalities
   Allowing unicode characters for uniqualities.
 *)
-Notation "x ≠ y" := (x <> y) (at level 70) : type_scope.
 Notation "x ≤ y" := (le x y) (at level 70, no associativity) : nat_scope.
 Notation "x ≥ y" := (ge x y) (at level 70, no associativity) : nat_scope.
 Notation "x ≤ y" := (x <= y)%R (at level 70, no associativity) : R_scope.

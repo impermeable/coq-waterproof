@@ -135,6 +135,17 @@ Class lt_type (carrier : Type) := {
 #[export] Instance R_lt_type : lt_type R :=
   {lt_op := fun y z => Rlt z y}.
 
+Class ne_type (carrier : Type) := {
+  ne_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_ne_type : ne_type nat :=
+  {ne_op := fun y z => z <> y}.
+
+#[export] Instance R_ne_type : ne_type R :=
+  {ne_op := fun y z => z <> y}.
+
+
 Declare Scope pred_for_subset_scope.
 
 Delimit Scope pred_for_subset_scope with pfs.
@@ -145,6 +156,7 @@ Notation "< y" :=  (lt_op y) (at level 69, y at next level) : pred_for_subset_sc
 Notation "≤ y" :=  (le_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "> y" :=  (gt_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "≥ y" :=  (ge_op y) (at level 69, y at next level) : pred_for_subset_scope.
+Notation "≠ y" :=  (ne_op y) (at level 69, y at next level) : pred_for_subset_scope.
 
 Notation "x ∈ A" := (subset_in A x) (at level 69, no associativity) : type_scope.
 Notation "x ≥ y" := (ge_op y x) (at level 70, no associativity, only printing) : subset_scope.

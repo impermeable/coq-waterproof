@@ -19,13 +19,22 @@
 Require Import Waterproof.Libs.Functions.
 Require Import Waterproof.Notations.Sets.
 
-Open Scope subset_scope.
+(** Declare a scope for function-related notations *)
+Declare Scope function_scope.
 
 (** * Notations for function images and preimages *)
 
 (** The notation g[U] for the image of set U under function g *)
-Notation "g [ U ]" := (image g U) (at level 10) : subset_scope.
+Notation "g [ U ]" := (image g U) (at level 10) : function_scope.
 
 (** The notation f⁻¹[V] for the preimage of set V under function f *)
-Notation "f ⁻¹[ V ]" := (preimage f V) (at level 10) : subset_scope.
+Notation "f ⁻¹[ V ]" := (preimage f V) (at level 10) : function_scope.
 
+(** * Function Composition *)
+(** The notation g ∘ f for the composition of functions g and f *)
+(** This matches the mathematical convention where (g ∘ f)(x) = g(f(x)) *)
+Notation "g ∘ f" := (fun x => g (f x)) (at level 40, left associativity) : function_scope.
+
+Notation "f 'is' 'injective'" := (injective f) (at level 68) : function_scope.
+
+(* TODO: Expand hacks *)
