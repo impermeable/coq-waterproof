@@ -37,4 +37,5 @@ Notation "g ∘ f" := (fun x => g (f x)) (at level 40, left associativity) : fun
 
 Notation "f 'is' 'injective'" := (injective f) (at level 68) : function_scope.
 
-(* TODO: Expand hacks *)
+Notation "f 'is' 'surjective'" := (surjective f) (at level 68) : function_scope.
+

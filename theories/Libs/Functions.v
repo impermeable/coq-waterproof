@@ -147,5 +147,29 @@ apply H_inj.
   exact H_eq.
 Qed.
 
+(** * Surjective Functions *)
+
+(** 
+  We formalize the notion of surjective (onto) functions. A function `f : X → Y` 
+  is surjective if for all `y ∈ Y`, there exists some `x ∈ X` such that `f(x) = y`.
+  In other words, every element in the codomain is the image of at least one element 
+  in the domain.
+*)
+
+Definition surjective {X Y : Type} (f : X -> Y) : Prop :=
+  ∀ y ∈ Y, ∃ x ∈ X, f x = y.
+
+(** * Basic Properties of Surjective Functions *)
+
+(** If f is surjective and y ∈ Y, then there exists x ∈ X such that f(x) = y *)
+Lemma surjective_elim {X Y : Type} (f : X -> Y) (y : Y) :
+  surjective f → ∃ x ∈ X, f x = y.
+Proof.
+intro H_surj.
+apply H_surj.
+(* Prove y ∈ Y *)
+apply mem_subset_full_set.
+Qed.
+
 
 
