@@ -35,8 +35,6 @@ Open Scope subset_scope.
 
 Context {X Y : Type}.
 
-(** ** Example 3.1.35: g[U ∩ V] ⊆ g[U] ∩ g[V] *)
-
 Example example_3_1_35 (g : X → Y) (U V : subset X) :
   g[U ∩ V] ⊂ (g[U] ∩ g[V]).
 Proof.
