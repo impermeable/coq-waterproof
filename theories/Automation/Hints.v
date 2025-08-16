@@ -47,7 +47,7 @@ Create HintDb wp_core.
     [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
-  #[export] Hint Extern 3 => congruence : wp_core.
+  #[export] Hint Extern 9 => congruence : wp_core.
   (* #[export] Hint Extern 2 ( _ = _ ) => congruence 20 : wp_core. *)
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
@@ -581,6 +581,9 @@ Create HintDb wp_sets.
   
   #[export] Hint Resolve bijective_is_injective : wp_sets.
   #[export] Hint Resolve bijective_is_surjective : wp_sets.
+
+  (** * Left inverse hints *)
+  #[export] Hint Resolve left_inverse_elim : wp_sets.
 
 (** * Intuition *)
 

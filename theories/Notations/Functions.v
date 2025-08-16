@@ -33,11 +33,15 @@ Notation "f ⁻¹[ V ]" := (preimage f V) (at level 10) : function_scope.
 (** * Function Composition *)
 (** The notation g ∘ f for the composition of functions g and f *)
 (** This matches the mathematical convention where (g ∘ f)(x) = g(f(x)) *)
-Notation "g ∘ f" := (fun x => g (f x)) (at level 40, left associativity) : function_scope.
+Notation "g ∘ f" := (composition f g) (at level 40, left associativity) : function_scope.
 
 Notation "f 'is' 'injective'" := (injective f) (at level 68) : function_scope.
 
 Notation "f 'is' 'surjective'" := (surjective f) (at level 68) : function_scope.
 
 Notation "f 'is' 'bijective'" := (bijective f) (at level 68) : function_scope.
+
+Notation "f 'has' 'a' 'left' 'inverse'" := (has_left_inverse f) (at level 68) : function_scope.
+
+Notation "f 'is' 'a' 'left' 'inverse' 'of' g" := (left_inverse g f) (at level 68) : function_scope.
 

@@ -212,5 +212,28 @@ unfold bijective.
 split; intro H; exact H.
 Qed.
 
+Definition composition {X Y Z : Type} (f : X -> Y) (g : Y -> Z) : X -> Z :=
+  fun x => g (f x).
+
+Definition left_inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop := composition f g = id.
 
 
+
+Definition has_left_inverse {X Y : Type} (f : X -> Y) : Prop := ∃ (g : Y -> X), left_inverse f g.
+
+(** * Lemmas for Left Inverse *)
+
+(** If g is a left inverse of f, then g ∘ f = id pointwise *)
+Lemma left_inverse_elim {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  left_inverse f g → (∀ x ∈ X, g (f x) = x).
+Proof.
+intro H.
+unfold left_inverse in H.
+intro x.
+intro H_x_in_X.
+(* From composition f g = id, we get (composition f g) x = id x *)
+assert (H_point : (composition f g) x = id x).
+{ rewrite H. reflexivity. }
+unfold composition in H_point.
+exact H_point.
+Qed.
