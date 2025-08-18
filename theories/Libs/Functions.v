@@ -20,6 +20,7 @@ Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 
 Require Import Sets.Ensembles.
+Require Import Coq.Logic.FunctionalExtensionality.
 
 Open Scope subset_scope.
 
@@ -217,9 +218,16 @@ Definition composition {X Y Z : Type} (f : X -> Y) (g : Y -> Z) : X -> Z :=
 
 Definition left_inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop := composition f g = id.
 
-
-
 Definition has_left_inverse {X Y : Type} (f : X -> Y) : Prop := ∃ (g : Y -> X), left_inverse f g.
+
+Definition right_inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop := composition g f = id.
+
+Definition has_right_inverse {X Y : Type} (f : X -> Y) : Prop := ∃ (g : Y -> X), right_inverse f g.
+
+Definition inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop := 
+  left_inverse f g ∧ right_inverse f g.
+
+Definition has_inverse {X Y : Type} (f : X -> Y) : Prop := ∃ (g : Y -> X), inverse f g.
 
 (** * Lemmas for Left Inverse *)
 
@@ -236,4 +244,97 @@ assert (H_point : (composition f g) x = id x).
 { rewrite H. reflexivity. }
 unfold composition in H_point.
 exact H_point.
+Qed.
+
+Lemma left_inverse_intro {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  (∀ x ∈ X, g (f x) = x) → left_inverse f g.
+Proof.
+intro H.
+unfold left_inverse.
+apply functional_extensionality.
+intro x.
+unfold composition, id.
+apply H.
+apply mem_subset_full_set.
+Qed.
+
+(** * Lemmas for Right Inverse *)
+
+(** If g is a right inverse of f, then f ∘ g = id pointwise *)
+Lemma right_inverse_elim {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  right_inverse f g → (∀ y ∈ Y, f (g y) = y).
+Proof.
+intro H.
+unfold right_inverse in H.
+intro y.
+intro H_y_in_Y.
+(* From composition g f = id, we get (composition g f) y = id y *)
+assert (H_point : (composition g f) y = id y).
+{ rewrite H. reflexivity. }
+unfold composition in H_point.
+exact H_point.
+Qed.
+
+Lemma right_inverse_intro {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  (∀ y ∈ Y, f (g y) = y) → right_inverse f g.
+Proof.
+intro H.
+unfold right_inverse.
+apply functional_extensionality.
+intro y.
+unfold composition, id.
+apply H.
+apply mem_subset_full_set.
+Qed.
+
+(** * Lemmas for Inverse *)
+
+(** If g is an inverse of f, then g is both a left and right inverse *)
+Lemma inverse_is_left_inverse {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  inverse f g → left_inverse f g.
+Proof.
+intro H.
+unfold inverse in H.
+destruct H as [H_left _].
+exact H_left.
+Qed.
+
+Lemma inverse_is_right_inverse {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  inverse f g → right_inverse f g.
+Proof.
+intro H.
+unfold inverse in H.
+destruct H as [_ H_right].
+exact H_right.
+Qed.
+
+(** If g is an inverse of f, then both composition laws hold pointwise *)
+Lemma inverse_elim_left {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  inverse f g → (∀ x ∈ X, g (f x) = x).
+Proof.
+intro H.
+apply left_inverse_elim.
+apply inverse_is_left_inverse.
+exact H.
+Qed.
+
+Lemma inverse_elim_right {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  inverse f g → (∀ y ∈ Y, f (g y) = y).
+Proof.
+intro H.
+apply right_inverse_elim.
+apply inverse_is_right_inverse.
+exact H.
+Qed.
+
+Lemma inverse_intro {X Y : Type} (f : X -> Y) (g : Y -> X) :
+  (∀ x ∈ X, g (f x) = x) → (∀ y ∈ Y, f (g y) = y) → inverse f g.
+Proof.
+intros H_left H_right.
+unfold inverse.
+split.
+- apply left_inverse_intro.
+  exact H_left.
+- apply right_inverse_intro.
+  exact H_right.
 Qed.

@@ -30,6 +30,16 @@ Proof.
     exact (hempty x hx).
 Qed.
 
+Lemma set_difference_elim {U : Type} (X Y : subset U) (x : U):
+    x ∈ X ⇒ ¬(x ∈ (Y \ X)).
+Proof.
+    intro hx.
+    intro hdiff.
+    case hdiff.
+    intros hy hnx.
+    contradiction.
+Qed.
+
 Lemma not_in_empty {U : Type} (x : U) : x ∉ (∅ : subset U).
 Proof.
 intro h.

@@ -549,6 +549,7 @@ Create HintDb wp_sets.
   #[export] Hint Resolve power_set_characterization_alt : wp_sets.
   #[export] Hint Extern 1 => apply empty_set_characterization; eassumption : wp_sets.
   #[export] Hint Resolve not_in_empty : wp_sets.
+  #[export] Hint Resolve set_difference_elim : wp_sets.
   #[export] Hint Resolve Extensionality_Ensembles : wp_sets.
 
   #[export] Hint Resolve Closed : wp_sets.
@@ -584,6 +585,18 @@ Create HintDb wp_sets.
 
   (** * Left inverse hints *)
   #[export] Hint Resolve left_inverse_elim : wp_sets.
+  #[export] Hint Resolve left_inverse_intro : wp_sets.
+
+  (** * Right inverse hints *)
+  #[export] Hint Resolve right_inverse_elim : wp_sets.
+  #[export] Hint Resolve right_inverse_intro : wp_sets.
+
+  (** * Inverse hints *)
+  #[export] Hint Resolve inverse_is_left_inverse : wp_sets.
+  #[export] Hint Resolve inverse_is_right_inverse : wp_sets.
+  #[export] Hint Resolve inverse_elim_left : wp_sets.
+  #[export] Hint Resolve inverse_elim_right : wp_sets.
+  #[export] Hint Resolve inverse_intro : wp_sets.
 
 (** * Intuition *)
 

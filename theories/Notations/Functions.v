@@ -45,3 +45,11 @@ Notation "f 'has' 'a' 'left' 'inverse'" := (has_left_inverse f) (at level 68) : 
 
 Notation "f 'is' 'a' 'left' 'inverse' 'of' g" := (left_inverse g f) (at level 68) : function_scope.
 
+Notation "f 'has' 'a' 'right' 'inverse'" := (has_right_inverse f) (at level 68) : function_scope.
+
+Notation "f 'is' 'a' 'right' 'inverse' 'of' g" := (right_inverse g f) (at level 68) : function_scope.
+
+Notation "f 'has' 'an' 'inverse'" := (has_inverse f) (at level 68) : function_scope.
+
+Notation "f 'is' 'an' 'inverse' 'of' g" := (inverse g f) (at level 68) : function_scope.
+
