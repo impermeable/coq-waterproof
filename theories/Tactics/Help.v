@@ -220,9 +220,7 @@ Local Ltac2 goal_wrapped_template_msg () : bool :=
   | [|- _] => false
   end.
 
-Waterproof Disable Filter Errors.
 Ltac2 print_hints () :=
-
   (* If advice is given in proof window, suggest to follow that, nothing else. *)
   if (goal_wrapped_template_msg ())
     then (info_notice (of_string "Follow the advice in the goal window."))
