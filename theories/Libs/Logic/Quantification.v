@@ -4,7 +4,7 @@ Require Import Notations.Sets.
 Open Scope subset_scope.
 
 Lemma alternative_char_unique_exists {T : Type} (U : subset T) (P : T -> Prop):
-    (∃! x ∈ U, P x) ↔ (∃x ∈ U, P x ∧ ∀y ∈ U, P y ⇒ y = x).
+    (∃! x ∈ U, P x) ↔ (∃ x ∈ U, P x ∧ ∀ y ∈ U, P y ⇒ y = x).
 Proof.
     unfold unique_exists.
     split.

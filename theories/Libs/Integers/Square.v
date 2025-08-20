@@ -9,7 +9,7 @@ Open Scope Z_scope.
 
 Definition square (n : Z) := n * n.
 
-Definition is_square (n : ℤ) := ∃m ∈ ℤ, m * m = n.
+Definition is_square (n : ℤ) := ∃ m ∈ ℤ, m * m = n.
 
 Lemma perfect_square_of (n m : ℤ) (hp : n * n = m) : is_square m.
 Proof.

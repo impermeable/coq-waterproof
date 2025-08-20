@@ -205,7 +205,7 @@ Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 0, x at level 99, y
 Open Scope subset_scope.
 
 Definition unique_exists {T : Type} (Q : subset T) (P : T -> Prop) :=
-  (∃x Q, (P x)) ∧ (∀x Q, ∀y Q, (P x) ∧ (P y) ⇒ x = y).
+  (∃ x Q, (P x)) ∧ (∀ x Q, ∀ y Q, (P x) ∧ (P y) ⇒ x = y).
 
 Notation "∃! x Q , P" := (unique_exists (Q%pfs) (fun x : (subset_type Q%pfs) => P)) (at level 199, x binder, right associativity) : subset_scope.
 

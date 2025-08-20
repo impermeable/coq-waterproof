@@ -31,13 +31,13 @@ Proof.
 Qed.
 
 (* Test 4: Basic archimedN_exists lemma with positive real *)
-Lemma test_archimedN_exists_positive : ∃n ∈ ℕ, INR n > 10.
+Lemma test_archimedN_exists_positive : ∃ n ∈ ℕ, INR n > 10.
 Proof.
     exact (the Archimedean property 10).
 Qed.
 
 (* Test 5: archimedN_exists with zero *)
-Lemma test_archimedN_exists_zero : ∃n ∈ ℕ, INR n > 0.
+Lemma test_archimedN_exists_zero : ∃ n ∈ ℕ, INR n > 0.
 Proof.
     destruct (archimedN 0) as [m hm].
     exists m.
@@ -47,9 +47,9 @@ Proof.
 Qed.
 
 (* Test 6: archimedN_exists with negative real *)
-Lemma test_archimedN_exists_negative : ∃n ∈ ℕ, n > (-7).
+Lemma test_archimedN_exists_negative : ∃ n ∈ ℕ, n > (-7).
 Proof.
-    By the Archimedean property we conclude that (∃n ∈ ℕ, n > (-7)).
+    By the Archimedean property we conclude that (∃ n ∈ ℕ, n > (-7)).
 Qed.
 
 (* Test 7: Testing practical application with fraction *)
@@ -59,7 +59,7 @@ Proof.
 Qed.
 
 (* Test 8: Using archimedN to prove specific bound *)
-Lemma test_specific_bound : ∃n ∈ ℕ, n > 3.14.
+Lemma test_specific_bound : ∃ n ∈ ℕ, n > 3.14.
 Proof.
-    By the Archimedean property we conclude that (∃n ∈ ℕ, n > 3.14).
+    By the Archimedean property we conclude that (∃ n ∈ ℕ, n > 3.14).
 Qed.
