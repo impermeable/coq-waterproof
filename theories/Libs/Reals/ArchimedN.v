@@ -43,7 +43,7 @@ Proof.
     }
 Qed.
 
-Lemma archimedN_exists (r : R) : ∃n ∈ nat, INR n > r.
+Lemma archimedN_exists (r : R) : ∃ n ∈ nat, INR n > r.
 Proof.
     destruct (archimedN r) as [m hm].
     exists m.
