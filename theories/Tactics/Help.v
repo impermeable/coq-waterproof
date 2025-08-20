@@ -192,34 +192,6 @@ Local Ltac2 is_empty (ls : 'a list) :=
   | _::_ => false
   | []   => true
   end.
-  
-(* Provide template hints for wrapped goals *)
-Local Ltac2 goal_wrapped_template_msg () : bool :=
-  lazy_match! goal with
-  | [|- Case.Wrapper ?case_type _] => 
-    replace_notice (Message.to_string (concat_list [of_string "- Case "; of_constr case_type; of_string ".${0}"])); true
-  | [|- StateGoal.Wrapper ?goal_type] => 
-    replace_notice (Message.to_string (concat_list [of_string "We need to show that "; of_constr goal_type; of_string ".${0}"]));
-    replace_notice (Message.to_string (concat_list [of_string "We conclude that "; of_constr goal_type; of_string ".${0}"])); true
-  | [|- VerifyGoal.Wrapper ?goal_type] => 
-    replace_notice (Message.to_string (concat_list [of_string "{ Indeed, "; of_constr goal_type; of_string ". }${0}"]));
-    replace_notice (Message.to_string (concat_list [of_string "{ We need to verify that "; of_constr goal_type; of_string ". }${0}"])); true
-  | [|- StateHyp.Wrapper ?hyp_type _ _] => 
-    replace_notice (Message.to_string (concat_list [of_string "It holds that "; of_constr hyp_type; of_string ".${0}"])); true
-  | [|- ByContradiction.Wrapper ?assumption_type _] => 
-    replace_notice (Message.to_string (concat_list [of_string "Assume that "; of_constr assumption_type; of_string ".${0}"])); true
-  | [|- NaturalInduction.Base.Wrapper ?goal_type] => 
-    replace_notice (Message.to_string (concat_list [of_string "- We first show the base case "; of_constr goal_type; of_string ".${0}"])); true
-  | [|- NaturalInduction.Step.Wrapper _] => 
-    replace_notice "- We now show the induction step.${0}"; true
-  | [|- StrongIndIndxSeq.Base.Wrapper _] => 
-    replace_notice "- We first define n_0.${0}"; true
-  | [|- StrongIndIndxSeq.Step.Wrapper _] => 
-    replace_notice "- Take k ∈ ℕ and assume n_0,...,n_k are defined.${0}"; true
-  | [|- False] => true
-  | [|- _] => false
-  end.
-
 Ltac2 print_hints () :=
   (* If advice is given in proof window, suggest to follow that, nothing else. *)
   if (goal_wrapped_template_msg ())
