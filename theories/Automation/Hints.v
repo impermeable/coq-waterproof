@@ -32,9 +32,9 @@ Require Import Notations.Sets.
 Require Import Chains.
 Require Import Libs.Negation.
 Require Import Libs.Reals.
-Require Import Libs.Logic.InformativeEpsilon.
-Require Import Libs.Logic.ConstructiveLogic.
+Require Import Libs.Logic.
 Require Import Libs.Sets.
+Require Import Libs.Integers.
 
 (** * Waterproof core *)
 
@@ -365,6 +365,23 @@ Create HintDb wp_integers.
   #[export] Hint Extern 1 ( ge _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
   #[export] Hint Extern 1 ( lt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
   #[export] Hint Extern 1 ( gt _ _ ) => cbn; ltac2:(simpl_ineq_chains ()); lia : wp_integers.
+  #[export] Hint Resolve divide_char : wp_integers.
+  #[export] Hint Resolve divide_char_inv : wp_integers.
+  #[export] Hint Resolve even_of : wp_integers.
+  #[export] Hint Resolve odd_of : wp_integers.
+  #[export] Hint Resolve Zeven_char : wp_integers.
+  #[export] Hint Resolve Zeven_not_Zodd : wp_integers.
+  #[export] Hint Resolve Zodd_not_Zeven : wp_integers.
+  #[export] Hint Extern 3 => apply Zeven_char_inv; assumption : wp_integers.
+  #[export] Hint Resolve Zodd_char : wp_integers.
+  #[export] Hint Extern 3 => apply Zodd_char_inv; assumption : wp_integers.
+  #[export] Hint Resolve not_even_and_odd : wp_integers.
+  #[export] Hint Resolve square : wp_integers.
+  #[export] Hint Resolve perfect_square_of : wp_integers.
+  #[export] Hint Resolve remainder_of : wp_integers.
+
+Create HintDb wp_decidability_integers.
+  #[export] Hint Resolve Zeven_odd_dec : wp_decidability_integers.
 
 
 (** * Integer negation *)
@@ -389,7 +406,7 @@ Create HintDb wp_reals.
 
   #[export] Hint Extern 1 (pred R _ _) => simpl; lra : wp_reals.
 
-  #[export] Hint Extern 3 ( @eq R _ _ ) => field : wp_reals.
+  #[export] Hint Extern 1 ( @eq R _ _ ) => field : wp_reals.
 
   #[export] Hint Extern 1 ( Rle _ _ ) => lra : wp_reals.
   #[export] Hint Extern 1 ( Rge _ _ ) => lra : wp_reals.
@@ -467,13 +484,53 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rplus_lt_compat : wp_reals.
   #[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
+  #[export] Hint Resolve mult_neq_zero : wp_reals.
+  #[export] Hint Resolve div_non_zero : wp_reals.
+  #[export] Hint Resolve R1_neq_R0 : wp_reals.
+
   #[export] Hint Extern 1 => rewrite Rabs_zero : wp_reals.
+
+  #[export] Hint Resolve plus_Z_in_R : wp_reals.
+  #[export] Hint Resolve minus_Z_in_R : wp_reals.
+  #[export] Hint Resolve mult_Z_in_R : wp_reals.
+  #[export] Hint Resolve neg_Z_in_R : wp_reals.
+  #[export] Hint Resolve zero_Z_in_R : wp_reals.
+  #[export] Hint Resolve one_Z_in_R : wp_reals.
+  #[export] Hint Resolve two_Z_in_R : wp_reals.
+
+  #[export] Hint Extern 1 => rewrite INR_0 : wp_reals.
+  #[export] Hint Extern 1 => rewrite INR_1 : wp_reals.
+  #[export] Hint Resolve ge_zero_gt_one : wp_reals.
+  #[export] Hint Extern 1 => apply le_INR : wp_reals.
+
+  #[export] Hint Extern 1 => eapply rational_of : wp_reals.
+
+  #[export] Hint Resolve int_is_rational : wp_reals.
+  #[export] Hint Resolve sum_is_rational : wp_reals.
+  #[export] Hint Resolve diff_is_rational : wp_reals.
+  #[export] Hint Resolve mult_is_rational : wp_reals.
+  #[export] Hint Resolve div_is_rational : wp_reals.
+  #[export] Hint Resolve neg_is_rational : wp_reals.
+
+  #[export] Hint Resolve plus_frac : wp_reals.
+  #[export] Hint Resolve min_frac : wp_reals.
+  #[export] Hint Resolve Rdivid_ineq_interchange : wp_reals.
+
+  #[export] Hint Resolve archimedN_exists : wp_reals.
+
+  #[export] Hint Resolve sqrt_lt_R0 : wp_reals.
+  #[export] Hint Resolve Rsqr_sqrt : wp_reals. 
+  #[export] Hint Resolve Rlt_le : wp_reals. 
+  #[export] Hint Resolve Rsqr_plus_minus : wp_reals.
+  #[export] Hint Resolve Rsqr_neg : wp_reals.
 
 (** * Real number negation *)
 
 Create HintDb wp_negation_reals.
 
-  #[export] Hint Extern 1 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
+#[export] Hint Extern 3 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
+(* Stricly speaking not about negation, but is needed in the shorten database*)
+#[export] Hint Resolve Rmult_integral : wp_negation_reals. 
 
 
 (** * Sets *)
@@ -484,11 +541,40 @@ Create HintDb wp_sets.
   #[export] Hint Constructors Union Intersection Disjoint Full_set : wp_sets.
   #[export] Hint Resolve power_set_characterization : wp_sets.
   #[export] Hint Resolve power_set_characterization_alt : wp_sets.
-  #[export] Hint Resolve empty_set_characterization : wp_sets.
+  #[export] Hint Extern 1 => apply empty_set_characterization; eassumption : wp_sets.
+  #[export] Hint Resolve not_in_empty : wp_sets.
   #[export] Hint Resolve Extensionality_Ensembles : wp_sets.
+
+  #[export] Hint Resolve Closed : wp_sets.
+  #[export] Hint Resolve Open : wp_sets.
+  #[export] Hint Resolve Closed_Open : wp_sets.
+  #[export] Hint Resolve Open_Closed : wp_sets.
+
+  #[export] Hint Extern 1 => apply intersection_characterization; assumption : wp_sets.
+  #[export] Hint Extern 1 => apply intersection_characterization_left; assumption : wp_sets.
+  #[export] Hint Extern 1 => apply union_characterization; assumption : wp_sets.
+  #[export] Hint Extern 1 => apply union_characterization_left; assumption : wp_sets.
+
+  #[export] Hint Extern 1 => eapply index_intersection_elim; eassumption : wp_sets.
+  #[export] Hint Extern 2 => eapply index_intersection_elim_left; eassumption : wp_sets.
+
+  #[export] Hint Extern 1 => eapply index_union_elim; eassumption : wp_sets.
+  #[export] Hint Extern 2 => eapply index_union_elim_left; eassumption : wp_sets.
 
 (** * Intuition *)
 
 Create HintDb wp_intuition.
 
   #[export] Hint Extern 8 => intuition (auto 2 with core): wp_intuition.
+
+Create HintDb wp_prop_logic.
+
+  #[export] Hint Extern 1 => eapply proj1; eassumption : wp_prop_logic.
+  #[export] Hint Extern 1 => eapply proj2; eassumption : wp_prop_logic.
+  #[export] Hint Extern 1 => apply conj; assumption : wp_prop_logic.
+  #[export] Hint Extern 1 => apply or_introl; assumption : wp_prop_logic.
+  #[export] Hint Extern 1 => apply or_intror; assumption : wp_prop_logic.
+
+Create HintDb wp_first_order_logic.
+
+  #[export] Hint Extern 1 => apply alternative_char_unique_exists : wp_first_order_logic.

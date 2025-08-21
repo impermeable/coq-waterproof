@@ -1,6 +1,9 @@
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 
+Require Export Libs.Sets.Operations.
+Require Export Libs.Sets.IndexedOperations.
+
 Open Scope subset_scope.
 
 Lemma power_set_characterization {U : Type} (X : subset U) (Y : subset U):
@@ -25,4 +28,10 @@ Lemma empty_set_characterization {U : Type} (X : subset U) (x : U):
 Proof.
     intros hempty hx.
     exact (hempty x hx).
+Qed.
+
+Lemma not_in_empty {U : Type} (x : U) : x ∉ (∅ : subset U).
+Proof.
+intro h.
+elim h.
 Qed.

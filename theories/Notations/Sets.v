@@ -36,7 +36,7 @@ Definition subset_type {X : Type} (A : subset X) := X.
 Definition subset_in {X : Type} (A : subset X) (x : X) := A x.
 
 Notation "'set_of_subsets' U" :=
-  (Ensemble (Ensemble U)) (at level 50).
+  (subset (subset U)) (at level 50).
 
 Definition empty {U} := Empty_set U.
 Definition full {U} := Full_set U.
@@ -192,6 +192,11 @@ Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 0, x at level 99, y
 
 Open Scope subset_scope.
 
+Definition unique_exists {T : Type} (Q : subset T) (P : T -> Prop) :=
+  (∃ x Q, (P x)) ∧ (∀ x Q, ∀ y Q, (P x) ∧ (P y) ⇒ x = y).
+
+Notation "∃! x Q , P" := (unique_exists (Q%pfs) (fun x : (subset_type Q%pfs) => P)) (at level 199, x binder, right associativity) : subset_scope.
+
 Lemma forall_forall_in_iff (T : Type) (Q : T -> Prop) :
   (∀ x ∈ T, Q x) <-> ∀ x, Q x.
 Proof.
@@ -212,3 +217,6 @@ Qed.
 
 Close Scope subset_scope.
 Close Scope R_scope.
+
+Notation "A 'is' 'empty'" :=
+  (¬ (∃ x, x ∈ A)) (at level 45).
