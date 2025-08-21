@@ -88,11 +88,11 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'first' 's
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  We  first  show  the  base  case  G ."
   ).
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'now' 'show' 'the' 'induction' 'step.'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'now' 'show' 'the' 'induction' 'step.'" :=
   (NaturalInduction.Step.Wrapper _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  We  now  show  the  induction  step."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' We  now  show  the  induction  step."
   ).
 
 
@@ -217,11 +217,11 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'first' 'd
     format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  We  first  define  n_0 ."
   ).
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'Take' 'k' '∈' 'ℕ' 'and' 'assume' 'n_0,...,n_k' 'are' 'defined.'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' '∈' 'ℕ' 'and' 'assume' 'n_0,...,n_k' 'are' 'defined.'" :=
   (StrongIndIndxSeq.Step.Wrapper _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  Take  k  ∈  ℕ  and  assume  n_0,...,n_k  are  defined."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' Take  k  ∈  ℕ  and  assume  n_0,...,n_k  are  defined."
   ).
 
 

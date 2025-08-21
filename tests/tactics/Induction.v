@@ -125,5 +125,5 @@ We use induction on n.
   assert_string_equal s 
  "(Add the following line to the proof:
  
- - We now show the induction step.)".
+ We now show the induction step.)".
 Abort.
