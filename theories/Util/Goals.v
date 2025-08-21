@@ -26,6 +26,10 @@ Require Import Util.TypeCorrector.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat (of_string "") ls.
 
+(* Note that the verbiage in this file is used to tweak behaviour in waterproof-vscode *)
+(* In partiular the phrases "Add the following line to the proof:" and "or write:" are *)
+(* used as markers to show buttons to adopt suggestions. *)
+
 Module Case.
 
   Private Inductive Wrapper (A G : Type) : Type :=
