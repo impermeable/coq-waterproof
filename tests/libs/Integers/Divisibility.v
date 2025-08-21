@@ -32,17 +32,17 @@ Open Scope subset_scope.
 Open Scope Z_scope.
 
 (* Test 0: Basic divide_char lemma - forward direction *)
-Lemma test_divide_char : Z.divide 3 6 ⇒ ∃z ∈ ℤ, 6 = z * 3.
+Lemma test_divide_char : Z.divide 3 6 ⇒ ∃ z ∈ ℤ, 6 = z * 3.
 Proof.
     Assume that (Z.divide 3 6).
-    By divide_char it holds that (∃z ∈ ℤ, 6 = z * 3).
-    We conclude that (∃z ∈ ℤ, 6 = z * 3).
+    By divide_char it holds that (∃ z ∈ ℤ, 6 = z * 3).
+    We conclude that (∃ z ∈ ℤ, 6 = z * 3).
 Qed.
 
 (* Test 1: Basic divide_char_inv lemma - reverse direction *)
-Lemma test_divide_char_inv : (∃z ∈ ℤ, 12 = z * 4) ⇒ Z.divide 4 12.
+Lemma test_divide_char_inv : (∃ z ∈ ℤ, 12 = z * 4) ⇒ Z.divide 4 12.
 Proof.
-    Assume that (∃z ∈ ℤ, 12 = z * 4).
+    Assume that (∃ z ∈ ℤ, 12 = z * 4).
     By divide_char_inv it holds that (Z.divide 4 12).
     We conclude that (Z.divide 4 12).
 Qed.
@@ -50,7 +50,7 @@ Qed.
 (* Test 2: Concrete divisibility example using divide_char *)
 Lemma test_concrete_divisibility : Z.divide 5 15.
 Proof.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, 15 = z * 5).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, 15 = z * 5).
     Choose z := 3.
     { Indeed, z ∈ ℤ. }
     We conclude that (15 = z * 5).
@@ -73,7 +73,7 @@ Qed.
 (* Test 5: Zero divisibility *)
 Lemma test_zero_divides_zero : Z.divide 0 0.
 Proof.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, 0 = z * 0).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, 0 = z * 0).
     Choose z := 1.
     { Indeed, z ∈ ℤ. }
     We conclude that (0 = z * 0).
@@ -83,7 +83,7 @@ Qed.
 Lemma test_any_divides_zero : ∀ n ∈ ℤ, Z.divide n 0.
 Proof.
     Take n ∈ ℤ.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, 0 = z * n).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, 0 = z * n).
     Choose z := 0.
     { Indeed, z ∈ ℤ. }
     We conclude that (0 = z * n).
@@ -93,7 +93,7 @@ Qed.
 Lemma test_one_divides_any : ∀ n ∈ ℤ, Z.divide 1 n.
 Proof.
     Take n ∈ ℤ.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, n = z * 1).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, n = z * 1).
     Choose z := n.
     { Indeed, z ∈ ℤ. }
     We conclude that (n = z * 1).
@@ -103,7 +103,7 @@ Qed.
 Lemma test_self_divisibility : ∀ n ∈ ℤ, Z.divide n n.
 Proof.
     Take n ∈ ℤ.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, n = z * n).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, n = z * n).
     Choose z := 1.
     { Indeed, z ∈ ℤ. }
     We conclude that (n = z * n).
@@ -119,7 +119,7 @@ Qed.
 (* Test 10: Negative number divisibility *)
 Lemma test_negative_divisibility : Z.divide (-3) 12.
 Proof.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, 12 = z * (-3)).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, 12 = z * (-3)).
     Choose z := (-4).
     { Indeed, z ∈ ℤ. }
     We conclude that (12 = z * (-3)).
@@ -135,7 +135,7 @@ Qed.
 (* Test 12: Simple divisibility verification *)
 Lemma test_simple_divisibility : Z.divide 6 18.
 Proof.
-    By divide_char_inv it suffices to show that (∃z ∈ ℤ, 18 = z * 6).
+    By divide_char_inv it suffices to show that (∃ z ∈ ℤ, 18 = z * 6).
     Choose z := 3.
     { Indeed, z ∈ ℤ. }
     We conclude that (18 = z * 6).

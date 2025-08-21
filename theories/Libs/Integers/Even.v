@@ -9,7 +9,7 @@ Require Import Coq.ZArith.Zeven.
 Open Scope subset_scope.
 Open Scope Z_scope.
 
-Lemma Zeven_char (n : ℤ) : Zeven n ⇒ ∃m ∈ ℤ, n = 2*m.
+Lemma Zeven_char (n : ℤ) : Zeven n ⇒ ∃ m ∈ ℤ, n = 2*m.
 Proof.
     rewrite Zeven_ex_iff.
     intros [m h].
@@ -18,7 +18,7 @@ Proof.
     exact h.
 Qed.
 
-Lemma Zeven_char_inv (n : ℤ) : (∃m ∈ ℤ, n = 2*m) ⇒ Zeven n.
+Lemma Zeven_char_inv (n : ℤ) : (∃ m ∈ ℤ, n = 2*m) ⇒ Zeven n.
 Proof.
     rewrite Zeven_ex_iff.
     intros [m [_ h]].
@@ -26,7 +26,7 @@ Proof.
     exact h.
 Qed.
 
-Lemma Zodd_char (n : ℤ) : Zodd n ⇒ ∃m ∈ ℤ, n = 2*m+1.
+Lemma Zodd_char (n : ℤ) : Zodd n ⇒ ∃ m ∈ ℤ, n = 2*m+1.
 Proof.
     rewrite Zodd_ex_iff.
     intros [m h].
@@ -35,7 +35,7 @@ Proof.
     exact h.
 Qed.
 
-Lemma Zodd_char_inv (n : ℤ) : (∃m ∈ ℤ, n = 2*m+1) ⇒ Zodd n.
+Lemma Zodd_char_inv (n : ℤ) : (∃ m ∈ ℤ, n = 2*m+1) ⇒ Zodd n.
 Proof.
     rewrite Zodd_ex_iff.
     intros [m [_ h]].

@@ -26,7 +26,7 @@ Lemma exercise_irrational_negation (x : ℝ) : x is irrational ⇒ (-x) is irrat
 Proof.
 Assume that x is irrational.
 Assume that (-x) is rational.
-It holds that ∃a ∈ ℤ, ∃b ∈ ℤ, 0 ≠ b ∧ (-x) = a/b.
+It holds that ∃ a ∈ ℤ, ∃ b ∈ ℤ, 0 ≠ b ∧ (-x) = a/b.
 Obtain such an a, b.
 It holds that 0 ≠ b ∧ (-x) = a/b.
 It holds that b ≠ 0.
