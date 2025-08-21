@@ -41,11 +41,11 @@ Module Case.
 End Case.
 
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'Case' ( A )." :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'Case' A ." :=
   (Case.Wrapper A _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  Case  ( A )."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  Case  A ."
   ).
 
 Module NaturalInduction.
@@ -77,11 +77,11 @@ Module NaturalInduction.
 
 End NaturalInduction.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'first' 'show' 'the' 'base' 'case' ( G )." :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'first' 'show' 'the' 'base' 'case' G ." :=
   (NaturalInduction.Base.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  We  first  show  the  base  case  ( G )."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' -  We  first  show  the  base  case  G ."
   ).
 
 Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '-' 'We' 'now' 'show' 'the' 'induction' 'step.'" :=
@@ -106,11 +106,11 @@ Module StateGoal.
 
 End StateGoal.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' '(' G ').' 'or' 'write:' 'We' 'conclude' 'that' '(' G ').' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 'show' 'that' G '.' 'or' 'write:' 'We' 'conclude' 'that' G '.' 'if' 'no' 'intermediary' 'proof' 'steps' 'are' 'required.'" :=
   (StateGoal.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' We  need  to  show  that  ( G ). '//' '//' or  write: '//' '//' We  conclude  that  ( G ). '//' '//' if  no  intermediary  proof  steps  are  required."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' We  need  to  show  that G . '//' '//' or  write: '//' '//' We  conclude  that  G . '//' '//' if  no  intermediary  proof  steps  are  required."
   ).
 
 Module VerifyGoal.
@@ -127,11 +127,11 @@ Module VerifyGoal.
 
 End VerifyGoal.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '{' 'Indeed,' '(' G ').' '}' 'or' 'write:' '{' 'We' 'need' 'to' 'verify' 'that' '(' G ').' '}' 'if' 'intermediary' 'proof' 'steps' 'are' 'required.'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' '{' 'Indeed,' G '.' '}' 'or' 'write:' '{' 'We' 'need' 'to' 'verify' 'that' G '.' '}' 'if' 'intermediary' 'proof' 'steps' 'are' 'required.'" :=
   (VerifyGoal.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' {  Indeed,  ( G ).  } '//' '//' or  write: '//' '//' {  We  need  to  verify  that  ( G ). '//' '//' } '//' '//' if  intermediary  proof  steps  are  required."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' {  Indeed,  G .  } '//' '//' or  write: '//' '//' {  We  need  to  verify  that  G . '//' '//' } '//' '//' if  intermediary  proof  steps  are  required."
   ).
 
 
@@ -149,11 +149,11 @@ Module StateHyp.
 
 End StateHyp.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'It' 'holds' 'that' '(' A ').'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'It' 'holds' 'that' A '.'" :=
   (StateHyp.Wrapper A _ _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' It  holds  that  ( A )."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' It  holds  that  A ."
   ).
 
 Module ByContradiction.
@@ -170,11 +170,11 @@ Module ByContradiction.
 
 End ByContradiction.
 
-Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' '(' A ').'" :=
+Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Assume' 'that' A '.'" :=
   (ByContradiction.Wrapper A _) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' Assume  that  ( A )."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' Assume  that  A ."
   ).
 
 

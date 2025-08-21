@@ -368,11 +368,11 @@ let s := Message.to_string (Message.of_constr (Control.goal ())) in
 assert_string_equal s (String.concat ""
  ["(Add the following line to the proof:
  ";"
- { Indeed, (2 <= 3). }
+ { Indeed, 2 <= 3. }
  ";"
  or write:
  ";"
- { We need to verify that (2 <= 3).
+ { We need to verify that 2 <= 3.
  ";"
  }
  ";"
