@@ -130,24 +130,25 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         is unsuccesful
     - [throw_error : bool], whether the tactic should throw an error which suggests
         user to remove this tactic in final version of the proof.
-    - [x : constr option], optional statement in which definitions are to be unfolded.
-        If [None], definitions are unfolded in every statement.
+    - [x : constr option], unused, kept for compatibility.
 
   Raises fatal exceptions:
     - [always/none] depending on value of [throw_error].
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) :=
+  (def_name : string option) (throw_error : bool) (x : constr option):=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_method def_name throw_error.
+
+(* TODO: Refactor unfold system to be more maintainable *)
 
 (* Tactic notation for unfolding generic Gallina terms, not notations.
   For an example of how to used [unfold_in_statement] to unfold notations,
   see [tests/tactics/Unfold.v] *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
 
-  wp_unfold (eval_unfold targets) None true.
+  wp_unfold (eval_unfold targets) None true None.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-  wp_unfold (eval_unfold targets) None false.
+  wp_unfold (eval_unfold targets) None false None.
