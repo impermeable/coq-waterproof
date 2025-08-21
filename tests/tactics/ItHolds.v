@@ -27,6 +27,7 @@ Require Import Waterproof.Tactics.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Util.Assertions.
+Require Import Waterproof.Util.MessagesToUser.
 
 Waterproof Enable Automation RealsAndIntegers.
 
@@ -342,15 +343,21 @@ Proof.
   * It holds that True as (i).
 Abort.
 
-Waterproof Disable Hypothesis Help.
+Waterproof Enable Redirect Feedback.
 
-(** Test 24: Test wrapper specialize blocks other tactics  *)
+(** Test 24: Test wrapper specialize blocks other tactics and generates notice *)
 Goal (forall x : nat, x >= 5 -> True) -> True.
 Proof.
   intro H1.
   Use x := 6 in (H1).
-  Fail We claim that False.
+  Waterproof Enable Redirect Errors.
+  assert_feedback_with_string (fun () =>
+    assert_fails_with_string (fun () => We claim that False)
+    "You cannot do this right now, follow the advice in the goal window."
+  ) Notice "Hint, replace with: It holds that (6 >= 5 -> True).${0}".
 Abort.
+
+Waterproof Disable Redirect Errors.
 
 (** Test 25: Test wrapper specialize fails with wrong statement *)
 Goal (forall x : nat, x >= 5 -> True) -> True.
