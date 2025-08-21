@@ -217,7 +217,7 @@ Ltac2 print_hints () :=
           else (
             info_notice(of_string "You can use one of the ‘for all’-statements (∀):");
             List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps ();
-            replace_msg "Use ... := ... in ...." "Use ${0:x} := ${1:0} in (0 = 0).${2}"
+            replace_msg "Use ... := ... in ...." "Use ${0:x} := ${1:0} in ({2:i}).${3}"
           );
 
         (* Print how to use exists statements. *)
@@ -226,7 +226,7 @@ Ltac2 print_hints () :=
           else (
             info_notice(of_string "You can use one of the ‘there exists’-statements (∃):");
             List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps ();
-            replace_msg "Obtain ... according to ...." "Obtain ${0:0 = 0} according to ${1:0 = 0}.${2}"
+            replace_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}"
           );
 
         (* Print no hints available if none have been given *)
@@ -272,7 +272,7 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   let print_exists_msg () :=
     info_notice (concat_list [
         of_string "To use "; of_constr x; of_string ", consider:"]);
-      insert_msg "Obtain ... according to ...." "Obtain ${0:such a 0 = 0} according to ${1:0 = 0}.${2}" in
+      insert_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}" in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
@@ -308,7 +308,7 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
     info_notice (concat_list [
         of_string "After proving "; of_constr x; of_string ", consider:"]);
       let template := match label with
-        | None => "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"
+        | None => "Use ${0:x} := ${1:0} in (${2:i}).${3}"
         | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
       end in
       insert_msg "Use ... := ... in ...." template in

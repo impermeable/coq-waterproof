@@ -114,7 +114,7 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'We' 'need' 'to' 's
   (StateGoal.Wrapper G) (
     at level 99,
     only printing,
-    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' We  need  to  show  that G . '//' '//' or  write: '//' '//' We  conclude  that  G . '//' '//' if  no  intermediary  proof  steps  are  required."
+    format "'[ ' Add  the  following  line  to  the  proof: ']' '//' '//' We  need  to  show  that  G . '//' '//' or  write: '//' '//' We  conclude  that  G . '//' '//' if  no  intermediary  proof  steps  are  required."
   ).
 
 Module VerifyGoal.
