@@ -47,7 +47,8 @@ Create HintDb wp_core.
     [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
-  (* #[export] Hint Extern 9 => congruence 20 : wp_core. *)
+  (* This uses congruence to generate 50 equalities. 20 was not enough for exercises involving an injective composition *)
+  #[export] Hint Extern 9 => congruence 50 : wp_core.
   (* #[export] Hint Extern 2 ( _ = _ ) => congruence 20 : wp_core. *)
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
