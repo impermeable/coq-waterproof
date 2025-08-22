@@ -47,13 +47,13 @@ Create HintDb wp_core.
     [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
-  #[export] Hint Extern 9 => congruence : wp_core.
+  (* #[export] Hint Extern 9 => congruence 20 : wp_core. *)
   (* #[export] Hint Extern 2 ( _ = _ ) => congruence 20 : wp_core. *)
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
   (* TODO: maybe tune this better *)
   #[export] Hint Extern 2 => progress (unfold seal, subset_type, gt_op, R_gt_type, nat_gt_type, ge_op, R_ge_type, nat_ge_type,
-    lt_op, R_lt_type, nat_lt_type, le_op, R_le_type, nat_le_type in * ) : wp_core.
+    lt_op, R_lt_type, nat_lt_type, le_op, R_le_type, nat_le_type, ne_op, nat_ne_type, R_ne_type in * ) : wp_core.
   #[export] Hint Extern 2 => progress (unfold subset_in, conv, as_subset in * ) : wp_core.
   #[export] Hint Resolve mem_subset_full_set : wp_core.
   #[export] Hint Extern 3 => progress ltac2:(split_conjunctions ()) : wp_core.

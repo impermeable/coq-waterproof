@@ -18,8 +18,6 @@ Open Scope R_scope.
 Open Scope subset_scope.
 Open Scope R2_scope.
 
-Set Default Timeout 10.
-
 Waterproof Enable Automation RealsAndIntegers.
 
 Lemma exercise_irrational_negation (x : ℝ) : x is irrational ⇒ (-x) is irrational.
