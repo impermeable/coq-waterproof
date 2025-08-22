@@ -28,7 +28,7 @@ Declare Scope function_scope.
 Notation "g [ U ]" := (image g U) (at level 10) : function_scope.
 
 (** The notation f⁻¹[V] for the preimage of set V under function f *)
-Notation "f ⁻¹[ V ]" := (preimage f V) (at level 10) : function_scope.
+Notation "f ⁻¹ [ V ]" := (preimage f V) (at level 10) : function_scope.
 
 (** * Function Composition *)
 (** The notation g ∘ f for the composition of functions g and f *)
