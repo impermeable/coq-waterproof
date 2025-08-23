@@ -75,6 +75,11 @@ Local Ltac2 goal_forall_le_msg (y: constr) :=
 Introduce an arbitrary variable less than or equal to "; of_constr y; of_string ", use
     Take ... ≤ (...)."].
 
+Local Ltac2 goal_forall_ne_msg (y: constr) :=
+  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable not equal to "; of_constr y; of_string ", use
+    Take ... ≠ (...)."].
+
 Local Ltac2 goal_forall_pred_msg (q: constr) :=
   concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
 Introduce an arbitrary variable that is (a/an) "; of_constr q; of_string ", use
@@ -108,6 +113,11 @@ Choose a specific variable less than or equal to "; of_constr y; of_string ", us
 Local Ltac2 goal_exists_pred_msg (q: constr) :=
   concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
 Choose a specific variable that is (a/an) "; of_constr q; of_string ", use
+    Choose ... := (...)."].
+
+Local Ltac2 goal_exists_ne_msg (y: constr) :=
+  concat_list [of_string "The goal is to show a 'there exists'-statement (∃).
+Choose a specific variable not equal to "; of_constr y; of_string ", use
     Choose ... := (...)."].
 
 Local Ltac2 goal_and_msg () := of_string
@@ -174,6 +184,7 @@ Local Ltac2 goal_hint () : message :=
   | ∀ _ ≥ ?y, _          => goal_forall_ge_msg y
   | ∀ _ < ?y, _          => goal_forall_lt_msg y
   | ∀ _ ≤ ?y, _          => goal_forall_le_msg y
+  | ∀ _ ≠ ?y, _         => goal_forall_ne_msg y
   | ∀ _ ?q, _           => goal_forall_pred_msg q
   | ∃ _ ∈ conv ?v_type, _    => goal_exists_el_msg v_type
   | ∃ _ ∈ ?v_type, _    => goal_exists_el_msg v_type
@@ -181,6 +192,7 @@ Local Ltac2 goal_hint () : message :=
   | ∃ _ ≥ ?y, _         => goal_exists_ge_msg y
   | ∃ _ < ?y, _         => goal_exists_lt_msg y
   | ∃ _ ≤ ?y, _         => goal_exists_le_msg y
+  | ∃ _ ≠ ?y, _         => goal_exists_ne_msg y
   | ∃ _ ?q, _           => goal_exists_pred_msg q
   | forall v:?v_type, _ => goal_forall_msg v_type
   | exists v:?v_type, _ => goal_exists_msg v_type

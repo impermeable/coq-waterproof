@@ -35,6 +35,7 @@ Require Import Libs.Reals.
 Require Import Libs.Logic.
 Require Import Libs.Sets.
 Require Import Libs.Integers.
+Require Import Libs.Functions.
 
 (** * Waterproof core *)
 
@@ -46,12 +47,14 @@ Create HintDb wp_core.
     [eq_sym] is still included in [wp_reals] *)
   #[export] Hint Resolve f_equal : wp_core.
   #[export] Hint Resolve f_equal2 : wp_core.
+  (* This uses congruence to generate 50 equalities. 20 was not enough for exercises involving an injective composition *)
+  #[export] Hint Extern 9 => congruence 50 : wp_core.
   (* #[export] Hint Extern 2 ( _ = _ ) => congruence 20 : wp_core. *)
   #[export] Hint Extern 2 => progress ltac2:(simpl_ineq_chains ()) : wp_core.
   #[export] Hint Extern 1 ( _ = _ ) => progress ltac2:(simpl_ineq_chains ()); congruence 20 : wp_core.
   (* TODO: maybe tune this better *)
   #[export] Hint Extern 2 => progress (unfold seal, subset_type, gt_op, R_gt_type, nat_gt_type, ge_op, R_ge_type, nat_ge_type,
-    lt_op, R_lt_type, nat_lt_type, le_op, R_le_type, nat_le_type in * ) : wp_core.
+    lt_op, R_lt_type, nat_lt_type, le_op, R_le_type, nat_le_type, ne_op, nat_ne_type, R_ne_type in * ) : wp_core.
   #[export] Hint Extern 2 => progress (unfold subset_in, conv, as_subset in * ) : wp_core.
   #[export] Hint Resolve mem_subset_full_set : wp_core.
   #[export] Hint Extern 3 => progress ltac2:(split_conjunctions ()) : wp_core.
@@ -484,6 +487,10 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rplus_lt_compat : wp_reals.
   #[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
+  (* Extern because the hypotheses need to be resolved by eapply *)
+  #[export] Hint Extern 1 => eapply R_multintegral_left : wp_reals.
+  #[export] Hint Extern 1 => eapply R_multintegral_right : wp_reals.
+
   #[export] Hint Resolve mult_neq_zero : wp_reals.
   #[export] Hint Resolve div_non_zero : wp_reals.
   #[export] Hint Resolve R1_neq_R0 : wp_reals.
@@ -543,6 +550,7 @@ Create HintDb wp_sets.
   #[export] Hint Resolve power_set_characterization_alt : wp_sets.
   #[export] Hint Extern 1 => apply empty_set_characterization; eassumption : wp_sets.
   #[export] Hint Resolve not_in_empty : wp_sets.
+  #[export] Hint Resolve set_difference_elim : wp_sets.
   #[export] Hint Resolve Extensionality_Ensembles : wp_sets.
 
   #[export] Hint Resolve Closed : wp_sets.
@@ -560,6 +568,36 @@ Create HintDb wp_sets.
 
   #[export] Hint Extern 1 => eapply index_union_elim; eassumption : wp_sets.
   #[export] Hint Extern 2 => eapply index_union_elim_left; eassumption : wp_sets.
+
+  (** * Function image hints *)
+  #[export] Hint Resolve in_image_intro : wp_sets.
+  #[export] Hint Resolve in_image_elim : wp_sets.
+
+  (** * Function preimage hints *)
+  #[export] Hint Resolve in_preimage_intro : wp_sets.
+  #[export] Hint Resolve in_preimage_elim : wp_sets.
+
+  (** * Function preimage translation hints *)
+  #[export] Hint Resolve preimage_of_mem : wp_sets.
+  #[export] Hint Resolve mem_of_preimage : wp_sets.
+  
+  #[export] Hint Resolve bijective_is_injective : wp_sets.
+  #[export] Hint Resolve bijective_is_surjective : wp_sets.
+
+  (** * Left inverse hints *)
+  #[export] Hint Resolve left_inverse_elim : wp_sets.
+  #[export] Hint Resolve left_inverse_intro : wp_sets.
+
+  (** * Right inverse hints *)
+  #[export] Hint Resolve right_inverse_elim : wp_sets.
+  #[export] Hint Resolve right_inverse_intro : wp_sets.
+
+  (** * Inverse hints *)
+  #[export] Hint Resolve inverse_is_left_inverse : wp_sets.
+  #[export] Hint Resolve inverse_is_right_inverse : wp_sets.
+  #[export] Hint Resolve inverse_elim_left : wp_sets.
+  #[export] Hint Resolve inverse_elim_right : wp_sets.
+  #[export] Hint Resolve inverse_intro : wp_sets.
 
 (** * Intuition *)
 
