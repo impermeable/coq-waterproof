@@ -1,5 +1,15 @@
 # Change log for the coq-waterproof library
 
+## Version 3.0.0+8.20
+
+- Remove need for parentheses in many places
+- Add theory for exercises for the book _An Infinite Descent into Pure Mathematics_ written by Clive Newstead
+- Remove make build
+- Small update 'By/Since .. it holds that' tactic
+- More natural formulation for assuming multiple premises at once
+- Add new behavior, more relaxed, for bullets
+- Improve infrastructure for testing
+
 ## Version 2.2.0+8.20
 
 - Allow for standard math notation

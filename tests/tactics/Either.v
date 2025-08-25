@@ -226,7 +226,7 @@ Proof.
   assert_string_equal s 
  "(Add the following line to the proof:
  
- - Case (x < 0).)".
+ - Case x < 0.)".
 Abort.
 
 Close Scope nat_scope.
