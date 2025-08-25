@@ -487,10 +487,6 @@ Create HintDb wp_reals.
   #[export] Hint Resolve Rplus_lt_compat : wp_reals.
   #[export] Hint Resolve Rplus_lt_le_compat : wp_reals.
 
-  (* Extern because the hypotheses need to be resolved by eapply *)
-  #[export] Hint Extern 1 => eapply R_multintegral_left : wp_reals.
-  #[export] Hint Extern 1 => eapply R_multintegral_right : wp_reals.
-
   #[export] Hint Resolve mult_neq_zero : wp_reals.
   #[export] Hint Resolve div_non_zero : wp_reals.
   #[export] Hint Resolve R1_neq_R0 : wp_reals.
