@@ -175,25 +175,6 @@ Proof.
       contradiction.
 Qed.
 
-Lemma R_multintegral_right :
-  forall a b : R, a <> 0 ⇒ a * b = 0 ⇒ b = 0.
-Proof.
-  intros a b Ha Hab.
-  destruct (Rmult_integral a b Hab) as [Ha_eq | Hb_eq].
-  - contradiction.
-  - exact Hb_eq.
-Qed.
-
-Lemma R_multintegral_left :
-  forall a b : R, b <> 0 ⇒ a * b = 0 ⇒ a = 0.
-Proof.
-  intros a b Hb Hab.
-  destruct (Rmult_integral a b Hab) as [Ha_eq | Hb_eq].
-  - exact Ha_eq.
-  - contradiction.
-Qed.
-
-
 (** * Lemmas for decidability *)
 
 (** ** Lemmas to write e.g. <<{r1 ≤ r2} + {r2 < r1}>> *)
