@@ -138,6 +138,7 @@ Local Ltac2 need_to_follow_advice () : bool :=
   | _ => false
   end.
 
+(* TODO: Refactor this function to return an option with data and call print after *)
 Local Ltac2 goal_hint () : bool :=
   let gl := Control.goal () in
   lazy_match! gl with
