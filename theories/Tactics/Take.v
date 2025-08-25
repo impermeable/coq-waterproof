@@ -29,6 +29,7 @@ Require Import Util.MessagesToUser.
 
 Require Import Coq.Sets.Ensembles.
 Require Import Notations.Sets.
+Require Import Coq.Sets.Ensembles.
 
 Local Ltac2 too_many_of_type_message (t : constr) :=
   concat_list [of_string "Tried to introduce too many variables of type ";
@@ -65,7 +66,7 @@ Local Ltac2 expected_col_not_el_message (z : ident) (provided_rhs : constr)
   of_ident z; of_string " : "; of_constr expected_rhs ].
 
 Ltac2 Type TakeKind :=
-  [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe | TakeNone ].
+  [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe | TakeNe | TakeNone ].
 
 Ltac2 string_to_take_kind (s : string) :=
   if String.equal s ":" then
@@ -80,18 +81,21 @@ Ltac2 string_to_take_kind (s : string) :=
     TakeLt
   else if String.equal s "≤" then
     TakeLe
+  else if String.equal s "≠" then
+    TakeNe
   else
     (throw (of_string "Unknown symbol encountered after Take"); TakeCol).
 
-Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 'c option* 'd option * 'e option) :=
-  let (col_opt, el_opt, gt_opt, ge_opt, lt_opt, le_opt) := option_tuple in
+Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 'c option* 'd option * 'e option * 'f option) :=
+  let (col_opt, el_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt) := option_tuple in
   let final_list := List.concat [
     (match col_opt with | Some _ => [TakeCol] | None => [] end);
     (match el_opt with | Some _ => [TakeEl] | None => [] end);
     (match gt_opt with | Some _ => [TakeGt] | None => [] end);
     (match ge_opt with | Some _ => [TakeGe] | None => [] end);
     (match lt_opt with | Some _ => [TakeLt] | None => [] end);
-    (match le_opt with | Some _ => [TakeLe] | None => [] end)] in
+    (match le_opt with | Some _ => [TakeLe] | None => [] end);
+    (match ne_opt with | Some _ => [TakeNe] | None => [] end)] in
   if Int.gt (List.length final_list) 1 then
     throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol
     else
@@ -109,6 +113,7 @@ Local Ltac2 pred_from_take_kind (rhs : constr) (tk : TakeKind) :=
   | TakeGe => constr:((≥ $rhs)%pfs)
   | TakeLt => constr:((< $rhs)%pfs)
   | TakeLe => constr:((≤ $rhs)%pfs)
+  | TakeNe => constr:((≠ $rhs)%pfs)
   | TakeNone => rhs
   end.
 
@@ -180,6 +185,7 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
     | (?v ∈ ?set_in_cond -> _) =>
       let possibly_coerced_type :=
         lazy_match! Constr.type type with
+        | subset _ => type
         | Ensemble _ => type
         | _ -> Prop => type
         | _ => get_coerced_type type
@@ -217,9 +223,9 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
   Raises fatal exceptions:
     - If the current goal does not require the introduction of a variable of type [type], including coercions of [type].
 *)
-Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * constr)) :=
-  let (ids, col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt, type) := pair in
-  let take_kind := get_take_kind (col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt) in
+Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * 'f option * constr)) :=
+  let (ids, col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt, type) := pair in
+  let take_kind := get_take_kind (col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt) in
   lazy_match! goal with
     | [ |- seal (fun _ => forall _ : ?u, _) _ ] =>
       let sort_u := get_value_of_hyp u in
@@ -242,7 +248,7 @@ Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b op
 (**
   Checks whether variables need to be introduced, attempts to introduce a list of variables of certain types.
 *)
-Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * constr) list) :=
+Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * 'f option * constr) list) :=
   lazy_match! goal with
     | [ |- seal (fun _ => forall _ : ?u, _) _ ] =>
       (* Check whether [u] is not a proposition. *)
@@ -262,6 +268,6 @@ Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c opt
   end.
 
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
-  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), lconstr), "and")) :=
+  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), opt("≠"), lconstr), "and")) :=
   panic_if_goal_wrapped ();
   take x.

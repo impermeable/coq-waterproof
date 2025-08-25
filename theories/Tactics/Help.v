@@ -59,6 +59,10 @@ Local Ltac2 goal_forall_le_msg (y: constr) :=
   info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable less than or equal to "; of_constr y; of_string "."]);
   replace_msg "Take ... ≤ ...." "Take ${0:x} ≤ ${1:0}.${2}".
 
+Local Ltac2 goal_forall_ne_msg (y: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a ‘for all’-statement (∀). Introduce an arbitrary variable not equal to "; of_constr y; of_string "."]);
+  replace_msg "Take ... ≠ ...." "Take ${0:x} ≠ ${1:0}.${2}".
+
 Local Ltac2 goal_forall_pred_msg (q: constr) :=
   info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable that is (a/an) "; of_constr q; of_string "."]);
   replace_msg "Take ... ...." "Take ${0:x} ${1:0 = 0}.${2}".
@@ -81,6 +85,10 @@ Local Ltac2 goal_exists_lt_msg (y: constr) :=
 
 Local Ltac2 goal_exists_le_msg (y: constr) :=
   info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable less than or equal to "; of_constr y; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+
+Local Ltac2 goal_exists_ne_msg (y: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable not equal to "; of_constr y; of_string "."]);
   replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
 Local Ltac2 goal_exists_pred_msg (q: constr) :=
@@ -162,6 +170,7 @@ Local Ltac2 goal_hint () : bool :=
   | ∃ _ ≥ ?y, _         => goal_exists_ge_msg y; true
   | ∃ _ < ?y, _         => goal_exists_lt_msg y; true
   | ∃ _ ≤ ?y, _         => goal_exists_le_msg y; true
+  | ∃ _ ≠ ?y, _         => goal_exists_ne_msg y; true
   | ∃ _ ?q, _           => goal_exists_pred_msg q; true
   | forall v:?v_type, _ => goal_forall_msg v_type; true
   | exists v:?v_type, _ => goal_exists_msg v_type; true
