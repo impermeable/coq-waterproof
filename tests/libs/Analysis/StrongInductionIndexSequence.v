@@ -129,5 +129,5 @@ Define the index sequence n inductively.
   assert_string_equal s (String.concat "" [
  "(Add the following line to the proof:
  ";"
- - Take k ∈ ℕ and assume n_0,...,n_k are defined.)"]).
+ Take k ∈ ℕ and assume n_0,...,n_k are defined.)"]).
 Abort.

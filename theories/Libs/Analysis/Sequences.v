@@ -25,6 +25,7 @@ From Stdlib Require Import ClassicalChoice.
 Require Import Tactics.
 Require Import Automation.
 Require Import Libs.Reals.
+Require Import Libs.Reals.ArchimedN.
 Require Import Notations.Common.
 Require Import Notations.Reals.
 Require Import Notations.Sets.
@@ -109,41 +110,6 @@ Proof. (* hide proof *)
     - We need to show that (∀ n ≥ N1, (｜a(n) - q｜ < ε)%R)%nat.
       Take n ≥ N1.
       We conclude that ｜a(n) - q｜ < ε.
-Qed.
-
-(** ## Preparation for a simple limit*)
-Lemma archimed_mod :
-  ∀ x ∈ ℝ, ∃ n ∈ ℕ, INR(n) > x.
-Proof.
-    Take x ∈ ℝ.
-    Either x <= 0 or 0 < x.
-    - Case x <= 0.
-      Choose n := 1%nat.
-      + Indeed, n ∈ ℕ.
-      + We need to show that n > x.
-        We claim that INR 1 > INR 0.
-        { We need to show that 1 > 0 .
-          We conclude that 1 > 0.
-        }
-        It holds that x <= INR 0.
-        We conclude that n > x.
-    - Case 0 < x.
-      By archimed it holds that IZR( up x) > x ∧ IZR( up x ) - x ≤ 1.
-      It holds that IZR( up x ) > x.
-      It holds that 0 < IZR( up x ).
-      By lt_0_IZR it holds that (0 < up x)%Z.
-      It holds that (0 <= up x)%Z.
-      By IZN it holds that ∃ k : ℕ, up x = Z.of_nat k.
-      Obtain such a k. It holds that up x = Z.of_nat k as (ii).
-      Choose n := k.
-      + Indeed, n ∈ ℕ.
-      + We need to show that INR k > x.
-        By INR_IZR_INZ it holds that INR k = IZR (Z.of_nat k).
-        (* TODO: better solution *)
-        We claim that IZR (up x) = IZR (Z.of_nat k).
-        { rewrite (ii). reflexivity. }
-        We need to show that x < k.
-        We conclude that & x < up x = Z.of_nat k = k.
 Qed.
 
 (** Next, we introduce eventually equal sequences, and show that they converge to the same limit.*)
@@ -255,7 +221,7 @@ Proof.
   To show :
       ∀ ε > 0, ∃ N1 ∈ ℕ, ∀ n ≥ N1, ｜d(n) - 0｜ < ε.
     Take ε > 0.
-    By archimed_mod it holds that ∃ n1 ∈ ℕ, n1 > / ε.
+    By archimedN_exists it holds that ∃ n1 ∈ ℕ, n1 > / ε.
     Obtain such an n1. Choose N1 := n1.
     * Indeed, N1 ∈ ℕ.
     * We need to show that ∀ n ≥ N1, ｜d(n) - 0｜ < ε.
