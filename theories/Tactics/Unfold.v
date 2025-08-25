@@ -34,72 +34,6 @@ Local Ltac2 _is_empty (ls : 'a list) :=
 Ltac2 Type exn ::=  [ Inner ].
 
 (**
-  Attemtps to unfold definition(s) in a statement according to specified method.
-  If succesful it also throws a fatal error suggesting the user to replace this
-  command by an alternative, suitable tactic with the unfolded statement.
-    E.g. if the statement corresponds with the proof goal,
-  the user is suggested to use
-    'We need to show that ([statement with unfolded definiton])'.
-
-  Arguments:
-    - [unfold method: constr -> constr], method to be used for unfolding
-        unfolding is deemed to be succesful if [unfold_method statement] =\= [statement]
-    - [def_name: string], optional string used for error message when unfolding
-        is unsuccesful
-    - [statement : constr], term in which definitions are to be unfolded.
-
-  Raises fatal exceptions:
-    - always if [throw_error = true], because it indicates that the user needs to
-      remove this line from the proof script.
-    - none if [throw_error = false].
-
-*)
-Ltac2 unfold_in_statement (unfold_method: constr -> constr)
-  (def_name : string option) (statement : constr) (throw_error : bool) :=
-  let unfolded_statement := unfold_method statement in
-  match Constr.equal statement unfolded_statement with
-  | false =>
-    match! goal with
-    | [ |- ?g] =>
-      match Constr.equal g statement with
-      | false => Control.zero Inner
-      | true =>
-        print (of_string "Replace line with:");
-        let msg (unfolded : constr) := concat_list
-          [of_string "We need to show that "; of_constr unfolded; of_string "."] in
-        print (msg unfolded_statement)
-      end
-    | [_ : ?hyp |- _ ] =>
-      match Constr.equal hyp statement with
-      | false => Control.zero Inner
-      | true =>
-        print (of_string "Replace line with:");
-        let msg (unfolded : constr) := concat_list
-          [of_string "It holds that "; of_constr unfolded; of_string "."] in
-        print (msg unfolded_statement)
-      end
-    | [ |- _ ] =>
-      print (of_string "Result:");
-      let msg (unfolded : constr) := concat_list
-      [of_constr unfolded] in
-      print (msg unfolded_statement)
-    end
-  | true =>
-    match def_name with
-    | None => print (concat_list
-      [of_string "definition does not appear in "; of_constr statement; of_string "."])
-    | Some def_name => print (concat_list
-      [of_string "'"; of_string def_name; of_string "'";
-        of_string " does not appear in "; of_constr statement; of_string "."])
-    end
-  end;
-
-  (* Throw error if required *)
-  if throw_error
-    then throw (of_string "Remove this line in the final version of your proof.")
-    else ().
-
-(**
   Attempts to unfold definition(s) in every statement according to specified method.
   If succesful it prints a list of suitable tactics
   that can be used to incorporate the unfolded statements into the user's proof script.
@@ -139,13 +73,22 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
       (* Print initial statement *)
-      print (of_string "Expanded definition in statements where applicable.");
-      print (of_string "To include these statements, use (one of):");
+      info_notice (of_string "Expanded definition in statements where applicable.");
+      let total_messages := Int.add
+        (if did_unfold_goal then 1 else 0)
+        (List.length only_unfolded_hyps) in
+
+      let print_tactic :=
+        if (Int.lt 1 total_messages) then
+          fun m => insert_msg (to_string m) (to_string (concat m (of_string "${}")))
+        else
+          fun m => replace_msg (to_string m) (to_string (concat m (of_string "${}")))
+        in
 
       (* Print unfolded goal *)
       if did_unfold_goal
         then
-          print (concat_list [of_string "  We need to show that ";
+          print_tactic (concat_list [of_string "We need to show that ";
             of_constr unfolded_goal; of_string "."])
         else ();
 
@@ -153,16 +96,16 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       if (Bool.neg (_is_empty only_unfolded_hyps))
         then
           let it_holds_msg := fun (x : constr) => concat_list
-            [of_string "  It holds that "; of_constr x; of_string "."] in
-          List.iter (fun unfolded_h => print (it_holds_msg unfolded_h))
+            [of_string "It holds that "; of_constr x; of_string "."] in
+          List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))
             only_unfolded_hyps
         else ()
 
     else
       (* Print no statements with definition *)
       match def_name with
-      | None => print (of_string "Definition does not appear in any statement.")
-      | Some def_name => print (concat_list
+      | None => info_notice (of_string "Definition does not appear in any statement.")
+      | Some def_name => info_notice (concat_list
           [of_string "'"; of_string def_name; of_string "'";
             of_string " does not appear in any statement."])
       end;
@@ -187,27 +130,25 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         is unsuccesful
     - [throw_error : bool], whether the tactic should throw an error which suggests
         user to remove this tactic in final version of the proof.
-    - [x : constr option], optional statement in which definitions are to be unfolded.
-        If [None], definitions are unfolded in every statement.
+    - [x : constr option], unused, kept for compatibility.
 
   Raises fatal exceptions:
     - [always/none] depending on value of [throw_error].
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (x : constr option) :=
+  (def_name : string option) (throw_error : bool) (x : constr option):=
   panic_if_goal_wrapped ();
-  match x with
-  | Some a => unfold_in_statement unfold_method def_name a throw_error
-  | None => unfold_in_all unfold_method def_name throw_error
-  end.
+  unfold_in_all unfold_method def_name throw_error.
+
+(* TODO: Refactor unfold system to be more maintainable *)
 
 (* Tactic notation for unfolding generic Gallina terms, not notations.
   For an example of how to used [unfold_in_statement] to unfold notations,
   see [tests/tactics/Unfold.v] *)
-Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ","))
-  x(opt(seq("in", lconstr))) :=
-  wp_unfold (eval_unfold targets) None true x.
+Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
+
+  wp_unfold (eval_unfold targets) None true None.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) x(opt(seq("in", lconstr))) :=
-  wp_unfold (eval_unfold targets) None false x.
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
+  wp_unfold (eval_unfold targets) None false None.

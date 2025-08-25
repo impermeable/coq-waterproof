@@ -1,6 +1,6 @@
 package "waterproof" (
     directory = "."
-    version = "2.1.1+8.19"
+    version = "3.0.0+8.19"
     description = "Waterproof plugin"
     requires = "coq-core.plugins.ltac coq-core.plugins.ltac2"
     archive(byte) = "waterproof.cma"
