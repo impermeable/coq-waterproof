@@ -17,9 +17,9 @@
   (package coq-waterproof)
   (package coq-lsp)
   %{project_root}/tests/test-folder.py
-  (source_tree %{workspace_root}/waterproof-exercises))
+  (source_tree %{workspace_root}/test-exercises))
  (action (progn
              (echo "Testing:")
              (run pwd)
-             (run python3 %{project_root}/tests/test-folder.py %{workspace_root}/../../waterproof-exercises/Analysis-1)
+             (run python3 %{project_root}/tests/test-folder.py %{workspace_root}/../../test-exercises/)
 )))

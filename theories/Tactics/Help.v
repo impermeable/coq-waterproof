@@ -31,108 +31,96 @@ Require Import Waterprove.
 Open Scope subset_scope.
 
 Local Ltac2 goal_impl_msg (premise: constr) :=
-  concat_list [of_string "The goal is to show an implication (⇒).
-Assume the premise "; of_constr premise; of_string ", use
-    Assume that (...)."].
+  info_notice (concat_list [of_string "The goal is to show an implication (⇒). Assume the premise "; of_constr premise; of_string "."]);
+  replace_msg "Assume that ...." "Assume that ${0:0 = 0}.${1}".
 
 Local Ltac2 goal_func_msg (var_type: constr) :=
-  concat_list [of_string "The goal is to construct a map (⇒).
-Introduce an arbitrary variable of type "; of_constr var_type; of_string ", use
-    Take ... : (...)."].
+  info_notice (concat_list [of_string "The goal is to construct a map (⇒). Introduce an arbitrary variable of type "; of_constr var_type; of_string "."]);
+  replace_msg "Take ... : ...." "Take ${0:x} : ${1:X}.${2}".
 
 Local Ltac2 goal_forall_msg (var_type: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable of type "; of_constr var_type; of_string ", use
-    Take ... : (...)."].
+  info_notice (concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable of type "; of_constr var_type; of_string "."]);
+  replace_msg "Take ... : ...." "Take ${0:x} : ${1:X}.${2}".
 
-Local Ltac2 goal_exists_msg (var_type: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable of type "; of_constr var_type; of_string ", use
-    Choose ... := (...)."].
-
-Local Ltac2 goal_forall_el_msg (var_type: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable in "; of_constr var_type; of_string ", use
-    Take ... ∈ (...)."].
-
-Local Ltac2 goal_forall_gt_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable strictly larger than "; of_constr y; of_string ", use
-    Take ... > (...)."].
+Ltac2 goal_forall_gt_msg (y: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable strictly larger than "; of_constr y; of_string "."]);
+  replace_msg "Take ... > ...." "Take ${0:x} > ${1:0}.${2}".
 
 Local Ltac2 goal_forall_ge_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable larger than or equal to "; of_constr y; of_string ", use
-    Take ... ≥ (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable larger than or equal to "; of_constr y; of_string "."]);
+  replace_msg "Take ... ≥ ...." "Take ${0:x} ≥ ${1:0}.${2}".
 
 Local Ltac2 goal_forall_lt_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable strictly less than "; of_constr y; of_string ", use
-    Take ... < (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable strictly less than "; of_constr y; of_string "."]);
+  replace_msg "Take ... < ...." "Take ${0:x} < ${1:0}.${2}".
 
 Local Ltac2 goal_forall_le_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable less than or equal to "; of_constr y; of_string ", use
-    Take ... ≤ (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable less than or equal to "; of_constr y; of_string "."]);
+  replace_msg "Take ... ≤ ...." "Take ${0:x} ≤ ${1:0}.${2}".
+
+Local Ltac2 goal_forall_ne_msg (y: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a ‘for all’-statement (∀). Introduce an arbitrary variable not equal to "; of_constr y; of_string "."]);
+  replace_msg "Take ... ≠ ...." "Take ${0:x} ≠ ${1:0}.${2}".
 
 Local Ltac2 goal_forall_pred_msg (q: constr) :=
-  concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable that is (a/an) "; of_constr q; of_string ", use
-    Take ... (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable that is (a/an) "; of_constr q; of_string "."]);
+  replace_msg "Take ... ...." "Take ${0:x} ${1:0 = 0}.${2}".
 
 Local Ltac2 goal_exists_el_msg (var_type: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable in "; of_constr var_type; of_string ", use
-    Choose ... := (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable in "; of_constr var_type; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
 Local Ltac2 goal_exists_gt_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable strictly larger than "; of_constr y; of_string ", use
-    Choose ... := (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly larger than "; of_constr y; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
 Local Ltac2 goal_exists_ge_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable larger than or equal to "; of_constr y; of_string ", use
-    Choose ... := (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable larger than or equal to "; of_constr y; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
 Local Ltac2 goal_exists_lt_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable strictly less than "; of_constr y; of_string ", use
-    Choose ... := (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly less than "; of_constr y; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
 Local Ltac2 goal_exists_le_msg (y: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable less than or equal to "; of_constr y; of_string ", use
-    Choose ... := (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable less than or equal to "; of_constr y; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+
+Local Ltac2 goal_exists_ne_msg (y: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable not equal to "; of_constr y; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
 Local Ltac2 goal_exists_pred_msg (q: constr) :=
-  concat_list [of_string "The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable that is (a/an) "; of_constr q; of_string ", use
-    Choose ... := (...)."].
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) "; of_constr q; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
-Local Ltac2 goal_and_msg () := of_string
-  "The goal is to show a conjunction (∧).
-Show both statements, use
-    We show both statements.".
+Local Ltac2 goal_and_msg () := 
+  info_notice (of_string "The goal is to show a conjunction (∧). Show both statements.");
+  replace_msg "We show both statements." "We show both statements.${0}".
 
-Local Ltac2 goal_or_msg () := of_string
-"The goal is to show a disjunction (∨).
-It suffices to show one of the statements, use
-    It suffices to show that (...).".
+Local Ltac2 goal_or_msg () :=
+  info_notice (of_string "The goal is to show a disjunction (∨). It suffices to show one of the statements.");
+  replace_msg "It suffices to show that ...." "It suffices to show that ${0:0 = 0}.${1}".
 
 Local Ltac2 goal_neg_msg (negated_type : constr) :=
-  concat_list [of_string "The goal is to show a negation (¬).
-Assume that the negated expression "; of_constr negated_type; of_string ", use
-    Assume that (...)."].
+  info_notice (concat_list [of_string "The goal is to show a negation (¬). Assume that the negated expression "; of_constr negated_type; of_string "."]);
+  replace_msg "Assume that ...." "Assume that ${0:0 = 0}.${1}".
 
-Local Ltac2 goal_directly () := of_string
-  "The goal can be shown immediately, use
-    We conclude that (...).".
+Local Ltac2 goal_directly () := 
+  info_notice (of_string "The goal can be shown immediately.");
+  replace_msg "We conclude that ...." "We conclude that ${0:0 = 0}.${1}".
 
-Local Ltac2 goal_no_hint ():= of_string
-  "No direct hint available.
-Does the goal contain a definition that can be expanded?".
+Local Ltac2 goal_no_hint () := 
+  info_notice (of_string "No direct hint available. Does the goal contain a definition that can be expanded?").
 
+Local Ltac2 goal_exists_msg (var_type: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable of type "; of_constr var_type; of_string "."]);
+  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+
+Local Ltac2 goal_forall_el_msg (var_type: constr) :=
+  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable in "; of_constr var_type; of_string "."]);
+  replace_msg "Take ... ∈ ...." "Take ${0:x} ∈ ${1:X}.${2}".
 
 (**
   Auxilliary tactic that checks if goal can be shown with automation
@@ -158,42 +146,44 @@ Local Ltac2 need_to_follow_advice () : bool :=
   | _ => false
   end.
 
-Local Ltac2 goal_hint () : message :=
+(* TODO: Refactor this function to return an option with data and call print after *)
+Local Ltac2 goal_hint () : bool :=
   let gl := Control.goal () in
   lazy_match! gl with
   | ?a -> ?b  =>
     let sort_a := get_value_of_hyp a in
     match check_constr_equal sort_a constr:(Prop) with
-      | true            => goal_impl_msg a
-      | false           => goal_func_msg a
+      | true            => goal_impl_msg a; true
+      | false           => goal_func_msg a; true
     end
     (* TODO: refactor this, so hints can be added in later library files *)
-  | ∀ _ ∈ conv ?v_type, _  => goal_forall_el_msg v_type
-  | ∀ _ ∈ ?v_type, _  => goal_forall_el_msg v_type
-  | ∀ _ > ?y, _        => goal_forall_gt_msg y
-  | ∀ _ ≥ ?y, _          => goal_forall_ge_msg y
-  | ∀ _ < ?y, _          => goal_forall_lt_msg y
-  | ∀ _ ≤ ?y, _          => goal_forall_le_msg y
-  | ∀ _ ?q, _           => goal_forall_pred_msg q
-  | ∃ _ ∈ conv ?v_type, _    => goal_exists_el_msg v_type
-  | ∃ _ ∈ ?v_type, _    => goal_exists_el_msg v_type
-  | ∃ _ > ?y, _         => goal_exists_gt_msg y
-  | ∃ _ ≥ ?y, _         => goal_exists_ge_msg y
-  | ∃ _ < ?y, _         => goal_exists_lt_msg y
-  | ∃ _ ≤ ?y, _         => goal_exists_le_msg y
-  | ∃ _ ?q, _           => goal_exists_pred_msg q
-  | forall v:?v_type, _ => goal_forall_msg v_type
-  | exists v:?v_type, _ => goal_exists_msg v_type
-  | _ /\ _              => goal_and_msg ()
-  | _ \/ _              => goal_or_msg ()
-  | not ?g              => goal_neg_msg g
-  | _                   => goal_no_hint ()
+  | ∀ _ ∈ conv ?v_type, _  => goal_forall_el_msg v_type; true
+  | ∀ _ ∈ ?v_type, _  => goal_forall_el_msg v_type; true
+  | ∀ _ > ?y, _        => goal_forall_gt_msg y; true
+  | ∀ _ ≥ ?y, _          => goal_forall_ge_msg y; true
+  | ∀ _ < ?y, _          => goal_forall_lt_msg y; true
+  | ∀ _ ≤ ?y, _          => goal_forall_le_msg y; true
+  | ∀ _ ?q, _           => goal_forall_pred_msg q; true
+  | ∃ _ ∈ conv ?v_type, _    => goal_exists_el_msg v_type; true
+  | ∃ _ ∈ ?v_type, _    => goal_exists_el_msg v_type; true
+  | ∃ _ > ?y, _         => goal_exists_gt_msg y; true
+  | ∃ _ ≥ ?y, _         => goal_exists_ge_msg y; true
+  | ∃ _ < ?y, _         => goal_exists_lt_msg y; true
+  | ∃ _ ≤ ?y, _         => goal_exists_le_msg y; true
+  | ∃ _ ≠ ?y, _         => goal_exists_ne_msg y; true
+  | ∃ _ ?q, _           => goal_exists_pred_msg q; true
+  | forall v:?v_type, _ => goal_forall_msg v_type; true
+  | exists v:?v_type, _ => goal_exists_msg v_type; true
+  | _ /\ _              => goal_and_msg (); true
+  | _ \/ _              => goal_or_msg (); true
+  | not ?g              => goal_neg_msg g; true
+  | _                   => false
   end.
 
 Local Ltac2 forall_filter (x : constr) : bool :=
   lazy_match! x with
   | ?a -> ?b     => false
-  (* | ∀ _ ∈ _, _   => true*)
+  | ∀ _ _ _, _   => true
   | ∀ _ _, _   => true
   | forall _, _  => true
   | _            => false
@@ -202,9 +192,8 @@ Local Ltac2 forall_filter (x : constr) : bool :=
 Local Ltac2 exists_filter (x : constr) : bool :=
   lazy_match! x with
   | exists _, _  => true
-  (* | ∃ _ ∈ _, _   => true *)
+  | ∃ _ _ _, _   => true
   | ∃ _ _, _   => true
-  (* | ∃ _ ≥ _, _   => true *)
   | _            => false
   end.
 
@@ -213,22 +202,19 @@ Local Ltac2 is_empty (ls : 'a list) :=
   | _::_ => false
   | []   => true
   end.
-
-
 Ltac2 print_hints () :=
-
   (* If advice is given in proof window, suggest to follow that, nothing else. *)
-  if (need_to_follow_advice ())
-    then (print (of_string "Follow the advice in the goal window."))
+  if (goal_wrapped_template_msg ())
+    then (info_notice (of_string "Follow the advice in the goal window."))
 
     else
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
-      | Val _           => print (goal_directly ())
+      | Val _           => goal_directly ()
       | Err exn         =>
 
         (* Suggest hint to solve goal *)
-        print (goal_hint ());
+        let hint_given := goal_hint () in
 
         (* Collect forall- and exists-statements *)
         let hyps := List.map (fun (i, x, t) => t) (Control.hyps ()) in
@@ -239,22 +225,28 @@ Ltac2 print_hints () :=
         if (is_empty forall_hyps)
           then ()
           else (
-            print(of_string "To use one of the ‘for all’-statements (∀)");
-            List.fold_left (fun _ h => print (concat (of_string "    ") (of_constr h))) forall_hyps ();
-            print(of_string "use");
-            print(of_string "    Use ... := (...) in (...).")
+            info_notice(of_string "You can use one of the ‘for all’-statements (∀):");
+            List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps ();
+            replace_msg "Use ... := ... in ...." "Use ${0:x} := ${1:0} in ({2:i}).${3}"
           );
 
         (* Print how to use exists statements. *)
         if (is_empty exists_hyps)
           then ()
           else (
-            print(of_string "To use one of the ‘there exists’-statements (∃)");
-            List.fold_left (fun _ h => print (concat (of_string "    ") (of_constr h))) exists_hyps ();
-            print(of_string "use");
-            print(of_string "    Obtain ... according to (...).")
-          )
-      end.
+            info_notice(of_string "You can use one of the ‘there exists’-statements (∃):");
+            List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps ();
+            replace_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}"
+          );
+
+        (* Print no hints available if none have been given *)
+        if (Bool.and (is_empty forall_hyps)
+            (Bool.and (is_empty exists_hyps) (Bool.neg hint_given)))
+          then (goal_no_hint ())
+          else ()
+        end.
+      
+
 
 
 (** * Help tactic
@@ -280,28 +272,31 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
     end
   in
   let print_forall_msg () :=
-    print (concat_list [
-        of_string "To use "; of_constr x; of_string ", use"]);
-      print (concat_list [
-        of_string "    Use ... := (...) in ("; msg_label; of_string ")."]) in
+    info_notice (concat_list [
+        of_string "To use "; of_constr x; of_string ", consider:"]);
+      let template := match label with
+        | None => "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"
+        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
+      end in
+      insert_msg "Use ... := ... in ...." template in
   let print_exists_msg () :=
-    print (concat_list [
-        of_string "To use "; of_constr x; of_string ", use"]);
-      print (of_string "    Obtain such a ... .") in
+    info_notice (concat_list [
+        of_string "To use "; of_constr x; of_string ", consider:"]);
+      insert_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}" in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _ , _ => print_forall_msg ()
-  (* | ∀ _ > _ , _ => print_forall_msg ()
+  | ∀ _ > _ , _ => print_forall_msg ()
   | ∀ _ ≥ _, _ => print_forall_msg ()
   | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()*)
+  | ∀ _ ≤ _, _ => print_forall_msg ()
   | exists _, _ => print_exists_msg ()
   | ∃ _ _, _ => print_exists_msg ()
-  (* | ∃ _ > _, _ => print_exists_msg ()
+  | ∃ _ > _, _ => print_exists_msg ()
   | ∃ _ ≥ _, _ => print_exists_msg ()
   | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()*)
+  | ∀ _ ≤ _, _ => print_forall_msg ()
   | _ => ()
   end.
 
@@ -310,7 +305,6 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
 
   (for use in 'We claim that ...'-tactic.)
 *)
-
 Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   if Bool.neg (get_print_hypothesis_flag ()) then ()
   else
@@ -321,24 +315,27 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
     end
   in
   let print_forall_msg () :=
-    print (concat_list [
-        of_string "After proving "; of_constr x; of_string ", use it with"]);
-      print (concat_list [
-        of_string "    Use ... := (...) in ("; msg_label; of_string ")."]) in
+    info_notice (concat_list [
+        of_string "After proving "; of_constr x; of_string ", consider:"]);
+      let template := match label with
+        | None => "Use ${0:x} := ${1:0} in (${2:i}).${3}"
+        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
+      end in
+      insert_msg "Use ... := ... in ...." template in
   let print_exists_msg () :=
-    print (concat_list [
-        of_string "After proving "; of_constr x; of_string ", use it with"]);
-      print (of_string "    Obtain such a ... .") in
+    info_notice (concat_list [
+        of_string "After proving "; of_constr x; of_string ", consider:"]);
+      insert_msg "Obtain such a ...." "Obtain such a ${0:x}.${1}" in
   lazy_match! x with
   | ?a -> ?b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _, _ => print_forall_msg ()
-  (* | ∀ _ > _, _ => print_forall_msg ()
-  | ∀ _ ≥ _, _ => print_forall_msg ()*)
+  | ∀ _ > _, _ => print_forall_msg ()
+  | ∀ _ ≥ _, _ => print_forall_msg ()
   | exists _, _ => print_exists_msg ()
   | ∃ _ _, _ => print_exists_msg ()
-  (* | ∃ _ > _, _ => print_exists_msg ()
-  | ∃ _ ≥ _, _ => print_exists_msg ()*)
+  | ∃ _ > _, _ => print_exists_msg ()
+  | ∃ _ ≥ _, _ => print_exists_msg ()
   | _ => ()
   end.
 

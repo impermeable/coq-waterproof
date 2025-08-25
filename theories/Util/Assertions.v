@@ -107,7 +107,7 @@ Ltac2 assert_fails_with_string (tac : unit -> 'a) (expected_string : string) :=
         print_success (of_string ("The tactic failed with the expected error message"))
       else
         fail_test (concat_list [of_string "The tactic failed, but with an unexpected error message. Expected:"; fnl ();
-        of_string expected_string; fnl (); of_string "Got:"; fnl (); msg]) in
+        of_string expected_string; fnl (); of_string "Got:"; fnl (); of_string (Message.to_string msg)]) in
     match exn with
     | RedirectedToUserError msg => inner_msg_test msg
     | TestFailedError msg => inner_msg_test msg
