@@ -25,7 +25,6 @@ Require Import Notations.Sets.
 (** ** (In)equalities
   Allowing unicode characters for uniqualities.
 *)
-Notation "x ≠ y" := (x <> y) (at level 70) : type_scope.
 Notation "x ≤ y" := (le x y) (at level 70, no associativity) : nat_scope.
 Notation "x ≥ y" := (ge x y) (at level 70, no associativity) : nat_scope.
 Notation "x ≤ y" := (x <= y)%R (at level 70, no associativity) : R_scope.
@@ -64,6 +63,9 @@ Definition cv_implies_cv_abs_to_l_abs := cv_cvabs.
 Notation "| x |" := (Rabs x) (at level 65, x at next level, format "| x |").
 Notation "｜ x - y ｜" := (R_dist x y) (at level 65, x at level 48, y at level 48, format "｜ x  -  y ｜") : R_scope.
 
+(** ** Powers *)
+Notation "a ³" := (a * a * a) (at level 1) : R_scope.
+
 (** ** Sums and series *)
 Notation "'Σ' Cn 'equals' x" := (infinite_sum Cn x) (at level 50).
 
@@ -74,6 +76,8 @@ Notation "[ a , b ]" := (as_subset R (fun x => (a <= x <= b))): R_scope.
 Notation "[ a , b )" := (as_subset R (fun x => (a <= x <  b))): R_scope.
 Notation "( a , b ]" := (as_subset R (fun x => (a <  x <= b))): R_scope.
 Notation "( a , b )" := (as_subset R (fun x => (a <  x <  b))): R_scope.
+Notation "( a , ∞ )" := (as_subset R (fun x => (a < x))): R_scope.
+Notation "[ a , ∞ )" := (as_subset R (fun x => (a ≤ x))): R_scope.
 
 Close Scope subset_scope.
 Close Scope nat_scope.

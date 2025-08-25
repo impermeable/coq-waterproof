@@ -22,6 +22,12 @@ From Stdlib Require Import ROrderedType.
 
 From Waterproof Require Import Notations.
 
+Require Export Libs.Reals.Rational.
+Require Export Libs.Reals.Integer.
+Require Export Libs.Reals.RealInequalities.
+Require Export Libs.Reals.Intervals.
+Require Export Libs.Reals.ArchimedN.
+
 Local Open Scope R_scope.
 
 (** * Lemmas linking reals and booleans *)
@@ -83,6 +89,24 @@ Proof.
   rewrite Rmult_1_l.
   apply Rinv_0_lt_compat.
   apply H.
+Qed.
+
+Lemma div_non_zero : forall a b : R, a ≠ 0 -> b ≠ 0 -> a / b ≠ 0.
+Proof.
+  intros a b Ha Hb.
+  unfold Rdiv.
+  apply Rmult_integral_contrapositive_currified.
+  - exact Ha.
+  - apply Rinv_neq_0_compat.
+    exact Hb.
+Qed.
+
+Lemma div_one_neq_zero : forall x : R, x ≠ 0 -> 1 / x ≠ 0.
+Proof.
+  intros x Hx.
+  apply div_non_zero.
+  - apply R1_neq_R0.
+  - exact Hx.
 Qed.
 
 Lemma Rabs_zero : forall r : R, Rabs (r - 0) = Rabs r.

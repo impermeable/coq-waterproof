@@ -119,11 +119,11 @@ We use induction on n.
   assert_string_equal s 
  "(Add the following line to the proof:
  
- - We first show the base case (0 >= 0).)".
+ - We first show the base case 0 >= 0.)".
   Control.shelve ().
 * let s := Message.to_string (Message.of_constr (Control.goal ())) in
   assert_string_equal s 
  "(Add the following line to the proof:
  
- - We now show the induction step.)".
+ We now show the induction step.)".
 Abort.

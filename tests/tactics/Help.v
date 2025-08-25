@@ -46,59 +46,51 @@ Abort.
 
 (** Test 2 : Suggest to solve directly if goal can be shown automatically. *)
 Goal True.
-  assert_feedback_with_string (fun () => Help) Info
-"The goal can be shown immediately, use
-    We conclude that (...).".
+  assert_feedback_with_strings (fun () => Help) Info
+["The goal can be shown immediately.";
+"Hint, replace with: We conclude that ...."].
 Abort.
 
 (** Test 3 : Only suggest to solve directly if goal can be shown automatically. *)
 Goal (forall n : nat, n = n) -> True.
   intros.
-  assert_feedback_with_string (fun () => Help) Info
-"The goal can be shown immediately, use
-    We conclude that (...).".
+  assert_feedback_with_strings (fun () => Help) Info
+["The goal can be shown immediately.";
+"Hint, replace with: We conclude that ...."].
 Abort.
 
 (** Test 4 : Report \forall hypotheses if available. *)
 Goal (∀ n ∈ nat, n = n) -> (∀ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
-["No direct hint available.
-Does the goal contain a definition that can be expanded?";
-"To use one of the ‘for all’-statements (∀)";
+[
+"You can use one of the ‘for all’-statements (∀):";
 "    (∀ n ∈ nat, n = n)";
 "    (∀ m ∈ nat, m + 1 = m + 1)";
-"use";
-"    Use ... := (...) in (...)."].
+"Hint, replace with: Use ... := ... in ...."].
 Abort.
 
 (** Test 5 : Report \exists hypotheses if available. *)
 Goal (∃ n ∈ nat, n = n) -> (∃ m ∈ nat, m + 1 = m + 1) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
-["No direct hint available.
-Does the goal contain a definition that can be expanded?";
-"To use one of the ‘there exists’-statements (∃)";
+[
+"You can use one of the ‘there exists’-statements (∃):";
 "    (∃ n ∈ nat, n = n)";
 "    (∃ m ∈ nat, m + 1 = m + 1)";
-"use";
-"    Obtain ... according to (...)."].
+"Hint, replace with: Obtain ... according to ...."].
 Abort.
 
 (** Test 6 : Report \forall and \exists hypotheses if available. *)
 Goal (∀ n ∈ nat, n = n) -> (∃ m ∈ nat, m = 0) -> (0 = 1).
   intros.
   assert_feedback_with_strings (fun () => Help) Info
-["No direct hint available.
-Does the goal contain a definition that can be expanded?";
-"To use one of the ‘for all’-statements (∀)";
+["You can use one of the ‘for all’-statements (∀):";
 "    (∀ n ∈ nat, n = n)";
-"use";
-"    Use ... := (...) in (...).";
-"To use one of the ‘there exists’-statements (∃)";
+"Hint, replace with: Use ... := ... in ....";
+"You can use one of the ‘there exists’-statements (∃):";
 "    (∃ m ∈ nat, m = 0)";
-"use";
-"    Obtain ... according to (...)."].
+"Hint, replace with: Obtain ... according to ...."].
 Abort.
 
 
@@ -114,8 +106,8 @@ Goal False.
 Proof.
   assert_feedback_with_strings
   (fun () => It holds that (∀ n ∈ nat, n = n)) Info
-["To use (∀ n ∈ nat, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ∈ nat, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 8: It holds that, label. *)
@@ -123,8 +115,8 @@ Goal False.
 Proof.
   assert_feedback_with_strings
   (fun () => It holds that ∀ n > 2, n = n as (i)) Info
-["To use (∀ n > 2, n = n), use";
-"    Use ... := (...) in (i)."].
+["To use (∀ n > 2, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 9: By ... it holds that, no label. *)
@@ -142,8 +134,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Since (True) it holds that (∀ n ≥ 4, n = n))
   Info
-["To use (∀ n ≥ 4, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ≥ 4, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 
@@ -155,8 +147,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Assume that (∀ n ∈ nat, n = n))
   Info
-["To use (∀ n ∈ nat, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ∈ nat, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 12: Assume that, label. *)
@@ -165,8 +157,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Assume that ∀ n > 3, n = n as (i))
   Info
-["To use (∀ n > 3, n = n), use";
-"    Use ... := (...) in (i)."].
+["To use (∀ n > 3, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 13: Assume negation. *)
@@ -175,8 +167,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => Assume that ∀ n ≥ 4, n = n)
   Info
-["To use (∀ n ≥ 4, n = n), use";
-"    Use ... := (...) in (...)."].
+["To use (∀ n ≥ 4, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 
@@ -188,8 +180,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n))
   Info
-["After proving (∀ n, n = n), use it with";
-"    Use ... := (...) in (...)."].
+["After proving (∀ n, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 (** Test 15: Assume that, label. *)
@@ -198,8 +190,8 @@ Proof.
   assert_feedback_with_strings
   (fun () => We claim that (forall n : nat, n = n) as (i))
   Info
-["After proving (∀ n, n = n), use it with";
-"    Use ... := (...) in (i)."].
+["After proving (∀ n, n = n), consider:";
+"Hint, insert: Use ... := ... in ...."].
 Abort.
 
 Waterproof Disable Hypothesis Help.
@@ -216,18 +208,16 @@ Abort.
 Goal ∀ x ∈ nat, x = 0.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable in nat, use
-    Take ... ∈ (...)."].
+["The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable in nat.";
+ "Hint, replace with: Take ... ∈ ...."].
 Abort.
 
 (** Test 18: Help on a there-exists goal *)
 Goal ∃ x > 3, x = 0.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable strictly larger than 3, use
-    Choose ... := (...)."].
+["The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly larger than 3.";
+ "Hint, replace with: Choose ... := ...."].
 Abort.
 
 (** Test 19: Help on an assumption *)
@@ -235,10 +225,8 @@ Goal ∀ x > 3, x < 2 -> x > 6.
 Proof.
 intros x Hx.
 assert_feedback_with_strings (fun () => Help) Info
-[String.concat "" ["The goal is to show an implication (⇒).
-Assume the premise "; "
-(x < 2), use
-    Assume that (...)."]].
+[String.concat "" ["The goal is to show an implication (⇒). Assume the premise "; "(x < 2)."];
+"Hint, replace with: Assume that ...."].
 Abort.
 
 (** Test 20: Help on forall with arbitrary predicate *)
@@ -247,16 +235,14 @@ Local Parameter B : nat -> Prop.
 Goal ∀ x B, x < 2.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable that is (a/an) B, use
-    Take ... (...)."].
+["The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable that is (a/an) B.";
+ "Hint, replace with: Take ... ...."].
 Abort.
 
 (** Test 21: Help on exists with arbitrary predicate *)
 Goal ∃ x B, x < 2.
 Proof.
 assert_feedback_with_strings (fun () => Help) Info
-["The goal is to show a ‘there exists’-statement (∃).
-Choose a specific variable that is (a/an) B, use
-    Choose ... := (...)."].
+["The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) B.";
+ "Hint, replace with: Choose ... := ...."].
 Abort.
