@@ -22,7 +22,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
-let waterproof_version : string = "2.2.0+8.17"
+let waterproof_version : string = "3.0.0+8.17"
 
 (* The code below is a hack to patch in (open_)lconstr into Ltac2 *)
 (* It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 *)

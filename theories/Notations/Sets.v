@@ -36,7 +36,7 @@ Definition subset_type {X : Type} (A : subset X) := X.
 Definition subset_in {X : Type} (A : subset X) (x : X) := A x.
 
 Notation "'set_of_subsets' U" :=
-  (Ensemble (Ensemble U)) (at level 50).
+  (subset (subset U)) (at level 50).
 
 Definition empty {U} := Empty_set U.
 Definition full {U} := Full_set U.
@@ -135,6 +135,17 @@ Class lt_type (carrier : Type) := {
 #[export] Instance R_lt_type : lt_type R :=
   {lt_op := fun y z => Rlt z y}.
 
+Class ne_type (carrier : Type) := {
+  ne_op : carrier -> carrier -> Prop
+}.
+
+#[export] Instance nat_ne_type : ne_type nat :=
+  {ne_op := fun y z => z <> y}.
+
+#[export] Instance R_ne_type : ne_type R :=
+  {ne_op := fun y z => z <> y}.
+
+
 Declare Scope pred_for_subset_scope.
 
 Delimit Scope pred_for_subset_scope with pfs.
@@ -145,6 +156,7 @@ Notation "< y" :=  (lt_op y) (at level 69, y at next level) : pred_for_subset_sc
 Notation "≤ y" :=  (le_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "> y" :=  (gt_op y) (at level 69, y at next level) : pred_for_subset_scope.
 Notation "≥ y" :=  (ge_op y) (at level 69, y at next level) : pred_for_subset_scope.
+Notation "≠ y" :=  (ne_op y) (at level 69, y at next level) : pred_for_subset_scope.
 
 Notation "x ∈ A" := (subset_in A x) (at level 69, no associativity) : type_scope.
 Notation "x ≥ y" := (ge_op y x) (at level 70, no associativity, only printing) : subset_scope.
@@ -192,6 +204,11 @@ Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 0, x at level 99, y
 
 Open Scope subset_scope.
 
+Definition unique_exists {T : Type} (Q : subset T) (P : T -> Prop) :=
+  (∃ x Q, (P x)) ∧ (∀ x Q, ∀ y Q, (P x) ∧ (P y) ⇒ x = y).
+
+Notation "∃! x Q , P" := (unique_exists (Q%pfs) (fun x : (subset_type Q%pfs) => P)) (at level 199, x binder, right associativity) : subset_scope.
+
 Lemma forall_forall_in_iff (T : Type) (Q : T -> Prop) :
   (∀ x ∈ T, Q x) <-> ∀ x, Q x.
 Proof.
@@ -212,3 +229,6 @@ Qed.
 
 Close Scope subset_scope.
 Close Scope R_scope.
+
+Notation "A 'is' 'empty'" :=
+  (¬ (∃ x, x ∈ A)) (at level 45).

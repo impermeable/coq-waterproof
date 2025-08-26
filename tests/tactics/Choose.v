@@ -184,11 +184,11 @@ Proof.
   assert_string_equal s (String.concat ""
  ["(Add the following line to the proof:
  ";"
- { Indeed, (n ≤ 4). }
+ { Indeed, n ≤ 4. }
  ";"
  or write:
  ";"
- { We need to verify that (n ≤ 4).
+ { We need to verify that n ≤ 4.
  ";"
  }
  ";"
