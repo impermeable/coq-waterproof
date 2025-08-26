@@ -105,26 +105,26 @@ Lemma sequence_ub_bds (a : ℕ → ℝ) (i : has_ub a) (N₀ : ℕ) (n : ℕ) :
     (n ≥ N₀)%nat ⇒ a n ≤ sequence_ub a (i) N₀.
 Proof.
     Assume that (n ≥ N₀)%nat.
-    We need to show that a n ≤ lub (fun k ↦ (a (N₀ + k)%nat), maj_ss a N₀ (i)).
+    We need to show that a n ≤ lub (fun k ↦ (a ((N₀ + k)%nat)), maj_ss a N₀ (i)).
     We need to show that
-      a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a (N₀ + k)%nat), maj_ss a N₀ (i)) in a0).
-    Define ii := ub_to_lub (fun (k : ℕ) ↦ a (N₀ +k)%nat) (maj_ss a N₀ (i)).
+      a n ≤ (let (a0, _) := ub_to_lub (fun k ↦ (a ((N₀ + k)%nat)), maj_ss a N₀ (i)) in a0).
+    Define ii := ub_to_lub (fun (k : ℕ) ↦ a ((N₀ +k)%nat)) (maj_ss a N₀ (i)).
     We need to show that a(n) ≤ (let (a0, _) := ii in a0).
     clear _defeq.
     Obtain such an l. It holds that
-      is_lub (EUn (fun (k : ℕ) ↦ a (N₀ +k)%nat)) l.
-    It holds that Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), l)
-      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ l ≤ b) as (iii).
-    Because (iii) both Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), l)
-      and for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a (N₀ + k)%nat)), b) ⇨ l ≤ b hold.
-    It holds that for all x : ℝ, EUn (fun k ↦ (a (N₀ + k)%nat), x) ⇨ x ≤ l.
+      is_lub (EUn (fun (k : ℕ) ↦ a ((N₀ +k)%nat))) l.
+    It holds that Raxioms.is_upper_bound (EUn (fun k ↦ (a ((N₀ + k)%nat))), l)
+      ∧ (for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a ((N₀ + k)%nat))), b) ⇨ l ≤ b) as (iii).
+    Because (iii) both Raxioms.is_upper_bound (EUn (fun k ↦ (a ((N₀ + k)%nat))), l)
+      and for all b : ℝ, Raxioms.is_upper_bound (EUn (fun k ↦ (a ((N₀ + k)%nat))), b) ⇨ l ≤ b hold.
+    It holds that for all x : ℝ, EUn (fun k ↦ (a ((N₀ + k)%nat)), x) ⇨ x ≤ l.
     It holds that (N₀ + (n-N₀) = n)%nat.
 
-    It suffices to show that EUn (fun (k : ℕ) ↦ (a (N₀ + k)%nat)) (a n).
-    We need to show that there exists k : ℕ, a n = a (N₀ + k)%nat.
-    We need to show that ∃ k : ℕ, a n = a (N₀ + k)%nat.
+    It suffices to show that EUn (fun (k : ℕ) ↦ (a ((N₀ + k)%nat))) (a n).
+    We need to show that there exists k : ℕ, a n = a ((N₀ + k)%nat).
+    We need to show that ∃ k : ℕ, a n = a ((N₀ + k)%nat).
     Choose k := (n - N₀)%nat.
-    We conclude that & a n = a (N₀ + n - N₀)%nat = a (N₀ + k)%nat.
+    We conclude that & a n = a ((N₀ + n - N₀)%nat) = a ((N₀ + k)%nat).
 Qed.
 
 (** ## A slightly upgraded version of the Bolzano-Weierstrass Theorem*)

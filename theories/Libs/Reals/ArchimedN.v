@@ -52,4 +52,4 @@ Proof.
     exact hm.
 Qed.
 
-Notation "'the' 'Archimedean' 'property'" := archimedN_exists (at level 30).
+Notation "'the' 'Archimedean' 'property'" := archimedN_exists (at level 10).

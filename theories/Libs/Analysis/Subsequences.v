@@ -206,7 +206,7 @@ Fixpoint first_satisfying_element_helper
   (N : ℕ) :=
   match k with
   | O => N
-  | S l => if (rel (N-k)%nat (N-k)%nat)
+  | S l => if (rel ((N-k)%nat) ((N-k)%nat))
                 then k
                 else (first_satisfying_element_helper rel l N)
   end.

@@ -610,14 +610,14 @@ Proof.
   We show both directions.
   - We need to show that is_sup A M ⇨ is_sup_alt_char A M.
     Assume that is_sup A M.
-    We need to show that 
+    We need to show that
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 M - ε < a).
     We show both statements.
     + We need to show that is_upper_bound A M.
-      It holds that 
+      It holds that
       is_upper_bound A M
       ∧ (∀ M0 ∈ ℝ,
         is_upper_bound A M0 ⇨ M ≤ M0)  as (i).
@@ -632,7 +632,7 @@ Proof.
 
   - We need to show that is_sup_alt_char A M ⇨ is_sup A M.
     Assume that is_sup_alt_char A M.
-    It holds that 
+    It holds that
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
@@ -640,7 +640,7 @@ Proof.
     Because (i) both is_upper_bound A M as (ii) and
       for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a as (iii) hold.
 
-    We need to show that 
+    We need to show that
     is_upper_bound A M
     ∧ (∀ M0 ∈ ℝ,
       is_upper_bound A M0 ⇨ M ≤ M0) .
@@ -661,14 +661,14 @@ Proof.
   We show both directions.
   - We need to show that is_inf A m ⇨ is_inf_alt_char A m.
     Assume that is_inf A m.
-    We need to show that 
+    We need to show that
     is_lower_bound A m
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 m + ε > a) .
     We show both statements.
     + We need to show that is_lower_bound A m.
-      It holds that 
+      It holds that
       is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m)
        as (i).
@@ -685,7 +685,7 @@ Proof.
 
   - We need to show that is_inf_alt_char A m ⇨ is_inf A m.
     Assume that is_inf_alt_char A m.
-    It holds that 
+    It holds that
       is_lower_bound A m
       ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
@@ -693,7 +693,7 @@ Proof.
     Because (i) both is_lower_bound A m as (ii) and
       for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a hold.
 
-    We need to show that 
+    We need to show that
       is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m).
     We show both statements.
@@ -806,7 +806,7 @@ Proof.
     ∀ m ∈ ℕ, ∀ Nn ∈ ℕ, (∃ k ≥ Nn, (a(k) > sequence_ub(a, pr, Nn) - 1 / (m + 1))%R)%nat.
     Take m, Nn ∈ ℕ.
     By seq_ex_almost_maximizer_m it holds that
-      ∃ k : ℕ, a (Nn + k)%nat > sequence_ub a (pr) Nn - 1 / (INR m + 1).
+      ∃ k : ℕ, a ((Nn + k)%nat) > sequence_ub a (pr) Nn - 1 / (INR m + 1).
     Obtain such a k. Choose k0 := (Nn+k)%nat.
     - Indeed, (k0 ≥ Nn)%nat.
     - We need to show that a k0 > sequence_ub a (pr) Nn - 1 / (m + 1).

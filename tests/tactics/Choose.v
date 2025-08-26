@@ -161,7 +161,7 @@ Abort.
 Goal ∃ n < 4%nat, INR(n) = 3.
 Proof.
   Choose n := 2%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n < 4)%nat).
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper ((n < 4)%nat)).
     Indeed, ((n < 4)%nat).
   * We need to show that (INR(n) = 3).
 Abort.
@@ -170,7 +170,7 @@ Abort.
 Goal ∃ n ≤ 4%nat, INR(n) = 3.
 Proof.
   Choose n := 3%nat.
-  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper (n ≤ 4)%nat).
+  * assert_constr_equal (Control.goal ()) constr:(VerifyGoal.Wrapper ((n ≤ 4)%nat)).
     Indeed, (n ≤ 4)%nat.
   * We need to show that (INR(n) = 3).
 Abort.

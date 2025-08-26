@@ -57,9 +57,9 @@ Proof.
   It holds that m <= n.
   It holds that | n - m | = n - m.
   It holds that (m + 1 <= n)%nat.
-  It holds that (INR m + INR 1 = INR (m + 1)%nat).
+  It holds that (INR m + INR 1 = INR ((m + 1)%nat)).
   It holds that (m + 1)%nat <= n.
-  It holds that & INR m + INR 1 = INR (m + 1)%nat <= n.
+  It holds that & INR m + INR 1 = INR ((m + 1)%nat) <= n.
   We conclude that 1 <= | n - m |.
 Qed.
 

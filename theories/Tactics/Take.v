@@ -97,7 +97,7 @@ Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 
     (match le_opt with | Some _ => [TakeLe] | None => [] end);
     (match ne_opt with | Some _ => [TakeNe] | None => [] end)] in
   if Int.gt (List.length final_list) 1 then
-    throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol
+    (throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol)
     else
     match final_list with
     | [] => TakeNone
@@ -168,8 +168,8 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
     lazy_match! (Control.goal ()) with
       | (forall _ : ?u, _) =>
         if check_constr_equal u (get_coerced_type type) then
-          intro $id;
-          unfold subset_type in $id
+          (intro $id;
+          unfold subset_type in $id)
         else throw (too_many_of_type_message type)
       | _ => throw (could_not_introduce_no_forall_message id)
       end

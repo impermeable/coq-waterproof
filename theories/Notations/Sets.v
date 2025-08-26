@@ -177,19 +177,19 @@ Notation "'for' 'all' x , P" := (forall x, P)
   (at level 200, x binder, right associativity, only parsing) : type_scope.
 
 Notation "'∃' x Q , P" :=
-  (seal (fun z : subset_type (Q)%pfs -> Prop => exists x : (subset_type (Q)%pfs), z x /\ P) Q%pfs)
+  (seal (fun z : subset_type ((Q)%pfs) -> Prop => exists x : (subset_type ((Q)%pfs)), z x /\ P) Q%pfs)
   (at level 200, x binder, right associativity) : subset_scope.
 
 Notation "'there' 'exists' x Q , P" :=
-  (seal (fun z : subset_type (Q)%pfs -> Prop => exists x : (subset_type (Q)%pfs), z x /\ P) Q%pfs)
+  (seal (fun z : subset_type ((Q)%pfs) -> Prop => exists x : (subset_type ((Q)%pfs)), z x /\ P) Q%pfs)
   (at level 200, x binder, right associativity, only parsing) : subset_scope.
 
 Notation "'∀' x Q , P" :=
-  (seal (fun z : subset_type (Q)%pfs -> Prop => forall x : (subset_type (Q)%pfs), z x -> P) Q%pfs)
+  (seal (fun z : subset_type ((Q)%pfs) -> Prop => forall x : (subset_type ((Q)%pfs)), z x -> P) Q%pfs)
   (at level 200, x binder, right associativity) : subset_scope.
 
 Notation "'for' 'all' x Q , P" :=
-  (seal (fun z : subset_type (Q)%pfs -> Prop => forall x : (subset_type (Q)%pfs), z x -> P) Q%pfs)
+  (seal (fun z : subset_type ((Q)%pfs) -> Prop => forall x : (subset_type ((Q)%pfs)), z x -> P) Q%pfs)
   (at level 200, x binder, right associativity, only parsing) : subset_scope.
 
 Lemma mem_subset_full_set {T : Type} (x : T) : (x ∈ T).
