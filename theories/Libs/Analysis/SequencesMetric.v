@@ -65,7 +65,7 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "converges" "to" x(
 
 (* Index shift*)
 Lemma relation_shift {X : Metric_Space} (a : nat -> Base X) (k : nat) (n : nat) (n_ge_k : (n ≥ k)%nat) :
-  a ((n - k) + k)%nat = a n.
+  a (((n - k) + k)%nat) = a n.
 Proof.
 We conclude that (a (n - k + k) = a n)%nat.
 Qed.

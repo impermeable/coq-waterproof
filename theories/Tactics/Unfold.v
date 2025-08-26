@@ -72,7 +72,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   (* Print output *)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
-      (* Print initial statement *)
+      ((* Print initial statement *)
       info_notice (of_string "Expanded definition in statements where applicable.");
       let total_messages := Int.add
         (if did_unfold_goal then 1 else 0)
@@ -80,7 +80,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 
       let print_tactic :=
         if (Int.lt 1 total_messages) then
-          fun m => insert_msg (to_string m) (to_string (concat m (of_string "${}")))
+          (fun m => insert_msg (to_string m) (to_string (concat m (of_string "${}"))))
         else
           fun m => replace_msg (to_string m) (to_string (concat m (of_string "${}")))
         in
@@ -88,19 +88,19 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       (* Print unfolded goal *)
       if did_unfold_goal
         then
-          print_tactic (concat_list [of_string "We need to show that ";
-            of_constr unfolded_goal; of_string "."])
+          (print_tactic (concat_list [of_string "We need to show that ";
+            of_constr unfolded_goal; of_string "."]))
         else ();
 
       (* Print unfolded hypotheses *)
       if (Bool.neg (_is_empty only_unfolded_hyps))
         then
-          let it_holds_msg := fun (x : constr) => concat_list
+          (let it_holds_msg := fun (x : constr) => concat_list
             [of_string "It holds that "; of_constr x; of_string "."] in
           List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))
-            only_unfolded_hyps
+            only_unfolded_hyps)
         else ()
-
+      )
     else
       (* Print no statements with definition *)
       match def_name with
