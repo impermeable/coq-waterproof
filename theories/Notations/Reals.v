@@ -60,7 +60,8 @@ Definition cv_implies_cv_abs_to_l_abs := cv_cvabs.
   When using this in rewrites, $<$, $>$, etc. should bind stronger.
 *)
 
-Notation "| x |" := (Rabs x) (at level 40, format "| x |").
+Notation "| x |" := (Rabs x) (at level 40, format "| x |") : R_scope.
+Notation "|- x |" := (| (-x) |) (at level 40, x at next level, only parsing) : R_scope.
 Notation "｜ x - y ｜" := (R_dist x y) (at level 40, x at level 38, y at level 38, format "｜ x  -  y ｜") : R_scope.
 
 (** ** Powers *)
