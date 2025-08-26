@@ -31,11 +31,11 @@ Most development is done based off the main branch, and then the following setup
 ```
 opam init
 eval $(opam env)
-opam install coq-lsp.0.2.0+8.18
+opam install coq-lsp.0.2.2+8.18
 opam install ocaml-lsp-server
 ```
 replacing 8.18 with the desired version of Coq, or more generally, replacing
-0.2.0+8.18 by the desired version of coq-lsp.
+0.2.2+8.18 by the desired version of coq-lsp.
 
 ### Creating the desired opam environment: advanced version for supporting multiple versions of Coq
 
@@ -51,7 +51,7 @@ opam switch create your_preferred_switch_name ocaml-base-compiler.4.14.1
 ```
 Next you can install the background libraries again
 ```
-opam install coq-lsp.0.2.0+8.18
+opam install coq-lsp.0.2.2+8.18
 opam install ocaml-lsp-server
 ```
 again replacing 8.18 with the desired version of Coq
@@ -119,9 +119,13 @@ dune build -p coq-waterproof
 
 ## Running external tests
 
-If one has symlink to a folder called `waterproof-exercises` 
-in the project root (i.e. in `coq-waterproof`), one can test coq-waterproof against all the files
-(typically exercise sheets) in `waterproof-exercises` by executing
+The `test-exercises` folder exists to facilitate external tests.
+Any `.mv` files located there, that do not end in `.notest.mv`,
+will be ran and any errors will be reported.
+
+The recommended way to use this is to symlink folders or files you want
+to be tested to any name in the `test-exercises` folder.
+
 
 ```
 dune build -p coq-waterproof @runtest
@@ -130,46 +134,6 @@ dune build -p coq-waterproof @runtest
 ## Setting up VSCode
 
 If you use VSCode, we recommend installing the [OCaml Platform](https://marketplace.visualstudio.com/items?itemName=ocamllabs.ocaml-platform) and [Coq LSP](https://marketplace.visualstudio.com/items?itemName=ejgallego.coq-lsp) plugins.
-
-## Building with make
-
-In principle, we use **dune** to build `coq-waterproof`, but we try to
-still support building with **make** as well. Before creating a PR, it is
-recommended to check that this really works (although the CI will check for this as well). For this, both `_CoqProjectForMake`
-and `waterproof.mlpack` need to be in order, i.e. they need to contain
-the correct files, and in particular `waterproof.mlpack` needs the files
-to be in the right order.
-
-TODO: include a test that checks that all .v, .ml files are actually included in the
-`_CoqProjectForMake` file.
-
-To then compile and install, run from the project's root directory:
-```
-make
-make install
-```
-
-## Building with make (legacy method)
-
-In previous versions of coq-waterproof, before running make, one needed to run,
-from the project's root directory,
-
-```
-autoreconf -i -s
-./configure
-```
-after which one could run
-```
-make
-make install
-```
-
-One needs to have the `autoconf` ocaml libary installed. One can install this with
-```
-sudo apt-get update
-sudo apt-get install autoconf
-```
-or equivalent for non-Debian/Ubuntu based environments
 
 ## Making Ocaml functions available from Ltac2: Using the foreign function interface (ffi)
 
