@@ -311,7 +311,8 @@ Waterproof Enable Redirect Errors.
 (** Test 32, Use take with the wrong symbol *)
 Goal ∀ n > 3, n = 0.
 assert_fails_with_string (fun () => Take n < 3)
-"The condition (n < 3) does not correspond to the expected condition (n > 3)".
+(String.concat "" ["The provided condition (n < 3) does not correspond to the expected condition in the for-all statement"; "
+"; "(n > 3)"]).
 Abort.
 
 (** Test 33, Check that subset type is simplified when using Take with colon *)
@@ -343,3 +344,45 @@ Goal ∀ m ∈ nat, ∀ n ∈ nat, ∀ k ∈ nat, ∀ l ∈ nat, ∀ j ∈ nat, 
 Proof.
 Take m, n ∈ const_nat 0 and k, l ∈ const_nat 1 and j ∈ const_nat 2.
 Abort.
+
+Open Scope R_scope.
+
+(** Test 36, Check error message, when providing ∈ condition, while > is expected *)
+
+Goal ∀ m > 0, True.
+Proof.
+assert_fails_with_string (fun () => Take m ∈ R)
+   (String.concat "" ["The provided condition m ∈ ℝ does not correspond to the expected condition in the for-all statement "; "
+"; "(m >"; " 0)"]).
+Abort.
+
+(** Test 37, Check error message, when providing > condition, while ∈ is expected *)
+
+Goal ∀ m ∈ ℝ, True.
+Proof.
+assert_fails_with_string (fun () => Take m > 0)
+  (String.concat "" ["The provided condition (m > 0) does not correspond to the expected condition in the for-all statement";"
+"; "(m ∈ ℝ)"]).
+Abort.
+
+(** Test 38, Check error message, when using ∈ rather than :, and provided space is incorrect *)
+
+Goal ∀ f : ℝ -> ℝ, True.
+Proof.
+assert_fails_with_string (fun () => Take f ∈ (ℝ -> ℝ))
+  (String.concat "" ["The provided condition f ∈ (ℝ -> ℝ) does not correspond to the expected condition in the for-all statement f : "; "
+"; "(ℝ -> ℝ)"]
+  ).
+Abort.
+
+(** Test 39, Check error message, when using ∈ rather than :, and provided space is incorrect *)
+
+Goal ∀ f : ℝ -> ℝ, True.
+Proof.
+assert_fails_with_string (fun () => Take f ∈ (ℝ))
+  (String.concat "" ["The provided condition f ∈ ℝ does not correspond to the expected condition in the for-all statement f : "; "
+"; "(ℝ -> ℝ)"]
+  ).
+Abort.
+
+Close Scope R_scope.

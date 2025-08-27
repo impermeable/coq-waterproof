@@ -29,6 +29,7 @@ Require Import Util.MessagesToUser.
 
 Require Import Stdlib.Sets.Ensembles.
 Require Import Notations.Sets.
+Require Import Stdlib.Sets.Ensembles.
 
 Local Ltac2 too_many_of_type_message (t : constr) :=
   concat_list [of_string "Tried to introduce too many variables of type ";
@@ -47,10 +48,25 @@ Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
     of_string " instead of "; of_constr t; of_string "."].
 
 Local Ltac2 expected_different_condition_message (e : constr) (expected : constr) :=
-  concat_list [of_string "The condition " ; of_constr e; of_string " does not correspond to the expected condition "; of_constr expected].
+  let simplified_e := (eval cbn in $e) in
+  concat_list [of_string "The provided condition " ; of_constr simplified_e;
+  of_string " does not correspond to the expected condition in the for-all statement"; of_constr expected].
+
+Local Ltac2 expected_el_message (e : constr) (z : ident) (expected_rhs : constr) :=
+  let simplified_e := (eval cbn in $e) in
+  concat_list [of_string "The provided condition " ;
+  of_ident z; of_string " ∈ "; of_constr expected_rhs;
+  of_string " does not correspond to the expected ";
+  of_string "condition in the for-all statement "; of_constr simplified_e ].
+
+Local Ltac2 expected_col_not_el_message (z : ident) (provided_rhs : constr)
+  (expected_rhs : constr) :=
+  concat_list [of_string "The provided condition " ; of_ident z; of_string " ∈ ";
+  of_constr provided_rhs; of_string " does not correspond to the expected condition in the for-all statement ";
+  of_ident z; of_string " : "; of_constr expected_rhs ].
 
 Ltac2 Type TakeKind :=
-  [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe | TakeNone ].
+  [TakeCol | TakeEl | TakeGt | TakeGe | TakeLt | TakeLe | TakeNe | TakeNone ].
 
 Ltac2 string_to_take_kind (s : string) :=
   if String.equal s ":" then
@@ -65,20 +81,23 @@ Ltac2 string_to_take_kind (s : string) :=
     TakeLt
   else if String.equal s "≤" then
     TakeLe
+  else if String.equal s "≠" then
+    TakeNe
   else
     (throw (of_string "Unknown symbol encountered after Take"); TakeCol).
 
-Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 'c option* 'd option * 'e option) :=
-  let (col_opt, el_opt, gt_opt, ge_opt, lt_opt, le_opt) := option_tuple in
+Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 'c option* 'd option * 'e option * 'f option) :=
+  let (col_opt, el_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt) := option_tuple in
   let final_list := List.concat [
     (match col_opt with | Some _ => [TakeCol] | None => [] end);
     (match el_opt with | Some _ => [TakeEl] | None => [] end);
     (match gt_opt with | Some _ => [TakeGt] | None => [] end);
     (match ge_opt with | Some _ => [TakeGe] | None => [] end);
     (match lt_opt with | Some _ => [TakeLt] | None => [] end);
-    (match le_opt with | Some _ => [TakeLe] | None => [] end)] in
+    (match le_opt with | Some _ => [TakeLe] | None => [] end);
+    (match ne_opt with | Some _ => [TakeNe] | None => [] end)] in
   if Int.gt (List.length final_list) 1 then
-    throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol
+    (throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol)
     else
     match final_list with
     | [] => TakeNone
@@ -94,6 +113,7 @@ Local Ltac2 pred_from_take_kind (rhs : constr) (tk : TakeKind) :=
   | TakeGe => constr:((≥ $rhs)%pfs)
   | TakeLt => constr:((< $rhs)%pfs)
   | TakeLe => constr:((≤ $rhs)%pfs)
+  | TakeNe => constr:((≠ $rhs)%pfs)
   | TakeNone => rhs
   end.
 
@@ -103,7 +123,7 @@ Local Ltac2 intro_with_assum (id : ident) (rhs : constr) (tk : TakeKind) :=
   let id_c := Control.hyp id in
   let pred := pred_from_take_kind rhs tk in
   lazy_match! (Control.goal ()) with
-  | (?cond -> _) => (* FIXME: this check should be more strict *)
+  | (?cond -> _) =>
     if check_constr_equal constr:($pred $id_c) cond then
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
       intro $w;
@@ -142,17 +162,21 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
   | _ => throw (could_not_introduce_no_forall_message id)
   end;
   match tk with
-  | TakeCol =>
+  | (* User uses Take ... : ... notation *)
+    TakeCol =>
     let type := rhs in
     lazy_match! (Control.goal ()) with
       | (forall _ : ?u, _) =>
         if check_constr_equal u (get_coerced_type type) then
-          intro $id;
-          unfold subset_type in $id
+          (intro $id;
+          unfold subset_type in $id)
         else throw (too_many_of_type_message type)
       | _ => throw (could_not_introduce_no_forall_message id)
       end
-  | TakeEl =>
+  | (* User uses Take ... ∈ ... notation. This requires separate
+       treatment due to the difficulties with coercions with the
+       sets on the right-hand side. *)
+    TakeEl =>
     let type := rhs in
     intro $id;
     unfold subset_type in $id;
@@ -161,6 +185,7 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
     | (?v ∈ ?set_in_cond -> _) =>
       let possibly_coerced_type :=
         lazy_match! Constr.type type with
+        | subset _ => type
         | Ensemble _ => type
         | _ -> Prop => type
         | _ => get_coerced_type type
@@ -177,9 +202,13 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
       else
         throw (expected_different_condition_message constr:($v ∈ $set_in_cond)
           constr:($id_c ∈ $rhs))
-    | _ => throw (expected_implication_message id)
+    | (?v -> _) =>
+        throw (expected_el_message constr:($v) id rhs)
+    | _ =>
+      throw (expected_col_not_el_message id rhs (Constr.type id_c))
     end
-  | _ => intro_with_assum id rhs tk
+  | (* User uses one of the other notations: separate function *)
+    _ => intro_with_assum id rhs tk
   end.
 
 (**
@@ -194,9 +223,9 @@ Local Ltac2 intro_ident (id : ident) (rhs : constr) (tk : TakeKind) :=
   Raises fatal exceptions:
     - If the current goal does not require the introduction of a variable of type [type], including coercions of [type].
 *)
-Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * constr)) :=
-  let (ids, col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt, type) := pair in
-  let take_kind := get_take_kind (col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt) in
+Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * 'f option * constr)) :=
+  let (ids, col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt, type) := pair in
+  let take_kind := get_take_kind (col_opt, in_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt) in
   lazy_match! goal with
     | [ |- seal (fun _ => forall _ : ?u, _) _ ] =>
       let sort_u := get_value_of_hyp u in
@@ -219,7 +248,7 @@ Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b op
 (**
   Checks whether variables need to be introduced, attempts to introduce a list of variables of certain types.
 *)
-Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * constr) list) :=
+Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c option * 'd option * 'e option * 'f option * constr) list) :=
   lazy_match! goal with
     | [ |- seal (fun _ => forall _ : ?u, _) _ ] =>
       (* Check whether [u] is not a proposition. *)
@@ -239,6 +268,6 @@ Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c opt
   end.
 
 Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
-  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), lconstr), "and")) :=
+  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), opt("≠"), lconstr), "and")) :=
   panic_if_goal_wrapped ();
   take x.

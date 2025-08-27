@@ -46,7 +46,7 @@ Lemma sigma_split_v2 (a : ℕ → ℝ) (k  l M : ℕ) :
 Proof.
   Assume that
     (k < l)%nat and (l ≤ M)%nat.
-  It holds that l = S (l - 1)%nat as (i).
+  It holds that l = S ((l - 1)%nat) as (i).
   (* TODO: It suffices to show that (sigma a k Nn = sigma a k (l - 1) + sigma a (S (l - 1)) Nn).*)
   rewrite (i) at 2.
   By sigma_split it suffices to show that (k <= l - 1 < M)%nat.

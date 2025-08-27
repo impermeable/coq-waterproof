@@ -22,7 +22,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
-let waterproof_version : string = "2.2.0+dev"
+let waterproof_version : string = "3.0.0+dev"
 
 }
 
@@ -30,14 +30,13 @@ let waterproof_version : string = "2.2.0+dev"
 (* Doing this enables parsing the mathematical expressions without parentheses *)
 (* The cost of this is that these words are no longer allowed to be variables *)
 {
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "and")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "as")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "hold")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "holds")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "it")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "or")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "we")) 
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "and")) 
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "and"))
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "as"))
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "hold"))
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "holds"))
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "it"))
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "or"))
+let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "we"))
 
 }
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF

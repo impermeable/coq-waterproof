@@ -83,11 +83,11 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
     | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end;
   if sealed then
-    split;
+    (split;
     Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type,
       gt_op, R_gt_type, nat_gt_type, lt_op, R_lt_type, nat_lt_type,
       le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
-    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap))
   else ().
 
 (**
@@ -132,11 +132,11 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
   | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
   end;
   if sealed then
-    split;
+    (split;
     Control.focus 1 1 (fun () => unfold ge_op, R_ge_type, nat_ge_type,
       gt_op, R_gt_type, nat_gt_type, lt_op, R_lt_type, nat_lt_type,
       le_op, R_le_type, nat_le_type; apply VerifyGoal.unwrap);
-    Control.focus 2 2 (fun () => apply StateGoal.unwrap)
+    Control.focus 2 2 (fun () => apply StateGoal.unwrap))
   else ().
 
 Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_lconstr) :=
