@@ -42,33 +42,26 @@ if __name__ == "__main__":
             # Load optional .test file (same name but .test instead of .diags).
             diags_path = os.path.join(FOLDER, filename)
             test_path = os.path.splitext(diags_path)[0] + '.test'
-            lemmas = set()
+            exceptions = list()
             if os.path.exists(test_path):
                 with open(test_path) as tf:
                     for line in tf:
                         line = line.strip()
                         if not line or line.startswith('#'):
                             continue
-                        lemmas.add(line)
+                        exceptions.append(line)
 
             contents = file.read().replace('}\n{','},{')
             diags = json.loads('[' + contents + ']')
             for diag in diags:
+                # severity <= 1 considered failing in previous behaviour
                 sev = diag.get('severity', 0)
                 if sev <= 1:
-                    # Check if message has proof name that is expected to fail
                     msg = diag.get('message')
 
-                    # Extract lemma names from patterns like "(in proof <lemma>)"
-                    proof_lemmas = re.findall(r"\(in proof\s+([^\)]+)\)", msg)
-
-                    skip = False
-                    for pl in proof_lemmas:
-                        pl = pl.strip()
-                        if pl in lemmas:
-                            skip = True
-                            break
-                    if skip:
+                    # if exact message is listed, skip it and remove it to show we processed it.
+                    if len(exceptions) > 0 and msg.strip() == exceptions[0]:
+                        exceptions.pop(0)
                         continue
 
                     print(filename)
