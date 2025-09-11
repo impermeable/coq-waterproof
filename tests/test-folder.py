@@ -2,6 +2,7 @@ import subprocess
 import os
 import glob
 import json
+import re
 import argparse
 
 if __name__ == "__main__":
@@ -38,10 +39,38 @@ if __name__ == "__main__":
     for filename in glob.iglob('**/*.diags', recursive=True, root_dir=FOLDER):
         print(filename)
         with open(f'{FOLDER}/{filename}') as file:
+            # Load optional .test file (same name but .test instead of .diags).
+            diags_path = os.path.join(FOLDER, filename)
+            test_path = os.path.splitext(diags_path)[0] + '.test'
+            lemmas = set()
+            if os.path.exists(test_path):
+                with open(test_path) as tf:
+                    for line in tf:
+                        line = line.strip()
+                        if not line or line.startswith('#'):
+                            continue
+                        lemmas.add(line)
+
             contents = file.read().replace('}\n{','},{')
             diags = json.loads('[' + contents + ']')
             for diag in diags:
-                if(diag['severity'] <= 1):
+                sev = diag.get('severity', 0)
+                if sev <= 1:
+                    # Check if message has proof name that is expected to fail
+                    msg = diag.get('message')
+
+                    # Extract lemma names from patterns like "(in proof <lemma>)"
+                    proof_lemmas = re.findall(r"\(in proof\s+([^\)]+)\)", msg)
+
+                    skip = False
+                    for pl in proof_lemmas:
+                        pl = pl.strip()
+                        if pl in lemmas:
+                            skip = True
+                            break
+                    if skip:
+                        continue
+
                     print(filename)
                     print(diag)
                     failed = True
