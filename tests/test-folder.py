@@ -60,7 +60,7 @@ if __name__ == "__main__":
                     msg = diag.get('message')
 
                     # if exact message is listed, skip it and remove it to show we processed it.
-                    if len(exceptions) > 0 and msg.strip() == exceptions[0]:
+                    if len(exceptions) > 0 and msg.strip() in exceptions[0]:
                         exceptions.pop(0)
                         continue
 
