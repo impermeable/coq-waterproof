@@ -19,7 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.

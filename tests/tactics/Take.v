@@ -112,7 +112,7 @@ Abort.
 Goal forall (a b c d e f g: nat) (b1 b2: bool),
     Nat.odd (a + b + c + d + e + f + g) = andb b1 b2.
     assert_fails_with_string (fun() => Take a, b, c, d, e, f, g : nat and a, h: bool)
-"Internal (err:(a is already used.))".
+"Internal err:(a is already used.)".
 Abort.
 
 (** Test 10: Two sets of multiple variables of the same type.
@@ -134,7 +134,7 @@ Goal not (0 = 1).
   Fail Take p : (0 = 1).
 Abort.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 (** Test 13: Introducing too many variables when
     the for all statement is followed by an implication.
 *)
@@ -200,7 +200,7 @@ Abort.
 Goal forall n : nat, forall n : nat, n = n.
 Proof.
   assert_feedback_with_string (fun () => assert_fails_with_string (fun () => Take n, n : nat)
-"Internal (err:(n is already used.))") (*This should produce an error ... *)
+"Internal err:(n is already used.)") (*This should produce an error ... *)
 Warning
 "Expected variable name n0 instead of n.". (* ... and also produce a warning *)
 Abort.

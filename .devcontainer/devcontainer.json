@@ -1,5 +1,5 @@
 {
-    "name": "coq-waterproof dev container for Coq 8.17",
+    "name": "coq-waterproof dev container for Coq dev",
 
     "build": {
         "dockerfile": "Dockerfile"

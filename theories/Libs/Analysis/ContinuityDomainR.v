@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Notations.Common.
 Require Import Notations.Reals.
@@ -102,9 +102,9 @@ Qed.
 #[export] Hint Resolve <- alt_char_continuity : wp_reals.
 
 (** Notations *)
-Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 68).
+Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 69).
 
-Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 68, only parsing).
+Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 69, only parsing).
 
 Local Ltac2 unfold_acc_point (statement : constr) := eval unfold is_accumulation_point in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation" "point" x(opt(seq("in", constr))) :=
@@ -113,9 +113,9 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation" "poi
   wp_unfold unfold_acc_point (Some "accumulation point") false x.
 
 
-Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 68).
+Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 69).
 
-Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 68, only parsing).
+Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 69, only parsing).
 
 Local Ltac2 unfold_isol_point (statement : constr) := eval unfold is_isolated_point in $statement.
 
@@ -124,9 +124,9 @@ Ltac2 Notation "Expand" "the" "definition" "of" "isolated" "point" x(opt(seq("in
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "isolated" "point" x(opt(seq("in", constr))) :=
   wp_unfold unfold_isol_point (Some "isolated point") false x.
 
-Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 68).
+Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 69).
 
-Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 68, only parsing).
+Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 69, only parsing).
 
 Local Ltac2 unfold_lim_in_point (statement : constr) := eval unfold limit_in_point in $statement.
 
@@ -136,9 +136,9 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "limit" x(opt(seq("
   wp_unfold unfold_lim_in_point (Some "limit") false x.
 
 
-Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in f a) (at level 68).
+Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in f a) (at level 69).
 
-Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in f a)  (at level 68, only parsing).
+Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in f a)  (at level 69, only parsing).
 
 Local Ltac2 unfold_is_cont (statement : constr) := eval unfold is_continuous_in in $statement.
 

@@ -73,6 +73,7 @@ struct
     | DCoFix  of int
     | DInt    of Uint63.t
     | DFloat  of Float64.t
+    | DString of Pstring.t
     | DArray
 
   let compare_ci ci1 ci2 =
@@ -116,12 +117,14 @@ struct
     | DInt _, _ -> -1 | _, DInt _ -> 1
     | DFloat f1, DFloat f2 -> Float64.total_compare f1 f2
     | DFloat _, _ -> -1 | _, DFloat _ -> 1
+    | DString s1, DString s2 -> Pstring.compare s1 s2
+    | DString _, _ -> -1 | _, DString _ -> 1
     | DArray, DArray -> 1
 end
 
 (**
   Terms discrimination nets
-  
+
   Uses the general dnet datatype on DTerm.t (here you can restart reading)
 *)
 module HintDN :
@@ -164,7 +167,7 @@ end = struct
       | Construct (c,u) -> Some (DRef (ConstructRef c), [])
       | Meta _ -> assert false
       | Evar (i,_) -> None
-      | Case (ci,u1,pms1,c1,_iv,c2,ca) -> Some (DCase(ci), [snd c1; c2] @ Array.map_to_list snd ca)
+      | Case (ci,u1,pms1,(c1,_),_iv,c2,ca) -> Some (DCase(ci), [snd c1; c2] @ Array.map_to_list snd ca)
       | Fix ((ia,i),(_,ta,ca)) -> Some (DFix(ia,i), Array.to_list ta @ Array.to_list ca)
       | CoFix (i,(_,ta,ca)) -> Some (DCoFix(i), Array.to_list ta @ Array.to_list ca)
       | Cast (c,_,_) -> pat_of_constr c
@@ -176,9 +179,13 @@ end = struct
         let a = ca.(len - 1) in
         let ca = Array.sub ca 0 (len - 1) in
         Some (DApp, [mkApp (f, ca); a])
-      | Proj (p,c) -> pat_of_constr @@ mkApp (mkConst @@ Projection.constant p, [|c|])
+        (* Same change as in the autorewrite library: the motivation there is:
+           UnsafeMonomorphic is fine because the term will only be used
+           by pat_of_constr which ignores universes *)
+      | Proj (p, _, c) -> pat_of_constr @@ mkApp (UnsafeMonomorphic.mkConst @@ Projection.constant p, [|c|])
       | Int i -> Some (DInt i, [])
       | Float f -> Some (DFloat f, [])
+      | String s -> Some (DString s, [])
       | Array (_u,t,def,ty) -> Some (DArray, Array.to_list t @ [def ; ty])
     in pat_of_constr c
 
@@ -187,7 +194,7 @@ end = struct
   let empty = TDnet.empty
 
   let add (c:constr) (id:Ident.t) (dn:t) =
-    let (ctx, c) = Term.decompose_prod_assum c in
+    let (ctx, c) = Term.decompose_prod_decls c in
     let c = TDnet.pattern pat_of_constr c in
     TDnet.add dn c id
 
@@ -229,8 +236,8 @@ let fresh_key: unit -> KerName.t =
 
 let decompose_applied_relation (env: Environ.env) (sigma: Evd.evar_map) (c: constr) (ctype: Evd.econstr) (left2right: bool): hypinfo option =
   let find_rel ty =
-    let sigma, ty = Clenv.make_evar_clause env sigma ty in
-    let (_, args) = Termops.decompose_app_vect sigma ty.Clenv.cl_concl in
+    let sigma, ty = EClause.make_evar_clause env sigma ty in
+    let (_, args) = EConstr.decompose_app sigma ty.EClause.cl_concl in
     let len = Array.length args in
     if 2 <= len then
       let c1 = args.(len - 2) in
@@ -240,12 +247,12 @@ let decompose_applied_relation (env: Environ.env) (sigma: Evd.evar_map) (c: cons
   in match find_rel ctype with
     | Some c -> Some { hyp_pat = c; hyp_ty = ctype }
     | None ->
-        let ctx,t' = Reductionops.splay_prod_assum env sigma ctype in (* Search for underlying eq *)
+        let ctx,t' = Reductionops.whd_decompose_prod_decls env sigma ctype in (* Search for underlying eq *)
         let ctype = EConstr.it_mkProd_or_LetIn t' ctx in
         match find_rel ctype with
         | Some c -> Some { hyp_pat = c; hyp_ty = ctype }
         | None -> None
-  
+
 
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 let add_rew_rules (rewrite_database: rewrite_db) (rew_rules: rew_rule list): rewrite_db =
@@ -281,6 +288,7 @@ let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: 
     Proofview.Goal.enter begin fun gl ->
       let sigma = Proofview.Goal.sigma gl in
       let subst, ctx' = UnivGen.fresh_universe_context_set_instance rule.rew_ctx in
+      let subst = Sorts.QVar.Map.empty, subst in
       let c' = Vars.subst_univs_level_constr subst rule.rew_lemma in
       let sigma = Evd.merge_context_set Evd.univ_flexible sigma ctx' in
       Proofview.tclTHEN (Proofview.Unsafe.tclEVARS sigma) (rewrite rule.rew_l2r c' tac)
@@ -346,7 +354,7 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
       )
 
 let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
-  let ist = Genintern.empty_glob_sign env in
+  let ist = Genintern.empty_glob_sign ~strict:true env in
   let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
   let to_rew_rule ({CAst.loc;v=((c,ctx),b,t)}: raw_rew_rule): rew_rule =
     let sigma = Evd.merge_context_set Evd.univ_rigid sigma ctx in
@@ -376,16 +384,16 @@ let print_rewrite_hintdb (env: Environ.env) (sigma: Evd.evar_map) (rewrite_datab
   ) (find_rewrites rewrite_database)
 
 (**
-  Converts a given hypothesis into a raw rule than can be added to the hint rewrite database    
+  Converts a given hypothesis into a raw rule than can be added to the hint rewrite database
 *)
 let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.constr_expr): raw_rew_rule =
   let econstr, context = Constrintern.interp_constr env sigma hyp in
   let constr = EConstr.to_constr sigma econstr in
   let univ_ctx = UState.context_set context in
-  let ctx = (DeclareUctx.declare_universe_context ~poly:false univ_ctx; Univ.ContextSet.empty) in
+  let ctx = (Global.push_context_set univ_ctx; Univ.ContextSet.empty) in
   CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) ((constr, ctx), true, Option.map (in_gen (rawwit wit_ltac)) None)
 
-(**  
+(**
   This function will add in the rewrite hint database "core" every hint possible created from the hypothesis
 *)
 let fill_local_rewrite_database (): rewrite_db tactic =

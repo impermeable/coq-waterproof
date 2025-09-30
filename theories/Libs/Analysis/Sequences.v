@@ -16,11 +16,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Lra.
-Require Import Classical.
-Require Import Classical_Pred_Type.
-Require Import ClassicalChoice.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Lra.
+From Stdlib Require Import Classical.
+From Stdlib Require Import Classical_Pred_Type.
+From Stdlib Require Import ClassicalChoice.
 
 Require Import Tactics.
 Require Import Automation.
@@ -376,8 +376,8 @@ Definition is_bounded (a : ℕ → ℝ) :=
     ∃ M > 0,
       ∀ n ∈ ℕ,
         |a n - q| ≤ M.
-Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 20).
-Notation "a 'is' 'bounded'" := (is_bounded a) (at level 20, only parsing).
+Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 69).
+Notation "a 'is' 'bounded'" := (is_bounded a) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_bounded (Some "bounded") true x.
@@ -439,8 +439,8 @@ Qed.
 (** Definitions sequence bounded from above and below *)
 Definition is_bounded_above (a : ℕ → ℝ) :=
   ∃ M ∈ ℝ, ∀ n ∈ ℕ, a(n) ≤ M.
-Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 20).
-Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 20, only parsing).
+Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 69).
+Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_bounded_above (Some "bounded above") true x.
@@ -449,8 +449,8 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" x
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m ∈ ℝ, ∀ n ∈ ℕ, m ≤ a(n).
-Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 20).
-Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 20, only parsing).
+Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 69).
+Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", constr))):=
   wp_unfold unfold_is_bounded_below (Some "bounded below") true x.

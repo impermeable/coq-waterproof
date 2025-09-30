@@ -2,7 +2,7 @@ Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Notations.Sets.
 
-Require Import Coq.ZArith.BinInt.
+Require Import Stdlib.ZArith.BinInt.
 
 Open Scope subset_scope.
 Open Scope Z_scope.

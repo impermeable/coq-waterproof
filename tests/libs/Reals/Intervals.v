@@ -3,7 +3,7 @@ Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Libs.Reals.Intervals.
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Open Scope R_scope.
 

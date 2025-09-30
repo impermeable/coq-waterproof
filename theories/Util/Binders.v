@@ -22,7 +22,7 @@ Require Import Notations.Sets.
 Require Import Util.MessagesToUser.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 
 (**
@@ -139,8 +139,8 @@ Ltac2 change_binder_name_under_seal (c : constr) (id : ident) :=
         | _ => f
         end in
       match Constr.Unsafe.check new_f with
-      | Val x => constr:(seal $new_f $d)
-      | Err exn => c
+      | Val _ => constr:(seal $new_f $d)
+      | Err _ => c
       end
   | _ => c
   end.

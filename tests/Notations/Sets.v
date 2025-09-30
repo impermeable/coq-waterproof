@@ -38,7 +38,7 @@ Abort.
 Goal ∃ x ∈ B, x = 0.
 Abort.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Open Scope R_scope.
 
 Goal ∀ x > 3, x = 5.

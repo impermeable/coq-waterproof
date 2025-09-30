@@ -30,7 +30,7 @@ Require Import Tactics.BothStatements.
 Require Import Notations.Sets.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 (* Ltac2 Type exn ::= [ ChooseError(string) ]. *)
 

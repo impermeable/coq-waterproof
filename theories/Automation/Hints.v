@@ -18,17 +18,18 @@
 
 Require Import Ltac2.Ltac2.
 
-Require Import Arith.PeanoNat.
-Require Import Classical_Pred_Type.
-Require Import Lia.
-Require Import Lra.
-Require Import Logic.ClassicalEpsilon.
-Require Import Reals.Reals.
-Require Import Reals.Rdefinitions.
-Require Import Sets.Classical_sets.
-Require Import Sets.Ensembles.
-Require Import Notations.Sets.
+From Stdlib Require Import Arith.PeanoNat.
+From Stdlib Require Import Classical_Pred_Type.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Lra.
+From Stdlib Require Import Logic.ClassicalEpsilon.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Reals.Rdefinitions.
+From Stdlib Require Import Sets.Classical_sets.
+From Stdlib Require Import Sets.Ensembles.
+From Stdlib Require Import ZArith.ZArith.
 
+Require Import Notations.Sets.
 Require Import Chains.
 Require Import Libs.Negation.
 Require Import Libs.Reals.
@@ -36,6 +37,8 @@ Require Import Libs.Logic.
 Require Import Libs.Sets.
 Require Import Libs.Integers.
 Require Import Libs.Functions.
+
+Local Set Default Proof Mode "Classic". (* Hint Extern respects Default Proof Mode after Rocq 9 *)
 
 (** * Waterproof core *)
 
@@ -187,9 +190,6 @@ Create HintDb wp_eq_opp.
   (** <<- (x - y) = y - x>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_minus_distr) : wp_eq_opp.
 
-  (** <<- (y - x) = x - y>> *)
-  #[export] Hint Extern 1 => (rewrite Ropp_minus_distr') : wp_eq_opp.
-
   (** <<- (x * y) = - x * y>> *)
   #[export] Hint Extern 1 => (rewrite Ropp_mult_distr_l) : wp_eq_opp.
 
@@ -212,7 +212,7 @@ Create HintDb wp_eq_opp.
   #[export] Hint Extern 1 => (rewrite Rmult_opp_opp) : wp_eq_opp.
 
   (** <<- a / b = - (a / b)>> *)
-  #[export] Hint Extern 1 => (rewrite Ropp_div) : wp_eq_opp.
+  #[export] Hint Extern 1 => (rewrite Rdiv_opp_l) : wp_eq_opp.
 
   (** <<-a  + a = 0>> *)
   #[export] Hint Extern 1 => (rewrite Rplus_opp_l) : wp_eq_opp.
@@ -373,8 +373,8 @@ Create HintDb wp_integers.
   #[export] Hint Resolve even_of : wp_integers.
   #[export] Hint Resolve odd_of : wp_integers.
   #[export] Hint Resolve Zeven_char : wp_integers.
-  #[export] Hint Resolve Zeven_not_Zodd : wp_integers.
-  #[export] Hint Resolve Zodd_not_Zeven : wp_integers.
+  #[export] Hint Resolve Zeven.Zeven_not_Zodd : wp_integers.
+  #[export] Hint Resolve Zeven.Zodd_not_Zeven : wp_integers.
   #[export] Hint Extern 3 => apply Zeven_char_inv; assumption : wp_integers.
   #[export] Hint Resolve Zodd_char : wp_integers.
   #[export] Hint Extern 3 => apply Zodd_char_inv; assumption : wp_integers.
@@ -384,7 +384,7 @@ Create HintDb wp_integers.
   #[export] Hint Resolve remainder_of : wp_integers.
 
 Create HintDb wp_decidability_integers.
-  #[export] Hint Resolve Zeven_odd_dec : wp_decidability_integers.
+  #[export] Hint Resolve Zeven.Zeven_odd_dec : wp_decidability_integers.
 
 
 (** * Integer negation *)
@@ -522,8 +522,8 @@ Create HintDb wp_reals.
   #[export] Hint Resolve archimedN_exists : wp_reals.
 
   #[export] Hint Resolve sqrt_lt_R0 : wp_reals.
-  #[export] Hint Resolve Rsqr_sqrt : wp_reals. 
-  #[export] Hint Resolve Rlt_le : wp_reals. 
+  #[export] Hint Resolve Rsqr_sqrt : wp_reals.
+  #[export] Hint Resolve Rlt_le : wp_reals.
   #[export] Hint Resolve Rsqr_plus_minus : wp_reals.
   #[export] Hint Resolve Rsqr_neg : wp_reals.
 
@@ -533,7 +533,7 @@ Create HintDb wp_negation_reals.
 
 #[export] Hint Extern 3 => ltac2:(solve_by_manipulating_negation (fun () => ltac1:(lra))) : wp_negation_reals.
 (* Stricly speaking not about negation, but is needed in the shorten database*)
-#[export] Hint Resolve Rmult_integral : wp_negation_reals. 
+#[export] Hint Resolve Rmult_integral : wp_negation_reals.
 
 
 (** * Sets *)
@@ -576,7 +576,7 @@ Create HintDb wp_sets.
   (** * Function preimage translation hints *)
   #[export] Hint Resolve preimage_of_mem : wp_sets.
   #[export] Hint Resolve mem_of_preimage : wp_sets.
-  
+
   #[export] Hint Resolve bijective_is_injective : wp_sets.
   #[export] Hint Resolve bijective_is_surjective : wp_sets.
 

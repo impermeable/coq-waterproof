@@ -1,4 +1,4 @@
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Require Import Notations.Common.
 Require Import Notations.Sets.
@@ -26,7 +26,7 @@ Proof.
     {
         exists (Z.to_nat z).
         rewrite INR_IZR_INZ.
-        rewrite Z2Nat.id.
+        rewrite Znat.Z2Nat.id.
         exact hz.
         apply le_IZR.
         apply Req_le_sym.
@@ -35,7 +35,7 @@ Proof.
     {
         exists (Z.to_nat z).
         rewrite INR_IZR_INZ.
-        rewrite Z2Nat.id.
+        rewrite Znat.Z2Nat.id.
         exact hz.
         apply le_IZR.
         apply Rlt_le.

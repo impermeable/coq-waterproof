@@ -20,7 +20,7 @@ Require Import Ltac2.Ltac2.
 Require Import Ltac2.Std.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
@@ -60,10 +60,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
 
-  let hyps := List.map (fun (i, def, t) => t) (Control.hyps ()) in
+  let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
   let unfolded_hyps := List.map unfold_method hyps in
   let only_unfolded_hyps :=
-    List.map (fun (uh, h) => uh) (
+    List.map (fun (uh, _) => uh) (
       List.filter_out (fun (uh, h) => Constr.equal uh h) (
         List.combine unfolded_hyps hyps
       )
@@ -74,17 +74,17 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
     then
       (* Print initial statement *)
       info_notice (of_string "Expanded definition in statements where applicable.");
-      let total_messages := Int.add 
-        (if did_unfold_goal then 1 else 0) 
+      let total_messages := Int.add
+        (if did_unfold_goal then 1 else 0)
         (List.length only_unfolded_hyps) in
-      
-      let print_tactic := 
+
+      let print_tactic :=
         if (Int.lt 1 total_messages) then
           fun m => insert_msg (to_string m) (to_string (concat m (of_string "${}")))
         else
-          fun m => replace_msg (to_string m) (to_string (concat m (of_string "${}"))) 
+          fun m => replace_msg (to_string m) (to_string (concat m (of_string "${}")))
         in
-      
+
       (* Print unfolded goal *)
       if did_unfold_goal
         then
@@ -97,8 +97,8 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         then
           let it_holds_msg := fun (x : constr) => concat_list
             [of_string "It holds that "; of_constr x; of_string "."] in
-          List.fold_left (fun _ unfolded_h => print_tactic (it_holds_msg unfolded_h))
-            only_unfolded_hyps ()
+          List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))
+            only_unfolded_hyps
         else ()
 
     else
@@ -136,7 +136,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
     - [always/none] depending on value of [throw_error].
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (x : constr option):=
+  (def_name : string option) (throw_error : bool) (_ : constr option):=
   panic_if_goal_wrapped ();
   unfold_in_all unfold_method def_name throw_error.
 

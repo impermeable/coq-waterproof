@@ -27,7 +27,7 @@ Require Import Waterproof.Util.Assertions.
 Open Scope subset_scope.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Waterproof Enable Redirect Feedback.
 

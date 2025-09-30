@@ -23,8 +23,8 @@ Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Libs.Integers.Divisibility.
 
-Require Import Coq.ZArith.BinInt.
-Require Import Coq.micromega.Lia.
+Require Import Stdlib.ZArith.BinInt.
+Require Import Stdlib.micromega.Lia.
 
 Waterproof Enable Automation RealsAndIntegers.
 

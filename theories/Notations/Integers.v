@@ -1,5 +1,5 @@
-Require Import Coq.ZArith.BinInt.
-Require Import Coq.ZArith.Zeven.
+Require Import Stdlib.ZArith.BinInt.
+Require Import Stdlib.ZArith.Zeven.
 Require Import Libs.Integers.
 
 Open Scope Z_scope.

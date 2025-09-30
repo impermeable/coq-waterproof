@@ -1,7 +1,7 @@
 COQ_PROJ := _CoqProjectForMake
 COQ_MAKEFILE := Makefile.coq
 COQ_MAKE := +${MAKE} -f $(COQ_MAKEFILE)
-LTAC2_PLUGIN_DIR := $(shell ocamlfind query coq-core.plugins.ltac2)
+LTAC2_PLUGIN_DIR := $(shell ocamlfind query rocq-runtime.plugins.ltac2)
 
 all install: $(COQ_MAKEFILE) Makefile
 	$(COQ_MAKE) $@

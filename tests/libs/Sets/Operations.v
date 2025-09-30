@@ -2,8 +2,8 @@ Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Libs.Sets.Operations.
 
-Require Import Coq.Arith.Arith.
-Require Import Coq.micromega.Lia.
+Require Import Stdlib.Arith.Arith.
+Require Import Stdlib.micromega.Lia.
 
 Open Scope subset_scope.
 

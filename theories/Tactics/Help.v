@@ -19,7 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Require Import Util.Constr.
 Require Import Util.Goals.
@@ -95,7 +95,7 @@ Local Ltac2 goal_exists_pred_msg (q: constr) :=
   info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) "; of_constr q; of_string "."]);
   replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
 
-Local Ltac2 goal_and_msg () := 
+Local Ltac2 goal_and_msg () :=
   info_notice (of_string "The goal is to show a conjunction (∧). Show both statements.");
   replace_msg "We show both statements." "We show both statements.${0}".
 
@@ -107,11 +107,11 @@ Local Ltac2 goal_neg_msg (negated_type : constr) :=
   info_notice (concat_list [of_string "The goal is to show a negation (¬). Assume that the negated expression "; of_constr negated_type; of_string "."]);
   replace_msg "Assume that ...." "Assume that ${0:0 = 0}.${1}".
 
-Local Ltac2 goal_directly () := 
+Local Ltac2 goal_directly () :=
   info_notice (of_string "The goal can be shown immediately.");
   replace_msg "We conclude that ...." "We conclude that ${0:0 = 0}.${1}".
 
-Local Ltac2 goal_no_hint () := 
+Local Ltac2 goal_no_hint () :=
   info_notice (of_string "No direct hint available. Does the goal contain a definition that can be expanded?").
 
 Local Ltac2 goal_exists_msg (var_type: constr) :=
@@ -150,7 +150,7 @@ Local Ltac2 need_to_follow_advice () : bool :=
 Local Ltac2 goal_hint () : bool :=
   let gl := Control.goal () in
   lazy_match! gl with
-  | ?a -> ?b  =>
+  | ?a -> ?_b  =>
     let sort_a := get_value_of_hyp a in
     match check_constr_equal sort_a constr:(Prop) with
       | true            => goal_impl_msg a; true
@@ -182,7 +182,7 @@ Local Ltac2 goal_hint () : bool :=
 
 Local Ltac2 forall_filter (x : constr) : bool :=
   lazy_match! x with
-  | ?a -> ?b     => false
+  | _ -> ?_b     => false
   | ∀ _ _ _, _   => true
   | ∀ _ _, _   => true
   | forall _, _  => true
@@ -211,13 +211,13 @@ Ltac2 print_hints () :=
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
       match Control.case (solvable_by_core_auto) with
       | Val _           => goal_directly ()
-      | Err exn         =>
+      | Err _         =>
 
         (* Suggest hint to solve goal *)
         let hint_given := goal_hint () in
 
         (* Collect forall- and exists-statements *)
-        let hyps := List.map (fun (i, x, t) => t) (Control.hyps ()) in
+        let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
         let forall_hyps := List.filter (forall_filter) hyps in
         let exists_hyps := List.filter (exists_filter) hyps in
 
@@ -226,7 +226,7 @@ Ltac2 print_hints () :=
           then ()
           else (
             info_notice(of_string "You can use one of the ‘for all’-statements (∀):");
-            List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps ();
+            List.iter (fun h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps;
             replace_msg "Use ... := ... in ...." "Use ${0:x} := ${1:0} in ({2:i}).${3}"
           );
 
@@ -235,7 +235,7 @@ Ltac2 print_hints () :=
           then ()
           else (
             info_notice(of_string "You can use one of the ‘there exists’-statements (∃):");
-            List.fold_left (fun _ h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps ();
+            List.iter (fun h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps;
             replace_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}"
           );
 
@@ -245,7 +245,8 @@ Ltac2 print_hints () :=
           then (goal_no_hint ())
           else ()
         end.
-      
+
+
 
 
 
@@ -265,12 +266,6 @@ Module HelpNewHyp.
 Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   if Bool.neg (get_print_hypothesis_flag ()) then ()
   else
-  let msg_label :=
-    match label with
-    | None   => of_string "..."
-    | Some i => of_ident i
-    end
-  in
   let print_forall_msg () :=
     info_notice (concat_list [
         of_string "To use "; of_constr x; of_string ", consider:"]);
@@ -284,7 +279,7 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
         of_string "To use "; of_constr x; of_string ", consider:"]);
       insert_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}" in
   lazy_match! x with
-  | ?a -> ?b => ()
+  | _ -> ?_b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _ , _ => print_forall_msg ()
   | ∀ _ > _ , _ => print_forall_msg ()
@@ -308,12 +303,6 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
 Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   if Bool.neg (get_print_hypothesis_flag ()) then ()
   else
-  let msg_label :=
-    match label with
-    | None   => of_string "..."
-    | Some i => of_ident i
-    end
-  in
   let print_forall_msg () :=
     info_notice (concat_list [
         of_string "After proving "; of_constr x; of_string ", consider:"]);
@@ -327,7 +316,7 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
         of_string "After proving "; of_constr x; of_string ", consider:"]);
       insert_msg "Obtain such a ...." "Obtain such a ${0:x}.${1}" in
   lazy_match! x with
-  | ?a -> ?b => ()
+  | _ -> ?_b => ()
   | forall _, _ => print_forall_msg ()
   | ∀ _ _, _ => print_forall_msg ()
   | ∀ _ > _, _ => print_forall_msg ()

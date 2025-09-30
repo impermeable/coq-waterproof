@@ -19,8 +19,8 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Coq.Reals.Reals.
-Require Import micromega.Lra.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Lra.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.

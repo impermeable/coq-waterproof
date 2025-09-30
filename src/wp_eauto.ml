@@ -43,7 +43,7 @@ let e_give_exact ?(flags: Unification.unify_flags = eauto_unif_flags) (c: types)
     if occur_existential sigma t1 || occur_existential sigma t2 then
       Tacticals.tclTHENLIST [
         Unsafe.tclEVARS sigma;
-        Clenv.unify ~flags t1;
+        Clenv.unify ~cv_pb:CUMUL ~flags t1;
         exact_no_check c
       ]
     else exact_check c
@@ -58,12 +58,12 @@ let e_assumption: trace tactic =
       Tacticals.tclZEROMSG (str "No applicable tactic.")
     else
       let not_ground = occur_existential sigma concl in
-      let map (decl: ('a, types) Declaration.pt): trace tactic =
+      let map (decl: (_, types, _) Declaration.pt): trace tactic =
         let id = Declaration.get_id decl in
         let t = Declaration.get_type decl in
         begin
           if not_ground || occur_existential sigma t
-            then Clenv.unify ~flags:eauto_unif_flags t <*> exact_no_check (mkVar id)
+            then Clenv.unify ~cv_pb:CUMUL ~flags:eauto_unif_flags t <*> exact_no_check (mkVar id)
             else exact_check (mkVar id)
         end <*> tclUNIT @@ singleton_trace true (str "eassumption") (str "")
       in

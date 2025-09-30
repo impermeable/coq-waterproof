@@ -323,7 +323,7 @@ Qed.
 
 (** Test 23 : Choose a natural number larger than another natural number, but in R_scope. *)
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Open Scope R_scope.
 
 Goal (∀ y > 0%nat, INR(y) = 0) -> True.
@@ -415,3 +415,12 @@ Use n := 3 + 1 in H.
 It holds that 4 = 4.
 Abort.
 Close Scope subset_scope.
+
+(** Test 28 : Test that helper variable has been removed *)
+
+Goal (forall n : nat, n = n) -> True.
+Proof.
+intro H.
+Use n := 3 in (H).
+Fail assert (n = 0).
+Abort.

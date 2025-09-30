@@ -19,7 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Require Import Util.Constr.
 Require Import Util.Goals.
@@ -131,9 +131,6 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
   (* Print suggestion on how to use new statement. *)
   HelpNewHyp.suggest_how_to_use claim label.
 
-
-(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
-Notation "[ ( % @ < x 'it'" := x (at level 0, only parsing).
 
 (**
   Attempts to assert a claim and proves it automatically using a specified lemma,

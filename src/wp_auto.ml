@@ -69,9 +69,8 @@ let exact (h: hint): unit tactic =
     let sigma, t = Typing.type_of env sigma c in
     let concl = Goal.concl gl in
     if occur_existential sigma t || occur_existential sigma concl then
-      let sigma = Evd.clear_metas sigma in
       try
-        let sigma = Unification.w_unify env sigma CONV ~flags:auto_unif_flags concl t in
+        let _, sigma = Unification.w_unify env sigma CONV ~flags:auto_unif_flags concl t in
         Unsafe.tclEVARSADVANCE sigma <*>
         exact_no_check c
       with e when CErrors.noncritical e -> tclZERO e
@@ -81,9 +80,10 @@ let exact (h: hint): unit tactic =
 (**
   Same function as {! Auto.exists_evaluable_reference}
 *)
-let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Tacred.evaluable_global_reference): bool = match evaluable_ref with
-  | Tacred.EvalConstRef _ -> true
-  | Tacred.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
+let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Evaluable.t): bool = match evaluable_ref with
+  | Evaluable.EvalConstRef _ -> true
+  | Evaluable.EvalProjectionRef _ -> true
+  | Evaluable.EvalVarRef v -> try ignore(Environ.lookup_named v env); true with Not_found -> false
 
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 

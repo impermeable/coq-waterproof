@@ -19,15 +19,14 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Rbase.
-Require Import Qreals.
-Require Import Rfunctions.
-Require Import SeqSeries.
-Require Import Rtrigo.
-Require Import Ranalysis.
-Require Import Integration.
-Require Import micromega.Lra.
-Require Import Max.
+From Stdlib Require Import Rbase.
+From Stdlib Require Import Qreals.
+From Stdlib Require Import Rfunctions.
+From Stdlib Require Import SeqSeries.
+From Stdlib Require Import Rtrigo.
+From Stdlib Require Import Ranalysis.
+From Stdlib Require Import Integration.
+From Stdlib Require Import Lra.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.

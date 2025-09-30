@@ -45,7 +45,7 @@ Require Import Waterproof.Util.MessagesToUser.
 Require Import Util.Init.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 (**   Introduce global test verbosity. *)
 Ltac2 mutable test_verbosity () := 0.
@@ -274,7 +274,7 @@ Ltac2 rec assert_list_equal (f : 'a -> 'a -> bool) (of_a : 'a -> message) (x:'a 
     | [] =>
       match y with
         | [] => print_success (of_string "Test passed: lists indeed equal")
-        | y_head::y_tai => fail_test (of_string "Second list has more elements")
+        | _::_ => fail_test (of_string "Second list has more elements")
       end
   end.
 

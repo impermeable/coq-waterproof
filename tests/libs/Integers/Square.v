@@ -5,7 +5,7 @@ Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Libs.Integers.Square.
 
-Require Import Coq.ZArith.BinInt.
+Require Import Stdlib.ZArith.BinInt.
 
 Waterproof Enable Automation RealsAndIntegers.
 

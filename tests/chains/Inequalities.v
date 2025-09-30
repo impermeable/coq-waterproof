@@ -19,7 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
@@ -101,7 +101,7 @@ Abort.
 (** Test whether one can provide a custom relation for an EqualInterpretation.
 *)
 Local Parameter X : Type.
-Require Import Relations.
+From Stdlib Require Import Relations.
 Local Parameter rel : relation X.
 
 #[local] Instance equal_setoid_interpretation : EqualInterpretation X :=

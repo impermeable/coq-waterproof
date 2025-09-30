@@ -19,16 +19,16 @@
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 
-Require Import Sets.Ensembles.
-Require Import Coq.Logic.FunctionalExtensionality.
+Require Import Stdlib.Sets.Ensembles.
+Require Import Stdlib.Logic.FunctionalExtensionality.
 
 Open Scope subset_scope.
 
 (** * Function Image *)
 
-(** 
-  We formalize the notion of the image of a function. Given a function `g : X → Y` 
-  and a subset `U`, the image of `U` under `g` is the set of all values `y` such 
+(**
+  We formalize the notion of the image of a function. Given a function `g : X → Y`
+  and a subset `U`, the image of `U` under `g` is the set of all values `y` such
   that there exists some `x ∈ U` with `y = g(x)`.
 *)
 
@@ -64,9 +64,9 @@ Qed.
 
 (** * Function Preimage *)
 
-(** 
-  We formalize the notion of the preimage of a function. Given a function `f : X → Y` 
-  and a subset `V`, the preimage of `V` under `f` is the set of all values `x` such 
+(**
+  We formalize the notion of the preimage of a function. Given a function `f : X → Y`
+  and a subset `V`, the preimage of `V` under `f` is the set of all values `x` such
   that there exists some `y ∈ V` with `f(x) = y`.
 *)
 
@@ -123,8 +123,8 @@ Qed.
 
 (** * Injective Functions *)
 
-(** 
-  We formalize the notion of injective (one-to-one) functions. A function `f : X → Y` 
+(**
+  We formalize the notion of injective (one-to-one) functions. A function `f : X → Y`
   is injective if for all `a, b ∈ X`, if `f(a) = f(b)` then `a = b`.
   In other words, distinct elements in the domain map to distinct elements in the codomain.
 *)
@@ -140,7 +140,7 @@ Lemma injective_elim {X Y : Type} (f : X -> Y) (a b : X) :
 Proof.
 intros H_inj H_eq.
 apply H_inj.
-- (* Prove a ∈ X *) 
+- (* Prove a ∈ X *)
   apply mem_subset_full_set.
 - (* Prove b ∈ X *)
   apply mem_subset_full_set.
@@ -150,10 +150,10 @@ Qed.
 
 (** * Surjective Functions *)
 
-(** 
-  We formalize the notion of surjective (onto) functions. A function `f : X → Y` 
+(**
+  We formalize the notion of surjective (onto) functions. A function `f : X → Y`
   is surjective if for all `y ∈ Y`, there exists some `x ∈ X` such that `f(x) = y`.
-  In other words, every element in the codomain is the image of at least one element 
+  In other words, every element in the codomain is the image of at least one element
   in the domain.
 *)
 
@@ -174,8 +174,8 @@ Qed.
 
 (** * Bijective Functions *)
 
-(** 
-  We formalize the notion of bijective functions. A function `f : X → Y` 
+(**
+  We formalize the notion of bijective functions. A function `f : X → Y`
   is bijective if it is both injective and surjective.
   In other words, f is a one-to-one correspondence between X and Y.
 *)
@@ -224,7 +224,7 @@ Definition right_inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop := compos
 
 Definition has_right_inverse {X Y : Type} (f : X -> Y) : Prop := ∃ (g : Y -> X), right_inverse f g.
 
-Definition inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop := 
+Definition inverse {X Y : Type} (f : X -> Y) (g : Y -> X) : Prop :=
   left_inverse f g ∧ right_inverse f g.
 
 Definition has_inverse {X Y : Type} (f : X -> Y) : Prop := ∃ (g : Y -> X), inverse f g.

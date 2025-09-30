@@ -1,7 +1,7 @@
 Require Import Notations.Common.
 Require Import Notations.Sets.
 
-Require Import Sets.Ensembles.
+Require Import Stdlib.Sets.Ensembles.
 
 Open Scope subset_scope.
 

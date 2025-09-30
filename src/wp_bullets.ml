@@ -61,7 +61,7 @@ let suggest_on_error sugg =
   | Suggest b -> Pp.(str"Write a bullet " ++ pr_bullet b ++ str" to embark on the next subproof.")
   | Unfinished b -> Pp.(str"Current bullet " ++ pr_bullet b ++ str" is not finished.")
 
-let bullet_kind = (new_focus_kind () : t list focus_kind)
+let bullet_kind = (new_focus_kind "wp_bullet_kind" : t list focus_kind)
 let bullet_cond = done_cond ~loose_end:true bullet_kind
 
 let get_bullets pr =

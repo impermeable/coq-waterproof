@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "3.0.1+8.17-dev"
+version: "3.0.1+9.0-dev"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
@@ -25,15 +25,16 @@ bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
 
 depends: [
   "ocaml" {>= "4.09.0"}
-  "coq" {>= "8.17" & < "8.18"}
-  "dune" {>= "3.6."}
+  "rocq-prover" {>= "9.0" & < "9.1" | = "dev"}
+  "coq" {>= "9.0" & < "9.1" | = "dev"}
+  "dune" {>= "3.8"}
 ]
 
 build: [
   ["dune" "build" "-p" name "-j" jobs "@install"]
 ]
 
-available: (arch != "s390x") & (arch != "ppc64") & (os != "win32")
+available: (arch != "s390x") & (arch != "ppc64")
 
 tags: [
   "keyword:mathematics education"

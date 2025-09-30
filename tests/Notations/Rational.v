@@ -4,7 +4,7 @@ Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Notations.RealsWithSubsets.
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Require Import Waterproof.Libs.Reals.Integer.
 Require Import Waterproof.Libs.Reals.Rational.
