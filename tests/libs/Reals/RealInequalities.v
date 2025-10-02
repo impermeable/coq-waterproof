@@ -3,8 +3,8 @@ Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Libs.Reals.RealInequalities.
 
-Require Import Coq.Reals.Reals.
-Require Import Coq.micromega.Lra.
+Require Import Stdlib.Reals.Reals.
+Require Import Stdlib.micromega.Lra.
 
 Open Scope R_scope.
 

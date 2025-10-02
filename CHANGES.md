@@ -1,6 +1,6 @@
 # Change log for the coq-waterproof library
 
-## Version 3.0.0+8.17
+## Version 3.0.0+9.0
 
 - Remove need for parentheses in many places
 - Add theory for exercises for the book _An Infinite Descent into Pure Mathematics_ written by Clive Newstead
@@ -10,7 +10,7 @@
 - Add new behavior, more relaxed, for bullets
 - Improve infrastructure for testing
 
-## Version 2.2.0+8.17
+## Version 2.2.0+9.0
 
 - Allow for standard math notation
 - No longer automatically replace terms introduced by choose in the goal
@@ -30,8 +30,9 @@
 - Add custom version of the specialize tactic
 - Allow for boolean statements in tactics
 
-## Version 2.1.1+8.17
+## Version 2.1.1+9.0
 
+- Compatibility with Coq dev
 - Compatibility with earlier OCaml compilers
 - Fixes for the strong induction tactic
 

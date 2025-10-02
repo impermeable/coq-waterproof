@@ -29,7 +29,7 @@ Require Import MessagesToUser.
 Require Import Util.TypeCorrector.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Ltac2 warn_equivalent_goal_given () :=
   warn (of_string
@@ -182,7 +182,7 @@ Local Ltac2 unwrap_state_goal_no_check () :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(lconstr) :=
+Ltac2 Notation "We" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -191,14 +191,12 @@ Ltac2 Notation "We" "conclude" tht(opt("that")) target_goal(lconstr) :=
 (**
   Alternative notation for [We conclude that ...].
 *)
-Ltac2 Notation "It" "follows" tht(opt("that")) target_goal(lconstr) :=
+Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
   conclude false.
 
-(* TODO: Remove hack after update to 8.18 and replace with Pcoq.set_keyword_state call *)
-Notation "[ ( % @ < x 'we'" := x (at level 0, only parsing).
 
 (**
   Finish proving a goal using automation.
@@ -211,13 +209,13 @@ Notation "[ ( % @ < x 'we'" := x (at level 0, only parsing).
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "By" xtr_lemma(lconstr) "we" "conclude" tht(opt("that")) target_goal(lconstr) :=
+Ltac2 Notation "By" xtr_lemma(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
   conclude_by xtr_lemma.
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" tht(opt("that")) target_goal(lconstr) :=
+Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -237,7 +235,7 @@ Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" tht(opt("that")) targe
   Raises warning:
     - [Please come back later to provide an actual proof of [target_goal].], always.
 *)
-Ltac2 Notation "By" "magic" "we" "conclude" tht(opt("that")) target_goal(lconstr) :=
+Ltac2 Notation "By" "magic" "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;

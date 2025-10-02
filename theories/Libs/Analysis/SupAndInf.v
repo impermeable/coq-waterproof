@@ -16,9 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Classical.
-Require Import Classical_Pred_Type.
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Classical.
+From Stdlib Require Import Classical_Pred_Type.
+From Stdlib Require Import Reals.Reals.
 
 Require Import Tactics.
 Require Import Automation.

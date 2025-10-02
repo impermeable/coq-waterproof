@@ -22,7 +22,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
-let waterproof_version : string = "3.0.1+8.17-dev"
+let waterproof_version : string = "3.0.1+9.0-dev"
 
 (* The code below is a hack to patch in (open_)lconstr into Ltac2 *)
 (* It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 *)
@@ -53,7 +53,7 @@ let () = add_scope "lconstr" (fun arg ->
       arg
   in
   let act e = Ltac2_plugin.Tac2quote.of_constr ~delimiters e in
-  Ltac2_plugin.Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
+  Ltac2_plugin.Tac2entries.ScopeRule (Procq.Symbol.nterm Procq.Constr.lconstr, act)
   )
 
 let () = add_scope "open_lconstr" (fun arg ->
@@ -63,11 +63,31 @@ let () = add_scope "open_lconstr" (fun arg ->
       arg
   in
   let act e = Ltac2_plugin.Tac2quote.of_open_constr ~delimiters e in
-  Ltac2_plugin.Tac2entries.ScopeRule (Pcoq.Symbol.nterm Pcoq.Constr.lconstr, act)
+  Ltac2_plugin.Tac2entries.ScopeRule (Procq.Symbol.nterm Procq.Constr.lconstr, act)
   )
 (* End of hack *)
 }
 
+(* Add any words that occur right after mathematical expressions as keywords *)
+(* Doing this enables parsing the mathematical expressions without parentheses *)
+(* The cost of this is that these words are no longer allowed to be variables *)
+{
+let () = Procq.set_keyword_state (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    (CLexer.add_keyword (
+    CLexer.add_keyword (Procq.get_keyword_state()) "and"
+    ) "as")
+    ) "hold")
+    ) "holds")
+    ) "it")
+    ) "or")
+    ) "we")
+    )
+}
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
     {

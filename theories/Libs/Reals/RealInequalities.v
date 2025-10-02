@@ -1,7 +1,7 @@
 Require Import Notations.Common.
 Require Import Notations.Sets.
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Open Scope R_scope.
 

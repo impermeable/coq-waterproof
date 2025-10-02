@@ -67,7 +67,7 @@ Abort.
 (* Tests framework expand the definition. *)
 Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_foo (Some "foo2") true x None.
+  wp_unfold unfold_foo (Some "foo2") true x.
 
 (* Test 6: unfold term in hypotheses and goal and throws an error suggesting
     to remove line after use. *)

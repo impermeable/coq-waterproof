@@ -24,7 +24,7 @@ Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat  ls (of_string "").
 
 (* Note that the verbiage in this file is used to tweak behaviour in waterproof-vscode *)
 (* In partiular the phrases "Add the following line to the proof:" and "or write:" are *)
@@ -228,30 +228,30 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' '∈' '�
 Ltac2 raise_goal_wrapped_error () :=
   throw (of_string "You cannot do this right now, follow the advice in the goal window.").
 
-(** 
-  Provide template hints for wrapped goals 
+(**
+  Provide template hints for wrapped goals
 *)
 Ltac2 goal_wrapped_template_msg () : bool :=
   lazy_match! goal with
-  | [|- Case.Wrapper ?case_type _] => 
+  | [|- Case.Wrapper ?case_type _] =>
     replace_notice (Message.to_string (concat_list [of_string "- Case "; of_constr case_type; of_string ".${0}"])); true
-  | [|- StateGoal.Wrapper ?goal_type] => 
+  | [|- StateGoal.Wrapper ?goal_type] =>
     replace_notice (Message.to_string (concat_list [of_string "We need to show that "; of_constr goal_type; of_string ".${0}"]));
     replace_notice (Message.to_string (concat_list [of_string "We conclude that "; of_constr goal_type; of_string ".${0}"])); true
-  | [|- VerifyGoal.Wrapper ?goal_type] => 
+  | [|- VerifyGoal.Wrapper ?goal_type] =>
     replace_notice (Message.to_string (concat_list [of_string "{ Indeed, "; of_constr goal_type; of_string ". }${0}"]));
     replace_notice (Message.to_string (concat_list [of_string "{ We need to verify that "; of_constr goal_type; of_string ". }${0}"])); true
-  | [|- StateHyp.Wrapper ?hyp_type _ _] => 
+  | [|- StateHyp.Wrapper ?hyp_type _ _] =>
     replace_notice (Message.to_string (concat_list [of_string "It holds that "; of_constr hyp_type; of_string ".${0}"])); true
-  | [|- ByContradiction.Wrapper ?assumption_type _] => 
+  | [|- ByContradiction.Wrapper ?assumption_type _] =>
     replace_notice (Message.to_string (concat_list [of_string "Assume that "; of_constr assumption_type; of_string ".${0}"])); true
-  | [|- NaturalInduction.Base.Wrapper ?goal_type] => 
+  | [|- NaturalInduction.Base.Wrapper ?goal_type] =>
     replace_notice (Message.to_string (concat_list [of_string "- We first show the base case "; of_constr goal_type; of_string ".${0}"])); true
-  | [|- NaturalInduction.Step.Wrapper _] => 
+  | [|- NaturalInduction.Step.Wrapper _] =>
     replace_notice "- We now show the induction step.${0}"; true
-  | [|- StrongIndIndxSeq.Base.Wrapper _] => 
+  | [|- StrongIndIndxSeq.Base.Wrapper _] =>
     replace_notice "- We first define n_0.${0}"; true
-  | [|- StrongIndIndxSeq.Step.Wrapper _] => 
+  | [|- StrongIndIndxSeq.Step.Wrapper _] =>
     replace_notice "- Take k ∈ ℕ and assume n_0,...,n_k are defined.${0}"; true
   | [|- False] => true
   | [|- _] => false

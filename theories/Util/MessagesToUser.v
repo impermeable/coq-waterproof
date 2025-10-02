@@ -29,21 +29,21 @@ Ltac2 fnl () := Message.of_string "
 
 Local Ltac2 Type feedback_lvl_ffi.
 
-Ltac2 @ external feedback_lvl_debug_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_debug".
-Ltac2 @ external feedback_lvl_info_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_info".
-Ltac2 @ external feedback_lvl_notice_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_notice".
-Ltac2 @ external feedback_lvl_warning_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_warning".
-Ltac2 @ external feedback_lvl_error_ffi : unit -> feedback_lvl_ffi := "coq-waterproof" "feedback_lvl_error".
+Ltac2 @ external feedback_lvl_debug_ffi : unit -> feedback_lvl_ffi := "rocq-runtime.plugins.coq-waterproof" "feedback_lvl_debug".
+Ltac2 @ external feedback_lvl_info_ffi : unit -> feedback_lvl_ffi := "rocq-runtime.plugins.coq-waterproof" "feedback_lvl_info".
+Ltac2 @ external feedback_lvl_notice_ffi : unit -> feedback_lvl_ffi := "rocq-runtime.plugins.coq-waterproof" "feedback_lvl_notice".
+Ltac2 @ external feedback_lvl_warning_ffi : unit -> feedback_lvl_ffi := "rocq-runtime.plugins.coq-waterproof" "feedback_lvl_warning".
+Ltac2 @ external feedback_lvl_error_ffi : unit -> feedback_lvl_ffi := "rocq-runtime.plugins.coq-waterproof" "feedback_lvl_error".
 
-Ltac2 @ external send_message_external: feedback_lvl_ffi -> message -> unit := "coq-waterproof" "message_external".
-Ltac2 @ external throw_external: message -> unit := "coq-waterproof" "throw_external".
-Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "coq-waterproof" "get_print_hypothesis_flag_external".
-Ltac2 @ external get_redirect_errors_flag : unit -> bool := "coq-waterproof" "get_redirect_errors_flag_external".
+Ltac2 @ external send_message_external: feedback_lvl_ffi -> message -> unit := "rocq-runtime.plugins.coq-waterproof" "message_external".
+Ltac2 @ external throw_external: message -> unit := "rocq-runtime.plugins.coq-waterproof" "throw_external".
+Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "rocq-runtime.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+Ltac2 @ external get_redirect_errors_flag : unit -> bool := "rocq-runtime.plugins.coq-waterproof" "get_redirect_errors_flag_external".
 
 Ltac2 @ external get_last_warning : unit -> message option :=
-  "coq-waterproof" "get_last_warning_external".
+  "rocq-runtime.plugins.coq-waterproof" "get_last_warning_external".
 Ltac2 @ external get_feedback_log_external : feedback_lvl_ffi -> message list :=
-  "coq-waterproof" "get_feedback_log_external".
+  "rocq-runtime.plugins.coq-waterproof" "get_feedback_log_external".
 
 Ltac2 Type FeedbackLevel := [ Debug | Info | Notice | Warning | Error ].
 

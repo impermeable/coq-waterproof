@@ -16,9 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Reals.ROrderedType.
-Require Import micromega.Lra.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Reals.ROrderedType.
+From Stdlib Require Import micromega.Lra.
 
 Require Import Tactics.
 Require Import Automation.
@@ -52,7 +52,9 @@ Definition dist_non_degenerate :
   (dist X x y = 0) ⇒ (x = y).
 Proof.
   Take x, y ∈ X.
-  By (proj1(_,_,(dist_refl X x y))) we conclude that dist X x y = 0 ⇨ x = y.
+  Assume that dist X x y = 0.
+  pose (proj1(_, _, (dist_refl X x y))) as i.
+  By (i) we conclude that x = y.
 Defined.
 
 Definition dist_symmetric :
@@ -68,13 +70,14 @@ Definition dist_triangle_inequality :
   dist X x z ≤ dist X x y + dist X y z.
 Proof.
   Take x, y, z ∈ X.
-  By (dist_tri X) we conclude that dist X x z ≤ dist X x y + dist X y z.
+  By (dist_tri) we conclude that dist X x z ≤ dist X x y + dist X y z.
 Qed.
 
 Definition dist_reflexive : ∀ x ∈ X, dist X x x = 0.
 Proof.
   Take x ∈ X.
-  By (proj2(_, _, (dist_refl X x x))) we conclude that dist X x x = 0.
+  pose (proj2(_, _, (dist_refl X x x))) as i.
+  By (i) we conclude that dist X x x = 0.
 Defined.
 
 End Definitions.
@@ -112,6 +115,8 @@ Either x = y or x ≠ y.
 + Case x ≠ y.
   By Req_false we conclude that Reqb x y = false.
 Qed.
+
+Local Set Default Proof Mode "Classic". (* Hint Extern respects Default Proof Mode after Rocq 9 *)
 
 #[export] Hint Resolve d'_eq_0 : wp_reals.
 #[export] Hint Resolve d'_eq_3 : wp_reals.

@@ -16,8 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
-Require Import Qreals.
+From Stdlib Require Import Reals.Reals.
+From Stdlib Require Import Qreals.
 
 Require Import Notations.Common.
 Require Import Notations.Sets.

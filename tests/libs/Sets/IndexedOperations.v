@@ -2,8 +2,8 @@ Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Libs.Sets.IndexedOperations.
 
-Require Import Coq.Arith.Arith.
-Require Import Coq.micromega.Lia.
+Require Import Stdlib.Arith.Arith.
+Require Import Stdlib.micromega.Lia.
 
 Open Scope subset_scope.
 
@@ -13,7 +13,7 @@ Definition all_nats : subset nat := fun _ => True.
 Definition empty_set : subset nat := fun _ => False.
 
 (* Test 1: Basic indexed intersection - element in all sets *)
-Lemma test_indexed_intersection_basic : 
+Lemma test_indexed_intersection_basic :
     5 ∈ indexed_intersection (single_element 0) (fun _ => all_nats).
 Proof.
     apply index_intersection_intro.

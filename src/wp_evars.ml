@@ -23,7 +23,7 @@ open Proofview.Notations
   Checks whether a given evar is a blank in the evar_map.
 *)
 let is_blank (ev_map : Evd.evar_map) (ev : Evar.t) : bool =
-  let ev_info = Evd.find ev_map ev in
+  let EvarInfo ev_info = Evd.find ev_map ev in
   let _, ev_kind = (Evd.evar_source ev_info) in
   match ev_kind with
   | Evar_kinds.QuestionMark _ -> true
@@ -49,7 +49,7 @@ let refine_goal_with_evar (input : string) : unit tactic =
     let env = Proofview.Goal.env gl in
     let concl = Proofview.Goal.concl gl in
     Refine.refine ~typecheck:true begin function sigma ->
-      let sigma, t = Evarutil.new_evar ~src 
+      let sigma, t = Evarutil.new_evar ~typeclass_candidate:false ~src
           ~naming:(Namegen.IntroFresh (Names.Id.of_string input))
           env sigma concl in
       (sigma, t)

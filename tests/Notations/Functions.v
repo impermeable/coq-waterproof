@@ -27,12 +27,12 @@ Require Import Waterproof.Libs.Functions.
 Waterproof Enable Automation Intuition.
 Waterproof Enable Automation Sets.
 
-Require Import Sets.Ensembles.
+Require Import Stdlib.Sets.Ensembles.
 
 Open Scope R_scope.
 Open Scope subset_scope.
 
-
+Section Function_tests.
 Context {X Y : Type}.
 
 Example example_3_1_35 (g : X → Y) (U V : subset X) :
@@ -80,3 +80,5 @@ We show both directions.
   It holds that f(x) ∈ V.
   We conclude that y ∈ V.
 Qed.
+
+End Function_tests.

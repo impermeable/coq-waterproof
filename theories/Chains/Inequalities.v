@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Reals.Rbase.
+From Stdlib Require Import Reals.Rbase.
 
 Unset Auto Template Polymorphism.
 

@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Require Import Ltac2.Ltac2.
 
 Require Import Waterproof.Waterproof.

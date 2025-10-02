@@ -26,7 +26,7 @@ Shared code for the 'Since ...' and 'By ...' prefix clauses for tactics like 'It
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Require Import Util.Constr.
 Require Import Util.MessagesToUser.

@@ -5,7 +5,7 @@ Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Libs.Reals.Integer.
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Waterproof Enable Automation RealsAndIntegers.
 

@@ -50,7 +50,7 @@ let info_counter = Summary.ref ~name:"info_counter" 0
 *)
 let wp_feedback_logger (fb : feedback) : unit =
   match fb.contents with
-  | Message (lvl, _, msg) ->
+  | Message (lvl, _, _, msg) ->
     (feedback_log lvl :=
       (msg) :: !(feedback_log lvl);
     info_counter := !info_counter + 1)
@@ -68,7 +68,7 @@ let add_wp_feedback_logger () : unit =
 (**
   Basic exception info
 *)
-let fatal_flag: 'a Exninfo.t = Exninfo.make ()
+let fatal_flag: unit Exninfo.t = Exninfo.make "waterproof_fatal_flag"
 
 (**
   The last thrown warning
@@ -127,7 +127,7 @@ let message (lvl : Feedback.level) (input : Pp.t) : unit Proofview.tactic =
   if !redirect_feedback then
     Proofview.tclUNIT @@ (feedback_log lvl := input :: !(feedback_log lvl))
   else
-    Proofview.tclUNIT @@ feedback (Message (lvl, None, input))
+    Proofview.tclUNIT @@ feedback (Message (lvl, None, [], input))
 
 (**
   Send a warning
@@ -174,8 +174,7 @@ let wp_error_handler (e : exn) : Pp.t option =
             Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood and whether all words are spelled correctly. Check for instance correct use of parentheses. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
           else
             None
-    | Gramlib.Stream.Error s -> Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood. Check for instance whether all parentheses match and whether all words are spelled correctly. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
-      (* This error changes in a later version to Gramlib.Grammer.Error *)
+    | Gramlib.Grammar.Error s -> Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood. Check for instance whether all parentheses match and whether all words are spelled correctly. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
     | CErrors.Timeout -> Some (Pp.str "Timeout: Waterproof could not find a proof in the allocated time. Consider making a smaller step.")
     | _ -> None)
   else None

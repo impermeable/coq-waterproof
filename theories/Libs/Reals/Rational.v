@@ -3,7 +3,7 @@ Require Import Notations.Sets.
 Require Import Notations.Reals.
 Require Import Waterproof.
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Require Import Libs.Reals.Integer.
 Require Import Libs.Reals.RealInequalities.
@@ -15,7 +15,7 @@ Definition is_rational (q : ℝ) : Prop := ∃ n ∈ Z_in_R, ∃ m ∈ Z_in_R, 0
 
 Definition Q_in_R : subset ℝ := fun y => exists x, Q2R(x) = y.
 
-Lemma rational_of {q : ℝ} {n m : R} (hq: q = n/m) (h : 0 ≠ m) (hn : n ∈ Z_in_R) (hm : m ∈ Z_in_R)  
+Lemma rational_of {q : ℝ} {n m : R} (hq: q = n/m) (h : 0 ≠ m) (hn : n ∈ Z_in_R) (hm : m ∈ Z_in_R)
     : is_rational q.
 Proof.
     exists n.
@@ -29,13 +29,13 @@ Proof.
     exact hq.
 Qed.
 
-Lemma plus_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d) 
+Lemma plus_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d)
     : a/b + c/d = (a*d + c*b)/(b*d).
 Proof.
     field; split; apply not_eq_sym; assumption.
 Qed.
 
-Lemma min_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d) 
+Lemma min_frac (a b c d : ℝ) (hb : 0 ≠ b) (hd : 0 ≠ d)
     : a/b - c/d = (a*d - c*b)/(b*d).
 Proof.
     field; split; apply not_eq_sym; assumption.
@@ -51,7 +51,7 @@ apply (@rational_of n n 1).
 Qed.
 
 
-Lemma sum_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b) 
+Lemma sum_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b)
     : is_rational (a + b).
 Proof.
 destruct ha as [n1 [hn1 [m1 [hm1 [hneq1 h1]]]]].
@@ -64,7 +64,7 @@ apply (@rational_of (a + b) (n1 * m2 + n2 * m1) (m1 * m2)).
 Qed.
 
 
-Lemma diff_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b) 
+Lemma diff_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b)
     : is_rational (a - b).
 Proof.
 destruct ha as [n1 [hn1 [m1 [hm1 [hneq1 h1]]]]].
@@ -76,7 +76,7 @@ apply (@rational_of (a - b) (n1 * m2 - n2 * m1) (m1 * m2)).
 - apply mult_Z_in_R; assumption.
 Qed.
 
-Lemma mult_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b) 
+Lemma mult_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b)
     : is_rational (a * b).
 Proof.
 destruct ha as [n1 [hn1 [m1 [hm1 [hneq1 h1]]]]].
@@ -88,7 +88,7 @@ apply (@rational_of (a * b) (n1 * n2) (m1 * m2)).
 - apply mult_Z_in_R; assumption.
 Qed.
 
-Lemma div_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b) 
+Lemma div_is_rational (a b : ℝ) (ha : is_rational a) (hb : is_rational b)
     : 0 ≠ b → is_rational (a / b).
 Proof.
 destruct ha as [n1 [hn1 [m1 [hm1 [hneq1 h1]]]]].

@@ -16,11 +16,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Lia.
-Require Import Arith.
-Require Import Arith.Compare.
-Require Import ClassicalChoice.
-Require Import ChoiceFacts.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Arith.
+From Stdlib Require Import Arith.Compare.
+From Stdlib Require Import ClassicalChoice.
+From Stdlib Require Import ChoiceFacts.
 
 Require Export Libs.Analysis.SubsequencesMetric.
 
@@ -328,7 +328,7 @@ End StrongInductionIndexSequence.
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
-  List.fold_right concat (of_string "") ls.
+  List.fold_right concat ls (of_string "").
 
 Require Import Waterproof.Util.Goals.
 Require Import Util.MessagesToUser.
@@ -342,7 +342,7 @@ Local Ltac2 inductive_def_index_seq_n () :=
     | Val _ =>
       Control.focus 1 1 (fun () => apply StrongIndIndxSeq.Base.unwrap);
       Control.focus 2 2 (fun () => apply StrongIndIndxSeq.Step.unwrap)
-    | Err exn => throw (of_string "The index sequence cannot be defined using this technique.")
+    | Err _ => throw (of_string "The index sequence cannot be defined using this technique.")
     end in
   lazy_match! goal with
   | [ |- ∃ n : nat -> nat, is_index_sequence n /\ ∀ k ∈ conv nat, @?p n k] => (*@?p*) apply_induction_principle p

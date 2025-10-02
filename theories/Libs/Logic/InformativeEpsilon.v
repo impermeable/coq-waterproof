@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import ClassicalEpsilon.
+From Stdlib Require Import ClassicalEpsilon.
 
 (** ClassicalEpsilon allows us to lift an uninformative or to an informative or. *)
 

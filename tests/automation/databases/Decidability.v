@@ -72,7 +72,7 @@ Proof.
   auto with wp_decidability_nat.
 Qed.
 
-Require Import Reals.Reals.
+From Stdlib Require Import Reals.Reals.
 Open Scope R_scope.
 Goal forall x : R, x < 5 \/ x > 4.
 Proof.

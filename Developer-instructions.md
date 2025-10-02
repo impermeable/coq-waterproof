@@ -25,19 +25,19 @@ port install opam
 ```
 
 ### Creating the desired opam environment: simplified version
-When we develop, we need to be aware of the version of Coq we develop for.
+When we develop, we need to be aware of the version of Rocq (formerly Coq) we develop for.
 Most development is done based off the main branch, and then the following setup will suffice.
 
 ```
 opam init
 eval $(opam env)
-opam install coq-lsp.0.2.2+8.17
+opam install coq-lsp.0.2.3+9.0
 opam install ocaml-lsp-server
 ```
-replacing 8.17 with the desired version of Coq, or more generally, replacing
-0.2.2+8.17 by the desired version of coq-lsp.
+replacing 9.0 with the desired version of Rocq, or more generally, replacing
+0.2.3+9.0 by the desired version of coq-lsp.
 
-### Creating the desired opam environment: advanced version for supporting multiple versions of Coq
+### Creating the desired opam environment: advanced version for supporting multiple versions of Rocq
 
 When we bring changes into different versions of Coq (for instance for the branches 8.18, 8.19...)
 it is convenient to have multiple opam environement, i.e. switches, available. If you prefer to start
@@ -51,10 +51,10 @@ opam switch create your_preferred_switch_name ocaml-base-compiler.4.14.1
 ```
 Next you can install the background libraries again
 ```
-opam install coq-lsp.0.2.2+8.17
+opam install coq-lsp.0.2.3+9.0
 opam install ocaml-lsp-server
 ```
-again replacing 8.17 with the desired version of Coq
+again replacing 9.0 with the desired version of Coq
 
 ### Caveat: locally compiling the coq-master branch
 

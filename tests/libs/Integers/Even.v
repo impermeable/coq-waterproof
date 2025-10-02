@@ -5,8 +5,8 @@ Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Libs.Integers.Even.
 
-Require Import Coq.ZArith.ZArith.
-Require Import Coq.ZArith.Zeven.
+Require Import Stdlib.ZArith.ZArith.
+Require Import Stdlib.ZArith.Zeven.
 
 Waterproof Enable Automation RealsAndIntegers.
 

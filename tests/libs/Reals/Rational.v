@@ -4,8 +4,8 @@ Require Import Waterproof.Notations.Reals.
 Require Import Waterproof.Libs.Reals.Rational.
 Require Import Waterproof.Libs.Reals.Integer.
 
-Require Import Coq.Reals.Reals.
-Require Import Coq.micromega.Lra.
+Require Import Stdlib.Reals.Reals.
+Require Import Stdlib.micromega.Lra.
 
 Open Scope R_scope.
 Open Scope subset_scope.

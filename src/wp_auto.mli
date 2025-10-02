@@ -21,7 +21,7 @@ open Backtracking
 (**
   Same function as {! Auto.exists_evaluable_reference}
 *)
-val exists_evaluable_reference : Environ.env -> Tacred.evaluable_global_reference -> bool
+val exists_evaluable_reference : Environ.env -> Evaluable.t -> bool
 
 (**
   Prints "idtac" if the [log] field is [true]

@@ -8,9 +8,9 @@ Require Import Waterproof.Automation.
 Require Import Waterproof.Chains.
 Require Import Waterproof.Libs.Reals.ArchimedN.
 
-Require Import Coq.Reals.Reals.
-Require Import Coq.micromega.Lra.
-Require Import Coq.micromega.Lia.
+Require Import Stdlib.Reals.Reals.
+Require Import Stdlib.micromega.Lra.
+Require Import Stdlib.micromega.Lia.
 
 
 Waterproof Enable Automation RealsAndIntegers.
@@ -52,7 +52,7 @@ We show both statements.
   It holds that x-1 > 1/n.
   It holds that x > 1 + 1/n.
   Use n:=n in (i).
-  { 
+  {
     We need to verify that (n ≥ 1)%nat.
     It holds that & n > 1/(x-1) > 0.
     It holds that n ≥ 1.
@@ -77,7 +77,7 @@ We show both statements.
 Qed.
 
 (* Simple test for indexed union - showing 0 is in the union *)
-Lemma test_indexed_union_contains_zero : 
+Lemma test_indexed_union_contains_zero :
   0 ∈ ⋃_{n ≥ 1%nat} [0, n].
 Proof.
 It suffices to show that ∃ n ≥ 1%nat, 0 ∈ [0, n].
@@ -90,7 +90,7 @@ We conclude that 0 ∈ [0, 1%nat].
 Qed.
 
 (* Simple test showing 1/2 is in a union of intervals *)
-Lemma test_indexed_union_half : 
+Lemma test_indexed_union_half :
   1/2 ∈ ⋃_{n ≥ 1%nat} [0, n].
 Proof.
 It suffices to show that ∃ n ≥ 1%nat, 1/2 ∈ [0, n].
