@@ -175,7 +175,7 @@ let wp_error_handler (e : exn) : Pp.t option =
           else
             None
     | Gramlib.Grammar.ParseError s -> Some (Pp.str "Syntax error: Unfortunately, this sentence cannot be understood. Check for instance whether all parentheses match and whether all words are spelled correctly. To reduce syntax errors, it can be helpful to input sentences using the autocomplete functionality.")
-    | CErrors.Timeout -> Some (Pp.str "Timeout: Waterproof could not find a proof in the allocated time. Consider making a smaller step.")
+    | VernacControl.CmdTimeout -> Some (Pp.str "Timeout: Waterproof could not find a proof in the allocated time. Consider making a smaller step.")
     | _ -> None)
   else None
 
