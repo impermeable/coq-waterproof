@@ -98,20 +98,44 @@ Proof.
 ["Definition does not appear in any statement."].
 Abort.
 
+Local Parameter P Q R : Prop.
+Local Parameter HPQ : P <-> Q.
+Local Parameter HPQ_mpr : P -> Q.
+Local Hint Resolve HPQ : core.
+Local Hint Resolve <- HPQ : core.
+
+(* Test 8: Use the [apply_in_constr] tactic for an alternative characterization *)
+Ltac2 Notation "Expand" "the" "definition" "of" "foo3" x(opt(seq("in", constr))) :=
+  wp_unfold (apply_in_constr constr:(HPQ_mpr)) (Some "foo3") true false x.
+Goal Q -> R -> Q.
+Proof.
+  intros.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo3)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"Hint, insert: It suffices to show that P.";
+"Hint, insert: It holds that P."].
+It suffices to show that P.
+It holds that P.
+Abort.
 
 (** Check unfolding method that does not throw an error.
   Meant for internal use by custom Waterproof editor. *)
 
 (** Non-framework version. *)
 
-(* Test 8: unfold term in hypotheses and goal without throwing an error. *)
+(* Test 9: unfold term in hypotheses and goal without throwing an error. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 9: unfold fails to unfold term if no statement with term. *)
+(* Test 10: unfold fails to unfold term if no statement with term. *)
 Goal False.
 Proof.
   _internal_ Expand the definition of foo.
