@@ -380,9 +380,9 @@ Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 69).
 Notation "a 'is' 'bounded'" := (is_bounded a) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded (Some "bounded") true x.
+  wp_unfold unfold_is_bounded (Some "bounded") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded (Some "bounded") false x.
+  wp_unfold unfold_is_bounded (Some "bounded") false true x.
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
   ∃ M > 0, ∀ n ∈ ℕ, |a n| ≤ M.
@@ -414,7 +414,7 @@ We show both directions.
     We conclude that & |a n| = |a n - q + q|
                               <= (|a n - q| + |q|) <= (M1 + |q|) = M.
 
-- We need to show that 
+- We need to show that
     is_bounded_equivalent a ⇨ is_bounded a.
   Assume that ∃ M1 > 0, ∀ n ∈ ℕ, |a n| ≤ M1.
   Obtain such an M1. It holds that
@@ -422,7 +422,7 @@ We show both directions.
   Because (i) both M1 > 0 and
   for all n : ℕ, | a n | ≤ M1 hold.
   (* Expand the definition of is_bounded. *)
-  We need to show that 
+  We need to show that
     ∃ q ∈ ℝ, ∃ M > 0, (∀ n ∈ ℕ,
     | a n - q | ≤ M).
   Choose q := 0.
@@ -430,7 +430,7 @@ We show both directions.
   + We need to show that ∃ M > q, ∀ n ∈ ℕ, |a(n) - q| ≤ M.
     Choose M := M1.
     * Indeed, M > q.
-    * We need to show that 
+    * We need to show that
         ∀ n ∈ ℕ, | a n - q | ≤ M.
     Take n ∈ ℕ.
     We conclude that & |a n - q| = |a n| <= M.
@@ -443,9 +443,9 @@ Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 69).
 Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_above (Some "bounded above") true x.
+  wp_unfold unfold_is_bounded_above (Some "bounded above") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_above (Some "bounded above") false x.
+  wp_unfold unfold_is_bounded_above (Some "bounded above") false true x.
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m ∈ ℝ, ∀ n ∈ ℕ, m ≤ a(n).
@@ -453,9 +453,9 @@ Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 69).
 Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", constr))):=
-  wp_unfold unfold_is_bounded_below (Some "bounded below") true x.
+  wp_unfold unfold_is_bounded_below (Some "bounded below") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_below (Some "bounded below") false x.
+  wp_unfold unfold_is_bounded_below (Some "bounded below") false true x.
 
 (** Convergence to +∞ and -∞. *)
 Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
@@ -469,13 +469,13 @@ Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 
 Local Ltac2 unfold_diverge_plus_infty (statement : constr) :=
   eval unfold diverges_to_plus_infinity in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "⟶ ∞") true x.
+  wp_unfold unfold_diverge_plus_infty (Some "⟶ ∞") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "⟶ ∞") false x.
+  wp_unfold unfold_diverge_plus_infty (Some "⟶ ∞") false true x.
 Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "diverges to ∞") true x.
+  wp_unfold unfold_diverge_plus_infty (Some "diverges to ∞") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "diverges to ∞") false x.
+  wp_unfold unfold_diverge_plus_infty (Some "diverges to ∞") false true x.
 
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
@@ -489,12 +489,12 @@ Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at leve
 Local Ltac2 unfold_diverge_minus_infty (statement : constr) :=
   eval unfold diverges_to_minus_infinity in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", constr))):=
-  wp_unfold unfold_diverge_minus_infty (Some "⟶ -∞") true x.
+  wp_unfold unfold_diverge_minus_infty (Some "⟶ -∞") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_minus_infty (Some "⟶ -∞") false x.
+  wp_unfold unfold_diverge_minus_infty (Some "⟶ -∞") false true x.
 Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_minus_infty (Some "diverges to -∞") true x.
+  wp_unfold unfold_diverge_minus_infty (Some "diverges to -∞") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_minus_infty (Some "diverges to -∞") false x.
+  wp_unfold unfold_diverge_minus_infty (Some "diverges to -∞") false true x.
 
 Close Scope R_scope.

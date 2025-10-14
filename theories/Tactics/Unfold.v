@@ -34,6 +34,77 @@ Local Ltac2 _is_empty (ls : 'a list) :=
 Ltac2 Type exn ::=  [ Inner ].
 
 (**
+  Helper tactic that can be used as an unfold method in
+  [unfold_in_all] below. This version can be used for simple reformulation
+  of alternative characterizations. It will likely only work
+  if the constant to unfold is the head constant.
+
+  Note: as of now, it is important that this lemma is available
+  in the automation databases that are used! This is not
+  explicitly checked here or below.
+  TODO: See if we want to add a check
+
+  Arguments:
+  - [alt_char : constr] An implication implying the concept
+    to unfold
+  - [x : constr] The expression in which the concept should
+    be unfolded
+*)
+Ltac2 apply_in_constr (alt_char : constr) (x : constr) : constr :=
+  let h := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
+  assert (False -> $x) as $h;
+  let return_term : constr :=
+    (Control.focus 1 1 (fun () =>
+      let h1 := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
+      intro $h1;
+      try (apply $alt_char);
+      let rewritten_term := Control.goal() in
+      let h2 := Control.hyp h1 in
+      destruct $h2;
+      exact I;
+      rewritten_term)
+    ) in
+  clear $h;
+  return_term.
+
+(**
+  Helper tactic that can be used as an unfold method in
+  [unfold_in_all] below. When combined with propositional
+  extensionality, this can give a slightly more advanced
+  reformulation using an alternative characterization.
+  It will likely work in more cases than [apply_in_constr].
+
+  Note: as of now, if one wants to use this way of unfolding,
+  it is important that this rewrite action is available
+  in the automation databases that are used! This is not
+  explicitly checked here or below.
+  TODO: See if we want to add a check
+
+  Arguments:
+  - [alt_char : constr] An implication implying the concept
+    to unfold
+  - [x : constr] The expression in which the concept should
+    be unfolded
+*)
+Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
+  let h := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
+  assert ($x -> True) as $h;
+  let return_term : constr :=
+    (Control.focus 1 1 (fun () =>
+      try (setoid_rewrite $equality);
+      let rewritten_term :=
+      match! goal with
+      | [|- ?c -> True ] => c
+      | [|- _] => throw (Message.of_string "Unexpected error in tactic_in_constr. Please report."); constr:(False)
+      end in
+      intro;
+      exact I;
+      rewritten_term)
+    ) in
+  clear $h;
+  return_term.
+
+(**
   Attempts to unfold definition(s) in every statement according to specified method.
   If succesful it prints a list of suitable tactics
   that can be used to incorporate the unfolded statements into the user's proof script.
@@ -47,19 +118,17 @@ Ltac2 Type exn ::=  [ Inner ].
         is unsuccesful
     - [throw_error : bool], whether the tactic should throw an error which suggests
         user to remove this tactic in final version of the proof.
+    - [judgmental : bool], whether the unfolded version is judgmentally equal to the original (as opposed to an alternative characterization)
 
   Raises fatal exceptions:
     - [always/none] depending on value of [throw_error].
 *)
 
 Ltac2 unfold_in_all (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) :=
-
-
+  (def_name : string option) (throw_error : bool) (judgmental : bool) :=
   let goal := Control.goal () in
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
-
   let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
   let unfolded_hyps := List.map unfold_method hyps in
   let only_unfolded_hyps :=
@@ -68,7 +137,6 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         List.combine unfolded_hyps hyps
       )
     ) in
-
   (* Print output *)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
@@ -88,8 +156,12 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       (* Print unfolded goal *)
       if did_unfold_goal
         then
-          print_tactic (concat_list [of_string "We need to show that ";
-            of_constr unfolded_goal; of_string "."])
+          if judgmental then
+            (print_tactic (concat_list [of_string "We need to show that ";
+              of_constr unfolded_goal; of_string "."]))
+          else
+            (print_tactic (concat_list [of_string "It suffices to show that ";
+              of_constr unfolded_goal; of_string "."]))
         else ();
 
       (* Print unfolded hypotheses *)
@@ -136,9 +208,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
     - [always/none] depending on value of [throw_error].
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (_ : constr option):=
+  (def_name : string option) (throw_error : bool)
+  (judgmental : bool) (_ : constr option) :=
   panic_if_goal_wrapped ();
-  unfold_in_all unfold_method def_name throw_error.
+  unfold_in_all unfold_method def_name throw_error judgmental.
 
 (* TODO: Refactor unfold system to be more maintainable *)
 
@@ -147,8 +220,8 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
   see [tests/tactics/Unfold.v] *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
 
-  wp_unfold (eval_unfold targets) None true None.
+  wp_unfold (eval_unfold targets) None true true None.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-  wp_unfold (eval_unfold targets) None false None.
+  wp_unfold (eval_unfold targets) None false true None.
