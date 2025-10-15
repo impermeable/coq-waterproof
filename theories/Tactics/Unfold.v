@@ -45,7 +45,7 @@ Ltac2 Type exn ::=  [ Inner ].
   TODO: See if we want to add a check
 
   Arguments:
-  - [alt_char : constr] An implication implying the concept
+  - [alt_char : constr] An alternative characterization for the concept
     to unfold
   - [x : constr] The expression in which the concept should
     be unfolded
@@ -81,8 +81,7 @@ Ltac2 apply_in_constr (alt_char : constr) (x : constr) : constr :=
   TODO: See if we want to add a check
 
   Arguments:
-  - [alt_char : constr] An implication implying the concept
-    to unfold
+  - [equality : constr] An equality with which to rewrite the concept
   - [x : constr] The expression in which the concept should
     be unfolded
 *)

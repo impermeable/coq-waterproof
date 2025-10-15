@@ -595,7 +595,7 @@ Definition is_inf_alt_char (A : ℝ → Prop) (m : ℝ) :=
   is_lower_bound A m ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε).
 
 Theorem alt_char_sup (A : ℝ → Prop) (M : ℝ) :
-    is_sup A M ⇔ is_sup_alt_char A M.
+    is_sup A M ⇔ is_upper_bound A M ∧ (∀ ε > 0, ∃ a ∈ A, M - ε < a).
 Proof.
   We show both directions.
   - We need to show that is_sup A M ⇨ is_sup_alt_char A M.
@@ -646,7 +646,7 @@ Proof.
 Qed.
 
 Theorem alt_char_inf (A : ℝ -> Prop) (m : ℝ) :
-    is_inf A m ⇔ is_inf_alt_char A m.
+    is_inf A m ⇔ is_lower_bound A m ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε).
 Proof.
   We show both directions.
   - We need to show that is_inf A m ⇨ is_inf_alt_char A m.
@@ -819,7 +819,7 @@ Qed.
 Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_inf (Some "infimum") false true x;
-  wp_unfold (apply_in_constr constr:(alt_char_inf_mpr)) (Some "Alternative characterization infimum") true false x.
+  wp_unfold (apply_in_constr constr:(alt_char_inf)) (Some "Alternative characterization infimum") true false x.
 
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_inf (Some "infimum") false true x.
@@ -827,7 +827,7 @@ Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq
 Local Ltac2 unfold_is_sup (statement : constr) := eval unfold is_sup in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_sup (Some "supremum") false true x;
-  wp_unfold (apply_in_constr constr:(alt_char_sup_mpr)) (Some "Alternative characterization supremum") true false x.
+  wp_unfold (apply_in_constr constr:(alt_char_sup)) (Some "Alternative characterization supremum") true false x.
 
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_sup (Some "supremum") false true x.

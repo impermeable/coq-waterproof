@@ -100,13 +100,12 @@ Abort.
 
 Local Parameter P Q R : Prop.
 Local Parameter HPQ : P <-> Q.
-Local Parameter HPQ_mpr : P -> Q.
 Local Hint Resolve HPQ : core.
 Local Hint Resolve <- HPQ : core.
 
 (* Test 8: Use the [apply_in_constr] tactic for an alternative characterization *)
 Ltac2 Notation "Expand" "the" "definition" "of" "foo3" x(opt(seq("in", constr))) :=
-  wp_unfold (apply_in_constr constr:(HPQ_mpr)) (Some "foo3") true false x.
+  wp_unfold (apply_in_constr constr:(HPQ)) (Some "foo3") true false x.
 Goal Q -> R -> Q.
 Proof.
   intros.
