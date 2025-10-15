@@ -49,11 +49,6 @@ otherwise be shielded by the automation.
   of alternative characterizations. It will likely only work
   if the constant to unfold is the head constant.
 
-  Note: as of now, it is important that this lemma is available
-  in the automation databases that are used! This is not
-  explicitly checked here or below.
-  TODO: See if we want to add a check
-
   Arguments:
   - [alt_char : constr] An alternative characterization for the concept
     to unfold
@@ -83,12 +78,6 @@ Ltac2 apply_in_constr (alt_char : constr) (x : constr) : constr :=
   extensionality, this can give a slightly more advanced
   reformulation using an alternative characterization.
   It will likely work in more cases than [apply_in_constr].
-
-  Note: as of now, if one wants to use this way of unfolding,
-  it is important that this rewrite action is available
-  in the automation databases that are used! This is not
-  explicitly checked here or below.
-  TODO: See if we want to add a check
 
   Arguments:
   - [equality : constr] An equality with which to rewrite the concept
