@@ -116,7 +116,7 @@ Proof.
   (fun () => Expand the definition of foo3)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
+["Applied alternative characterizations in statements where applicable.";
 "Hint, insert: It suffices to show that P.";
 "Hint, insert: It holds that P."].
 It suffices to show that P.

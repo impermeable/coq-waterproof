@@ -118,14 +118,14 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
         is unsuccesful
     - [throw_error : bool], whether the tactic should throw an error which suggests
         user to remove this tactic in final version of the proof.
-    - [judgmental : bool], whether the unfolded version is judgmentally equal to the original (as opposed to an alternative characterization)
+    - [definitional : bool], whether the unfolded version is definitionally equal to the original (as opposed to an alternative characterization)
 
   Raises fatal exceptions:
     - [always/none] depending on value of [throw_error].
 *)
 
 Ltac2 unfold_in_all (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (judgmental : bool) :=
+  (def_name : string option) (throw_error : bool) (definitional : bool) :=
   let goal := Control.goal () in
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
@@ -141,7 +141,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
       (* Print initial statement *)
-      info_notice (of_string "Expanded definition in statements where applicable.");
+      if definitional then
+        (info_notice (of_string "Expanded definition in statements where applicable."))
+      else
+        (info_notice (of_string "Applied alternative characterizations in statements where applicable."));
       let total_messages := Int.add
         (if did_unfold_goal then 1 else 0)
         (List.length only_unfolded_hyps) in
@@ -156,7 +159,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       (* Print unfolded goal *)
       if did_unfold_goal
         then
-          if judgmental then
+          if definitional then
             (print_tactic (concat_list [of_string "We need to show that ";
               of_constr unfolded_goal; of_string "."]))
           else
