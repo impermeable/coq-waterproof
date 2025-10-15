@@ -19,6 +19,8 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Std.
 Require Import Ltac2.Message.
+Require Import Waterproof.Tactics.ItSuffices.
+Require Import Waterproof.Tactics.ItHolds.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -32,6 +34,14 @@ Local Ltac2 _is_empty (ls : 'a list) :=
   end.
 
 Ltac2 Type exn ::=  [ Inner ].
+
+(**
+TODO / Note:
+
+Some alternative characterizations will need to be added to a special
+wp_alt_chars database, especially if they involve expressions that would
+otherwise be shielded by the automation.
+*)
 
 (**
   Helper tactic that can be used as an unfold method in
@@ -123,6 +133,8 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
     - [always/none] depending on value of [throw_error].
 *)
 
+Local Ltac2 Type exn ::= [Succeeded].
+
 Ltac2 unfold_in_all (unfold_method: constr -> constr)
   (def_name : string option) (throw_error : bool) (definitional : bool) :=
   let goal := Control.goal () in
@@ -162,8 +174,12 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
             (print_tactic (concat_list [of_string "We need to show that ";
               of_constr unfolded_goal; of_string "."]))
           else
-            (print_tactic (concat_list [of_string "It suffices to show that ";
-              of_constr unfolded_goal; of_string "."]))
+            match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
+            | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
+                                of_constr unfolded_goal; of_string "."]))
+            | _ => warn (concat_list [of_string "The following suggestion will likely not work, please report: It suffices to show that ";
+                                of_constr unfolded_goal; of_string "."])
+            end
         else ();
 
       (* Print unfolded hypotheses *)
@@ -171,8 +187,15 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         then
           let it_holds_msg := fun (x : constr) => concat_list
             [of_string "It holds that "; of_constr x; of_string "."] in
-          List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))
-            only_unfolded_hyps
+          let test_and_print unfolded_h :=
+            match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
+            | Err Succeeded => print_tactic (it_holds_msg unfolded_h)
+            | _ => warn (concat_list [of_string "The following suggestion will likely not work, please report: "; it_holds_msg unfolded_h])
+            end in
+          if definitional then
+            (List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))) only_unfolded_hyps
+          else
+            (List.iter test_and_print only_unfolded_hyps)
         else ()
 
     else

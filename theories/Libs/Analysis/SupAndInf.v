@@ -701,6 +701,12 @@ Proof.
   intro H. apply alt_char_inf. exact H.
 Qed.
 
+Theorem alt_char_inf_mp (A : ℝ -> Prop) (m : ℝ) :
+    is_inf A m ⇒ (m is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε)).
+Proof.
+  intro H. apply alt_char_inf. exact H.
+Qed.
+
 Theorem alt_char_sup_mpr (A : ℝ -> Prop) (M : ℝ) :
     (M is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, M - ε < a)) ⇒ is_sup A M.
 Proof.
@@ -832,12 +838,14 @@ Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", const
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_sup (Some "supremum") false true x.
 
+Local Parameter A : subset R.
+
 #[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.
 #[export] Hint Resolve bounded_by_lower_bound_propform : wp_reals.
-#[export] Hint Resolve alt_char_inf : wp_reals.
-#[export] Hint Resolve alt_char_sup : wp_reals.
-#[export] Hint Resolve <- alt_char_inf : wp_reals.
-#[export] Hint Resolve <- alt_char_sup : wp_reals.
+#[export] Hint Resolve -> alt_char_inf : wp_alt_chars.
+#[export] Hint Resolve -> alt_char_sup : wp_alt_chars.
+#[export] Hint Resolve <- alt_char_inf : wp_alt_chars.
+#[export] Hint Resolve <- alt_char_sup : wp_alt_chars.
 
 (** ### **Hints***)
 #[export] Hint Unfold is_lub : wp_reals.
