@@ -232,7 +232,7 @@ let fresh_key: unit -> KerName.t =
     let (mp, _) = KerName.repr kn in
     let lbl = Id.of_string_soft (Printf.sprintf "%s#%i"
       (ModPath.to_string mp) cur)
-    in KerName.make mp (Label.of_id lbl)
+    in KerName.make mp lbl
 
 let decompose_applied_relation (env: Environ.env) (sigma: Evd.evar_map) (c: constr) (ctype: Evd.econstr) (left2right: bool): hypinfo option =
   let find_rel ty =
