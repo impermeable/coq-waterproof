@@ -200,3 +200,19 @@ VERNAC COMMAND EXTEND AddWpLoggerSideEff CLASSIFIED AS SIDEFF
       add_wp_feedback_logger ()
     }
 END
+
+{
+  open Ltac2_plugin.Tac2entries
+  open Ltac2_plugin.Tac2expr
+  open Unfold_framework
+  open Stdarg
+}
+
+VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Register" "Unfold" ne_string_list(s) ref(id) ] => { Vernacextend.(VtSideff ([], VtNow)) }
+    SYNTERP AS my_notation_interpretation_data
+    {
+      register_unfold s (Nametab.locate id)
+    } ->
+    { register_notation_interpretation my_notation_interpretation_data }
+END

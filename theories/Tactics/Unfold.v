@@ -27,6 +27,8 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 
+Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.coq-waterproof" "extract_def_external".
+
 Local Ltac2 _is_empty (ls : 'a list) :=
   match ls with
   | _::_ => false
@@ -270,6 +272,12 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
 
   wp_unfold (eval_unfold targets) None true true None.
+
+Ltac2 Notation "Unfold" "the" "definition" "of" _x(tactic) :=
+  match extract_def_ffi _x with
+  | Some id => unfold $id
+  | None => Message.print (Message.of_string "Definition was not found")
+  end.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
