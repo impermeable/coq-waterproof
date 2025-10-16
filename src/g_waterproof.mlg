@@ -204,7 +204,6 @@ END
 {
   open Stdarg
   open Names
-  open Unfold_framework
   open Ltac2_plugin.Tac2entries
   open Ltac2_plugin.Tac2expr
 
