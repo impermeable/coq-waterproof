@@ -200,3 +200,33 @@ VERNAC COMMAND EXTEND AddWpLoggerSideEff CLASSIFIED AS SIDEFF
       add_wp_feedback_logger ()
     }
 END
+
+{
+  open Stdarg
+  open Names
+  open Unfold_framework
+  open Ltac2_plugin.Tac2entries
+  open Ltac2_plugin.Tac2expr
+
+  let my_atom : raw_tacexpr_r =
+    CTacAtm (AtmInt 3)
+
+  let my_tac2_expr : raw_tacexpr =
+    CAst.make my_atom
+
+  let my_sexpr : sexpr =
+    SexprStr (CAst.make "hello")
+
+  let my_notation_interpretation_data : notation_interpretation_data =
+    register_notation [] [my_sexpr] None my_tac2_expr
+
+  let add_hello () =
+    register_notation_interpretation my_notation_interpretation_data
+}
+
+VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Register" "Unfold" ] ->
+    {
+      add_hello ()
+    }
+END
