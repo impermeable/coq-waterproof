@@ -221,6 +221,14 @@ END
 
   let add_hello () =
     register_notation_interpretation my_notation_interpretation_data
+
+  let my_sexpr_2 : sexpr =
+    SexprStr (CAst.make "hey")
+
+  let my_notation_interpretation_data_2 : notation_interpretation_data =
+    register_notation [] [my_sexpr_2] None my_tac2_expr
+
+  let () = register_notation_interpretation my_notation_interpretation_data_2
 }
 
 VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF

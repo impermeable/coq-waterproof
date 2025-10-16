@@ -23,4 +23,8 @@ Require Import Waterproof.Waterproof.
 
 Waterproof Register Unfold.
 
+(* This works: *)
+Ltac2 Eval hey.
+
+(* Yet this fails: *)
 Ltac2 Eval hello.
