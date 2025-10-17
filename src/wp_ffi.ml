@@ -33,6 +33,7 @@ open Exceptions
 open Hint_dataset_declarations
 open Waterprove
 open Wp_evars
+open Unfold_framework
 
 (** Creates a name used to define the function interface *)
 let pname (s: string): ml_tactic_name = { mltac_plugin = "rocq-runtime.plugins.coq-waterproof"; mltac_tactic = s }
@@ -258,3 +259,7 @@ let () =
 let () =
   define1 "get_feedback_log_external" feedback_lvl_repr @@
     fun input -> tclUNIT @@ of_list of_pp !(feedback_log input)
+
+let () =
+  define1 "extract_def_external" string @@
+    fun s -> tclUNIT @@ of_option of_reference (extract_def s)

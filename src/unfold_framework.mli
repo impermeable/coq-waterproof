@@ -16,24 +16,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+open Names
+open Ltac2_plugin.Tac2entries
 
-Require Import Waterproof.Waterproof.
-Require Import Waterproof.Tactics.Unfold.
-Require Import Waterproof.Util.MessagesToUser.
-Require Import Waterproof.Util.Assertions.
+module StringMap : Map.S with type key = string
+val wp_unfold_map : GlobRef.t StringMap.t ref
 
-(* Test 1 : Register a simple notation and use it to expand a definition *)
+val add_to_unfold_map : string -> GlobRef.t -> unit
 
-Local Definition z := 2.
+val register_unfold : string list -> GlobRef.t -> notation_interpretation_data
 
-Waterproof Register Unfold "test1" "unfold" "phrase" z.
-
-Goal z = 2.
-Unfold the definition of test1 unfold phrase.
-assert_is_true (Constr.equal (Control.goal ()) constr:(2 = 2)).
-reflexivity.
-Abort.
-
-(* TODO: add a test for expanding a definition that is defined
-in a different module with the framework *)
+val extract_def : string -> GlobRef.t option
