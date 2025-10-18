@@ -28,9 +28,9 @@ Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 
 Ltac2 Type unfold_action := [
-  | Unfold (reference)
-  | Apply (constr)
-  | Rewrite (constr)
+  | Unfold (string, reference)
+  | Apply (string, constr)
+  | Rewrite (string, constr)
 ].
 
 Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.coq-waterproof" "extract_def_external".
@@ -147,9 +147,9 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
 
 Ltac2 unfold_method_for_action (ua : unfold_action) (stmt : constr) : constr :=
   match ua with
-  | Unfold r => eval unfold $r in $stmt
-  | Apply equiv => apply_in_constr equiv stmt
-  | Rewrite eq => tactic_in_constr eq stmt
+  | Unfold _ name => eval unfold $name in $stmt
+  | Apply _ equiv => apply_in_constr equiv stmt
+  | Rewrite _ eq => tactic_in_constr eq stmt
   end.
 
 (**
@@ -190,6 +190,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   (* Print output *)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
+      match def_name with
+      | Some s => info_notice (of_string s)
+      | _ => ()
+      end;
       (* Print initial statement *)
       if definitional then
         (info_notice (of_string "Expanded definition in statements where applicable."))
@@ -291,14 +295,22 @@ Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occ
 
   wp_unfold (eval_unfold targets) None true true None.
 
+Ltac2 name_from_action (ua : unfold_action) : string :=
+  match ua with
+  | Unfold name _ => name
+  | Apply name _ => name
+  | Rewrite name _ => name
+  end.
+
 Local Ltac2 wp_unfold_from_action_list (ua_list : unfold_action list) :=
   let definitional_for_action (ua : unfold_action) := match ua with
-  | Unfold _ => true
-  | Apply _ => false
-  | Rewrite _ => false
+  | Unfold _ _ => true
+  | Apply _ _ => false
+  | Rewrite _ _ => false
   end in
   List.iter (fun z =>
-      wp_unfold (unfold_method_for_action z) None false (definitional_for_action z) None)
+      wp_unfold (unfold_method_for_action z)
+      (Some (name_from_action z)) false (definitional_for_action z) None)
     ua_list.
 
 

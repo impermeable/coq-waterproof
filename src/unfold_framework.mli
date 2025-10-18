@@ -33,17 +33,17 @@ introduced notations, and the global reference they are associated with
 
 (** A type to represent the different unfold actions, and the data they need. *)
 type unfold_action =
-  | Unfold of GlobRef.t
-  | Apply of EConstr.constr
-  | Rewrite of EConstr.constr
+  | Unfold of string * GlobRef.t
+  | Apply of string * EConstr.constr
+  | Rewrite of string * EConstr.constr
 
 (** A type that represents the datastructure that can be added
     to the unfold table. When it is added, it will be converted
     to an unfold action. *)
 type unfold_entry =
-  | Unfold_entry
-  | Apply_entry of Constrexpr.constr_expr
-  | Rewrite_entry of Constrexpr.constr_expr
+  | Unfold_entry of string
+  | Apply_entry of string * Constrexpr.constr_expr
+  | Rewrite_entry of string * Constrexpr.constr_expr
 
 module StringMap : Map.S with type key = string
 

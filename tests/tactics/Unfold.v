@@ -101,7 +101,7 @@ Abort.
 Local Parameter P Q R : Prop.
 Local Parameter HPQ : P <-> Q.
 
-Waterproof Register Unfold Apply "notation" "for" "P" P ; (HPQ).
+Waterproof Register Unfold Apply "notation" "for" "P" P ; "Alternative characterization of P"; (HPQ).
 
 (* Test 8: Use alternative characterization, with concept in conclusion,
 but without having the automation able to prove the alternative
@@ -152,7 +152,8 @@ Proof.
   (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Info
-["Applied alternative characterizations in statements where applicable.";
+["Alternative characterization of P";
+"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that Q."].
 It suffices to show that Q.
 Abort.
@@ -167,7 +168,8 @@ Proof.
   (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Info
-["Applied alternative characterizations in statements where applicable.";
+["Alternative characterization of P";
+"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It holds that Q."].
 It holds that Q.
 Abort.
@@ -180,7 +182,7 @@ Proof.
 assert_constr_equal (tactic_in_constr constr:(HPR) constr:(P -> Q)) constr:(R -> Q).
 Abort.
 
-Waterproof Register Unfold Rewrite "characterization" "of" "P" P ; HPR.
+Waterproof Register Unfold Rewrite "characterization" "of" "P" P ; "Characterization of P"; HPR.
 
 Local Hint Extern 1 => rewrite HPR : core.
 
@@ -195,8 +197,10 @@ intros.
   (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Info
-["Applied alternative characterizations in statements where applicable.";
+["Characterization of P";
+"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that R.";
+"Alternative characterization of P";
 "Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that Q."].
 It suffices to show that Q.
@@ -225,11 +229,13 @@ assert_feedback_with_strings
   (fun () => Unfold the definition of infimum)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
+["Definition infimum";
+"Expanded definition in statements where applicable.";
 "Hint, insert: We need to show that (3 is a _lower bound_ for A
                       ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
 "Hint, insert: It holds that (4 is a _lower bound_ for A
                ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 4)).";
+"Alternative characterization infimum";
 "Applied alternative characterizations in statements where applicable.";
 "Hint, insert: It suffices to show that (3 is a _lower bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
@@ -246,11 +252,13 @@ assert_feedback_with_strings
   (fun () => Unfold the definition of supremum)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
+["Definition supremum";
+"Expanded definition in statements where applicable.";
 "Hint, insert: We need to show that (3 is an _upper bound_ for A
                       ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 3 ≤ L)).";
 "Hint, insert: It holds that (4 is an _upper bound_ for A
                ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
+"Alternative characterization supremum";
 "Applied alternative characterizations in statements where applicable.";
 "Hint, insert: It suffices to show that (3 is an _upper bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, 3 - ε < a)).";
@@ -267,15 +275,20 @@ assert_feedback_with_strings
   (fun () => Unfold All)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
+[
+"Definition infimum";
+"Expanded definition in statements where applicable.";
 "Hint, replace with: We need to show that (3 is a _lower bound_ for A
                       ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
+"Alternative characterization infimum";
 "Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that (3 is a _lower bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
+"Definition supremum";
 "Expanded definition in statements where applicable.";
 "Hint, replace with: It holds that (4 is an _upper bound_ for A
                ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
+"Alternative characterization supremum";
 "Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
 Abort.
