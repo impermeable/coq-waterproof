@@ -36,11 +36,41 @@ Local Ltac2 _is_empty (ls : 'a list) :=
 Ltac2 Type exn ::=  [ Inner ].
 
 (**
+This module provides a framework for unfolding definitions and alternative characterizations.
+
+Please have a look at
+the test file [tests/tactics/Unfold.v]
+
+and at the bottom of the file
+[Libs/Analysis/SupAndInf.v]
+
+for the syntax for adding new definitions and alternative characterizations.
+
+For using alternative characterizations, one can use
+
+[Hint Resolve -> ... : wp_alt_chars.]
+[Hint Resolve <- ... : wp_alt_chars.]
+
+to add both directions of the equivalence to the proper automation database.
+
+*)
+
+(**
 TODO / Note:
 
 Some alternative characterizations will need to be added to a special
 wp_alt_chars database, especially if they involve expressions that would
 otherwise be shielded by the automation.
+*)
+
+(**
+What follows are two methods to deal with alternative characterizations.
+The second method uses rewriting and when combined with propositional extensionality,
+can give significantly strong statmemnts than the first. Reasons why one might prefer
+the first over the second:
+
+- If one doesn't want to take too large steps
+- If the automation cannot handle the rewriting used in the stronger tactic.
 *)
 
 (**
@@ -166,7 +196,9 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
             match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
             | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
                                 of_constr unfolded_goal; of_string "."]))
-            | _ => warn (concat_list [of_string "The following suggestion will likely not work, please report: It suffices to show that ";
+            | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
+            of_string " (this is probably caused by a misalignment in the automation for";
+            of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); of_string "It suffices to show that ";
                                 of_constr unfolded_goal; of_string "."])
             end
         else ();
@@ -179,7 +211,9 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
           let test_and_print unfolded_h :=
             match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
             | Err Succeeded => print_tactic (it_holds_msg unfolded_h)
-            | _ => warn (concat_list [of_string "The following suggestion will likely not work, please report: "; it_holds_msg unfolded_h])
+            | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
+            of_string " (this is probably caused by a misalignment in the automation for";
+            of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); it_holds_msg unfolded_h])
             end in
           if definitional then
             (List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))) only_unfolded_hyps
@@ -189,12 +223,13 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 
     else
       (* Print no statements with definition *)
-      match def_name with
-      | None => info_notice (of_string "Definition does not appear in any statement.")
-      | Some def_name => info_notice (concat_list
-          [of_string "'"; of_string def_name; of_string "'";
-            of_string " does not appear in any statement."])
-      end;
+      if definitional then
+        (match def_name with
+        | None => info_notice (of_string "Definition does not appear in any statement.")
+        | Some def_name => info_notice (concat_list
+            [of_string "'"; of_string def_name; of_string "'";
+              of_string " does not appear in any statement."])
+        end) else ();
 
   (* Throw error if required *)
   if throw_error

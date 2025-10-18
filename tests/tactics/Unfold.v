@@ -116,7 +116,8 @@ Proof.
   (fun () => Expand the definition of foo3)
 "Remove this line in the final version of your proof.")
   Warning
-["The following suggestion will likely not work, please report: It suffices to show that Q."].
+["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
+It suffices to show that Q."].
 assert_fails_with_string (fun () => It suffices to show that Q)
 "Could not verify that it suffices to show Q.".
 Abort.
@@ -133,7 +134,8 @@ Proof.
   (fun () => Expand the definition of foo3)
 "Remove this line in the final version of your proof.")
   Warning
-["The following suggestion will likely not work, please report: It holds that Q."].
+["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
+It holds that Q."].
 assert_fails_with_string (fun () => It holds that Q)
 "Could not verify that Q.".
 Abort.
