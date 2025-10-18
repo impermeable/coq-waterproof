@@ -108,9 +108,9 @@ Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at l
 
 Local Ltac2 unfold_acc_point (statement : constr) := eval unfold is_accumulation_point in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "accumulation" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_acc_point (Some "accumulation point") true x.
+  wp_unfold unfold_acc_point (Some "accumulation point") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "accumulation" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_acc_point (Some "accumulation point") false x.
+  wp_unfold unfold_acc_point (Some "accumulation point") false true x.
 
 
 Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 69).
@@ -120,9 +120,9 @@ Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 69,
 Local Ltac2 unfold_isol_point (statement : constr) := eval unfold is_isolated_point in $statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "isolated" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_isol_point (Some "isolated point") true x.
+  wp_unfold unfold_isol_point (Some "isolated point") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "isolated" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_isol_point (Some "isolated point") false x.
+  wp_unfold unfold_isol_point (Some "isolated point") false true x.
 
 Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 69).
 
@@ -131,9 +131,9 @@ Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 69, 
 Local Ltac2 unfold_lim_in_point (statement : constr) := eval unfold limit_in_point in $statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "limit" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_lim_in_point (Some "limit") true x.
+  wp_unfold unfold_lim_in_point (Some "limit") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "limit" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_lim_in_point (Some "limit") false x.
+  wp_unfold unfold_lim_in_point (Some "limit") false true x.
 
 
 Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in f a) (at level 69).
@@ -143,8 +143,8 @@ Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in f a)  (at level 69, o
 Local Ltac2 unfold_is_cont (statement : constr) := eval unfold is_continuous_in in $statement.
 
 Ltac2 Notation "Expand" "the" "definition" "of" "continuous" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_cont (Some "continuous") true x.
+  wp_unfold unfold_is_cont (Some "continuous") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "continuous" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_cont (Some "continuous") false x.
+  wp_unfold unfold_is_cont (Some "continuous") false true x.
 
 Close Scope R_scope.

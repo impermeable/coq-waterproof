@@ -67,7 +67,7 @@ Abort.
 (* Tests framework expand the definition. *)
 Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_foo (Some "foo2") true x.
+  wp_unfold unfold_foo (Some "foo2") true true x.
 
 (* Test 6: unfold term in hypotheses and goal and throws an error suggesting
     to remove line after use. *)
@@ -98,20 +98,159 @@ Proof.
 ["Definition does not appear in any statement."].
 Abort.
 
+Local Parameter P Q R : Prop.
+Local Parameter HPQ : P <-> Q.
+
+Ltac2 Notation "Expand" "the" "definition" "of" "foo3" x(opt(seq("in", constr))) :=
+  wp_unfold (apply_in_constr constr:(HPQ)) (Some "foo3") true false x.
+
+(* Test 8: Use alternative characterization, with concept in conclusion,
+but without having the automation able to prove the alternative
+characterizations: then warnings should be thrown. *)
+Goal R -> P.
+Proof.
+  intros.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo3)
+"Remove this line in the final version of your proof.")
+  Warning
+["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
+It suffices to show that Q."].
+assert_fails_with_string (fun () => It suffices to show that Q)
+"Could not verify that it suffices to show Q.".
+Abort.
+
+(* Test 9: Use alternative characterization, with concept in assumption,
+but without having the automation able to prove the alternative characterizations: then warnings should be thrown. *)
+
+Goal P -> R.
+Proof.
+  intros.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo3)
+"Remove this line in the final version of your proof.")
+  Warning
+["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
+It holds that Q."].
+assert_fails_with_string (fun () => It holds that Q)
+"Could not verify that Q.".
+Abort.
+
+Local Hint Resolve -> HPQ : core.
+Local Hint Resolve <- HPQ : core.
+
+(* Test 10: Use the [apply_in_constr] tactic for an alternative characterization, with concept in conclusion *)
+Goal R -> P.
+Proof.
+  intros.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo3)
+"Remove this line in the final version of your proof.")
+  Info
+["Applied alternative characterizations in statements where applicable.";
+"Hint, replace with: It suffices to show that Q."].
+It suffices to show that Q.
+Abort.
+
+(* Test 11: Use the [apply_in_constr] tactic for an alternative characterization, with concept in assumption *)
+Goal P -> R.
+Proof.
+  intros.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of foo3)
+"Remove this line in the final version of your proof.")
+  Info
+["Applied alternative characterizations in statements where applicable.";
+"Hint, replace with: It holds that Q."].
+It holds that Q.
+Abort.
+
+Local Parameter HPR : P = R.
+(* Test 12: Test for [tactic_in_constr] *)
+Goal False.
+Proof.
+assert_constr_equal (tactic_in_constr constr:(HPR) constr:(P -> Q)) constr:(R -> Q).
+Abort.
+
+From Stdlib Require Import Reals.Reals.
+Require Import Waterproof.Notations.Common.
+Require Import Waterproof.Notations.Reals.
+Require Import Waterproof.Notations.Sets.
+Require Import Waterproof.Libs.Analysis.SupAndInf.
+Require Import Waterproof.Automation.
+
+Waterproof Enable Automation RealsAndIntegers.
+
+Open Scope R_scope.
+
+Local Parameter A : subset R.
+
+(* Test 12, test for infimum, as it is important that it works in practice. *)
+Goal 4 is the infimum of A -> 3 is the infimum of A.
+Proof.
+intro H.
+assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of infimum)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"Hint, insert: We need to show that (3 is a _lower bound_ for A
+                      ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
+"Hint, insert: It holds that (4 is a _lower bound_ for A
+               ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 4)).";
+"Applied alternative characterizations in statements where applicable.";
+"Hint, insert: It suffices to show that (3 is a _lower bound_ for A
+                          ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
+"Hint, insert: It holds that (4 is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < 4 + ε))."].
+Abort.
+
+(* Test 13, test for supremum, as it is important that it works in practice. *)
+Goal 4 is the supremum of A -> 3 is the supremum of A.
+Proof.
+intro H.
+assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of supremum)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"Hint, insert: We need to show that (3 is an _upper bound_ for A
+                      ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 3 ≤ L)).";
+"Hint, insert: It holds that (4 is an _upper bound_ for A
+               ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
+"Applied alternative characterizations in statements where applicable.";
+"Hint, insert: It suffices to show that (3 is an _upper bound_ for A
+                          ∧ (∀ ε > 0, ∃ a ∈ A, 3 - ε < a)).";
+"Hint, insert: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
+Abort.
+
+Close Scope R_scope.
+Open Scope nat_scope.
 
 (** Check unfolding method that does not throw an error.
   Meant for internal use by custom Waterproof editor. *)
 
 (** Non-framework version. *)
 
-(* Test 8: unfold term in hypotheses and goal without throwing an error. *)
+(* Test 14: unfold term in hypotheses and goal without throwing an error. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 9: unfold fails to unfold term if no statement with term. *)
+(* Test 15: unfold fails to unfold term if no statement with term. *)
 Goal False.
 Proof.
   _internal_ Expand the definition of foo.
@@ -120,16 +259,16 @@ Abort.
 (** Framework version:  *)
 
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" :=
-  wp_unfold unfold_foo (Some "foo2") false None.
+  wp_unfold unfold_foo (Some "foo2") false true None.
 
-(* Test 11: unfold term in hypotheses and goals. *)
+(* Test 16: unfold term in hypotheses and goals. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo2.
 Abort.
 
-(* Test 12: fails to unfold term if no statements with term. *)
+(* Test 17: fails to unfold term if no statements with term. *)
 Goal False.
 Proof.
    _internal_ Expand the definition of foo2.
