@@ -34,7 +34,11 @@ Ltac2 Type unfold_action := [
 ].
 
 Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.coq-waterproof" "extract_def_external".
-Ltac2 @ external find_unfold_actions_ffi : string -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_actions_external".
+Ltac2 @ external find_unfolds_by_str_ffi : string -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_by_str_external".
+Ltac2 @ external find_unfolds_by_ref_ffi : reference -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_by_ref_external".
+
+Ltac2 @ external get_unfold_references_ffi : unit -> reference list := "rocq-runtime.plugins.coq-waterproof" "get_unfold_references_external".
+
 
 Local Ltac2 _is_empty (ls : 'a list) :=
   match ls with
@@ -287,6 +291,23 @@ Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occ
 
   wp_unfold (eval_unfold targets) None true true None.
 
+Local Ltac2 wp_unfold_from_action_list (ua_list : unfold_action list) :=
+  let definitional_for_action (ua : unfold_action) := match ua with
+  | Unfold _ => true
+  | Apply _ => false
+  | Rewrite _ => false
+  end in
+  List.iter (fun z =>
+      wp_unfold (unfold_method_for_action z) None false (definitional_for_action z) None)
+    ua_list.
+
+
+Ltac2 wp_unfold_by_string (s : string) :=
+  wp_unfold_from_action_list (find_unfolds_by_str_ffi s).
+
+Ltac2 wp_unfold_by_ref (r : reference) :=
+  wp_unfold_from_action_list (find_unfolds_by_ref_ffi r).
+
 (**
   Attempts to unfold definition(s) in statements according to unfold actions that have
   been pre-stored in a database.
@@ -298,16 +319,18 @@ Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occ
   Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
   Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
 *)
-Ltac2 Notation "Unfold" "the" "definition" "of" _x(tactic) :=
-  let definitional_for_action (ua : unfold_action) := match ua with
-  | Unfold _ => true
-  | Apply _ => false
-  | Rewrite _ => false
-  end in
-  List.iter (fun z =>
-      wp_unfold (unfold_method_for_action z) None false (definitional_for_action z) None)
-    (find_unfold_actions_ffi _x);
+Ltac2 Notation "Unfold" "the" "definition" "of" x(tactic) :=
+  wp_unfold_by_string x;
   throw (of_string "Remove this line in the final version of your proof.").
+
+(**
+  Unfold all occurences of all registered definitions and alternative characterizations.
+*)
+Ltac2 Notation "Unfold" "All" :=
+  let ls := get_unfold_references_ffi () in
+  List.iter wp_unfold_by_ref ls;
+  throw (of_string "Remove this line in the final version of your proof.").
+
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=

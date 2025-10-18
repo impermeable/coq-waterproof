@@ -285,8 +285,13 @@ let define s = Ltac2_plugin.Tac2externals.define (pname s)
 let return = Proofview.tclUNIT
 
 let () =
-  define "find_unfold_actions_external" (string @-> ret (list unfold_action_repr)) @@
-    fun s ->
-      match extract_def s with
-      | Some gr -> Hashtbl.find_all !wp_unfold_tbl gr
-      | None -> []
+  define "find_unfold_by_ref_external" (reference @-> ret (list unfold_action_repr)) @@
+    find_unfold_actions_by_ref
+
+let () =
+  define "find_unfold_by_str_external" (string @-> ret (list unfold_action_repr)) @@
+    find_unfold_actions_by_str
+
+let () =
+  define "get_unfold_references_external" (unit @-> ret (list reference)) @@
+    get_all_references
