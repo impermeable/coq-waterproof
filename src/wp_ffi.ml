@@ -173,14 +173,14 @@ let feedback_lvl_from_valexpr (value : valexpr): Feedback.level = match value wi
 
 let of_unfold_action =
   function
-  | Unfold gr -> of_block (0, [|of_reference gr|])
-  | Apply c -> of_block (1, [|of_constr c|])
-  | Rewrite c -> of_block(2, [|of_constr c|])
+  | Unfold (s, gr) -> of_block (0, [|of_string s; of_reference gr|])
+  | Apply (s, c) -> of_block (1, [|of_string s; of_constr c|])
+  | Rewrite (s, c) -> of_block(2, [|of_string s; of_constr c|])
 
 let to_unfold_action = let open Ltac2_plugin.Tac2val in function
-  | ValBlk (0, [|gr|]) -> Unfold (to_reference gr)
-  | ValBlk (1, [|c|]) -> Apply (to_constr c)
-  | ValBlk (2, [|c|]) -> Rewrite (to_constr c)
+  | ValBlk (0, [|s; gr|]) -> Unfold (to_string s, to_reference gr)
+  | ValBlk (1, [|s; c|]) -> Apply (to_string s, to_constr c)
+  | ValBlk (2, [|s; c|]) -> Rewrite (to_string s, to_constr c)
   | _ -> assert false
 
 let unfold_action_repr = make_repr of_unfold_action to_unfold_action

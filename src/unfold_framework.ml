@@ -33,11 +33,11 @@ open Names
 
 module StringMap = Map.Make(String)
 
-(** A type to represent the different unfold actions, and the data they need. *)
+(** A type to represent the different unfold actions, a name for the action, and the data they need. *)
 type unfold_action =
-  | Unfold of GlobRef.t
-  | Apply of EConstr.constr
-  | Rewrite of EConstr.constr
+  | Unfold of string * GlobRef.t
+  | Apply of string * EConstr.constr
+  | Rewrite of string * EConstr.constr
 
 (** The map that associate notation strings to references *)
   let wp_unfold_map = Summary.ref ~name:"wp_unfold_map" StringMap.empty
@@ -105,9 +105,9 @@ let register_unfold (toks : string list) (id : GlobRef.t) : notation_interpretat
     to an unfold action.
 *)
 type unfold_entry =
-  | Unfold_entry
-  | Apply_entry of Constrexpr.constr_expr
-  | Rewrite_entry of Constrexpr.constr_expr
+  | Unfold_entry of string
+  | Apply_entry of string * Constrexpr.constr_expr
+  | Rewrite_entry of string * Constrexpr.constr_expr
 
 (** Registers a new entry in the table that stores a list of
     unfold actions associated to a reference.
@@ -126,11 +126,11 @@ let register_unfold_entry (id : GlobRef.t) (ue : unfold_entry) : unit =
     let (constr_e, _) = Constrintern.interp_constr env sigma e in
     constr_e in
   match ue with
-  | Unfold_entry -> add_to_unfold_tbl id (Unfold id)
-  | Apply_entry e ->
-      add_to_unfold_tbl id (Apply (f e))
-  | Rewrite_entry e ->
-      add_to_unfold_tbl id (Rewrite (f e))
+  | Unfold_entry s -> add_to_unfold_tbl id (Unfold (s,  id))
+  | Apply_entry (s, e) ->
+      add_to_unfold_tbl id (Apply (s, f e))
+  | Rewrite_entry (s, e) ->
+      add_to_unfold_tbl id (Rewrite (s, f e))
 
 let get_all_references () : GlobRef.t list =
   let lst = !wp_unfold_tbl |> Hashtbl.to_seq_keys |> List.of_seq in
