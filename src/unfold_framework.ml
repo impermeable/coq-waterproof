@@ -131,3 +131,18 @@ let register_unfold_entry (id : GlobRef.t) (ue : unfold_entry) : unit =
       add_to_unfold_tbl id (Apply (f e))
   | Rewrite_entry e ->
       add_to_unfold_tbl id (Rewrite (f e))
+
+let get_all_references () : GlobRef.t list =
+  let lst = !wp_unfold_tbl |> Hashtbl.to_seq_keys |> List.of_seq in
+  (* Remove duplicates *)
+  let tbl = Hashtbl.create (List.length lst) in
+  List.iter (fun x -> Hashtbl.replace tbl x ()) lst;
+  Hashtbl.fold (fun key _ acc -> key :: acc) tbl []
+
+let find_unfold_actions_by_ref (r : GlobRef.t) : unfold_action list =
+  Hashtbl.find_all !wp_unfold_tbl r
+
+let find_unfold_actions_by_str (s : string) : unfold_action list =
+  match extract_def s with
+  | Some r -> find_unfold_actions_by_ref r
+  | None -> []

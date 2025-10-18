@@ -255,6 +255,29 @@ assert_feedback_with_strings
 "Hint, insert: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
 Abort.
 
+(* Test 15, use Unfold All *)
+Goal 4 is the supremum of A -> 3 is the infimum of A.
+Proof.
+intro H.
+assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Unfold All)
+"Remove this line in the final version of your proof.")
+  Info
+["Expanded definition in statements where applicable.";
+"Hint, replace with: We need to show that (3 is a _lower bound_ for A
+                      ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
+"Applied alternative characterizations in statements where applicable.";
+"Hint, replace with: It suffices to show that (3 is a _lower bound_ for A
+                          ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
+"Expanded definition in statements where applicable.";
+"Hint, replace with: It holds that (4 is an _upper bound_ for A
+               ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
+"Applied alternative characterizations in statements where applicable.";
+"Hint, replace with: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
+Abort.
+
 Close Scope R_scope.
 Open Scope nat_scope.
 
