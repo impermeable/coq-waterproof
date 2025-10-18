@@ -29,10 +29,16 @@ Local Definition z := 2.
 
 Waterproof Register Unfold "test1" "unfold" "phrase" z.
 
+Waterproof Enable Redirect Feedback.
+Waterproof Enable Redirect Errors.
+
 Goal z = 2.
-Unfold the definition of test1 unfold phrase.
-assert_is_true (Constr.equal (Control.goal ()) constr:(2 = 2)).
-reflexivity.
+assert_feedback_with_strings ( fun () =>
+    assert_fails_with_string (fun () => Unfold the definition of test1 unfold phrase)
+    "Remove this line in the final version of your proof.")
+  Info
+  ["Expanded definition in statements where applicable.";
+  "Hint, replace with: We need to show that (2 = 2)."].
 Abort.
 
 (* TODO: add a test for expanding a definition that is defined
