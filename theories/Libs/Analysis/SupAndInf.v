@@ -81,30 +81,24 @@ Notation "M 'is' 'the' 'supremum' 'of' A" := (is_sup A M) (at level 69, only par
 
 Notation "A 'is' '_bounded' 'from' 'above_'" := (is_bounded_above A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (is_bounded_above A) (at level 69, only parsing).
-Local Ltac2 unfold_bound (statement : constr) := eval unfold is_bounded_above in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_bound (Some "bounded from above") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_bound (Some "bounded from above") false true x.
+
+Waterproof Register Unfold
+  "bounded" "from" "above" is_bounded_above; "Definition bounded from above".
 
 Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := (is_upper_bound A M) (at level 69).
 Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := (is_upper_bound A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_upper_bound (statement : constr) := eval unfold is_upper_bound in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_upper_bound (Some "upper bound") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_upper_bound (Some "upper bound") false true x.
+
+Waterproof Register Unfold
+  "upper" "bound" is_upper_bound; "Definition upper bound".
 
 (** Maximum *)
 Definition is_max (A : subset ℝ) (x : ℝ) := (x ∈ A) ∧ (x is an upper bound for A).
 
 Notation "M 'is' 'the' '_maximum_' 'of' A" := (is_max A M) (at level 69).
 Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_max (statement : constr) := eval unfold is_max in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_max (Some "maximum") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_max (Some "maximum") false true x.
+
+Waterproof Register Unfold
+  "maximum" is_max; "Definition maximum".
 
 (** ## The completeness axiom
 
@@ -171,21 +165,15 @@ Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only pars
 
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded_below (statement : constr) :=
-  eval unfold is_bounded_below in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_below (Some "bounded from below") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_below (Some "bounded from below") false true x.
 
+Waterproof Register Unfold
+  "bounded" "from" "below" is_bounded_below; "Definition bounded from below".
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_lower_bound (statement : constr) := eval unfold is_lower_bound in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_lower_bound (Some "lower bound") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_lower_bound (Some "lower bound") false true x.
+
+Waterproof Register Unfold
+  "lower" "bound" is_lower_bound; "Definition lower bound".
 
 (** ## Reflection of a subset of ℝ in the origin
 
@@ -822,25 +810,8 @@ Proof.
       We conclude that a k0 > sequence_ub a (pr) Nn - 1 / (m + 1).
 Qed.
 
-Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
-
 Waterproof Register Unfold Apply "infimum" is_inf; "Alternative characterization infimum"; (alt_char_inf).
 Waterproof Register Unfold "infimum" is_inf; "Definition infimum".
-
-Ltac2 Notation "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_inf (Some "infimum") false true x;
-  wp_unfold (apply_in_constr constr:(alt_char_inf)) (Some "Alternative characterization infimum") true false x.
-
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_inf (Some "infimum") false true x.
-
-Local Ltac2 unfold_is_sup (statement : constr) := eval unfold is_sup in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_sup (Some "supremum") false true x;
-  wp_unfold (apply_in_constr constr:(alt_char_sup)) (Some "Alternative characterization supremum") true false x.
-
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_sup (Some "supremum") false true x.
 
 Waterproof Register Unfold Apply "supremum" is_sup; "Alternative characterization supremum";(alt_char_sup).
 Waterproof Register Unfold "supremum" is_sup; "Definition supremum".

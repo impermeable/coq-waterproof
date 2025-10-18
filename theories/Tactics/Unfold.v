@@ -175,7 +175,7 @@ Ltac2 unfold_method_for_action (ua : unfold_action) (stmt : constr) : constr :=
 Local Ltac2 Type exn ::= [Succeeded].
 
 Ltac2 unfold_in_all (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (definitional : bool) :=
+  (def_name : string option) (throw_error : bool) (definitional : bool) (notify_if_not_present : bool) :=
   let goal := Control.goal () in
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
@@ -247,7 +247,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 
     else
       (* Print no statements with definition *)
-      if definitional then
+      if (Bool.and notify_if_not_present definitional) then
         (match def_name with
         | None => info_notice (of_string "Definition does not appear in any statement.")
         | Some def_name => info_notice (concat_list
@@ -282,9 +282,9 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
   (def_name : string option) (throw_error : bool)
-  (judgmental : bool) (_ : constr option) :=
+  (judgmental : bool) (notify_if_not_present : bool) :=
   panic_if_goal_wrapped ();
-  unfold_in_all unfold_method def_name throw_error judgmental.
+  unfold_in_all unfold_method def_name throw_error judgmental notify_if_not_present.
 
 (* TODO: Refactor unfold system to be more maintainable *)
 
@@ -293,7 +293,7 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
   see [tests/tactics/Unfold.v] *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
 
-  wp_unfold (eval_unfold targets) None true true None.
+  wp_unfold (eval_unfold targets) None true true true.
 
 Ltac2 name_from_action (ua : unfold_action) : string :=
   match ua with
@@ -302,7 +302,8 @@ Ltac2 name_from_action (ua : unfold_action) : string :=
   | Rewrite name _ => name
   end.
 
-Local Ltac2 wp_unfold_from_action_list (ua_list : unfold_action list) :=
+Local Ltac2 wp_unfold_from_action_list (ua_list : unfold_action list)
+  (notify_if_not_present : bool) :=
   let definitional_for_action (ua : unfold_action) := match ua with
   | Unfold _ _ => true
   | Apply _ _ => false
@@ -310,15 +311,15 @@ Local Ltac2 wp_unfold_from_action_list (ua_list : unfold_action list) :=
   end in
   List.iter (fun z =>
       wp_unfold (unfold_method_for_action z)
-      (Some (name_from_action z)) false (definitional_for_action z) None)
+      (Some (name_from_action z)) false (definitional_for_action z) notify_if_not_present)
     ua_list.
 
 
-Ltac2 wp_unfold_by_string (s : string) :=
-  wp_unfold_from_action_list (find_unfolds_by_str_ffi s).
+Ltac2 wp_unfold_by_string (s : string) (notify_if_not_present : bool) :=
+  wp_unfold_from_action_list (find_unfolds_by_str_ffi s) notify_if_not_present.
 
-Ltac2 wp_unfold_by_ref (r : reference) :=
-  wp_unfold_from_action_list (find_unfolds_by_ref_ffi r).
+Ltac2 wp_unfold_by_ref (r : reference) (notify_if_not_present : bool) :=
+  wp_unfold_from_action_list (find_unfolds_by_ref_ffi r) notify_if_not_present.
 
 (**
   Attempts to unfold definition(s) in statements according to unfold actions that have
@@ -332,7 +333,7 @@ Ltac2 wp_unfold_by_ref (r : reference) :=
   Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
 *)
 Ltac2 Notation "Unfold" "the" "definition" "of" x(tactic) :=
-  wp_unfold_by_string x;
+  wp_unfold_by_string x true;
   throw (of_string "Remove this line in the final version of your proof.").
 
 (**
@@ -340,10 +341,10 @@ Ltac2 Notation "Unfold" "the" "definition" "of" x(tactic) :=
 *)
 Ltac2 Notation "Unfold" "All" :=
   let ls := get_unfold_references_ffi () in
-  List.iter wp_unfold_by_ref ls;
+  List.iter (fun l => wp_unfold_by_ref l false) ls;
   throw (of_string "Remove this line in the final version of your proof.").
 
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-  wp_unfold (eval_unfold targets) None false true None.
+  wp_unfold (eval_unfold targets) None false true false.

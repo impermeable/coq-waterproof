@@ -317,7 +317,7 @@ Abort.
 (** Framework version:  *)
 
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" :=
-  wp_unfold unfold_foo (Some "foo2") false true None.
+  wp_unfold unfold_foo (Some "foo2") false true false.
 
 (* Test 18: unfold term in hypotheses and goals. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).

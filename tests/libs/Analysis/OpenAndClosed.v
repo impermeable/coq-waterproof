@@ -42,10 +42,10 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of open)
+  (fun () => Unfold the definition of open)
 "Remove this line in the final version of your proof.")
   Info
-["open";
+["Definition open";
 "Expanded definition in statements where applicable.";
 "Hint, insert: We need to show that (∀ a ∈ A, a is an _interior point_ of A).";
 "Hint, insert: It holds that (∀ a ∈ A, a is an _interior point_ of A)."].
@@ -58,8 +58,8 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of open)
+  (fun () => Unfold the definition of open)
 "Remove this line in the final version of your proof.")
   Info
-["'open' does not appear in any statement."].
+["'Definition open' does not appear in any statement."].
 Abort.
