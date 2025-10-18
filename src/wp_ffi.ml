@@ -171,6 +171,20 @@ let feedback_lvl_from_valexpr (value : valexpr): Feedback.level = match value wi
     in feedback_lvl
   | _ -> throw (CastError "cannot cast something different from an [int] into a [Feedback.level]")
 
+let of_unfold_action =
+  function
+  | Unfold gr -> of_block (0, [|of_reference gr|])
+  | Apply c -> of_block (1, [|of_constr c|])
+  | Rewrite c -> of_block(2, [|of_constr c|])
+
+let to_unfold_action = let open Ltac2_plugin.Tac2val in function
+  | ValBlk (0, [|gr|]) -> Unfold (to_reference gr)
+  | ValBlk (1, [|c|]) -> Apply (to_constr c)
+  | ValBlk (2, [|c|]) -> Rewrite (to_constr c)
+  | _ -> assert false
+
+let unfold_action_repr = make_repr of_unfold_action to_unfold_action
+
 (** Pack the conversion functions for feedback levels into a representation *)
 let feedback_lvl_repr = make_repr feedback_lvl_to_valexpr feedback_lvl_from_valexpr
 
@@ -263,3 +277,16 @@ let () =
 let () =
   define1 "extract_def_external" string @@
     fun s -> tclUNIT @@ of_option of_reference (extract_def s)
+
+open Ltac2_plugin.Tac2externals
+
+let define s = Ltac2_plugin.Tac2externals.define (pname s)
+
+let return = Proofview.tclUNIT
+
+let () =
+  define "find_unfold_actions_external" (string @-> ret (list unfold_action_repr)) @@
+    fun s ->
+      match extract_def s with
+      | Some gr -> Hashtbl.find_all !wp_unfold_tbl gr
+      | None -> []

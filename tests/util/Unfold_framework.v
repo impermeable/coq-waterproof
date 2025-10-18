@@ -23,14 +23,14 @@ Require Import Waterproof.Tactics.Unfold.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
+Waterproof Enable Redirect Feedback.
+Waterproof Enable Redirect Errors.
+
 (* Test 1 : Register a simple notation and use it to expand a definition *)
 
 Local Definition z := 2.
 
 Waterproof Register Unfold "test1" "unfold" "phrase" z.
-
-Waterproof Enable Redirect Feedback.
-Waterproof Enable Redirect Errors.
 
 Goal z = 2.
 assert_feedback_with_strings ( fun () =>

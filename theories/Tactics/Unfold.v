@@ -27,7 +27,14 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 
+Ltac2 Type unfold_action := [
+  | Unfold (reference)
+  | Apply (constr)
+  | Rewrite (constr)
+].
+
 Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.coq-waterproof" "extract_def_external".
+Ltac2 @ external find_unfold_actions_ffi : string -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_actions_external".
 
 Local Ltac2 _is_empty (ls : 'a list) :=
   match ls with
@@ -133,6 +140,13 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
     ) in
   clear $h;
   return_term.
+
+Ltac2 unfold_method_for_action (ua : unfold_action) (stmt : constr) : constr :=
+  match ua with
+  | Unfold r => eval unfold $r in $stmt
+  | Apply equiv => apply_in_constr equiv stmt
+  | Rewrite eq => tactic_in_constr eq stmt
+  end.
 
 (**
   Attempts to unfold definition(s) in every statement according to specified method.
@@ -273,13 +287,25 @@ Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occ
 
   wp_unfold (eval_unfold targets) None true true None.
 
+(**
+  Attempts to unfold definition(s) in statements according to unfold actions that have
+  been pre-stored in a database.
+
+  Here are some examples of syntax for adding unfold actions to the database.
+  For more examples, see [tests/tactics/Unfold.v].
+
+  [Waterproof Register Unfold "converges" "to" converges_to.
+  Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
+  Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
+*)
 Ltac2 Notation "Unfold" "the" "definition" "of" _x(tactic) :=
-  let unfold_method (r : reference) (c : constr) : constr :=
-    (eval unfold $r in $c) in
-  match extract_def_ffi _x with
-  | Some id => wp_unfold (unfold_method id) None true true None
-  | None => Message.print (Message.of_string "Definition was not found")
-  end.
+  let definitional_for_action (ua : unfold_action) := match ua with
+  | Unfold _ => true
+  | Apply _ => false
+  | Rewrite _ => false
+  end in
+  List.iter (fun z => wp_unfold (unfold_method_for_action z) None true (definitional_for_action z) None)
+    (find_unfold_actions_ffi _x).
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
