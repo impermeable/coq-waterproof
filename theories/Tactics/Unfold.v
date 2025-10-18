@@ -274,8 +274,10 @@ Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occ
   wp_unfold (eval_unfold targets) None true true None.
 
 Ltac2 Notation "Unfold" "the" "definition" "of" _x(tactic) :=
+  let unfold_method (r : reference) (c : constr) : constr :=
+    (eval unfold $r in $c) in
   match extract_def_ffi _x with
-  | Some id => unfold $id
+  | Some id => wp_unfold (unfold_method id) None true true None
   | None => Message.print (Message.of_string "Definition was not found")
   end.
 
