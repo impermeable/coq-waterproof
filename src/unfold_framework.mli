@@ -19,11 +19,42 @@
 open Names
 open Ltac2_plugin.Tac2entries
 
+(**
+In this module we keep two tables:
+- [wp_unfold_map] a map from strings to global references, that is used to keep track of the
+introduced notations, and the global reference they are associated with
+- [wp_unfold_tbl] a table from global references to unfold actions, that can later be used
+  by the unfold framework. The unfold actions can be of three types:
+    - unfold the definition associated to the global reference
+    - apply a bi-implication
+    - rewrite an equality
+*)
+
+
+(** A type to represent the different unfold actions, and the data they need. *)
+type unfold_action =
+  | Unfold of GlobRef.t
+  | Apply of EConstr.constr
+  | Rewrite of EConstr.constr
+
+(** A type that represents the datastructure that can be added
+    to the unfold table. When it is added, it will be converted
+    to an unfold action. *)
+type unfold_entry =
+  | Unfold_entry
+  | Apply_entry of Constrexpr.constr_expr
+  | Rewrite_entry of Constrexpr.constr_expr
+
 module StringMap : Map.S with type key = string
+
 val wp_unfold_map : GlobRef.t StringMap.t ref
 
 val add_to_unfold_map : string -> GlobRef.t -> unit
 
 val register_unfold : string list -> GlobRef.t -> notation_interpretation_data
 
+val register_unfold_entry : GlobRef.t -> unfold_entry -> unit
+
 val extract_def : string -> GlobRef.t option
+
+val wp_unfold_tbl : (GlobRef.t, unfold_action) Hashtbl.t ref
