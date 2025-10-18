@@ -280,8 +280,10 @@ Ltac2 Notation "Unfold" "the" "definition" "of" _x(tactic) :=
   | Apply _ => false
   | Rewrite _ => false
   end in
-  List.iter (fun z => wp_unfold (unfold_method_for_action z) None true (definitional_for_action z) None)
-    (find_unfold_actions_ffi _x).
+  List.iter (fun z =>
+      wp_unfold (unfold_method_for_action z) None false (definitional_for_action z) None)
+    (find_unfold_actions_ffi _x);
+  throw (of_string "Remove this line in the final version of your proof.").
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=

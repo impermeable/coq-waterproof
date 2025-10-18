@@ -101,8 +101,7 @@ Abort.
 Local Parameter P Q R : Prop.
 Local Parameter HPQ : P <-> Q.
 
-Ltac2 Notation "Expand" "the" "definition" "of" "foo3" x(opt(seq("in", constr))) :=
-  wp_unfold (apply_in_constr constr:(HPQ)) (Some "foo3") true false x.
+Waterproof Register Unfold Apply "notation" "for" "P" P ; (HPQ).
 
 (* Test 8: Use alternative characterization, with concept in conclusion,
 but without having the automation able to prove the alternative
@@ -113,7 +112,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo3)
+  (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Warning
 ["The following suggestion will likely not work, please report: It suffices to show that Q."].
@@ -130,7 +129,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo3)
+  (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Warning
 ["The following suggestion will likely not work, please report: It holds that Q."].
@@ -148,7 +147,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo3)
+  (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Info
 ["Applied alternative characterizations in statements where applicable.";
@@ -163,7 +162,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo3)
+  (fun () => Unfold the definition of notation for P)
 "Remove this line in the final version of your proof.")
   Info
 ["Applied alternative characterizations in statements where applicable.";
@@ -171,11 +170,34 @@ Proof.
 It holds that Q.
 Abort.
 
+Local Parameter T : Prop.
 Local Parameter HPR : P = R.
 (* Test 12: Test for [tactic_in_constr] *)
 Goal False.
 Proof.
 assert_constr_equal (tactic_in_constr constr:(HPR) constr:(P -> Q)) constr:(R -> Q).
+Abort.
+
+Waterproof Register Unfold Rewrite "characterization" "of" "P" P ; HPR.
+
+Local Hint Extern 1 => rewrite HPR : core.
+
+(* Test 13: Test unfolding by rewriting *)
+
+Goal T -> P.
+Proof.
+intros.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Unfold the definition of notation for P)
+"Remove this line in the final version of your proof.")
+  Info
+["Applied alternative characterizations in statements where applicable.";
+"Hint, replace with: It suffices to show that R.";
+"Applied alternative characterizations in statements where applicable.";
+"Hint, replace with: It suffices to show that Q."].
+It suffices to show that Q.
 Abort.
 
 From Stdlib Require Import Reals.Reals.
@@ -191,14 +213,14 @@ Open Scope R_scope.
 
 Local Parameter A : subset R.
 
-(* Test 12, test for infimum, as it is important that it works in practice. *)
+(* Test 14, test for infimum, as it is important that it works in practice. *)
 Goal 4 is the infimum of A -> 3 is the infimum of A.
 Proof.
 intro H.
 assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of infimum)
+  (fun () => Unfold the definition of infimum)
 "Remove this line in the final version of your proof.")
   Info
 ["Expanded definition in statements where applicable.";
@@ -212,14 +234,14 @@ assert_feedback_with_strings
 "Hint, insert: It holds that (4 is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < 4 + ε))."].
 Abort.
 
-(* Test 13, test for supremum, as it is important that it works in practice. *)
+(* Test 15, test for supremum, as it is important that it works in practice. *)
 Goal 4 is the supremum of A -> 3 is the supremum of A.
 Proof.
 intro H.
 assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of supremum)
+  (fun () => Unfold the definition of supremum)
 "Remove this line in the final version of your proof.")
   Info
 ["Expanded definition in statements where applicable.";
@@ -241,14 +263,14 @@ Open Scope nat_scope.
 
 (** Non-framework version. *)
 
-(* Test 14: unfold term in hypotheses and goal without throwing an error. *)
+(* Test 16: unfold term in hypotheses and goal without throwing an error. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo.
 Abort.
 
-(* Test 15: unfold fails to unfold term if no statement with term. *)
+(* Test 17: unfold fails to unfold term if no statement with term. *)
 Goal False.
 Proof.
   _internal_ Expand the definition of foo.
@@ -259,14 +281,14 @@ Abort.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" :=
   wp_unfold unfold_foo (Some "foo2") false true None.
 
-(* Test 16: unfold term in hypotheses and goals. *)
+(* Test 18: unfold term in hypotheses and goals. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
   intros.
   _internal_ Expand the definition of foo2.
 Abort.
 
-(* Test 17: fails to unfold term if no statements with term. *)
+(* Test 19: fails to unfold term if no statements with term. *)
 Goal False.
 Proof.
    _internal_ Expand the definition of foo2.
