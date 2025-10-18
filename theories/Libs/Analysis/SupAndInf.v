@@ -823,6 +823,10 @@ Proof.
 Qed.
 
 Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
+
+Waterproof Register Unfold Apply "infimum" is_inf; (alt_char_inf).
+Waterproof Register Unfold "infimum" is_inf.
+
 Ltac2 Notation "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_inf (Some "infimum") false true x;
   wp_unfold (apply_in_constr constr:(alt_char_inf)) (Some "Alternative characterization infimum") true false x.
@@ -838,7 +842,8 @@ Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", const
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
   wp_unfold unfold_is_sup (Some "supremum") false true x.
 
-Local Parameter A : subset R.
+Waterproof Register Unfold Apply "supremum" is_sup; (alt_char_sup).
+Waterproof Register Unfold "supremum" is_sup.
 
 #[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.
 #[export] Hint Resolve bounded_by_lower_bound_propform : wp_reals.
