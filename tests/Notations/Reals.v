@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.

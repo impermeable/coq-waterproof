@@ -282,8 +282,6 @@ open Ltac2_plugin.Tac2externals
 
 let define s = Ltac2_plugin.Tac2externals.define (pname s)
 
-let return = Proofview.tclUNIT
-
 let () =
   define "find_unfold_by_ref_external" (reference @-> ret (list unfold_action_repr)) @@
     find_unfold_actions_by_ref

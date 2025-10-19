@@ -203,7 +203,6 @@ END
 
 {
   open Ltac2_plugin.Tac2entries
-  open Ltac2_plugin.Tac2expr
   open Unfold_framework
   open Stdarg
 }
