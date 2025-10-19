@@ -112,4 +112,4 @@ val message :
 (**
   Check the last warning against a string
 *)
-val get_last_warning : unit -> Pp.t option Proofview.tactic
+val get_last_warning : unit -> Pp.t option
