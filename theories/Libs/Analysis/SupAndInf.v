@@ -78,27 +78,22 @@ Qed.
 (* Implement notations for these concepts. *)
 Notation "M 'is' 'the' '_supremum_' 'of' A" := (is_sup A M) (at level 69).
 Notation "M 'is' 'the' 'supremum' 'of' A" := (is_sup A M) (at level 69, only parsing).
-Local Ltac2 unfold_is_sup (statement : constr) := eval unfold is_sup in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_sup (Some "supremum") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_sup (Some "supremum") false x.
 
 Notation "A 'is' '_bounded' 'from' 'above_'" := (is_bounded_above A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (is_bounded_above A) (at level 69, only parsing).
 Local Ltac2 unfold_bound (statement : constr) := eval unfold is_bounded_above in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_bound (Some "bounded from above") true x.
+  wp_unfold unfold_bound (Some "bounded from above") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_bound (Some "bounded from above") false x.
+  wp_unfold unfold_bound (Some "bounded from above") false true x.
 
 Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := (is_upper_bound A M) (at level 69).
 Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := (is_upper_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_upper_bound (statement : constr) := eval unfold is_upper_bound in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_upper_bound (Some "upper bound") true x.
+  wp_unfold unfold_is_upper_bound (Some "upper bound") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "upper" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_upper_bound (Some "upper bound") false x.
+  wp_unfold unfold_is_upper_bound (Some "upper bound") false true x.
 
 (** Maximum *)
 Definition is_max (A : subset ℝ) (x : ℝ) := (x ∈ A) ∧ (x is an upper bound for A).
@@ -107,9 +102,9 @@ Notation "M 'is' 'the' '_maximum_' 'of' A" := (is_max A M) (at level 69).
 Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_max (statement : constr) := eval unfold is_max in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_max (Some "maximum") true x.
+  wp_unfold unfold_is_max (Some "maximum") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "maximum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_max (Some "maximum") false x.
+  wp_unfold unfold_is_max (Some "maximum") false true x.
 
 (** ## The completeness axiom
 
@@ -173,29 +168,24 @@ Definition is_inf (A : subset ℝ) (m : ℝ) :=
 (* Implement notations for these concepts. *)
 Notation "m 'is' 'the' '_infimum_' 'of' A" := (is_inf A m) (at level 69).
 Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only parsing).
-Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_inf (Some "infimum") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_inf (Some "infimum") false x.
 
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
 Local Ltac2 unfold_is_bounded_below (statement : constr) :=
   eval unfold is_bounded_below in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_below (Some "bounded from below") true x.
+  wp_unfold unfold_is_bounded_below (Some "bounded from below") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "from" "below" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_below (Some "bounded from below") false x.
+  wp_unfold unfold_is_bounded_below (Some "bounded from below") false true x.
 
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
 Local Ltac2 unfold_is_lower_bound (statement : constr) := eval unfold is_lower_bound in $statement.
 Ltac2 Notation "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_lower_bound (Some "lower bound") true x.
+  wp_unfold unfold_is_lower_bound (Some "lower bound") true true x.
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "lower" "bound" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_lower_bound (Some "lower bound") false x.
+  wp_unfold unfold_is_lower_bound (Some "lower bound") false true x.
 
 (** ## Reflection of a subset of ℝ in the origin
 
@@ -605,19 +595,19 @@ Definition is_inf_alt_char (A : ℝ → Prop) (m : ℝ) :=
   is_lower_bound A m ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε).
 
 Theorem alt_char_sup (A : ℝ → Prop) (M : ℝ) :
-    is_sup A M ⇔ is_sup_alt_char A M.
+    is_sup A M ⇔ is_upper_bound A M ∧ (∀ ε > 0, ∃ a ∈ A, M - ε < a).
 Proof.
   We show both directions.
   - We need to show that is_sup A M ⇨ is_sup_alt_char A M.
     Assume that is_sup A M.
-    We need to show that 
+    We need to show that
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 M - ε < a).
     We show both statements.
     + We need to show that is_upper_bound A M.
-      It holds that 
+      It holds that
       is_upper_bound A M
       ∧ (∀ M0 ∈ ℝ,
         is_upper_bound A M0 ⇨ M ≤ M0)  as (i).
@@ -632,7 +622,7 @@ Proof.
 
   - We need to show that is_sup_alt_char A M ⇨ is_sup A M.
     Assume that is_sup_alt_char A M.
-    It holds that 
+    It holds that
     is_upper_bound A M
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
@@ -640,7 +630,7 @@ Proof.
     Because (i) both is_upper_bound A M as (ii) and
       for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ M - ε < a as (iii) hold.
 
-    We need to show that 
+    We need to show that
     is_upper_bound A M
     ∧ (∀ M0 ∈ ℝ,
       is_upper_bound A M0 ⇨ M ≤ M0) .
@@ -656,19 +646,19 @@ Proof.
 Qed.
 
 Theorem alt_char_inf (A : ℝ -> Prop) (m : ℝ) :
-    is_inf A m ⇔ is_inf_alt_char A m.
+    is_inf A m ⇔ is_lower_bound A m ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε).
 Proof.
   We show both directions.
   - We need to show that is_inf A m ⇨ is_inf_alt_char A m.
     Assume that is_inf A m.
-    We need to show that 
+    We need to show that
     is_lower_bound A m
     ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
                 m + ε > a) .
     We show both statements.
     + We need to show that is_lower_bound A m.
-      It holds that 
+      It holds that
       is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m)
        as (i).
@@ -685,7 +675,7 @@ Proof.
 
   - We need to show that is_inf_alt_char A m ⇨ is_inf A m.
     Assume that is_inf_alt_char A m.
-    It holds that 
+    It holds that
       is_lower_bound A m
       ∧ (for all ε : ℝ,
       ε > 0 ⇨ there exists a : ℝ, (A a) ∧
@@ -693,7 +683,7 @@ Proof.
     Because (i) both is_lower_bound A m as (ii) and
       for all ε : ℝ, ε > 0 ⇨ there exists a : ℝ, (A a) ∧ m + ε > a hold.
 
-    We need to show that 
+    We need to show that
       is_lower_bound A m ∧ (∀ l ∈ ℝ,
                           is_lower_bound A l ⇨ l ≤ m).
     We show both statements.
@@ -703,6 +693,25 @@ Proof.
       By if_almost_minimizer_ε_then_every_low_bd_smaller
       we conclude that ∀ l ∈ ℝ,
       is_lower_bound A l ⇨ l ≤ m.
+Qed.
+
+Theorem alt_char_inf_mpr (A : ℝ -> Prop) (m : ℝ) :
+    (m is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε)) ⇒ is_inf A m.
+Proof.
+  intro H. apply alt_char_inf. exact H.
+Qed.
+
+Theorem alt_char_inf_mp (A : ℝ -> Prop) (m : ℝ) :
+    is_inf A m ⇒ (m is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < m + ε)).
+Proof.
+  intro H. apply alt_char_inf. exact H.
+Qed.
+
+Theorem alt_char_sup_mpr (A : ℝ -> Prop) (M : ℝ) :
+    (M is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, M - ε < a)) ⇒ is_sup A M.
+Proof.
+  unfold is_sup_alt_char.
+  intro H. apply alt_char_sup. exact H.
 Qed.
 
 Lemma max_or_strict :
@@ -813,12 +822,30 @@ Proof.
       We conclude that a k0 > sequence_ub a (pr) Nn - 1 / (m + 1).
 Qed.
 
+Local Ltac2 unfold_is_inf (statement : constr) := eval unfold is_inf in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_inf (Some "infimum") false true x;
+  wp_unfold (apply_in_constr constr:(alt_char_inf)) (Some "Alternative characterization infimum") true false x.
+
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "infimum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_inf (Some "infimum") false true x.
+
+Local Ltac2 unfold_is_sup (statement : constr) := eval unfold is_sup in $statement.
+Ltac2 Notation "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_sup (Some "supremum") false true x;
+  wp_unfold (apply_in_constr constr:(alt_char_sup)) (Some "Alternative characterization supremum") true false x.
+
+Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "supremum" x(opt(seq("in", constr))) :=
+  wp_unfold unfold_is_sup (Some "supremum") false true x.
+
+Local Parameter A : subset R.
+
 #[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.
 #[export] Hint Resolve bounded_by_lower_bound_propform : wp_reals.
-#[export] Hint Resolve alt_char_inf : wp_reals.
-#[export] Hint Resolve alt_char_sup : wp_reals.
-#[export] Hint Resolve <- alt_char_inf : wp_reals.
-#[export] Hint Resolve <- alt_char_sup : wp_reals.
+#[export] Hint Resolve -> alt_char_inf : wp_alt_chars.
+#[export] Hint Resolve -> alt_char_sup : wp_alt_chars.
+#[export] Hint Resolve <- alt_char_inf : wp_alt_chars.
+#[export] Hint Resolve <- alt_char_sup : wp_alt_chars.
 
 (** ### **Hints***)
 #[export] Hint Unfold is_lub : wp_reals.

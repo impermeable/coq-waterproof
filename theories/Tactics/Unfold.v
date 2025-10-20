@@ -19,6 +19,8 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Std.
 Require Import Ltac2.Message.
+Require Import Waterproof.Tactics.ItSuffices.
+Require Import Waterproof.Tactics.ItHolds.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -34,6 +36,103 @@ Local Ltac2 _is_empty (ls : 'a list) :=
 Ltac2 Type exn ::=  [ Inner ].
 
 (**
+This module provides a framework for unfolding definitions and alternative characterizations.
+
+Please have a look at
+the test file [tests/tactics/Unfold.v]
+
+and at the bottom of the file
+[Libs/Analysis/SupAndInf.v]
+
+for the syntax for adding new definitions and alternative characterizations.
+
+For using alternative characterizations, one can use
+
+[Hint Resolve -> ... : wp_alt_chars.]
+[Hint Resolve <- ... : wp_alt_chars.]
+
+to add both directions of the equivalence to the proper automation database.
+
+*)
+
+(**
+TODO / Note:
+
+Some alternative characterizations will need to be added to a special
+wp_alt_chars database, especially if they involve expressions that would
+otherwise be shielded by the automation.
+*)
+
+(**
+What follows are two methods to deal with alternative characterizations.
+The second method uses rewriting and when combined with propositional extensionality,
+can give significantly strong statmemnts than the first. Reasons why one might prefer
+the first over the second:
+
+- If one doesn't want to take too large steps
+- If the automation cannot handle the rewriting used in the stronger tactic.
+*)
+
+(**
+  Helper tactic that can be used as an unfold method in
+  [unfold_in_all] below. This version can be used for simple reformulation
+  of alternative characterizations. It will likely only work
+  if the constant to unfold is the head constant.
+
+  Arguments:
+  - [alt_char : constr] An alternative characterization for the concept
+    to unfold
+  - [x : constr] The expression in which the concept should
+    be unfolded
+*)
+Ltac2 apply_in_constr (alt_char : constr) (x : constr) : constr :=
+  let h := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
+  assert (False -> $x) as $h;
+  let return_term : constr :=
+    (Control.focus 1 1 (fun () =>
+      let h1 := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
+      intro $h1;
+      try (apply $alt_char);
+      let rewritten_term := Control.goal() in
+      let h2 := Control.hyp h1 in
+      destruct $h2;
+      exact I;
+      rewritten_term)
+    ) in
+  clear $h;
+  return_term.
+
+(**
+  Helper tactic that can be used as an unfold method in
+  [unfold_in_all] below. When combined with propositional
+  extensionality, this can give a slightly more advanced
+  reformulation using an alternative characterization.
+  It will likely work in more cases than [apply_in_constr].
+
+  Arguments:
+  - [equality : constr] An equality with which to rewrite the concept
+  - [x : constr] The expression in which the concept should
+    be unfolded
+*)
+Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
+  let h := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
+  assert ($x -> True) as $h;
+  let return_term : constr :=
+    (Control.focus 1 1 (fun () =>
+      try (setoid_rewrite $equality);
+      let rewritten_term :=
+      match! goal with
+      | [|- ?c -> True ] => c
+      | [|- _] => throw (Message.of_string "Unexpected error in tactic_in_constr. Please report."); constr:(False)
+      end in
+      intro;
+      exact I;
+      rewritten_term)
+    ) in
+  clear $h;
+  return_term.
+
+(**
   Attempts to unfold definition(s) in every statement according to specified method.
   If succesful it prints a list of suitable tactics
   that can be used to incorporate the unfolded statements into the user's proof script.
@@ -47,19 +146,19 @@ Ltac2 Type exn ::=  [ Inner ].
         is unsuccesful
     - [throw_error : bool], whether the tactic should throw an error which suggests
         user to remove this tactic in final version of the proof.
+    - [definitional : bool], whether the unfolded version is definitionally equal to the original (as opposed to an alternative characterization)
 
   Raises fatal exceptions:
     - [always/none] depending on value of [throw_error].
 *)
 
+Local Ltac2 Type exn ::= [Succeeded].
+
 Ltac2 unfold_in_all (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) :=
-
-
+  (def_name : string option) (throw_error : bool) (definitional : bool) :=
   let goal := Control.goal () in
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
-
   let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
   let unfolded_hyps := List.map unfold_method hyps in
   let only_unfolded_hyps :=
@@ -68,12 +167,14 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         List.combine unfolded_hyps hyps
       )
     ) in
-
   (* Print output *)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
       (* Print initial statement *)
-      info_notice (of_string "Expanded definition in statements where applicable.");
+      if definitional then
+        (info_notice (of_string "Expanded definition in statements where applicable."))
+      else
+        (info_notice (of_string "Applied alternative characterizations in statements where applicable."));
       let total_messages := Int.add
         (if did_unfold_goal then 1 else 0)
         (List.length only_unfolded_hyps) in
@@ -88,8 +189,18 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       (* Print unfolded goal *)
       if did_unfold_goal
         then
-          print_tactic (concat_list [of_string "We need to show that ";
-            of_constr unfolded_goal; of_string "."])
+          if definitional then
+            (print_tactic (concat_list [of_string "We need to show that ";
+              of_constr unfolded_goal; of_string "."]))
+          else
+            match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
+            | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
+                                of_constr unfolded_goal; of_string "."]))
+            | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
+            of_string " (this is probably caused by a misalignment in the automation for";
+            of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); of_string "It suffices to show that ";
+                                of_constr unfolded_goal; of_string "."])
+            end
         else ();
 
       (* Print unfolded hypotheses *)
@@ -97,18 +208,28 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         then
           let it_holds_msg := fun (x : constr) => concat_list
             [of_string "It holds that "; of_constr x; of_string "."] in
-          List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))
-            only_unfolded_hyps
+          let test_and_print unfolded_h :=
+            match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
+            | Err Succeeded => print_tactic (it_holds_msg unfolded_h)
+            | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
+            of_string " (this is probably caused by a misalignment in the automation for";
+            of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); it_holds_msg unfolded_h])
+            end in
+          if definitional then
+            (List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))) only_unfolded_hyps
+          else
+            (List.iter test_and_print only_unfolded_hyps)
         else ()
 
     else
       (* Print no statements with definition *)
-      match def_name with
-      | None => info_notice (of_string "Definition does not appear in any statement.")
-      | Some def_name => info_notice (concat_list
-          [of_string "'"; of_string def_name; of_string "'";
-            of_string " does not appear in any statement."])
-      end;
+      if definitional then
+        (match def_name with
+        | None => info_notice (of_string "Definition does not appear in any statement.")
+        | Some def_name => info_notice (concat_list
+            [of_string "'"; of_string def_name; of_string "'";
+              of_string " does not appear in any statement."])
+        end) else ();
 
   (* Throw error if required *)
   if throw_error
@@ -136,9 +257,10 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
     - [always/none] depending on value of [throw_error].
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (_ : constr option):=
+  (def_name : string option) (throw_error : bool)
+  (judgmental : bool) (_ : constr option) :=
   panic_if_goal_wrapped ();
-  unfold_in_all unfold_method def_name throw_error.
+  unfold_in_all unfold_method def_name throw_error judgmental.
 
 (* TODO: Refactor unfold system to be more maintainable *)
 
@@ -147,8 +269,8 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
   see [tests/tactics/Unfold.v] *)
 Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
 
-  wp_unfold (eval_unfold targets) None true None.
+  wp_unfold (eval_unfold targets) None true true None.
 
 (* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
 Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-  wp_unfold (eval_unfold targets) None false None.
+  wp_unfold (eval_unfold targets) None false true None.
