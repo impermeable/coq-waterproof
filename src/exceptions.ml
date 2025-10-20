@@ -156,11 +156,10 @@ let err (input : Pp.t) : unit Proofview.tactic =
 (**
   Return the last warning
 *)
-let get_last_warning () : Pp.t option Proofview.tactic =
-  Proofview.tclUNIT @@
-    match !(feedback_log Warning) with
-    | [] -> None
-    | hd :: tl -> Some hd
+let get_last_warning () : Pp.t option =
+  match !(feedback_log Warning) with
+| [] -> None
+| hd :: tl -> Some hd
 
 let wp_error_handler (e : exn) : Pp.t option =
   if !filter_errors then
