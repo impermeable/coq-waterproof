@@ -53,7 +53,7 @@ Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
   match Control.case (fun () =>
     let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by
-      (rwaterprove 5 true Main xtr_lemma))
+      (rwaterprove 5 true Main [xtr_lemma] []))
   with
   | Val _ => ()
   | Err (FailedToProve _) => throw err_msg

@@ -136,7 +136,7 @@ Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
     [of_string "Could not verify that "; of_constr g; of_string "."]
   in
   match Control.case (fun () =>
-    rwaterprove 5 true Main xtr_lemma)
+    rwaterprove 5 true Main [xtr_lemma] [])
   with
   | Val _ => ()
   | Err (FailedToProve g) => throw (err_msg g)

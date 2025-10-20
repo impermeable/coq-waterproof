@@ -107,7 +107,7 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
   let claim := correct_type_by_wrapping claim in
   match Control.case (fun () =>
     assert $claim as $id by
-      (rwaterprove 5 true Main xtr_lemma))
+      (rwaterprove 5 true Main [xtr_lemma] []))
   with
   | Val _ => ()
   | Err (FailedToProve g) => throw (err_msg g)
@@ -178,7 +178,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
   | [_ : ?s |- StateHyp.Wrapper ?s _ _] =>
     if Bool.neg (check_constr_equal s claim) then
       throw (of_string "Wrong statement specified.")
-    else 
+    else
       match! goal with
       | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
         let h_constr := Control.hyp h in
@@ -190,7 +190,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
           | Some label => label
           end in
         match Control.case (fun () => assert $claim as $w by exact $h_constr) with
-        | Val _ =>  
+        | Val _ =>
           apply (StateHyp.wrap $s);
           Std.clear [h]
         | Err exn => print (of_string "Exception occurred"); print (of_exn exn)
