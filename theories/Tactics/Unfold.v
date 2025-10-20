@@ -194,11 +194,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       | Some s => info_notice (of_string s)
       | _ => ()
       end;
-      (* Print initial statement *)
-      if definitional then
-        (info_notice (of_string "Expanded definition in statements where applicable."))
-      else
-        (info_notice (of_string "Applied alternative characterizations in statements where applicable."));
+
       let total_messages := Int.add
         (if did_unfold_goal then 1 else 0)
         (List.length only_unfolded_hyps) in

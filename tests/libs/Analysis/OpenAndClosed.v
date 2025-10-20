@@ -46,7 +46,6 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition open";
-"Expanded definition in statements where applicable.";
 "Hint, insert: We need to show that (∀ a ∈ A, a is an _interior point_ of A).";
 "Hint, insert: It holds that (∀ a ∈ A, a is an _interior point_ of A)."].
 Abort.

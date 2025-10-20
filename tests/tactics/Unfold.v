@@ -42,8 +42,7 @@ Proof.
   (fun () => Expand the definition of foo)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
-"Hint, replace with: We need to show that (0 = 1)."].
+["Hint, replace with: We need to show that (0 = 1)."].
 Abort.
 
 (* Test 2: unfold term in hypothese and goal, and throws an error suggesting
@@ -57,8 +56,7 @@ Proof.
   (fun () => Expand the definition of foo)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
-"Hint, insert: We need to show that (0 = 1).";
+["Hint, insert: We need to show that (0 = 1).";
 "Hint, insert: It holds that (0 = 0).";
 "Hint, insert: It holds that (0 = 2)."].
 Abort.
@@ -80,8 +78,7 @@ Proof.
   (fun () => Expand the definition of foo)
 "Remove this line in the final version of your proof.")
   Info
-["Expanded definition in statements where applicable.";
-"Hint, insert: We need to show that (0 = 1).";
+["Hint, insert: We need to show that (0 = 1).";
 "Hint, insert: It holds that (0 = 0).";
 "Hint, insert: It holds that (0 = 2)."].
 Abort.
@@ -153,7 +150,6 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Alternative characterization of P";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that Q."].
 It suffices to show that Q.
 Abort.
@@ -169,7 +165,6 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Alternative characterization of P";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It holds that Q."].
 It holds that Q.
 Abort.
@@ -198,10 +193,8 @@ intros.
 "Remove this line in the final version of your proof.")
   Info
 ["Characterization of P";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that R.";
 "Alternative characterization of P";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that Q."].
 It suffices to show that Q.
 Abort.
@@ -230,13 +223,11 @@ assert_feedback_with_strings
 "Remove this line in the final version of your proof.")
   Info
 ["Definition infimum";
-"Expanded definition in statements where applicable.";
 "Hint, insert: We need to show that (3 is a _lower bound_ for A
                       ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
 "Hint, insert: It holds that (4 is a _lower bound_ for A
                ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 4)).";
 "Alternative characterization infimum";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, insert: It suffices to show that (3 is a _lower bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
 "Hint, insert: It holds that (4 is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < 4 + ε))."].
@@ -253,13 +244,11 @@ assert_feedback_with_strings
 "Remove this line in the final version of your proof.")
   Info
 ["Definition supremum";
-"Expanded definition in statements where applicable.";
 "Hint, insert: We need to show that (3 is an _upper bound_ for A
                       ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 3 ≤ L)).";
 "Hint, insert: It holds that (4 is an _upper bound_ for A
                ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
 "Alternative characterization supremum";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, insert: It suffices to show that (3 is an _upper bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, 3 - ε < a)).";
 "Hint, insert: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
@@ -277,19 +266,15 @@ assert_feedback_with_strings
   Info
 [
 "Definition infimum";
-"Expanded definition in statements where applicable.";
 "Hint, replace with: We need to show that (3 is a _lower bound_ for A
                       ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
 "Alternative characterization infimum";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It suffices to show that (3 is a _lower bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
 "Definition supremum";
-"Expanded definition in statements where applicable.";
 "Hint, replace with: It holds that (4 is an _upper bound_ for A
                ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
 "Alternative characterization supremum";
-"Applied alternative characterizations in statements where applicable.";
 "Hint, replace with: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
 Abort.
 
