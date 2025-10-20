@@ -30,23 +30,10 @@ Require Import Ltac2.Init.
 
 Require Import Chains.Inequalities.
 
-Local Ltac2 Type database_type_ffi.
-
-Local Ltac2 @ external database_type_main: unit -> database_type_ffi := "rocq-runtime.plugins.coq-waterproof" "database_type_main".
-Local Ltac2 @ external database_type_decidability: unit -> database_type_ffi := "rocq-runtime.plugins.coq-waterproof" "database_type_decidability".
-Local Ltac2 @ external database_type_shorten: unit -> database_type_ffi := "rocq-runtime.plugins.coq-waterproof" "database_type_shorten".
-
-Local Ltac2 @ external waterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> unit := "rocq-runtime.plugins.coq-waterproof" "waterprove".
-Local Ltac2 @ external rwaterprove_ffi: int -> bool -> (unit -> constr) list -> database_type_ffi -> constr list -> constr list -> unit := "rocq-runtime.plugins.coq-waterproof" "rwaterprove".
-
 Ltac2 Type database_type := [ Main | Decidability | Shorten ].
 
-Local Ltac2 database_type_to_ffi (db_type: database_type): database_type_ffi :=
-  match db_type with
-    | Main => database_type_main ()
-    | Decidability => database_type_decidability ()
-    | Shorten => database_type_shorten ()
-  end.
+Local Ltac2 @ external waterprove_ffi: int -> bool -> (unit -> constr) list -> database_type -> unit := "rocq-runtime.plugins.coq-waterproof" "waterprove".
+Local Ltac2 @ external rwaterprove_ffi: int -> bool -> (unit -> constr) list -> database_type -> constr list -> constr list -> unit := "rocq-runtime.plugins.coq-waterproof" "rwaterprove".
 
 Open Scope subset_scope.
 
@@ -65,10 +52,10 @@ Close Scope subset_scope.
 
 (** Internal versions of [waterprove] and [rwaterprove]. *)
 Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type): unit  :=
-  waterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type).
+  waterprove_ffi depth (shield && contains_shielded_pattern ()) lems db_type.
 
 Local Ltac2 _risky_rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (db_type: database_type) (must : constr list) (forbidden : constr list) : unit  :=
-  rwaterprove_ffi depth (shield && contains_shielded_pattern ()) lems (database_type_to_ffi db_type) must forbidden.
+  rwaterprove_ffi depth (shield && contains_shielded_pattern ()) lems db_type must forbidden.
 
 
 (** Checks whether [x] is in the current list of hypotheses *)
