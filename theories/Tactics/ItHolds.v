@@ -95,7 +95,7 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
   identifier starting with '_H' is generated.
   [xtr_lemma] has to be used in the proof that [claim] holds.
   *)
-Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
+Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemmas : constr list) (dbs : hint_db_name list) :=
   let err_msg (g : constr) := concat_list
     [of_string "Could not verify that "; of_constr g; of_string "."] in
   let id :=
@@ -107,7 +107,7 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
   let claim := correct_type_by_wrapping claim in
   match Control.case (fun () =>
     assert $claim as $id by
-      (rwaterprove 5 true Main [xtr_lemma] []))
+      (rwaterprove 5 true Main xtr_lemmas dbs))
   with
   | Val _ => ()
   | Err (FailedToProve g) => throw (err_msg g)
@@ -118,8 +118,8 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
 
 (** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemma : constr) :=
-  wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemma;
+Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemmas xtr_dbs;
   (* Print suggestion on how to use new statement. *)
   HelpNewHyp.suggest_how_to_use claim label.
 
@@ -146,14 +146,16 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
     - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-Ltac2 Notation "By" xtr_lemma(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
-  panic_if_goal_wrapped ();
-  wp_assert_by claim label xtr_lemma.
+
+
+
+(** Attempts to prove that proposed goal is enough to show current goal,
+  given an additional lemma that has to be used in said proof.
+  If succesful, replaces current goal by proposed goal. *)
 
 Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
-
 
 (** * It holds that ... (...)
   Attempts to assert a claim and proves it automatically.

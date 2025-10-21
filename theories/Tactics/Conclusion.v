@@ -71,7 +71,7 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 *)
 
 
-Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
+Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
   let sttd_goal := correct_type_by_wrapping sttd_goal in
   let sttd_goal := (eval unfold subset_type, ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $sttd_goal) in
   let current_goal := Control.goal () in
@@ -131,12 +131,12 @@ Local Ltac2 conclude (postpone : bool) :=
       end.
 
 (** Attempts to solve current goal using additional lemma which has to be used. *)
-Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
+Local Ltac2 core_conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   let err_msg (g : constr) := concat_list
     [of_string "Could not verify that "; of_constr g; of_string "."]
   in
   match Control.case (fun () =>
-    rwaterprove 5 true Main [xtr_lemma] [])
+    rwaterprove 5 true Main xtr_lemmas xtr_dbs)
   with
   | Val _ => ()
   | Err (FailedToProve g) => throw (err_msg g)
@@ -145,8 +145,8 @@ Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
 
 (** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Local Ltac2 conclude_by (xtr_lemma : constr) :=
-  wrapper_core_by_tactic core_conclude_by xtr_lemma.
+Ltac2 conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  wrapper_core_by_tactic core_conclude_by xtr_lemmas xtr_dbs.
 
 (** Adaptation of [core_conclude_by] that allows user to use mathematical statements themselves
   instead of references to them as extra information for the automation system.
@@ -164,7 +164,7 @@ Local Ltac2 conclude_since (xtr_claim : constr) :=
   Does:
     - Removes the wrapper [StateGoal.Wrapper G].
 *)
-Local Ltac2 unwrap_state_goal_no_check () :=
+Ltac2 unwrap_state_goal_no_check () :=
   lazy_match! goal with
     | [|- StateGoal.Wrapper _] => apply StateGoal.wrap
     | [|- VerifyGoal.Wrapper _] => apply VerifyGoal.wrap
@@ -209,12 +209,6 @@ Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "By" xtr_lemma(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
-  unwrap_state_goal_no_check ();
-  panic_if_goal_wrapped ();
-  guarantee_stated_goal_matches target_goal;
-  conclude_by xtr_lemma.
-
 Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();

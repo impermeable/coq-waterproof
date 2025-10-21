@@ -47,13 +47,13 @@ Local Ltac2 wp_enough (new_goal : constr) :=
 (** Attempts to prove that proposed goal is enough to show current goal,
   given an additional lemma that has to be used in said proof.
   If succesful, replaces current goal by proposed goal. *)
-Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
+Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   let err_msg := concat_list
     [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
   match Control.case (fun () =>
     let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by
-      (rwaterprove 5 true Main [xtr_lemma] []))
+      (rwaterprove 5 true Main xtr_lemmas xtr_dbs))
   with
   | Val _ => ()
   | Err (FailedToProve _) => throw err_msg
@@ -62,8 +62,8 @@ Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemma : constr) :=
 
 (** Adaptation of [core_wp_enough_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Local Ltac2 wp_enough_by (claim : constr) (xtr_lemma : constr) :=
-  wrapper_core_by_tactic (core_wp_enough_by claim) xtr_lemma.
+Ltac2 wp_enough_by (claim : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  wrapper_core_by_tactic (core_wp_enough_by claim) xtr_lemmas xtr_dbs.
 
 (** Adaptation of [core_wp_assert_by] that allows user to use mathematical statements themselves
   instead of references to them as extra information for the automation system.
@@ -80,11 +80,6 @@ Local Ltac2 wp_enough_by_admit (claim : constr) :=
 Ltac2 Notation "It" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough statement.
-
-
-Ltac2 Notation "By" xtr_lemma(lconstr) "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
-  panic_if_goal_wrapped ();
-  wp_enough_by statement xtr_lemma.
 
 Ltac2 Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();

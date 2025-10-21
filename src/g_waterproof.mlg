@@ -79,6 +79,7 @@ let () = Procq.set_keyword_state (
     (CLexer.add_keyword (
     (CLexer.add_keyword (
     (CLexer.add_keyword (
+    (CLexer.add_keyword (
     CLexer.add_keyword (Procq.get_keyword_state()) "and"
     ) "as")
     ) "hold")
@@ -86,6 +87,7 @@ let () = Procq.set_keyword_state (
     ) "it")
     ) "or")
     ) "we")
+    ) "that")
     )
 }
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF

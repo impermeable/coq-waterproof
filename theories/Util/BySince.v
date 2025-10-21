@@ -71,7 +71,7 @@ Try `Since "; of_constr x; of_string " ...` instead."]
   is used in a new error that is thrown.
 *)
 
-Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
+Ltac2 since_framework (by_tactic : constr list -> hint_db_name list -> unit) (claimed_cause : constr) :=
   (* first, check if [claimed_cause] is a statement. *)
   check_if_not_reference claimed_cause;
   (* Wrap in is_true if needed *)
@@ -93,7 +93,7 @@ Ltac2 since_framework (by_tactic : constr -> unit) (claimed_cause : constr) :=
     (* use proof of [claimed_cause] in [by_tactic] *)
     let cause := Control.hyp id_cause in
     match Control.case (fun () =>
-      by_tactic cause)
+      by_tactic [cause] [])
     with
     | Val _ => clear $id_cause
     | Err (FailedToUse _) =>
@@ -111,35 +111,36 @@ Ltac2 unseal_lemma (xtr_lemma : constr) : ident :=
   assert $unsealed_statement as $aux_id;
   Control.focus 1 1 (fun () => exact $xtr_lemma);
   aux_id.
-
+Waterproof Disable Filter Errors.
 (** Wrapper for the main functionality of 'By ...'-tactics,
   such that the main fucntionality can be reused in 'Since ...'-tactics.
 
   Checks whether [xtr_lemma] is not a statement (i.e. not a Prop/Set/Type) and
   catches [(Waterprove.)FailedToUse] errors to turn them into user-readable errors. *)
-Ltac2 wrapper_core_by_tactic (by_tactic : constr -> unit) (xtr_lemma : constr) :=
-  check_if_not_statement xtr_lemma;
+Ltac2 wrapper_core_by_tactic (by_tactic : constr list -> hint_db_name list -> unit)
+  (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  List.iter check_if_not_statement xtr_lemmas;
   (* check if necessary to unseal. Because we are adding to the local
     hypothesis if we need to unseal, this interferes with our
     capability to check whether a lemma is used... *)
   (* TODO: does this need to move away from here? *)
-  let xtr_lemma_contains_seal :=
-    match! (Constr.type xtr_lemma) with
-    | context [seal _ _ ] => true
-    | _ => false
-    end in
-  let (opt_id, aux_lemma) :=
+  let unseal_and_record (xtr_lemma : constr) :=
+    (let xtr_lemma_contains_seal :=
+      match! (Constr.type xtr_lemma) with
+      | context [seal _ _ ] => true
+      | _ => false
+      end in
     if xtr_lemma_contains_seal then
-      let aux_id := unseal_lemma xtr_lemma in
-      (Some aux_id, Control.hyp aux_id)
-    else (None, xtr_lemma) in
-  match Control.case (fun () => by_tactic aux_lemma) with
+      (let aux_id := unseal_lemma xtr_lemma in
+      (Some aux_id, Control.hyp aux_id))
+    else (None, xtr_lemma))
+    in
+  let unsealed_and_recorded := List.map unseal_and_record xtr_lemmas in
+  let (opt_ids, aux_lemmas) := List.split unsealed_and_recorded in
+  match Control.case (fun () => by_tactic aux_lemmas xtr_dbs) with
   | Val _ => ()
   | Err (FailedToUse _) => throw (concat_list
-      [of_string "Could not verify this follows from "; of_constr xtr_lemma; of_string "."])
+      [of_string "Could not verify this follows from the provided reasons."])
   | Err exn => Control.zero exn
   end;
-  match opt_id with
-  | Some id => Std.clear [id]
-  | _ => ()
-  end.
+  Std.clear (List.map_filter (fun id => id) opt_ids).

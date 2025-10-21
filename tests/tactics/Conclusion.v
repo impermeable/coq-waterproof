@@ -141,7 +141,7 @@ Proof.
     reflexivity.
     assert_fails_with_string
     (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
-"Could not verify this follows from test_by_we_conclude_1.".
+"Could not verify this follows from the provided reasons.".
 Abort.
 
 (** Additional tests 'By ...' clause.  *)
