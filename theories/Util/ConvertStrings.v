@@ -27,7 +27,7 @@ From Stdlib Require Import List.
 Import ListNotations.
 Open Scope list_scope.
 
-Ltac2 rocq_byte_to_ltac2_int (b : constr) :=
+Local Ltac2 rocq_byte_to_ltac2_int (b : constr) :=
   lazy_match! b with
     | x00 => 0
     | x01 => 1
@@ -289,7 +289,7 @@ Ltac2 rocq_byte_to_ltac2_int (b : constr) :=
 
 Ltac2 Type exn ::= [RocqStringConversionError (message)].
 
-Ltac2 rec rocq_byte_list_to_ltac2_int_list (ls : constr) :=
+Local Ltac2 rec rocq_byte_list_to_ltac2_int_list (ls : constr) :=
   lazy_match! Constr.type ls with
   | list byte =>
     match! (eval cbn in $ls) with
@@ -302,6 +302,18 @@ Ltac2 rec rocq_byte_list_to_ltac2_int_list (ls : constr) :=
   | _ => Control.zero (RocqStringConversionError (Message.of_string "Expected a list of bytes."))
   end.
 
+(**
+  Convert a Galinna term of type [string] into an Ltac2 string.
+
+  Arguments:
+  - [c]: A Galinna term of type [string].
+
+  Returns:
+  - An Ltac2 string corresponding to the input Galinna string.
+
+  Throws:
+  - [RocqStringConversionError]: If the input is not a valid Galinna string.
+*)
 Ltac2 rocq_string_to_ltac2_string (c : constr) :=
   let ls := constr:(list_byte_of_string $c) in
   let int_ls := rocq_byte_list_to_ltac2_int_list ls in
