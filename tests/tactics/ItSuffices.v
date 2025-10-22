@@ -137,3 +137,78 @@ Proof.
   It holds that true.
   Since true it suffices to show that b.
 Abort.
+
+(** Test 14: Multiple reasons for it suffices *)
+
+Local Parameter P Q R T : Prop.
+Local Parameter HPQ : P -> Q.
+Local Parameter HQR : Q -> R.
+Local Parameter HRT : R -> T.
+
+Goal T.
+Proof.
+By HPQ, HQR and HRT it suffices to show that P.
+Abort.
+
+(** Test 15: Multiple reasons, but one is also a
+  local assumption, using the local assumption. *)
+
+Goal (P -> Q) -> T.
+Proof.
+  intro H.
+  By H, HQR and HRT it suffices to show that P.
+Abort.
+
+(** Test 16: Multiple reasons, but one is also a
+  local assumption, using the external reason. *)
+
+Goal (P -> Q) -> T.
+Proof.
+  intro H.
+  By HPQ, HQR and HRT it suffices to show that P.
+Abort.
+
+(** Test 17: Using an external database as a reason. *)
+
+Local Parameter U V : Prop.
+Local Parameter HUV : U -> V.
+Local Parameter HVP : V -> P.
+
+Local Create HintDb my_reason.
+From Stdlib Require Import String.
+
+Notation "'my' 'reason'" := "my_reason"%string.
+Hint Resolve HUV : my_reason.
+
+Notation "'my' 'other' 'reason'" := "my_other_reason"%string.
+Hint Resolve HVP : my_other_reason.
+
+Goal V.
+Proof.
+By my reason it suffices to show that U.
+Abort.
+
+(** Test 18: Using two extra databases as a reason, with multiple databases. *)
+
+Goal P.
+By my reason and my other reason it suffices to show that U.
+Abort.
+
+(** Test 19: Using two extra databases and multiple lemmas as reasons *)
+
+Goal R.
+By my reason, HQR, my other reason and HPQ it
+  suffices to show that U.
+Abort.
+
+(** Test 20: Fails when one of the reasons is not helpful *)
+
+Waterproof Enable Logging.
+Waterproof Enable Redirect Errors.
+
+Goal R.
+assert_fails_with_string
+  (fun () => By my reason, my other reason,
+    HPQ, HQR and HRT it suffices to show that U)
+  "Could not verify this follows from the provided reasons.".
+Abort.
