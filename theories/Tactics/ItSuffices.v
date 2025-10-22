@@ -62,8 +62,24 @@ Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemmas : constr list) (xt
 
 (** Adaptation of [core_wp_enough_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Ltac2 wp_enough_by (claim : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+Local Ltac2 wp_enough_by (claim : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   wrapper_core_by_tactic (core_wp_enough_by claim) xtr_lemmas xtr_dbs.
+
+(**
+  Proves that proposed goal is enough to show current goal.
+
+  Arguments:
+  - [claim]: proposed goal.
+  - [xtr_lemmas]: list of extra lemmas that can be used in the proof.
+  - [xtr_dbs]: list of extra hint databases to use in the proof.
+
+  Throws:
+  - [FailedToProve] if [rwaterprove] fails to prove that [claim] is enough to show current goal using the specified lemmas and hint databases.
+  - [FailedToUse] if [rwaterprove] fails to use a lemma in the proof while it should have used it.
+*)
+Ltac2 wp_enough_by_with_checks (claim : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  panic_if_goal_wrapped ();
+  wp_enough_by claim xtr_lemmas xtr_dbs.
 
 (** Adaptation of [core_wp_assert_by] that allows user to use mathematical statements themselves
   instead of references to them as extra information for the automation system.

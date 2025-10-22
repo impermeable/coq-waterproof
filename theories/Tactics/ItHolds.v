@@ -118,7 +118,7 @@ Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemma
 
 (** Adaptation of [core_wp_assert_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+Local Ltac2 wp_assert_by (claim : constr) (label : ident option) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   wrapper_core_by_tactic (core_wp_assert_by claim label) xtr_lemmas xtr_dbs;
   (* Print suggestion on how to use new statement. *)
   HelpNewHyp.suggest_how_to_use claim label.
@@ -146,7 +146,9 @@ Local Ltac2 wp_assert_since (claim : constr) (label : ident option) (xtr_claim :
     - (fatal) if [rwaterprove] fails to prove the claim using the specified lemma.
     - [[label] is already used], if there is already another hypothesis with identifier [label].
 *)
-
+Ltac2 wp_assert_by_with_checks (claim : constr) (label : ident option) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  panic_if_goal_wrapped ();
+  wp_assert_by claim label xtr_lemmas xtr_dbs.
 
 
 (** Attempts to prove that proposed goal is enough to show current goal,

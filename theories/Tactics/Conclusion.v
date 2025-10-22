@@ -71,7 +71,7 @@ Local Ltac2 target_equals_goal_judgementally (target : constr) :=
 *)
 
 
-Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
+Local Ltac2 guarantee_stated_goal_matches (sttd_goal : constr) :=
   let sttd_goal := correct_type_by_wrapping sttd_goal in
   let sttd_goal := (eval unfold subset_type, ge_op, R_ge_type, nat_ge_type, gt_op, R_gt_type, nat_gt_type in $sttd_goal) in
   let current_goal := Control.goal () in
@@ -145,7 +145,7 @@ Local Ltac2 core_conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name 
 
 (** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Ltac2 conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+Local Ltac2 conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   wrapper_core_by_tactic core_conclude_by xtr_lemmas xtr_dbs.
 
 (** Adaptation of [core_conclude_by] that allows user to use mathematical statements themselves
@@ -164,7 +164,7 @@ Local Ltac2 conclude_since (xtr_claim : constr) :=
   Does:
     - Removes the wrapper [StateGoal.Wrapper G].
 *)
-Ltac2 unwrap_state_goal_no_check () :=
+Local Ltac2 unwrap_state_goal_no_check () :=
   lazy_match! goal with
     | [|- StateGoal.Wrapper _] => apply StateGoal.wrap
     | [|- VerifyGoal.Wrapper _] => apply VerifyGoal.wrap
@@ -203,12 +203,19 @@ Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
 
   Arguments:
     - [target_goal: constr], expression that should equal the goal under focus.
-    - [xtr_lemma: constr], lemma that can be and has to be used for proof of [target_goal].
+    - [xtr_lemmas: constr list], extra lemmas that can be used for proof of [target_goal].
+    - [xtr_dbs: hint_db_name list], extra hint databases that can be used for proof of [target_goal].
 
   Raises exceptions:
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
+Ltac2 wp_conclude_by_with_checks (target_goal : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  unwrap_state_goal_no_check ();
+  panic_if_goal_wrapped ();
+  guarantee_stated_goal_matches target_goal;
+  conclude_by xtr_lemmas xtr_dbs.
+
 Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();

@@ -57,12 +57,8 @@ Ltac2 Notation "By"
   let xtr_dbs := List.filter (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
   let xtr_dbs := List.map rocq_string_to_ltac2_string xtr_dbs in
   if String.equal x "it holds" then
-    panic_if_goal_wrapped();
-    (wp_assert_by claim label xtr_lemmas xtr_dbs)
+    (wp_assert_by_with_checks claim label xtr_lemmas xtr_dbs)
   else if String.equal x "we conclude" then
-    unwrap_state_goal_no_check ();
-    panic_if_goal_wrapped();
-    guarantee_stated_goal_matches claim;
-    (conclude_by xtr_lemmas xtr_dbs)
+    (wp_conclude_by_with_checks claim xtr_lemmas xtr_dbs)
   else
-    (wp_enough_by claim xtr_lemmas xtr_dbs).
+    (wp_enough_by_with_checks claim xtr_lemmas xtr_dbs).
