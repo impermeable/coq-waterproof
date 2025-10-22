@@ -23,6 +23,7 @@ Ltac2 Type exn ::=  [ Inner
                     | FailedToProve (constr) ].
 
 Require Import Waterproof.
+From Waterproof Require Import Constr.
 Require Import Notations.Sets.
 
 Require Import Ltac2.Bool.
@@ -52,8 +53,9 @@ Local Ltac2 contains_shielded_pattern (): bool :=
 Close Scope subset_scope.
 
 (** Internal versions of [waterprove] and [rwaterprove]. *)
-Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (dbs: hint_db_name list) (db_type: database_type): unit  :=
-  waterprove_ffi depth (shield && contains_shielded_pattern ()) lems dbs db_type.
+Local Ltac2 _waterprove (depth: int) (shield: bool) (lems: constr list) (dbs: hint_db_name list) (db_type: database_type): unit  :=
+  waterprove_ffi depth (shield && contains_shielded_pattern ())
+  (List.map (fun z => (fun () => z)) lems) dbs db_type.
 
 Local Ltac2 _risky_rwaterprove (depth: int) (shield: bool) (lems: (unit -> constr) list) (dbs : hint_db_name list) (db_type: database_type) (must : constr list) (forbidden : constr list) : unit  :=
   rwaterprove_ffi depth (shield && contains_shielded_pattern ()) lems dbs db_type must forbidden.
@@ -66,7 +68,7 @@ Local Ltac2 in_hypotheses (x : constr) :=
   | [ h_id : _ |- _ ] =>
     (* check if xtr_lemma matches h *)
     let h := Control.hyp h_id in
-    match Constr.equal x h with
+    match check_constr_equal (Constr.type x) (Constr.type h) with
     | false => Control.zero Inner
     | true => true
     end
@@ -86,7 +88,7 @@ Local Ltac2 _rwaterprove (depth: int) (shield: bool) (db_type: database_type)
     (* xtr_lemma is not one of the hypotheses, so we can use rwaterprove without risking anomalies. *)
     _risky_rwaterprove depth shield (List.map (fun z => (fun () => z)) xtr_lemmas) xtr_dbs db_type xtr_lemmas []
   | true =>
-    _waterprove depth shield [] xtr_dbs Main
+    _waterprove depth shield xtr_lemmas xtr_dbs Main
   end.
 
 
@@ -97,14 +99,13 @@ Local Ltac2 rec waterprove_iterate_conj (depth: int) (shield: bool)
  (db_type: database_type) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   (* accepts optional extra lemma since it can be called by restricted version
     [rwaterprove_iterate_conj] when extra lemma is no longer required but still available *)
-  let list_lemmas := List.map (fun z => (fun () => z)) xtr_lemmas in
   lazy_match! goal with
   (* recursion step *)
   | [ |- ?g1 /\ _ ] =>
     split;
     (* Attempt to prove 1st goal *)
     match Control.case (fun () => Control.focus 1 1 (fun () =>
-      _waterprove depth shield list_lemmas xtr_dbs db_type))
+      _waterprove depth shield xtr_lemmas xtr_dbs db_type))
     with
     | Val _ => waterprove_iterate_conj depth shield db_type xtr_lemmas xtr_dbs
     | Err _ => Control.zero (FailedToProve g1)
@@ -113,7 +114,7 @@ Local Ltac2 rec waterprove_iterate_conj (depth: int) (shield: bool)
   | [ |- _ ] =>
     (* Prove remaining goal. *)
     match Control.case (fun () =>
-      _waterprove depth shield list_lemmas xtr_dbs db_type)
+      _waterprove depth shield xtr_lemmas xtr_dbs db_type)
     with
     | Val _ => ()
     | Err _ => Control.zero (FailedToProve (Control.goal ()))
@@ -141,7 +142,7 @@ Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
     | Err _ =>
       (* failed, could be due to restriction; try to prove without. *)
       match Control.case (fun () => Control.focus 1 1 (fun () =>
-        _waterprove depth shield [] xtr_dbs db_type))
+        _waterprove depth shield xtr_lemmas xtr_dbs db_type))
       with
       | Val _ =>
         (* succesful. prove remaining statements with restriction. *)
@@ -157,9 +158,9 @@ Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
     with
     | Val _ => ()
     | Err _ => (* failed, if due to restricition, give feedback *)
-      (* check if it would work without lemma *)
+      (* check if it would work without restriction *)
       match Control.case (fun () =>
-        _waterprove depth shield [] xtr_dbs db_type)
+        _waterprove depth shield xtr_lemmas xtr_dbs db_type)
       with
       | Err _ => Control.zero (FailedToProve (Control.goal ()))
       | Val _ => (* problem is the extra lemma *)
@@ -215,11 +216,12 @@ Ltac2 rwaterprove (depth: int) (shield: bool) (db_type: database_type) (xtr_lemm
     with
     | Val _ => ()
     | Err _ => (* failed, if due to restricition, give feedback *)
-      (* check if it would work without lemma *)
+      (* check if it would work without restriction *)
       match Control.case (fun () =>
-        _waterprove depth shield [] xtr_dbs db_type)
+        _waterprove depth shield xtr_lemmas xtr_dbs db_type)
       with
-      | Err _ => Control.zero (FailedToProve (Control.goal ()))
+      | Err _ =>
+        Control.zero (FailedToProve (Control.goal ()))
       | Val _ => (* problem is the extra lemma *)
         Control.zero (FailedToUse xtr_lemmas)
       end

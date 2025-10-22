@@ -401,3 +401,31 @@ Proof.
   Use x := 6 in (H1).
   Fail It holds that (6 >= 5 -> True) as (H1).
 Abort.
+
+(** Test 29: Use multiple hypothesis *)
+
+Local Parameter a b c : Prop.
+Local Parameter Ha : a.
+Local Parameter Hab : a -> b.
+Local Parameter Hbc : b -> c.
+
+Goal a -> b.
+Proof.
+intro H.
+By Ha, Hab and Hbc it holds that c.
+Abort.
+
+Goal a -> b.
+Proof.
+intro H.
+By H, Hab and Hbc it holds that c.
+Abort.
+
+Waterproof Enable Redirect Errors.
+Waterproof Enable Logging.
+
+Goal a -> b.
+Proof.
+assert_fails_with_string (fun () => By Ha, Hab and Hbc it holds that b)
+"Could not verify this follows from the provided reasons.".
+Abort.

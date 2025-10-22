@@ -25,7 +25,7 @@ Require Import Waterproof.Tactics.
 Require Import Waterproof.Util.Assertions.
 
 (* -------------------------------------------------------------------------- *)
-(** * Testcases for [It suffices to show that ...] 
+(** * Testcases for [It suffices to show that ...]
   Variant without the [by] clause.
 *)
 
@@ -100,10 +100,10 @@ Proof.
   Fail By h it suffices to show that A.
 Abort.
 
-(* Test 9: unable to show goal if lemma is superfluous. *)
+(* Test 9: this passes, because the type of g is the same as the type of h. *)
 Goal B.
   pose g.
-  Fail By h it suffices to show that A.
+  By h it suffices to show that A.
 Abort.
 
 
