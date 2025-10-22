@@ -72,23 +72,10 @@ let () = add_scope "open_lconstr" (fun arg ->
 (* Doing this enables parsing the mathematical expressions without parentheses *)
 (* The cost of this is that these words are no longer allowed to be variables *)
 {
-let () = Procq.set_keyword_state (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    CLexer.add_keyword (Procq.get_keyword_state()) "and"
-    ) "as")
-    ) "hold")
-    ) "holds")
-    ) "it")
-    ) "or")
-    ) "we")
-    ) "that")
-    )
+let () = Mltop.add_init_function "coq-waterproof.plugin" @@ fun () ->
+    Procq.set_keyword_state
+      (List.fold_left CLexer.add_keyword (Procq.get_keyword_state())
+      ["and"; "as"; "hold"; "holds"; "it"; "or"; "we"; "that"])
 }
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
