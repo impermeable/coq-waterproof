@@ -46,68 +46,42 @@ Definition is_closed (A : R -> Prop) := is_open (complement A).
 (** Notations *)
 Notation "B( p , r )" := (open_ball p r) (at level 68, format "B( p ,  r )").
 
-Local Ltac2 unfold_open_ball (statement : constr) := eval unfold open_ball,
-  as_subset in $statement.
+Waterproof Register Unfold
+  "B" open_ball; "Definition open ball".
 
-Ltac2 Notation "Expand" "the" "definition" "of" "B" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "B") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "B" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "B") false true x.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "open ball ") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "open ball ") false true x.
+Waterproof Register Unfold
+  "open" "ball" open_ball; "Definition open ball".
 
 Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 69).
 
 Notation "a 'is' 'an' 'interior' 'point' 'of' A" := (is_interior_point a A) (at level 69, only parsing).
 
-Local Ltac2 unfold_is_interior_point (statement : constr) := eval unfold is_interior_point in $statement.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_interior_point (Some "interior point") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_interior_point (Some "interior point") false true x.
+Waterproof Register Unfold
+  "interior" "point" is_interior_point; "Definition interior point".
 
 Notation "A 'is' '_open_'" := (is_open A) (at level 69).
 
 Notation "A 'is' 'open'" := (is_open A) (at level 69, only parsing).
 
-Local Ltac2 unfold_is_open (statement : constr) := eval unfold is_open in $statement.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "open" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_open (Some "open") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_open (Some "open") false true x.
+Waterproof Register Unfold
+  "open" is_open; "Definition open".
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
 Notation "'ℝ' '\' A" := (complement A) (at level 0, only parsing).
 
-Local Ltac2 unfold_complement (statement : constr) := eval unfold complement,
-  as_subset in $statement.
+Waterproof Register Unfold
+  "complement" complement; "Definition complement".
 
-Ltac2 Notation "Expand" "the" "definition" "of" "ℝ\" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "ℝ\") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "ℝ\" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "ℝ\") false true x.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "complement" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "complement") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "complement" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "complement") false true x.
+Waterproof Register Unfold
+  "ℝ\" complement; "Definition complement".
 
 Notation "A 'is' '_closed_'" := (is_closed A) (at level 69).
 
 Notation "A 'is' 'closed'" := (is_closed A) (at level 69, only parsing).
 
-Local Ltac2 unfold_is_closed (statement : constr) := eval unfold is_closed in $statement.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "closed" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_closed (Some "closed") true true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_closed (Some "closed") false true x.
+Waterproof Register Unfold
+  "closed" is_closed; "Definition closed".
 
 (** Hints *)
 Lemma zero_in_interval_closed_zero_open_one : (0 ∈ [0,1)).
