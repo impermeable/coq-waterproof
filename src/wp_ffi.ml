@@ -121,26 +121,28 @@ let feedback_level = make_repr of_feedback_level to_feedback_level
 
 (* Exports {! Waterprove.waterprove} to Ltac2 *)
 let () =
-  define "waterprove" (int @-> bool @-> (list (thunk constr)) @-> database_type @-> tac unit) @@
-    fun depth shield lems database_type ->
+  define "waterprove" (int @-> bool @-> (list (thunk constr)) @-> list string @-> database_type @-> tac unit) @@
+    fun depth shield lems dbs database_type ->
       begin
         waterprove
           depth
           ~shield
           (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          dbs
           database_type
       end
 
 (* Exports {! Waterprove.rwaterprove} to Ltac2 *)
 let () =
-  define "rwaterprove" (int @-> bool @-> (list (thunk constr))
+  define "rwaterprove" (int @-> bool @-> (list (thunk constr)) @-> list string
       @-> database_type @-> list constr @-> list constr @-> tac unit) @@
-    fun depth shield lems database_type must_use forbidden ->
+    fun depth shield lems dbs database_type must_use forbidden ->
       begin
         rwaterprove
           depth
           ~shield
           (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          dbs
           database_type
           must_use
           forbidden

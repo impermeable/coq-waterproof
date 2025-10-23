@@ -24,6 +24,7 @@ Require Import Waterproof.Tactics.Help.
 Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 Require Import Waterproof.Notations.Sets.
+Require Import Waterproof.Tactics.By.
 Open Scope subset_scope.
 
 Waterproof Enable Hypothesis Help.
