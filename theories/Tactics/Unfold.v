@@ -284,13 +284,6 @@ Ltac2 wp_unfold (unfold_method: constr -> constr)
 
 (* TODO: Refactor unfold system to be more maintainable *)
 
-(* Tactic notation for unfolding generic Gallina terms, not notations.
-  For an example of how to used [unfold_in_statement] to unfold notations,
-  see [tests/tactics/Unfold.v] *)
-Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-
-  wp_unfold (eval_unfold targets) None true true true.
-
 Ltac2 name_from_action (ua : unfold_action) : string :=
   match ua with
   | Unfold name _ => name
@@ -328,19 +321,14 @@ Ltac2 wp_unfold_by_ref (r : reference) (notify_if_not_present : bool) :=
   Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
   Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
 *)
-Ltac2 Notation "Unfold" "the" "definition" "of" x(tactic) :=
+Ltac2 Notation "Expand" x(tactic) :=
   wp_unfold_by_string x true;
   throw (of_string "Remove this line in the final version of your proof.").
 
 (**
   Unfold all occurences of all registered definitions and alternative characterizations.
 *)
-Ltac2 Notation "Unfold" "All" :=
+Ltac2 Notation "Expand" "All" :=
   let ls := get_unfold_references_ffi () in
   List.iter (fun l => wp_unfold_by_ref l false) ls;
   throw (of_string "Remove this line in the final version of your proof.").
-
-
-(* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-  wp_unfold (eval_unfold targets) None false true false.

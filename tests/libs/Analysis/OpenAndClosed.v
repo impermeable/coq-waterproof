@@ -42,7 +42,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of open)
+  (fun () => Expand open)
 "Remove this line in the final version of your proof.")
   Info
 ["Definition open";
@@ -57,7 +57,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of open)
+  (fun () => Expand open)
 "Remove this line in the final version of your proof.")
   Info
 ["'Definition open' does not appear in any statement."].

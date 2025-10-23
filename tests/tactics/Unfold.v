@@ -30,6 +30,8 @@ Waterproof Enable Redirect Errors.
 
 Definition foo : nat := 0.
 
+Waterproof Register Unfold "foo" foo ; "Definition of foo".
+
 (* Tests general unfolding: *)
 
 (* Test 1: unfold term in goal, and throws an error suggesting
@@ -39,10 +41,11 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo)
+  (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Hint, replace with: We need to show that (0 = 1)."].
+["Definition of foo";
+"Hint, replace with: We need to show that (0 = 1)."].
 Abort.
 
 (* Test 2: unfold term in hypothese and goal, and throws an error suggesting
@@ -53,10 +56,11 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo)
+  (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Hint, insert: We need to show that (0 = 1).";
+["Definition of foo";
+"Hint, insert: We need to show that (0 = 1).";
 "Hint, insert: It holds that (0 = 0).";
 "Hint, insert: It holds that (0 = 2)."].
 Abort.
@@ -75,10 +79,11 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo)
+  (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Hint, insert: We need to show that (0 = 1).";
+["Definition of foo";
+"Hint, insert: We need to show that (0 = 1).";
 "Hint, insert: It holds that (0 = 0).";
 "Hint, insert: It holds that (0 = 2)."].
 Abort.
@@ -89,10 +94,10 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of foo)
+  (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Definition does not appear in any statement."].
+["'Definition of foo' does not appear in any statement."].
 Abort.
 
 Local Parameter P Q R : Prop.
@@ -109,7 +114,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of notation for P)
+  (fun () => Expand notation for P)
 "Remove this line in the final version of your proof.")
   Warning
 ["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
@@ -127,7 +132,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of notation for P)
+  (fun () => Expand notation for P)
 "Remove this line in the final version of your proof.")
   Warning
 ["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
@@ -146,7 +151,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of notation for P)
+  (fun () => Expand notation for P)
 "Remove this line in the final version of your proof.")
   Info
 ["Alternative characterization of P";
@@ -161,7 +166,7 @@ Proof.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of notation for P)
+  (fun () => Expand notation for P)
 "Remove this line in the final version of your proof.")
   Info
 ["Alternative characterization of P";
@@ -189,7 +194,7 @@ intros.
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of notation for P)
+  (fun () => Expand characterization of P)
 "Remove this line in the final version of your proof.")
   Info
 ["Characterization of P";
@@ -219,7 +224,7 @@ intro H.
 assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of infimum)
+  (fun () => Expand infimum)
 "Remove this line in the final version of your proof.")
   Info
 ["Definition infimum";
@@ -240,7 +245,7 @@ intro H.
 assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold the definition of supremum)
+  (fun () => Expand supremum)
 "Remove this line in the final version of your proof.")
   Info
 ["Definition supremum";
@@ -261,7 +266,7 @@ intro H.
 assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Unfold All)
+  (fun () => Expand All)
 "Remove this line in the final version of your proof.")
   Info
 [
@@ -279,40 +284,3 @@ assert_feedback_with_strings
 Abort.
 
 Close Scope R_scope.
-Open Scope nat_scope.
-
-(** Check unfolding method that does not throw an error.
-  Meant for internal use by custom Waterproof editor. *)
-
-(** Non-framework version. *)
-
-(* Test 16: unfold term in hypotheses and goal without throwing an error. *)
-Goal (foo = 0) -> (foo = 2) -> (foo = 1).
-Proof.
-  intros.
-  _internal_ Expand the definition of foo.
-Abort.
-
-(* Test 17: unfold fails to unfold term if no statement with term. *)
-Goal False.
-Proof.
-  _internal_ Expand the definition of foo.
-Abort.
-
-(** Framework version:  *)
-
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "foo2" :=
-  wp_unfold unfold_foo (Some "foo2") false true false.
-
-(* Test 18: unfold term in hypotheses and goals. *)
-Goal (foo = 0) -> (foo = 2) -> (foo = 1).
-Proof.
-  intros.
-  _internal_ Expand the definition of foo2.
-Abort.
-
-(* Test 19: fails to unfold term if no statements with term. *)
-Goal False.
-Proof.
-   _internal_ Expand the definition of foo2.
-Abort.
