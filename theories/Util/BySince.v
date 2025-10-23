@@ -111,7 +111,7 @@ Ltac2 unseal_lemma (xtr_lemma : constr) : ident :=
   assert $unsealed_statement as $aux_id;
   Control.focus 1 1 (fun () => exact $xtr_lemma);
   aux_id.
-Waterproof Disable Filter Errors.
+
 (** Wrapper for the main functionality of 'By ...'-tactics,
   such that the main fucntionality can be reused in 'Since ...'-tactics.
 

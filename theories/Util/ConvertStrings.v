@@ -19,11 +19,8 @@
 Require Import Ltac2.Ltac2.
 From Stdlib Require Import String.
 From Corelib Require Import Byte.
-
-(* Open Scope byte_scope. *)
-
-
 From Stdlib Require Import List.
+
 Import ListNotations.
 Open Scope list_scope.
 
