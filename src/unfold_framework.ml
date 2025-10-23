@@ -77,12 +77,13 @@ let add_to_unfold_map (s : string) (id : GlobRef.t) : unit =
   Lib.add_leaf (declare_unfold_map (StringMap.add s id !wp_unfold_map))
 
 let add_to_unfold_tbl (id : GlobRef.t) (ua : unfold_action) : unit =
-  Hashtbl.add !wp_unfold_tbl id ua;
+  let new_table = Hashtbl.copy !wp_unfold_tbl in
+  Hashtbl.add new_table id ua;
   (* Adding a copy here, because otherwise we seem to get strange behavior when
      one adds definitions later in a file: earlier in a file it will already use
      to try the new definition and failing because it is not in the context yet.
      TODO: check with an expert what is best practice here. *)
-  Lib.add_leaf (declare_unfold_tbl (Hashtbl.copy !wp_unfold_tbl))
+  Lib.add_leaf (declare_unfold_tbl new_table)
 
 let extract_def (s : string) : GlobRef.t option =
   StringMap.find_opt s !wp_unfold_map
