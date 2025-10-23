@@ -17,12 +17,12 @@
 (******************************************************************************)
 
 (**
-  Is automation shield enabled ? 
+  Is automation shield enabled ?
 *)
 val automation_shield : bool ref
 
 (**
-  Do we want to debug the automation ?   
+  Do we want to debug the automation ?
 *)
 val automation_debug : bool ref
 
@@ -44,12 +44,14 @@ val print_rewrite_hints: bool ref
     - [depth] ([int]): max depth of the proof search
     - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
     - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
+    - [dbs] ([hint_db_name list]): list of additional hint databases to use
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
 val waterprove :
   int ->
   ?shield:bool ->
   Tactypes.delayed_open_constr list ->
+  Hints.hint_db_name list ->
   Hint_dataset_declarations.database_type ->
   unit Proofview.tactic
 
@@ -62,6 +64,7 @@ val waterprove :
     - [depth] ([int]): max depth of the proof search
     - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
     - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
+    - [dbs] ([hint_db_name list]): list of additional hint databases to use
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
     - [must_use] ([string list]): list of hints that have to be used during the automatic solving
     - [forbidden] ([string list]): list of hints that must not be used during the automatic solving
@@ -70,6 +73,7 @@ val rwaterprove :
   int ->
   ?shield:bool ->
   Tactypes.delayed_open_constr list ->
+  Hints.hint_db_name list ->
   Hint_dataset_declarations.database_type ->
   Evd.econstr list ->
   Evd.econstr list ->

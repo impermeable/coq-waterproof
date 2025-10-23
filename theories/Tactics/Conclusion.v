@@ -131,12 +131,12 @@ Local Ltac2 conclude (postpone : bool) :=
       end.
 
 (** Attempts to solve current goal using additional lemma which has to be used. *)
-Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
+Local Ltac2 core_conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   let err_msg (g : constr) := concat_list
     [of_string "Could not verify that "; of_constr g; of_string "."]
   in
   match Control.case (fun () =>
-    rwaterprove 5 true Main xtr_lemma)
+    rwaterprove 5 true Main xtr_lemmas xtr_dbs)
   with
   | Val _ => ()
   | Err (FailedToProve g) => throw (err_msg g)
@@ -145,8 +145,8 @@ Local Ltac2 core_conclude_by (xtr_lemma : constr) :=
 
 (** Adaptation of [core_conclude_by] that turns the [FailedToUse] errors
   which might be thrown into user readable errors. *)
-Local Ltac2 conclude_by (xtr_lemma : constr) :=
-  wrapper_core_by_tactic core_conclude_by xtr_lemma.
+Local Ltac2 conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
+  wrapper_core_by_tactic core_conclude_by xtr_lemmas xtr_dbs.
 
 (** Adaptation of [core_conclude_by] that allows user to use mathematical statements themselves
   instead of references to them as extra information for the automation system.
@@ -203,17 +203,18 @@ Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
 
   Arguments:
     - [target_goal: constr], expression that should equal the goal under focus.
-    - [xtr_lemma: constr], lemma that can be and has to be used for proof of [target_goal].
+    - [xtr_lemmas: constr list], extra lemmas that can be used for proof of [target_goal].
+    - [xtr_dbs: hint_db_name list], extra hint databases that can be used for proof of [target_goal].
 
   Raises exceptions:
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "By" xtr_lemma(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
+Ltac2 wp_conclude_by_with_checks (target_goal : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
-  conclude_by xtr_lemma.
+  conclude_by xtr_lemmas xtr_dbs.
 
 Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();

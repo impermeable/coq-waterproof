@@ -75,7 +75,7 @@ let () = add_scope "open_lconstr" (fun arg ->
 let () = Mltop.add_init_function "coq-waterproof.plugin" @@ fun () ->
     Procq.set_keyword_state
       (List.fold_left CLexer.add_keyword (Procq.get_keyword_state())
-      ["and"; "as"; "hold"; "holds"; "it"; "or"; "we"])
+      ["and"; "as"; "hold"; "holds"; "it"; "or"; "we"; "that"])
 }
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
