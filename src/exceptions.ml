@@ -179,3 +179,12 @@ let wp_error_handler (e : exn) : Pp.t option =
   else None
 
 let () = CErrors.register_handler wp_error_handler
+
+let check_feedback_level_Ltac2_to_Ocaml (lvl: Feedback.level) (n: int) : bool =
+  match n with
+  | 0 -> lvl == Debug
+  | 1 -> lvl == Info
+  | 2 -> lvl == Notice
+  | 3 -> lvl == Warning
+  | 4 -> lvl == Error
+  | _ -> throw (CastError "Tried to check a feedback level outside range {0,1,2,3,4}")

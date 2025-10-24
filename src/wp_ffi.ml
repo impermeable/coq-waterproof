@@ -82,22 +82,22 @@ let database_type = make_repr of_database_type to_database_type
 
 (** Converts a {! Feedback.level} into a [valexpr] *)
 let of_feedback_level (feedback_lvl: Feedback.level): valexpr = match feedback_lvl with
-  | Debug -> ValInt (-1)
-  | Info -> ValInt 0
-  | Notice -> ValInt 1
-  | Warning -> ValInt 2
-  | Error -> ValInt 3
+  | Debug -> ValInt 0
+  | Info -> ValInt 1
+  | Notice -> ValInt 2
+  | Warning -> ValInt 3
+  | Error -> ValInt 4
 
 (** Converts a [valexpr] into a {! Feedback.level} *)
 let to_feedback_level (value : valexpr): Feedback.level = match value with
   | ValInt n ->
     let feedback_lvl = match n with
-      | -1 -> Feedback.Debug
-      | 0 -> Info
-      | 1 -> Notice
-      | 2 -> Warning
-      | 3 -> Error
-      | _ -> throw (CastError "cannot cast an [int] outside {-1, 0, 1, 2, 3} into a [Feedback.level]")
+      | 0 -> Feedback.Debug
+      | 1 -> Info
+      | 2 -> Notice
+      | 3 -> Warning
+      | 4 -> Error
+      | _ -> throw (CastError "cannot cast an [int] outside {0, 1, 2, 3, 4} into a [Feedback.level]")
     in feedback_lvl
   | _ -> throw (CastError "cannot cast something different from an [int] into a [Feedback.level]")
 
@@ -175,3 +175,11 @@ let () =
 let () =
   define "get_feedback_log_external" (feedback_level @-> ret (list pp)) @@
     fun input -> !(feedback_log input)
+
+let () =
+  define "check_feedback_level_Ltac2_to_Ocaml_external" (feedback_level @-> int @-> ret bool) @@
+    check_feedback_level_Ltac2_to_Ocaml
+
+let () =
+  define "feedback_level_round_trip_external" (feedback_level @-> ret feedback_level) @@
+    fun input -> input
