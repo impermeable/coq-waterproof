@@ -113,3 +113,8 @@ val message :
   Check the last warning against a string
 *)
 val get_last_warning : unit -> Pp.t option
+
+(**
+  Purely for testing that passing Feedback levels through the ffi works
+*)
+val check_feedback_level_Ltac2_to_Ocaml : Feedback.level -> int -> bool
