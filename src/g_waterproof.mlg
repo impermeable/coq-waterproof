@@ -194,46 +194,48 @@ END
   open Ltac2_plugin.Tac2entries
   open Unfold_framework
   open Stdarg
+  open Procq.Constr
+
+  type pre_unfold_entry =
+    | PreUnfold
+    | PreApply of Constrexpr.constr_expr
+    | PreRewrite of Constrexpr.constr_expr
+
+  let pr_pre_unfold_entry env sigma ent =
+    let open Pp in
+    match ent with
+    | PreUnfold -> str "unfold"
+    | PreApply e -> str "apply" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
+    | PreRewrite e -> str "rewrite" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
 }
 
+VERNAC ARGUMENT EXTEND unfold_action_entry
+PRINTED BY { pr_pre_unfold_entry env sigma }
+| [ ";" "by" "unfold" ] -> { PreUnfold }
+| [ ";" "by" "apply" constr(e) ] -> { PreApply e }
+| [ ";" "by" "rewrite" constr(e) ] -> { PreRewrite e }
+END
+
 VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
-  | [ "Waterproof" "Register" "Unfold" ne_string_list(s) ref(id) ";" string(name)] => { Vernacextend.(VtSideff ([], VtNow)) }
-    SYNTERP AS notation_data_and_ref
+  | [ "Waterproof" "Register" "Expand" ne_string_list(s) ";"
+      "for" ref(id) ";"
+      "as" string(name)
+      unfold_action_entry_opt(opt_unfold_action) ] => { Vernacextend.(VtSideff ([], VtNow)) }
+    SYNTERP AS notation_data
     {
-      let located_id = Nametab.locate id in
-      (register_unfold s id, located_id, name)
+      register_unfold s id
     } ->
     {
-      let (notation_data, id, name) = notation_data_and_ref in
-      register_notation_interpretation notation_data;
-      register_unfold_entry id (Unfold_entry name)
-    }
-END
-
-VERNAC COMMAND EXTEND RegisterUnfoldRewrite CLASSIFIED AS SIDEFF
-  | [ "Waterproof" "Register" "Unfold" "Rewrite" ne_string_list(s) ref(id) ";" string(name) ";" constr(e)] => { Vernacextend.(VtSideff ([], VtNow)) }
-    SYNTERP AS notation_data_and_ref_and_constr_expr
-    {
       let located_id = Nametab.locate id in
-      (register_unfold s id, located_id, name, e)
-    } ->
-    {
-      let (notation_data, id, name, e) = notation_data_and_ref_and_constr_expr in
       register_notation_interpretation notation_data;
-      register_unfold_entry id (Rewrite_entry (name, e))
-    }
-END
-
-VERNAC COMMAND EXTEND RegisterUnfoldApply CLASSIFIED AS SIDEFF
-  | [ "Waterproof" "Register" "Unfold" "Apply" ne_string_list(s) ref(id) ";" string(name) ";"constr(e)] => { Vernacextend.(VtSideff ([], VtNow)) }
-    SYNTERP AS notation_data_and_ref_and_constr_expr
-    {
-      let located_id = Nametab.locate id in
-      (register_unfold s id, located_id, name, e)
-    } ->
-    {
-      let (notation_data, id, name, e) = notation_data_and_ref_and_constr_expr in
-      register_notation_interpretation notation_data;
-      register_unfold_entry id (Apply_entry (name, e))
+      let ua =
+        begin
+          match opt_unfold_action with
+          | None -> Unfold_entry name
+          | Some PreUnfold -> Unfold_entry name
+          | Some (PreApply e) -> Apply_entry (name, e)
+          | Some (PreRewrite e) -> Rewrite_entry (name, e)
+        end in
+      register_unfold_entry located_id ua
     }
 END

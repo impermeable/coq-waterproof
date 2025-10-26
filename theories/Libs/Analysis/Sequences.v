@@ -379,8 +379,9 @@ Definition is_bounded (a : ℕ → ℝ) :=
 Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 69).
 Notation "a 'is' 'bounded'" := (is_bounded a) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "bounded" is_bounded; "Definition bounded".
+Waterproof Register Expand "bounded";
+  for is_bounded;
+  as "Definition bounded".
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
   ∃ M > 0, ∀ n ∈ ℕ, |a n| ≤ M.
@@ -440,16 +441,18 @@ Definition is_bounded_above (a : ℕ → ℝ) :=
 Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 69).
 Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "bounded" "above" is_bounded_above; "Definition bounded above".
+Waterproof Register Expand "bounded" "above";
+  for is_bounded_above;
+  as "Definition bounded above".
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m ∈ ℝ, ∀ n ∈ ℕ, m ≤ a(n).
 Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 69).
 Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "bounded" "below" is_bounded_below; "Definition bounded below".
+Waterproof Register Expand "bounded" "below";
+  for is_bounded_below;
+  as "Definition bounded below".
 
 (** Convergence to +∞ and -∞. *)
 Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
@@ -461,11 +464,13 @@ Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
 Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
 
-Waterproof Register Unfold
-  "⟶" "∞" diverges_to_plus_infinity; "Definition divergence to infinity".
+Waterproof Register Expand "⟶" "∞";
+  for diverges_to_plus_infinity;
+  as "Definition divergence to infinity".
 
-Waterproof Register Unfold
-  "diverges" "to" "∞" diverges_to_plus_infinity; "Definition divergence to infinity".
+Waterproof Register Expand "diverges" "to" "∞";
+  for diverges_to_plus_infinity;
+  as "Definition divergence to infinity".
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
   ∀ M ∈ ℝ,
@@ -476,10 +481,12 @@ Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).
 Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
 
-Waterproof Register Unfold
-  "⟶" "-∞" diverges_to_minus_infinity; "Definition divergence to minus infinity".
+Waterproof Register Expand "⟶" "-∞";
+  for diverges_to_minus_infinity;
+  as "Definition divergence to minus infinity".
 
-Waterproof Register Unfold
-  "diverges" "to" "-∞" diverges_to_minus_infinity; "Definition divergence to minus infinity".
+Waterproof Register Expand "diverges" "to" "-∞";
+  for diverges_to_minus_infinity;
+  as "Definition divergence to minus infinity".
 
 Close Scope R_scope.

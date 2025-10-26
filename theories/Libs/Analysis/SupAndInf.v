@@ -82,14 +82,16 @@ Notation "M 'is' 'the' 'supremum' 'of' A" := (is_sup A M) (at level 69, only par
 Notation "A 'is' '_bounded' 'from' 'above_'" := (is_bounded_above A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'above'" := (is_bounded_above A) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "bounded" "from" "above" is_bounded_above; "Definition bounded from above".
+Waterproof Register Expand "bounded" "from" "above";
+  for is_bounded_above;
+  as "Definition bounded from above".
 
 Notation "M 'is' 'an' '_upper' 'bound_' 'for' A" := (is_upper_bound A M) (at level 69).
 Notation "M 'is' 'an' 'upper' 'bound' 'for' A" := (is_upper_bound A M) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "upper" "bound" is_upper_bound; "Definition upper bound".
+Waterproof Register Expand "upper" "bound";
+  for is_upper_bound;
+  as "Definition upper bound".
 
 (** Maximum *)
 Definition is_max (A : subset ℝ) (x : ℝ) := (x ∈ A) ∧ (x is an upper bound for A).
@@ -97,8 +99,9 @@ Definition is_max (A : subset ℝ) (x : ℝ) := (x ∈ A) ∧ (x is an upper bou
 Notation "M 'is' 'the' '_maximum_' 'of' A" := (is_max A M) (at level 69).
 Notation "M 'is' 'the' 'maximum' 'of' A" := (is_max A M) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "maximum" is_max; "Definition maximum".
+Waterproof Register Expand "maximum";
+  for is_max;
+  as "Definition maximum".
 
 (** ## The completeness axiom
 
@@ -166,14 +169,16 @@ Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only pars
 Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
 Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "bounded" "from" "below" is_bounded_below; "Definition bounded from below".
+Waterproof Register Expand "bounded" "from" "below";
+  for is_bounded_below;
+  as "Definition bounded from below".
 
 Notation "M 'is' 'a' '_lower' 'bound_' 'for' A" := (is_lower_bound A M) (at level 69).
 Notation "M 'is' 'a' 'lower' 'bound' 'for' A" := (is_lower_bound A M) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "lower" "bound" is_lower_bound; "Definition lower bound".
+Waterproof Register Expand "lower" "bound";
+  for is_lower_bound;
+  as "Definition lower bound".
 
 (** ## Reflection of a subset of ℝ in the origin
 
@@ -810,11 +815,23 @@ Proof.
       We conclude that a k0 > sequence_ub a (pr) Nn - 1 / (m + 1).
 Qed.
 
-Waterproof Register Unfold Apply "infimum" is_inf; "Alternative characterization infimum"; (alt_char_inf).
-Waterproof Register Unfold "infimum" is_inf; "Definition infimum".
+Waterproof Register Expand "infimum";
+  for is_inf;
+  as "Alternative characterization infimum";
+  by apply (alt_char_inf).
 
-Waterproof Register Unfold Apply "supremum" is_sup; "Alternative characterization supremum";(alt_char_sup).
-Waterproof Register Unfold "supremum" is_sup; "Definition supremum".
+Waterproof Register Expand "infimum";
+  for is_inf;
+  as "Definition infimum".
+
+Waterproof Register Expand "supremum";
+  for is_sup;
+  as "Alternative characterization supremum";
+  by apply (alt_char_sup).
+
+Waterproof Register Expand "supremum";
+  for is_sup;
+  as "Definition supremum".
 
 #[export] Hint Resolve bounded_by_upper_bound_propform : wp_reals.
 #[export] Hint Resolve bounded_by_lower_bound_propform : wp_reals.

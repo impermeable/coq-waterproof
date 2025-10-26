@@ -46,42 +46,49 @@ Definition is_closed (A : R -> Prop) := is_open (complement A).
 (** Notations *)
 Notation "B( p , r )" := (open_ball p r) (at level 68, format "B( p ,  r )").
 
-Waterproof Register Unfold
-  "B" open_ball; "Definition open ball".
+Waterproof Register Expand "B";
+  for open_ball;
+  as "Definition open ball".
 
-Waterproof Register Unfold
-  "open" "ball" open_ball; "Definition open ball".
+Waterproof Register Expand "open" "ball";
+  for open_ball;
+  as "Definition open ball".
 
 Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 69).
 
 Notation "a 'is' 'an' 'interior' 'point' 'of' A" := (is_interior_point a A) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "interior" "point" is_interior_point; "Definition interior point".
+Waterproof Register Expand "interior" "point";
+  for is_interior_point;
+  as "Definition interior point".
 
 Notation "A 'is' '_open_'" := (is_open A) (at level 69).
 
 Notation "A 'is' 'open'" := (is_open A) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "open" is_open; "Definition open".
+Waterproof Register Expand "open";
+  for is_open;
+  as "Definition open".
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
 Notation "'ℝ' '\' A" := (complement A) (at level 0, only parsing).
 
-Waterproof Register Unfold
-  "complement" complement; "Definition complement".
+Waterproof Register Expand "complement";
+  for complement;
+  as "Definition complement".
 
-Waterproof Register Unfold
-  "ℝ\" complement; "Definition complement".
+Waterproof Register Expand "ℝ\";
+  for complement;
+  as "Definition complement".
 
 Notation "A 'is' '_closed_'" := (is_closed A) (at level 69).
 
 Notation "A 'is' 'closed'" := (is_closed A) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "closed" is_closed; "Definition closed".
+Waterproof Register Expand "closed";
+  for is_closed;
+  as "Definition closed".
 
 (** Hints *)
 Lemma zero_in_interval_closed_zero_open_one : (0 ∈ [0,1)).

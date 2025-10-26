@@ -106,28 +106,32 @@ Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at
 
 Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "accumulation" "point" is_accumulation_point ; "Definition accumulation point".
+Waterproof Register Expand "accumulation" "point";
+  for is_accumulation_point;
+  as "Definition accumulation point".
 
 Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 69).
 
 Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "isolated" "point" is_isolated_point; "Definition isolated point".
+Waterproof Register Expand "isolated" "point";
+  for is_isolated_point;
+  as "Definition isolated point".
 
 Notation "'_limit_' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 69).
 
 Notation "'limit' 'of' f 'in' a 'is' L" := (limit_in_point f a L) (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "limit" limit_in_point ; "Definition limit".
+Waterproof Register Expand "limit";
+  for limit_in_point;
+  as "Definition limit".
 
 Notation "f 'is' '_continuous_' 'in' a" := (is_continuous_in f a) (at level 69).
 
 Notation "f 'is' 'continuous' 'in' a" := (is_continuous_in f a)  (at level 69, only parsing).
 
-Waterproof Register Unfold
-  "continuous" is_continuous_in ; "Definition continuity in a point".
+Waterproof Register Expand "continuous";
+  for is_continuous_in;
+  as "Definition continuity in a point".
 
 Close Scope R_scope.

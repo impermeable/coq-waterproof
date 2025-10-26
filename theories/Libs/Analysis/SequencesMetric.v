@@ -50,8 +50,9 @@ Notation "a ⟶ c" := (convergence a c) (at level 20) : metric_scope.
 
 Waterproof Disable Filter Errors.
 
-Waterproof Register Unfold
-  "⟶" convergence ; "Definition convergence".
+Waterproof Register Expand "⟶";
+  for convergence;
+  as "Definition convergence".
 
 (* With -->, waterproof complains, giving the following error:
     Command not supported (No proof-editing in progress)*)
@@ -59,8 +60,9 @@ Waterproof Register Unfold
 Notation "a '_converges' 'to_' p" := (convergence a p) (at level 68) : metric_scope.
 Notation "a 'converges' 'to' p" := (convergence a p) (at level 68, only parsing) : metric_scope.
 
-Waterproof Register Unfold
-  "converges" "to" convergence; "Definition convergence".
+Waterproof Register Expand "converges" "to";
+  for convergence;
+  as "Definition convergence".
 
 (* Index shift*)
 Lemma relation_shift {X : Metric_Space} (a : nat -> Base X) (k : nat) (n : nat) (n_ge_k : (n ≥ k)%nat) :

@@ -30,7 +30,9 @@ Waterproof Enable Redirect Errors.
 
 Definition foo : nat := 0.
 
-Waterproof Register Unfold "foo" foo ; "Definition of foo".
+Waterproof Register Expand "foo";
+  for foo;
+  as "Definition of foo".
 
 (* Tests general unfolding: *)
 
@@ -103,7 +105,10 @@ Abort.
 Local Parameter P Q R : Prop.
 Local Parameter HPQ : P <-> Q.
 
-Waterproof Register Unfold Apply "notation" "for" "P" P ; "Alternative characterization of P"; (HPQ).
+Waterproof Register Expand "notation" "for" "P";
+  for P ;
+  as "Alternative characterization of P";
+  by apply (HPQ).
 
 (* Test 8: Use alternative characterization, with concept in conclusion,
 but without having the automation able to prove the alternative
@@ -182,7 +187,10 @@ Proof.
 assert_constr_equal (tactic_in_constr constr:(HPR) constr:(P -> Q)) constr:(R -> Q).
 Abort.
 
-Waterproof Register Unfold Rewrite "characterization" "of" "P" P ; "Characterization of P"; HPR.
+Waterproof Register Expand "characterization" "of" "P";
+  for P ;
+  as "Characterization of P";
+  by rewrite HPR.
 
 Local Hint Extern 1 => rewrite HPR : core.
 
