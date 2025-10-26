@@ -119,3 +119,8 @@ val get_last_warning : unit -> Pp.t option
   corresponding qualid
 *)
 val shortest_string_of_global : Names.GlobRef.t -> string
+
+(**
+  Purely for testing that passing Feedback levels through the ffi works
+*)
+val check_feedback_level_Ltac2_to_Ocaml : Feedback.level -> int -> bool
