@@ -191,7 +191,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
       match def_name with
-      | Some s => info_notice (of_string s)
+      | Some s => info_notice (of_string (String.concat "" [s; ":"]))
       | _ => ()
       end;
 
@@ -248,7 +248,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         | None => info_notice (of_string "Definition does not appear in any statement.")
         | Some def_name => info_notice (concat_list
             [of_string "'"; of_string def_name; of_string "'";
-              of_string " does not appear in any statement."])
+              of_string " cannot be used in any statement."])
         end) else ();
 
   (* Throw error if required *)
@@ -308,7 +308,16 @@ Ltac2 wp_unfold_by_string (s : string) (notify_if_not_present : bool) :=
   wp_unfold_from_action_list (find_unfolds_by_str_ffi s) notify_if_not_present.
 
 Ltac2 wp_unfold_by_ref (r : reference) (notify_if_not_present : bool) :=
-  wp_unfold_from_action_list (find_unfolds_by_ref_ffi r) notify_if_not_present.
+  let unfold_list := find_unfolds_by_ref_ffi r in
+  let unfold_list := match unfold_list with
+    | [] => [Unfold (String.concat " " ["Definition"; shortest_string_of_global_ffi r]) r]
+    | _ => unfold_list
+    end in
+  wp_unfold_from_action_list unfold_list notify_if_not_present.
+
+Ltac2 wp_expand (r : reference) :=
+  wp_unfold_by_ref r true;
+  throw (of_string "Remove this line in the final version of your proof.").
 
 (**
   Attempts to unfold definition(s) in statements according to unfold actions that have
@@ -321,9 +330,8 @@ Ltac2 wp_unfold_by_ref (r : reference) (notify_if_not_present : bool) :=
   Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
   Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
 *)
-Ltac2 Notation "Expand" x(tactic) :=
-  wp_unfold_by_string x true;
-  throw (of_string "Remove this line in the final version of your proof.").
+Ltac2 Notation "Expand" x(reference) :=
+  wp_expand x.
 
 (**
   Unfold all occurences of all registered definitions and alternative characterizations.

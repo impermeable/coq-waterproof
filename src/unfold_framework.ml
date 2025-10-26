@@ -92,18 +92,22 @@ let extract_def (s : string) : GlobRef.t option =
     Registers a new unfold notation in the notation table.
 
     Arguments:
-    - [toks]: the list of string tokens that compose the notation
-    - [id]: the global reference to associate the unfold action to
+    - [toks]: the list of string tokens that should follow "Expand" in the notation
+    - [id]: the qualid to associate the unfold action to
 
     Returns:
     - the notation interpretation data created
 *)
-let register_unfold (toks : string list) (id : GlobRef.t) : notation_interpretation_data =
+let register_unfold (toks : string list) (id : Libnames.qualid) : notation_interpretation_data =
+  let glob_ref = Nametab.locate id in
+  let full_id = Libnames.qualid_of_path (Nametab.path_of_global glob_ref) in
   let concatenated_str = (String.concat " " toks) in
-  let atom_str = CTacAtm (AtmStr concatenated_str) in
-  let sexpr_seq = List.map (fun s -> SexprStr (CAst.make s)) toks in
-  add_to_unfold_map concatenated_str id;
-  register_notation [] sexpr_seq (Some 1) (CAst.make atom_str)
+  let sexpr_seq = List.map (fun s -> SexprStr (CAst.make s)) ("Expand"::toks) in
+  let get_qualid () = Libnames.qualid_of_string "Unfold.wp_expand" in
+  let get_ref () = CAst.make @@ CTacExt (Ltac2_plugin.Tac2quote.wit_reference, CAst.make (Ltac2_plugin.Tac2qexpr.QReference full_id)) in
+  let rhs = CTacApp (CAst.make (CTacRef (RelId (get_qualid ()))), [get_ref ()]) in
+  add_to_unfold_map concatenated_str glob_ref;
+  register_notation [] sexpr_seq None (CAst.make rhs)
 
 (** A type that represents the datastructure that can be added
     to the unfold table. When it is added, it will be converted

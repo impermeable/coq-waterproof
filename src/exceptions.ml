@@ -179,3 +179,11 @@ let wp_error_handler (e : exn) : Pp.t option =
   else None
 
 let () = CErrors.register_handler wp_error_handler
+
+(**
+  Convert a reference in a shortest string representation of the
+  corresponding qualid
+*)
+let shortest_string_of_global (gr : Names.GlobRef.t) : string =
+  Nametab.shortest_qualid_of_global Names.Id.Set.empty gr
+  |> Libnames.string_of_qualid

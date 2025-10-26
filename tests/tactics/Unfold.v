@@ -44,7 +44,7 @@ Proof.
   (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Definition of foo";
+["Definition of foo:";
 "Hint, replace with: We need to show that (0 = 1)."].
 Abort.
 
@@ -59,7 +59,7 @@ Proof.
   (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Definition of foo";
+["Definition of foo:";
 "Hint, insert: We need to show that (0 = 1).";
 "Hint, insert: It holds that (0 = 0).";
 "Hint, insert: It holds that (0 = 2)."].
@@ -82,7 +82,7 @@ Proof.
   (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["Definition of foo";
+["Definition of foo:";
 "Hint, insert: We need to show that (0 = 1).";
 "Hint, insert: It holds that (0 = 0).";
 "Hint, insert: It holds that (0 = 2)."].
@@ -97,7 +97,7 @@ Proof.
   (fun () => Expand foo)
 "Remove this line in the final version of your proof.")
   Info
-["'Definition of foo' does not appear in any statement."].
+["'Definition of foo' cannot be used in any statement."].
 Abort.
 
 Local Parameter P Q R : Prop.
@@ -154,7 +154,7 @@ Proof.
   (fun () => Expand notation for P)
 "Remove this line in the final version of your proof.")
   Info
-["Alternative characterization of P";
+["Alternative characterization of P:";
 "Hint, replace with: It suffices to show that Q."].
 It suffices to show that Q.
 Abort.
@@ -169,7 +169,7 @@ Proof.
   (fun () => Expand notation for P)
 "Remove this line in the final version of your proof.")
   Info
-["Alternative characterization of P";
+["Alternative characterization of P:";
 "Hint, replace with: It holds that Q."].
 It holds that Q.
 Abort.
@@ -197,9 +197,9 @@ intros.
   (fun () => Expand characterization of P)
 "Remove this line in the final version of your proof.")
   Info
-["Characterization of P";
+["Characterization of P:";
 "Hint, replace with: It suffices to show that R.";
-"Alternative characterization of P";
+"Alternative characterization of P:";
 "Hint, replace with: It suffices to show that Q."].
 It suffices to show that Q.
 Abort.
@@ -227,12 +227,12 @@ assert_feedback_with_strings
   (fun () => Expand infimum)
 "Remove this line in the final version of your proof.")
   Info
-["Definition infimum";
+["Definition infimum:";
 "Hint, insert: We need to show that (3 is a _lower bound_ for A
                       ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
 "Hint, insert: It holds that (4 is a _lower bound_ for A
                ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 4)).";
-"Alternative characterization infimum";
+"Alternative characterization infimum:";
 "Hint, insert: It suffices to show that (3 is a _lower bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
 "Hint, insert: It holds that (4 is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < 4 + ε))."].
@@ -248,18 +248,18 @@ assert_feedback_with_strings
   (fun () => Expand supremum)
 "Remove this line in the final version of your proof.")
   Info
-["Definition supremum";
+["Definition supremum:";
 "Hint, insert: We need to show that (3 is an _upper bound_ for A
                       ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 3 ≤ L)).";
 "Hint, insert: It holds that (4 is an _upper bound_ for A
                ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
-"Alternative characterization supremum";
+"Alternative characterization supremum:";
 "Hint, insert: It suffices to show that (3 is an _upper bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, 3 - ε < a)).";
 "Hint, insert: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
 Abort.
 
-(* Test 15, use Unfold All *)
+(* Test 15, use Expand All *)
 Goal 4 is the supremum of A -> 3 is the infimum of A.
 Proof.
 intro H.
@@ -270,17 +270,38 @@ assert_feedback_with_strings
 "Remove this line in the final version of your proof.")
   Info
 [
-"Definition infimum";
+"Definition infimum:";
 "Hint, replace with: We need to show that (3 is a _lower bound_ for A
                       ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
-"Alternative characterization infimum";
+"Alternative characterization infimum:";
 "Hint, replace with: It suffices to show that (3 is a _lower bound_ for A
                           ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
-"Definition supremum";
+"Definition supremum:";
 "Hint, replace with: It holds that (4 is an _upper bound_ for A
                ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
-"Alternative characterization supremum";
+"Alternative characterization supremum:";
 "Hint, replace with: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
 Abort.
 
 Close Scope R_scope.
+
+
+(* Test 16, expand a definition that has not been added to the framework *)
+
+Open Scope nat_scope.
+
+Definition my_nat : nat := 3.
+
+Goal my_nat = 4.
+Proof.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand my_nat)
+"Remove this line in the final version of your proof.")
+  Info
+["Definition my_nat:";
+"Hint, replace with: We need to show that (3 = 4)."].
+Abort.
+
+Close Scope nat_scope.

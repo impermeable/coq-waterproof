@@ -45,7 +45,7 @@ Proof.
   (fun () => Expand open)
 "Remove this line in the final version of your proof.")
   Info
-["Definition open";
+["Definition open:";
 "Hint, insert: We need to show that (∀ a ∈ A, a is an _interior point_ of A).";
 "Hint, insert: It holds that (∀ a ∈ A, a is an _interior point_ of A)."].
 Abort.
@@ -60,5 +60,5 @@ Proof.
   (fun () => Expand open)
 "Remove this line in the final version of your proof.")
   Info
-["'Definition open' does not appear in any statement."].
+["'Definition open' cannot be used in any statement."].
 Abort.

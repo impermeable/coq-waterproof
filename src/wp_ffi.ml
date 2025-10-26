@@ -207,3 +207,7 @@ let () =
 let () =
   define "get_unfold_references_external" (unit @-> ret (list reference)) @@
     get_all_references
+
+let () =
+  define "shortest_string_of_global_external" (reference @-> ret string) @@
+    shortest_string_of_global

@@ -201,7 +201,7 @@ VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
     SYNTERP AS notation_data_and_ref
     {
       let located_id = Nametab.locate id in
-      (register_unfold s (Nametab.locate id), located_id, name)
+      (register_unfold s id, located_id, name)
     } ->
     {
       let (notation_data, id, name) = notation_data_and_ref in
@@ -215,7 +215,7 @@ VERNAC COMMAND EXTEND RegisterUnfoldRewrite CLASSIFIED AS SIDEFF
     SYNTERP AS notation_data_and_ref_and_constr_expr
     {
       let located_id = Nametab.locate id in
-      (register_unfold s located_id, located_id, name, e)
+      (register_unfold s id, located_id, name, e)
     } ->
     {
       let (notation_data, id, name, e) = notation_data_and_ref_and_constr_expr in
@@ -229,7 +229,7 @@ VERNAC COMMAND EXTEND RegisterUnfoldApply CLASSIFIED AS SIDEFF
     SYNTERP AS notation_data_and_ref_and_constr_expr
     {
       let located_id = Nametab.locate id in
-      (register_unfold s located_id, located_id, name, e)
+      (register_unfold s id, located_id, name, e)
     } ->
     {
       let (notation_data, id, name, e) = notation_data_and_ref_and_constr_expr in

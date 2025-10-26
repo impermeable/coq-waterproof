@@ -33,6 +33,8 @@ Ltac2 @ external send_message_external: FeedbackLevel -> message -> unit := "roc
 Ltac2 @ external throw_external: message -> unit := "rocq-runtime.plugins.coq-waterproof" "throw_external".
 Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "rocq-runtime.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
 Ltac2 @ external get_redirect_errors_flag : unit -> bool := "rocq-runtime.plugins.coq-waterproof" "get_redirect_errors_flag_external".
+Ltac2 @ external shortest_string_of_global_ffi : Std.reference -> string :=
+  "rocq-runtime.plugins.coq-waterproof" "shortest_string_of_global_external".
 
 Ltac2 @ external get_last_warning : unit -> message option :=
   "rocq-runtime.plugins.coq-waterproof" "get_last_warning_external".
