@@ -180,7 +180,15 @@ let wp_error_handler (e : exn) : Pp.t option =
 
 let () = CErrors.register_handler wp_error_handler
 
-let check_feedback_level_Ltac2_to_Ocaml (lvl: Feedback.level) (n: int) : bool =
+(**
+  Convert a reference in a shortest string representation of the
+  corresponding qualid
+*)
+let shortest_string_of_global (gr : Names.GlobRef.t) : string =
+  Nametab.shortest_qualid_of_global Names.Id.Set.empty gr
+  |> Libnames.string_of_qualid
+
+  let check_feedback_level_Ltac2_to_Ocaml (lvl: Feedback.level) (n: int) : bool =
   match n with
   | 0 -> lvl == Debug
   | 1 -> lvl == Info

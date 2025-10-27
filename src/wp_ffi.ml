@@ -33,6 +33,7 @@ open Exceptions
 open Hint_dataset_declarations
 open Waterprove
 open Wp_evars
+open Unfold_framework
 
 (** Creates a name used to define the function interface *)
 let pname (s: string): ml_tactic_name = { mltac_plugin = "rocq-runtime.plugins.coq-waterproof"; mltac_tactic = s }
@@ -101,6 +102,21 @@ let to_feedback_level (value : valexpr): Feedback.level = match value with
     in feedback_lvl
   | _ -> throw (CastError "cannot cast something different from an [int] into a [Feedback.level]")
 
+let of_unfold_action =
+  function
+  | Unfold (s, gr) -> of_block (0, [|of_string s; of_reference gr|])
+  | Apply (s, c) -> of_block (1, [|of_string s; of_constr c|])
+  | Rewrite (s, c) -> of_block(2, [|of_string s; of_constr c|])
+
+let to_unfold_action = let open Ltac2_plugin.Tac2val in function
+  | ValBlk (0, [|s; gr|]) -> Unfold (to_string s, to_reference gr)
+  | ValBlk (1, [|s; c|]) -> Apply (to_string s, to_constr c)
+  | ValBlk (2, [|s; c|]) -> Rewrite (to_string s, to_constr c)
+  | _ -> assert false
+
+let unfold_action = make_repr of_unfold_action to_unfold_action
+
+(** Pack the conversion functions for feedback levels into a representation *)
 let feedback_level = make_repr of_feedback_level to_feedback_level
 
 (* Exports {! Waterprove.waterprove} to Ltac2 *)
@@ -175,6 +191,26 @@ let () =
 let () =
   define "get_feedback_log_external" (feedback_level @-> ret (list pp)) @@
     fun input -> !(feedback_log input)
+
+let () =
+  define "extract_def_external" (string @-> ret (option reference)) @@
+    extract_def
+
+let () =
+  define "find_unfold_by_ref_external" (reference @-> ret (list unfold_action)) @@
+    find_unfold_actions_by_ref
+
+let () =
+  define "find_unfold_by_str_external" (string @-> ret (list unfold_action)) @@
+    find_unfold_actions_by_str
+
+let () =
+  define "get_unfold_references_external" (unit @-> ret (list reference)) @@
+    get_all_references
+
+let () =
+  define "shortest_string_of_global_external" (reference @-> ret string) @@
+    shortest_string_of_global
 
 let () =
   define "check_feedback_level_Ltac2_to_Ocaml_external" (feedback_level @-> int @-> ret bool) @@

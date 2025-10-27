@@ -27,6 +27,19 @@ Local Ltac2 concat_list (ls : message list) : message :=
 Require Import Util.Goals.
 Require Import Util.MessagesToUser.
 
+Ltac2 Type unfold_action := [
+  | Unfold (string, reference)
+  | Apply (string, constr)
+  | Rewrite (string, constr)
+].
+
+Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.coq-waterproof" "extract_def_external".
+Ltac2 @ external find_unfolds_by_str_ffi : string -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_by_str_external".
+Ltac2 @ external find_unfolds_by_ref_ffi : reference -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_by_ref_external".
+
+Ltac2 @ external get_unfold_references_ffi : unit -> reference list := "rocq-runtime.plugins.coq-waterproof" "get_unfold_references_external".
+
+
 Local Ltac2 _is_empty (ls : 'a list) :=
   match ls with
   | _::_ => false
@@ -132,6 +145,13 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
   clear $h;
   return_term.
 
+Ltac2 unfold_method_for_action (ua : unfold_action) (stmt : constr) : constr :=
+  match ua with
+  | Unfold _ name => eval unfold $name in $stmt
+  | Apply _ equiv => apply_in_constr equiv stmt
+  | Rewrite _ eq => tactic_in_constr eq stmt
+  end.
+
 (**
   Attempts to unfold definition(s) in every statement according to specified method.
   If succesful it prints a list of suitable tactics
@@ -155,7 +175,7 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
 Local Ltac2 Type exn ::= [Succeeded].
 
 Ltac2 unfold_in_all (unfold_method: constr -> constr)
-  (def_name : string option) (throw_error : bool) (definitional : bool) :=
+  (def_name : string option) (throw_error : bool) (definitional : bool) (notify_if_not_present : bool) :=
   let goal := Control.goal () in
   let unfolded_goal := unfold_method goal in
   let did_unfold_goal := Bool.neg (Constr.equal unfolded_goal goal) in
@@ -170,11 +190,11 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   (* Print output *)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
-      (* Print initial statement *)
-      if definitional then
-        (info_notice (of_string "Expanded definition in statements where applicable."))
-      else
-        (info_notice (of_string "Applied alternative characterizations in statements where applicable."));
+      match def_name with
+      | Some s => info_notice (of_string (String.concat "" [s; ":"]))
+      | _ => ()
+      end;
+
       let total_messages := Int.add
         (if did_unfold_goal then 1 else 0)
         (List.length only_unfolded_hyps) in
@@ -223,12 +243,12 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 
     else
       (* Print no statements with definition *)
-      if definitional then
+      if (Bool.and notify_if_not_present definitional) then
         (match def_name with
         | None => info_notice (of_string "Definition does not appear in any statement.")
         | Some def_name => info_notice (concat_list
             [of_string "'"; of_string def_name; of_string "'";
-              of_string " does not appear in any statement."])
+              of_string " cannot be used in any statement."])
         end) else ();
 
   (* Throw error if required *)
@@ -258,19 +278,73 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
 *)
 Ltac2 wp_unfold (unfold_method: constr -> constr)
   (def_name : string option) (throw_error : bool)
-  (judgmental : bool) (_ : constr option) :=
+  (judgmental : bool) (notify_if_not_present : bool) :=
   panic_if_goal_wrapped ();
-  unfold_in_all unfold_method def_name throw_error judgmental.
+  unfold_in_all unfold_method def_name throw_error judgmental notify_if_not_present.
 
 (* TODO: Refactor unfold system to be more maintainable *)
 
-(* Tactic notation for unfolding generic Gallina terms, not notations.
-  For an example of how to used [unfold_in_statement] to unfold notations,
-  see [tests/tactics/Unfold.v] *)
-Ltac2 Notation "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
+Ltac2 name_from_action (ua : unfold_action) : string :=
+  match ua with
+  | Unfold name _ => name
+  | Apply name _ => name
+  | Rewrite name _ => name
+  end.
 
-  wp_unfold (eval_unfold targets) None true true None.
+Local Ltac2 wp_unfold_from_action_list (ua_list : unfold_action list)
+  (notify_if_not_present : bool) :=
+  let definitional_for_action (ua : unfold_action) := match ua with
+  | Unfold _ _ => true
+  | Apply _ _ => false
+  | Rewrite _ _ => false
+  end in
+  List.iter (fun z =>
+      wp_unfold (unfold_method_for_action z)
+      (Some (name_from_action z)) false (definitional_for_action z) notify_if_not_present)
+    ua_list.
 
-(* For now, include optional tail to keep compatible with tactic called by Waterproof editor. *)
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" targets(list1(seq(reference, occurrences), ",")) :=
-  wp_unfold (eval_unfold targets) None false true None.
+
+Ltac2 wp_unfold_by_string (s : string) (notify_if_not_present : bool) :=
+  wp_unfold_from_action_list (find_unfolds_by_str_ffi s) notify_if_not_present.
+
+Ltac2 wp_unfold_by_ref (r : reference) (notify_if_not_present : bool) :=
+  let unfold_list := find_unfolds_by_ref_ffi r in
+  let unfold_list := match unfold_list with
+    | [] => [Unfold (String.concat " " ["Definition"; shortest_string_of_global_ffi r]) r]
+    | _ => unfold_list
+    end in
+  wp_unfold_from_action_list unfold_list notify_if_not_present.
+
+Ltac2 wp_expand (r : reference) :=
+  wp_unfold_by_ref r true;
+  throw (of_string "Remove this line in the final version of your proof.").
+
+Ltac2 wp_expand_deprecated (r : reference) :=
+  warn (of_string "Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead.");
+  wp_expand r.
+
+(**
+  Attempts to unfold definition(s) in statements according to unfold actions that have
+  been pre-stored in a database.
+
+  Here are some examples of syntax for adding unfold actions to the database.
+  For more examples, see [tests/tactics/Unfold.v].
+
+  [Waterproof Register Unfold "converges" "to" converges_to.
+  Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
+  Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
+*)
+Ltac2 Notation "Expand" x(reference) :=
+  wp_expand x.
+
+(** Deprecated version of this notation *)
+Ltac2 Notation "Expand" "the" "definition" "of" x(reference) :=
+  wp_expand_deprecated x.
+
+(**
+  Unfold all occurences of all registered definitions and alternative characterizations.
+*)
+Ltac2 Notation "Expand" "All" :=
+  let ls := get_unfold_references_ffi () in
+  List.iter (fun l => wp_unfold_by_ref l false) ls;
+  throw (of_string "Remove this line in the final version of your proof.").
