@@ -312,4 +312,50 @@ Proof.
 "Hint, replace with: We need to show that (3 = 4)."].
 Abort.
 
+(* Test 17, deprecated notation *)
+Goal my_nat = 4.
+Proof.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of my_nat)
+"Remove this line in the final version of your proof.")
+  Info
+["Definition my_nat:";
+"Hint, replace with: We need to show that (3 = 4)."].
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of my_nat)
+"Remove this line in the final version of your proof.")
+  Warning
+["Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead."].
+Abort.
+
+Definition my_nat_2 : nat := 3.
+
+Waterproof Register Expand "my_nat_2";
+  for my_nat_2;
+  as "Definition my_nat_2".
+
+(* Test 17, deprecated notation with framework *)
+Goal my_nat_2 = 4.
+Proof.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of my_nat_2)
+"Remove this line in the final version of your proof.")
+  Info
+["Definition my_nat_2:";
+"Hint, replace with: We need to show that (3 = 4)."].
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand the definition of my_nat)
+"Remove this line in the final version of your proof.")
+  Warning
+["Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead."].
+Abort.
+
 Close Scope nat_scope.

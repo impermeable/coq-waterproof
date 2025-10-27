@@ -221,13 +221,15 @@ VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
       "for" ref(id) ";"
       "as" string(name)
       unfold_action_entry_opt(opt_unfold_action) ] => { Vernacextend.(VtSideff ([], VtNow)) }
-    SYNTERP AS notation_data
+    SYNTERP AS notation_data_pair
     {
       register_unfold s id
     } ->
     {
+      let (notation_data, old_notation_data) = notation_data_pair in
       let located_id = Nametab.locate id in
       register_notation_interpretation notation_data;
+      register_notation_interpretation old_notation_data;
       let ua =
         begin
           match opt_unfold_action with

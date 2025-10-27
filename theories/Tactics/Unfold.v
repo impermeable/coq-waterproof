@@ -319,6 +319,10 @@ Ltac2 wp_expand (r : reference) :=
   wp_unfold_by_ref r true;
   throw (of_string "Remove this line in the final version of your proof.").
 
+Ltac2 wp_expand_deprecated (r : reference) :=
+  warn (of_string "Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead.");
+  wp_expand r.
+
 (**
   Attempts to unfold definition(s) in statements according to unfold actions that have
   been pre-stored in a database.
@@ -332,6 +336,10 @@ Ltac2 wp_expand (r : reference) :=
 *)
 Ltac2 Notation "Expand" x(reference) :=
   wp_expand x.
+
+(** Deprecated version of this notation *)
+Ltac2 Notation "Expand" "the" "definition" "of" x(reference) :=
+  wp_expand_deprecated x.
 
 (**
   Unfold all occurences of all registered definitions and alternative characterizations.
