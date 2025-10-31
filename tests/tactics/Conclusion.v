@@ -139,9 +139,8 @@ Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
     assert (useless: 1 = 1).
     reflexivity.
-    assert_fails_with_string
-    (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
-"Could not verify this follows from the provided reasons.".
+    assert_feedback_with_strings (fun () => By test_by_we_conclude_1 we conclude that (1 < 2)) Info
+    ["It may be that the provided reason test_by_we_conclude_1 is not necessary for the proof."].
 Abort.
 
 (** Additional tests 'By ...' clause.  *)
@@ -179,7 +178,10 @@ Abort.
 Goal A -> B.
   intro H.
   pose f.
-  Fail By g we conclude that B.
+  assert_feedback_with_strings
+    (fun () => By g we conclude that B)
+    Info
+    ["It may be that the provided reason g is not necessary for the proof."].
 Abort.
 
 
@@ -373,7 +375,8 @@ Qed.
 
 Goal U -> R.
 intro H.
-assert_fails_with_string
+assert_feedback_with_strings
   (fun () => By my reason, my other reason, HPQ, HQR and HRT we conclude that R)
-  "Could not verify this follows from the provided reasons.".
+  Info
+  ["It may be that the provided reason HRT is not necessary for the proof."].
 Abort.

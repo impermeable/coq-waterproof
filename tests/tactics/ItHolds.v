@@ -29,6 +29,10 @@ Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Util.Assertions.
 Require Import Waterproof.Util.MessagesToUser.
 
+Waterproof Enable Redirect Errors.
+Waterproof Enable Redirect Feedback.
+Waterproof Enable Logging.
+
 Waterproof Enable Automation RealsAndIntegers.
 
 (* lra only works in the [R_scope] *)
@@ -201,7 +205,9 @@ Goal A -> False.
 Proof.
   intro H.
   pose f.
-  Fail By g it holds that B.
+  assert_feedback_with_strings (fun () => By g it holds that B)
+  Info
+  ["It may be that the provided reason g is not necessary for the proof."].
 Abort.
 
 (** Tests for 'Since ...' clause. *)
@@ -426,14 +432,14 @@ By H, Hab and Hbc it holds that c.
 Abort.
 
 Waterproof Enable Redirect Errors.
-Waterproof Enable Logging.
 
 (** Test 31: Multiple hypotheses, mention hypothesis that is not useful *)
 
 Goal a -> b.
 Proof.
-assert_fails_with_string (fun () => By Ha, Hab and Hbc it holds that b)
-"Could not verify this follows from the provided reasons.".
+assert_feedback_with_strings (fun () => By Ha, Hab and Hbc it holds that b)
+Info
+  ["It may be that the provided reason Hbc is not necessary for the proof."].
 Abort.
 
 Local Parameter d : Prop.

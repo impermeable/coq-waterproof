@@ -22,6 +22,7 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 (* -------------------------------------------------------------------------- *)
@@ -204,11 +205,12 @@ Abort.
 (** Test 20: Fails when one of the reasons is not helpful *)
 
 Waterproof Enable Logging.
-Waterproof Enable Redirect Errors.
+Waterproof Enable Redirect Feedback.
 
 Goal R.
-assert_fails_with_string
+assert_feedback_with_strings
   (fun () => By my reason, my other reason,
     HPQ, HQR and HRT it suffices to show that U)
-  "Could not verify this follows from the provided reasons.".
+  Info
+  ["It may be that the provided reason HRT is not necessary for the proof."].
 Abort.
