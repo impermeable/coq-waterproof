@@ -46,8 +46,8 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition open:";
-"Hint, insert: We need to show that (∀ a ∈ A, a is an _interior point_ of A).";
-"Hint, insert: It holds that (∀ a ∈ A, a is an _interior point_ of A)."].
+"Hint, insert: We need to show that ∀ a ∈ A, a is an _interior point_ of A.";
+"Hint, insert: It holds that ∀ a ∈ A, a is an _interior point_ of A."].
 Abort.
 
 (* Test 2: Fails to expand definition when "open" doesn't appear in statements. *)

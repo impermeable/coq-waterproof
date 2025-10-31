@@ -47,7 +47,7 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition of foo:";
-"Hint, replace with: We need to show that (0 = 1)."].
+"Hint, replace with: We need to show that 0 = 1."].
 Abort.
 
 (* Test 2: unfold term in hypothese and goal, and throws an error suggesting
@@ -62,9 +62,9 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition of foo:";
-"Hint, insert: We need to show that (0 = 1).";
-"Hint, insert: It holds that (0 = 0).";
-"Hint, insert: It holds that (0 = 2)."].
+"Hint, insert: We need to show that 0 = 1.";
+"Hint, insert: It holds that 0 = 0.";
+"Hint, insert: It holds that 0 = 2."].
 Abort.
 
 
@@ -85,9 +85,9 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition of foo:";
-"Hint, insert: We need to show that (0 = 1).";
-"Hint, insert: It holds that (0 = 0).";
-"Hint, insert: It holds that (0 = 2)."].
+"Hint, insert: We need to show that 0 = 1.";
+"Hint, insert: It holds that 0 = 0.";
+"Hint, insert: It holds that 0 = 2."].
 Abort.
 
 (* Test 7: fails to unfold term in statment without term. *)
@@ -236,14 +236,14 @@ assert_feedback_with_strings
 "Remove this line in the final version of your proof.")
   Info
 ["Definition infimum:";
-"Hint, insert: We need to show that (3 is a _lower bound_ for A
-                      ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
-"Hint, insert: It holds that (4 is a _lower bound_ for A
-               ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 4)).";
+"Hint, insert: We need to show that 3 is a _lower bound_ for A
+                     ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3).";
+"Hint, insert: It holds that 4 is a _lower bound_ for A
+              ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 4).";
 "Alternative characterization infimum:";
-"Hint, insert: It suffices to show that (3 is a _lower bound_ for A
-                          ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
-"Hint, insert: It holds that (4 is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < 4 + ε))."].
+"Hint, insert: It suffices to show that 3 is a _lower bound_ for A
+                         ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε).";
+"Hint, insert: It holds that 4 is a _lower bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, a < 4 + ε)."].
 Abort.
 
 (* Test 15, test for supremum, as it is important that it works in practice. *)
@@ -257,14 +257,14 @@ assert_feedback_with_strings
 "Remove this line in the final version of your proof.")
   Info
 ["Definition supremum:";
-"Hint, insert: We need to show that (3 is an _upper bound_ for A
-                      ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 3 ≤ L)).";
-"Hint, insert: It holds that (4 is an _upper bound_ for A
-               ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
+"Hint, insert: We need to show that 3 is an _upper bound_ for A
+                     ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 3 ≤ L).";
+"Hint, insert: It holds that 4 is an _upper bound_ for A
+              ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L).";
 "Alternative characterization supremum:";
-"Hint, insert: It suffices to show that (3 is an _upper bound_ for A
-                          ∧ (∀ ε > 0, ∃ a ∈ A, 3 - ε < a)).";
-"Hint, insert: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
+"Hint, insert: It suffices to show that 3 is an _upper bound_ for A
+                         ∧ (∀ ε > 0, ∃ a ∈ A, 3 - ε < a).";
+"Hint, insert: It holds that 4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a)."].
 Abort.
 
 (* Test 15, use Expand All *)
@@ -279,16 +279,16 @@ assert_feedback_with_strings
   Info
 [
 "Definition infimum:";
-"Hint, replace with: We need to show that (3 is a _lower bound_ for A
-                      ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3)).";
+"Hint, replace with: We need to show that 3 is a _lower bound_ for A
+                     ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3).";
 "Alternative characterization infimum:";
-"Hint, replace with: It suffices to show that (3 is a _lower bound_ for A
-                          ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)).";
+"Hint, replace with: It suffices to show that 3 is a _lower bound_ for A
+                         ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε).";
 "Definition supremum:";
-"Hint, replace with: It holds that (4 is an _upper bound_ for A
-               ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L)).";
+"Hint, replace with: It holds that 4 is an _upper bound_ for A
+              ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L).";
 "Alternative characterization supremum:";
-"Hint, replace with: It holds that (4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a))."].
+"Hint, replace with: It holds that 4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a)."].
 Abort.
 
 Close Scope R_scope.
@@ -309,7 +309,7 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition my_nat:";
-"Hint, replace with: We need to show that (3 = 4)."].
+"Hint, replace with: We need to show that 3 = 4."].
 Abort.
 
 (* Test 17, deprecated notation *)
@@ -322,7 +322,7 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition my_nat:";
-"Hint, replace with: We need to show that (3 = 4)."].
+"Hint, replace with: We need to show that 3 = 4."].
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
@@ -348,7 +348,7 @@ Proof.
 "Remove this line in the final version of your proof.")
   Info
 ["Definition my_nat_2:";
-"Hint, replace with: We need to show that (3 = 4)."].
+"Hint, replace with: We need to show that 3 = 4."].
   assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string

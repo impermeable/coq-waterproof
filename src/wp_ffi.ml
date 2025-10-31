@@ -219,3 +219,9 @@ let () =
 let () =
   define "feedback_level_round_trip_external" (feedback_level @-> ret feedback_level) @@
     fun input -> input
+
+(** TODO: This can be removed in a later version of Rocq, probably 9.2,
+    because it has then been integrated in Ltac2. *)
+let () =
+  define "message_of_lconstr" (constr @-> tac pp) @@ fun c ->
+  Ltac2_plugin.Tac2core.pf_apply @@ fun env sigma -> Proofview.tclUNIT (Printer.pr_leconstr_env env sigma c)

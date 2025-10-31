@@ -45,13 +45,13 @@ Local Ltac2 check_if_not_reference (x : constr) :=
   | bool => ()
   | _ => throw (concat_list
         [of_string "Cannot use reference "; of_constr x; of_string " with `Since`.
-Try `By "; of_constr x; of_string " ...` instead."])
+Try `By "; of_lconstr x; of_string " ...` instead."])
   end.
 
 Local Ltac2 check_if_not_statement (x : constr) :=
   let err_msg := concat_list
     [of_string "Cannot use statement "; of_constr x; of_string " with `By`.
-Try `Since "; of_constr x; of_string " ...` instead."]
+Try `Since "; of_lconstr x; of_string " ...` instead."]
   in
   let type_x := Constr.type x in
   lazy_match! type_x with

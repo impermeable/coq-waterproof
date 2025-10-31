@@ -25,6 +25,7 @@ Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Tactics.By.
+Require Import Waterproof.Tactics.Unfold.
 Open Scope subset_scope.
 
 Waterproof Enable Hypothesis Help.
@@ -246,4 +247,34 @@ Proof.
 assert_feedback_with_strings (fun () => Help) Info
 ["The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) B.";
  "Hint, replace with: Choose ... := ...."].
+Abort.
+
+(** Test 22: Help on expanding registered definitions *)
+Definition foo := 37.
+
+Waterproof Register Expand "foo";
+  for foo;
+  as "Definition foo".
+
+Require Import Waterproof.Tactics.Conclusion.
+
+Goal foo = 42.
+Proof.
+assert_feedback_with_strings (fun () => Help) Info
+["You can try to expand definitions or use alternative characterizations:";
+"Definition foo:";
+"Hint, replace with: We need to show that 37 = 42."].
+Abort.
+
+(** Test 23: Combine expanding definitions with more hints *)
+Goal (∀ n ∈ nat, n + 1 < 0) -> foo = 42.
+Proof.
+intro.
+assert_feedback_with_strings (fun () => Help) Info
+["You can try to expand definitions or use alternative characterizations:";
+"Definition foo:";
+"Hint, replace with: We need to show that 37 = 42.";
+"You can use one of the ‘for all’-statements (∀):";
+"    (∀ n ∈ nat, n + 1 < 0)";
+"Hint, replace with: Use ... := ... in ...."].
 Abort.

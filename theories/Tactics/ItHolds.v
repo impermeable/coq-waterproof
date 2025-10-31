@@ -30,7 +30,7 @@ Require Import Util.MessagesToUser.
 Require Import Util.TypeCorrector.
 Require Import Waterprove.
 
-Require Import Waterproof.Tactics.Help.
+Require Import Waterproof.Tactics.HelpNewHyp.
 Require Import Notations.Sets.
 
 

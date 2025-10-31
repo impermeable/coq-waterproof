@@ -211,15 +211,15 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
         then
           if definitional then
             (print_tactic (concat_list [of_string "We need to show that ";
-              of_constr unfolded_goal; of_string "."]))
+              of_lconstr unfolded_goal; of_string "."]))
           else
             match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
             | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
-                                of_constr unfolded_goal; of_string "."]))
+                                of_lconstr unfolded_goal; of_string "."]))
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
             of_string " (this is probably caused by a misalignment in the automation for";
             of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); of_string "It suffices to show that ";
-                                of_constr unfolded_goal; of_string "."])
+                                of_lconstr unfolded_goal; of_string "."])
             end
         else ();
 
@@ -227,7 +227,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       if (Bool.neg (_is_empty only_unfolded_hyps))
         then
           let it_holds_msg := fun (x : constr) => concat_list
-            [of_string "It holds that "; of_constr x; of_string "."] in
+            [of_string "It holds that "; of_lconstr x; of_string "."] in
           let test_and_print unfolded_h :=
             match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
             | Err Succeeded => print_tactic (it_holds_msg unfolded_h)

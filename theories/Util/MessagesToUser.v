@@ -41,6 +41,12 @@ Ltac2 @ external get_last_warning : unit -> message option :=
 Ltac2 @ external get_feedback_log_external : FeedbackLevel -> message list :=
   "rocq-runtime.plugins.coq-waterproof" "get_feedback_log_external".
 
+(** Can be removed in a later version of Rocq, probably 9.2,
+    because it has then been integrated in Ltac2. *)
+Ltac2 @ external of_lconstr : constr -> message := "rocq-runtime.plugins.coq-waterproof" "message_of_lconstr".
+(** Prints at level 200 (no surrounding parentheses).
+    Panics if there is more than one goal under focus. *)
+
 Ltac2 Type exn ::= [RedirectedToUserError (message)].
 
 Ltac2 send_message (lvl : FeedbackLevel) (msg : message) :=
