@@ -33,7 +33,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
   If succesful, replaces current goal by proposed goal. *)
 Local Ltac2 wp_enough (new_goal : constr) :=
   let err_msg := concat_list
-    [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
+    [of_string "Could not verify that it suffices to show "; of_lconstr new_goal; of_string "."] in
   match Control.case (fun () =>
     let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by (waterprove 5 true Main))
@@ -49,7 +49,7 @@ Local Ltac2 wp_enough (new_goal : constr) :=
   If succesful, replaces current goal by proposed goal. *)
 Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   let err_msg := concat_list
-    [of_string "Could not verify that it suffices to show "; of_constr new_goal; of_string "."] in
+    [of_string "Could not verify that it suffices to show "; of_lconstr new_goal; of_string "."] in
   match Control.case (fun () =>
     let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by
@@ -91,7 +91,7 @@ Local Ltac2 wp_enough_by_admit (claim : constr) :=
   enough $claim by admit;
   warn (concat_list [of_string "Please come back later to prove that";
     of_string " it suffices to show that ";
-    of_constr claim]).
+    of_lconstr claim]).
 
 Ltac2 Notation "It" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();

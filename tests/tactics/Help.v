@@ -263,7 +263,7 @@ Proof.
 assert_feedback_with_strings (fun () => Help) Info
 ["You can try to expand definitions or use alternative characterizations:";
 "Definition foo:";
-"Hint, replace with: We need to show that (37 = 42)."].
+"Hint, replace with: We need to show that 37 = 42."].
 Abort.
 
 (** Test 23: Combine expanding definitions with more hints *)
@@ -273,7 +273,7 @@ intro.
 assert_feedback_with_strings (fun () => Help) Info
 ["You can try to expand definitions or use alternative characterizations:";
 "Definition foo:";
-"Hint, replace with: We need to show that (37 = 42).";
+"Hint, replace with: We need to show that 37 = 42.";
 "You can use one of the ‘for all’-statements (∀):";
 "    (∀ n ∈ nat, n + 1 < 0)";
 "Hint, replace with: Use ... := ... in ...."].

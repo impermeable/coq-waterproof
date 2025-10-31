@@ -354,7 +354,7 @@ Proof.
   assert_feedback_with_string (fun () =>
     assert_fails_with_string (fun () => We claim that False)
     "You cannot do this right now, follow the advice in the goal window."
-  ) Notice "Hint, replace with: It holds that (6 >= 5 -> True).${0}".
+  ) Notice "Hint, replace with: It holds that 6 >= 5 -> True.${0}".
 Abort.
 
 Waterproof Disable Redirect Errors.
