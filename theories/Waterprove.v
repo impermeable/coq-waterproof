@@ -121,55 +121,6 @@ Local Ltac2 rec waterprove_iterate_conj (depth: int) (shield: bool)
     end
   end.
 
-(** Subroutine to solve conjunction of statements piece by piece
-  using an extra lemma which has to be used.
-  Throws [FailedToProve] error with statement that could not be proven.
-  Throws [FailedToUse] error if no proof of the statements used the extra lemma. *)
-(* Assumes goal is of the form (g1 /\ ... /\ gn). *)
-Local Ltac2 rec rwaterprove_iterate_conj (depth: int) (shield: bool)
- (db_type: database_type) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
-  lazy_match! goal with
-  (* recursion step *)
-  | [ |- ?g1 /\ _ ] =>
-    split;
-    (* Attempt to prove 1st goal with extra lemma. *)
-    match Control.case (fun () => Control.focus 1 1 (fun () =>
-      _rwaterprove depth shield db_type xtr_lemmas xtr_dbs))
-    with
-    | Val _ =>
-      (* succesfully used lemma; prove remaining goals, but without restriction. *)
-      waterprove_iterate_conj depth shield db_type xtr_lemmas xtr_dbs
-    | Err _ =>
-      (* failed, could be due to restriction; try to prove without. *)
-      match Control.case (fun () => Control.focus 1 1 (fun () =>
-        _waterprove depth shield xtr_lemmas xtr_dbs db_type))
-      with
-      | Val _ =>
-        (* succesful. prove remaining statements with restriction. *)
-        rwaterprove_iterate_conj depth shield db_type xtr_lemmas xtr_dbs
-      | Err _ => Control.zero (FailedToProve g1)
-      end
-    end
-  (* base case *)
-  | [ |- _ ] =>
-    (* Prove remaining goal with restriction. *)
-    match Control.case (fun () =>
-      _rwaterprove depth shield db_type xtr_lemmas xtr_dbs)
-    with
-    | Val _ => ()
-    | Err _ => (* failed, if due to restricition, give feedback *)
-      (* check if it would work without restriction *)
-      match Control.case (fun () =>
-        _waterprove depth shield xtr_lemmas xtr_dbs db_type)
-      with
-      | Err _ => Control.zero (FailedToProve (Control.goal ()))
-      | Val _ => (* problem is the extra lemma *)
-        Control.zero (FailedToUse xtr_lemmas)
-      end
-    end
-  end.
-
-
 (** External versions of (restricted) automation.
   (In)equality chains are attempted piece by piece. *)
 
@@ -207,7 +158,9 @@ Ltac2 rwaterprove (depth: int) (shield: bool) (db_type: database_type) (xtr_lemm
   (* prove (in)equality chain piece by piece to give better feedback *)
   | [ |- total_statement _ ] =>
     cbn; repeat (apply _and_assoc1); (* get chain into shape: g1 /\ ... /\ gn *)
-    rwaterprove_iterate_conj depth shield db_type xtr_lemmas xtr_dbs
+    (* TODO: note that rwaterprove_iterate_conj is no longer used here, because
+       waterproof no longer throws an error if a lemma is not used *)
+    waterprove_iterate_conj depth shield db_type xtr_lemmas xtr_dbs
   (* regular proof attempt *)
   | [ |- _] =>
     (* Prove goal with restriction. *)
@@ -215,15 +168,6 @@ Ltac2 rwaterprove (depth: int) (shield: bool) (db_type: database_type) (xtr_lemm
       _rwaterprove depth shield db_type xtr_lemmas xtr_dbs)
     with
     | Val _ => ()
-    | Err _ => (* failed, if due to restricition, give feedback *)
-      (* check if it would work without restriction *)
-      match Control.case (fun () =>
-        _waterprove depth shield xtr_lemmas xtr_dbs db_type)
-      with
-      | Err _ =>
-        Control.zero (FailedToProve (Control.goal ()))
-      | Val _ => (* problem is the extra lemma *)
-        Control.zero (FailedToUse xtr_lemmas)
-      end
+    | Err _ => Control.zero (FailedToProve (Control.goal ()))
     end
   end.
