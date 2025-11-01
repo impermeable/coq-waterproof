@@ -168,11 +168,10 @@ module Relaxed = struct
   (** Unfocus as many proofs as possible: this should correspond to unfocusing
   all subproofs that are finished. *)
   let rec pop_until (prf : Proof.t) : Proof.t =
-    try
-      let prf', b = Option.get (pop prf) in
-      pop_until prf'
-    with e when CErrors.noncritical e ->
-      prf
+    match pop prf with
+    | None -> prf
+    | Some (prf', b) -> pop_until prf'
+    | exception e when CErrors.noncritical e -> prf
 
   (** The intention here is to unfocus all finished subproofs, and then
     start a new bullet. *)

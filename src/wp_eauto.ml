@@ -249,12 +249,12 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
       let hyps = EConstr.named_context env in
       let db = delayed_database env sigma in
       let secvars = secvars_of_hyps hyps in
-      
+
       (* Construction of tactics equivalent to [assumption] *)
       let assumption_tacs : (bool * delayed_db * trace tactic * Pp.t) list =
 
         (* Ensure that no goal is generated *)
-        let mkdb (env: Environ.env) (sigma: Evd.evar_map): 'a = assert false in 
+        let mkdb (env: Environ.env) (sigma: Evd.evar_map): 'a = assert false in
 
         let map_assum (id: variable): (bool * delayed_db * trace tactic * Pp.t) =
           let hint =  str "exact" ++ str " " ++ Id.print id in
@@ -283,7 +283,7 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
             |> tclUNIT
         with Not_found -> tclUNIT []
       in
-      
+
       rec_tacs >>= fun rec_tacs ->
       tclUNIT (assumption_tacs @ intro_tac :: rec_tacs)
     end
@@ -342,7 +342,7 @@ let resolve_esearch (max_depth: int) (dblist: hint_db list) (local_lemmas: Tacty
             | SearchBound trace -> explore_many previous_envs l
             | _ -> explore_many previous_envs l
         )
-  
+
   in explore state []
 
 (**
@@ -371,7 +371,6 @@ let esearch (log: bool) (depth: int) (lems: Tactypes.delayed_open_constr list) (
   Generates the {! wp_eauto} function
 *)
 let gen_wp_eauto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
-  wrap_hint_warning @@
     TraceTactics.typedGoalEnter begin fun gl ->
     let db_list =
       match dbnames with

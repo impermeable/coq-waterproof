@@ -41,13 +41,13 @@ let pname (s: string): ml_tactic_name = { mltac_plugin = "rocq-runtime.plugins.c
 let define s = Ltac2_plugin.Tac2externals.define (pname s)
 
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
-let thaw (r: 'a repr) (f: (unit, 'a) fun1): 'a tactic = app_fun1 f unit r ()
+let thaw (f: (unit, 'a) fun1): 'a tactic = f ()
 
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
 let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
   let _, pv = Proofview.init sigma [] in
   let name, poly = Names.Id.of_string "ltac2_delayed", false in
-  let c, pv, _, _= Proofview.apply ~name ~poly env tac pv in
+  let c, pv, _, _, _ = Proofview.apply ~name ~poly env tac pv in
   let _, sigma = Proofview.proofview pv in
   (sigma, c)
 
@@ -56,8 +56,8 @@ let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map):
 
   Comes from [coq/plugins/ltac2/tac2tactics.ml]
 *)
-let delayed_of_thunk (r: 'a repr) (tac: (unit, 'a) fun1) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
-  delayed_of_tactic (thaw r tac) env sigma
+let delayed_of_thunk (tac: (unit, 'a) fun1) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
+  delayed_of_tactic (thaw tac) env sigma
 
 (** Converts a ['a repr] into a [(unit -> 'a) repr] *)
 let thunk (r: 'a repr): (unit, 'a) fun1 repr = fun1 unit r
@@ -127,7 +127,7 @@ let () =
         waterprove
           depth
           ~shield
-          (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          (List.map (fun lem -> delayed_of_thunk lem) lems)
           dbs
           database_type
       end
@@ -141,7 +141,7 @@ let () =
         rwaterprove
           depth
           ~shield
-          (List.map (fun lem -> delayed_of_thunk constr lem) lems)
+          (List.map (fun lem -> delayed_of_thunk lem) lems)
           dbs
           database_type
           must_use

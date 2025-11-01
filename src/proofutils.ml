@@ -206,4 +206,4 @@ let pr_hint (env: Environ.env) (sigma: Evd.evar_map) (h: FullHint.t) =
     | Give_exact c -> pr_hint_elt env sigma c
     | Res_pf_THEN_trivial_fail c -> pr_hint_elt env sigma c
     | Unfold_nth c -> Printer.pr_evaluable_reference c
-    | Extern (_, tac) -> Pputils.pr_glb_generic env sigma tac
+    | Extern (_, tac) -> Gentactic.print_glob env sigma tac
