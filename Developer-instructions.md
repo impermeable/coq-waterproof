@@ -31,11 +31,11 @@ Most development is done based off the main branch, and then the following setup
 ```
 opam init
 eval $(opam env)
-opam install coq-lsp.0.2.3+9.0
+opam install coq-lsp.0.2.3+9.1
 opam install ocaml-lsp-server
 ```
-replacing 9.0 with the desired version of Rocq, or more generally, replacing
-0.2.3+9.0 by the desired version of coq-lsp.
+replacing 9.1 with the desired version of Rocq, or more generally, replacing
+0.2.3+9.1 by the desired version of coq-lsp.
 
 ### Creating the desired opam environment: advanced version for supporting multiple versions of Rocq
 

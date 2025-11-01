@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "coq-waterproof"
-version: "3.0.1+9.0-dev"
+version: "3.0.1+9.1-dev"
 maintainer: "Jim Portegies <j.w.portegies@tue.nl>"
 authors: [
   "Jelle Wemmenhove"
@@ -25,8 +25,9 @@ bug-reports: "https://github.com/impermeable/coq-waterproof/issues"
 
 depends: [
   "ocaml" {>= "4.09.0"}
-  "rocq-prover" {>= "9.0" & < "9.1" | = "dev"}
-  "coq" {>= "9.0" & < "9.1" | = "dev"}
+  "rocq-core" {>= "9.1" & < "9.2"}
+  "rocq-stdlib" {>= "9"}
+  "coq" {>= "9.1" & < "9.2"}
   "dune" {>= "3.8"}
 ]
 
