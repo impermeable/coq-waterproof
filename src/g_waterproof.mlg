@@ -230,6 +230,7 @@ VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
     {
       let (notation_data, old_notation_data) = notation_data_pair in
       let located_id = Nametab.locate id in
+      add_to_unfold_map s located_id;
       register_notation_interpretation notation_data;
       register_notation_interpretation old_notation_data;
       let ua =
