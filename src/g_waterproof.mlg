@@ -22,22 +22,62 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
-let waterproof_version : string = "3.0.0+dev"
+let waterproof_version : string = "3.0.1+dev-dev"
+(*
+(* The code below is a hack to patch in (open_)lconstr into Ltac2 *)
+(* It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 *)
+let add_scope s f =
+  Ltac2_plugin.Tac2entries.register_scope (Names.Id.of_string s) f
 
+let rec pr_scope =
+  let open Ltac2_plugin.Tac2expr in
+  let open CAst in function
+    | SexprStr {v=s; _} -> Pp.qstring s
+    | SexprInt {v=n; _} -> Pp.int n
+    | SexprRec (_, {v=na; _}, args) ->
+      let na = match na with
+        | None -> Pp.str "_"
+        | Some id -> Names.Id.print id
+      in
+      Pp.(na ++ str "(" ++ prlist_with_sep (fun () -> str ", ") pr_scope args ++ str ")")
+
+let scope_fail s args =
+  let open Pp in
+  let args = str "(" ++ prlist_with_sep (fun () -> str ", ") pr_scope args ++ str ")" in
+  CErrors.user_err (str "Invalid arguments " ++ args ++ str " in scope " ++ str s)
+
+let () = add_scope "lconstr" (fun arg ->
+  let delimiters = List.map (function
+      | Ltac2_plugin.Tac2expr.SexprRec (_, { v = Some s; _ }, []) -> s
+      | _ -> scope_fail "lconstr" arg)
+      arg
+  in
+  let act e = Ltac2_plugin.Tac2quote.of_constr ~delimiters e in
+  Ltac2_plugin.Tac2entries.ScopeRule (Procq.Symbol.nterm Procq.Constr.lconstr, act)
+  )
+
+let () = add_scope "open_lconstr" (fun arg ->
+  let delimiters = List.map (function
+      | Ltac2_plugin.Tac2expr.SexprRec (_, { v = Some s; _ }, []) -> s
+      | _ -> scope_fail "open_.constr" arg)
+      arg
+  in
+  let act e = Ltac2_plugin.Tac2quote.of_open_constr ~delimiters e in
+  Ltac2_plugin.Tac2entries.ScopeRule (Procq.Symbol.nterm Procq.Constr.lconstr, act)
+  )
+(* End of hack *)
+*)
 }
 
 (* Add any words that occur right after mathematical expressions as keywords *)
 (* Doing this enables parsing the mathematical expressions without parentheses *)
 (* The cost of this is that these words are no longer allowed to be variables *)
 {
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "and"))
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "as"))
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "hold"))
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "holds"))
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "it"))
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "or"))
-let () = Procq.modify_keyword_state (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD "we"))
-
+let () = Mltop.add_init_function "coq-waterproof.plugin" @@ fun () ->
+    List.iter
+      (fun s -> Procq.modify_keyword_state
+        (fun kw -> CLexer.add_keyword_tok kw (Tok.PKEYWORD s)))
+      ["and"; "as"; "hold"; "holds"; "it"; "or"; "we"; "that"]
 }
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
@@ -149,5 +189,58 @@ VERNAC COMMAND EXTEND AddWpLoggerSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Logging" ] ->
     {
       add_wp_feedback_logger ()
+    }
+END
+
+{
+  open Ltac2_plugin.Tac2entries
+  open Unfold_framework
+  open Stdarg
+  open Procq.Constr
+
+  type pre_unfold_entry =
+    | PreUnfold
+    | PreApply of Constrexpr.constr_expr
+    | PreRewrite of Constrexpr.constr_expr
+
+  let pr_pre_unfold_entry env sigma ent =
+    let open Pp in
+    match ent with
+    | PreUnfold -> str "unfold"
+    | PreApply e -> str "apply" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
+    | PreRewrite e -> str "rewrite" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
+}
+
+VERNAC ARGUMENT EXTEND unfold_action_entry
+PRINTED BY { pr_pre_unfold_entry env sigma }
+| [ ";" "by" "unfold" ] -> { PreUnfold }
+| [ ";" "by" "apply" constr(e) ] -> { PreApply e }
+| [ ";" "by" "rewrite" constr(e) ] -> { PreRewrite e }
+END
+
+VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Register" "Expand" ne_string_list(s) ";"
+      "for" ref(id) ";"
+      "as" string(name)
+      unfold_action_entry_opt(opt_unfold_action) ] => { Vernacextend.(VtSideff ([], VtNow)) }
+    SYNTERP AS notation_data_pair
+    {
+      register_unfold s id
+    } ->
+    {
+      let (notation_data, old_notation_data) = notation_data_pair in
+      let located_id = Nametab.locate id in
+      add_to_unfold_map s located_id;
+      register_notation_interpretation notation_data;
+      register_notation_interpretation old_notation_data;
+      let ua =
+        begin
+          match opt_unfold_action with
+          | None -> Unfold_entry name
+          | Some PreUnfold -> Unfold_entry name
+          | Some (PreApply e) -> Apply_entry (name, e)
+          | Some (PreRewrite e) -> Rewrite_entry (name, e)
+        end in
+      register_unfold_entry located_id ua
     }
 END

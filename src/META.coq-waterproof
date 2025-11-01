@@ -1,6 +1,6 @@
 package "plugin" (
     directory = "."
-    version = "3.0.0+9.0"
+    version = "3.0.1+9.0-dev"
     description = "Waterproof plugin"
     requires = "rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2"
     archive(byte) = "waterproof.cma"

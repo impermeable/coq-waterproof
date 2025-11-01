@@ -25,19 +25,19 @@ port install opam
 ```
 
 ### Creating the desired opam environment: simplified version
-When we develop, we need to be aware of the version of Coq we develop for.
+When we develop, we need to be aware of the version of Rocq (formerly Coq) we develop for.
 Most development is done based off the main branch, and then the following setup will suffice.
 
 ```
 opam init
 eval $(opam env)
-opam install coq-lsp.0.2.2+8.20
+opam install coq-lsp.0.2.3+9.1
 opam install ocaml-lsp-server
 ```
-replacing 8.20 with the desired version of Coq, or more generally, replacing
-0.2.2+8.20 by the desired version of coq-lsp.
+replacing 9.1 with the desired version of Rocq, or more generally, replacing
+0.2.3+9.1 by the desired version of coq-lsp.
 
-### Creating the desired opam environment: advanced version for supporting multiple versions of Coq
+### Creating the desired opam environment: advanced version for supporting multiple versions of Rocq
 
 When we bring changes into different versions of Coq (for instance for the branches 8.18, 8.19...)
 it is convenient to have multiple opam environement, i.e. switches, available. If you prefer to start
@@ -51,10 +51,10 @@ opam switch create your_preferred_switch_name ocaml-base-compiler.4.14.1
 ```
 Next you can install the background libraries again
 ```
-opam install coq-lsp.0.2.2+8.20
+opam install coq-lsp.0.2.3+9.0
 opam install ocaml-lsp-server
 ```
-again replacing 8.20 with the desired version of Coq
+again replacing 9.0 with the desired version of Coq
 
 ### Caveat: locally compiling the coq-master branch
 
@@ -139,110 +139,18 @@ If you use VSCode, we recommend installing the [OCaml Platform](https://marketpl
 
 One can make Ocaml functions available for use in Ltac2 by using the
 foreign function interface (ffi). For now, we gather all such
-definitions in `Wp_ffi.ml`.
+definitions in `wp_ffi.ml`.
 
-Suppose one has an Ocaml function `f : a -> b -> c -> d` where `a, b, c, d` are types, and one would like to make this function available as an Ltac2 tactic.
+Note that with Coq v8.19, using the ffi got a lot easier.
+It may be possible to just look at the examples in `wp_ffi.ml`.
+This process is also explained in [tuto2](https://github.com/rocq-prover/rocq/tree/master/doc/plugin_tutorial/tuto4) of the [Rocq plugin tutorial](https://github.com/rocq-prover/rocq/tree/master/doc/plugin_tutorial).
+The documentation in the file `Tac2externals.mli` may also help.
 
-### Make a tactic
-
-First of all, only tactics can pass the ffi, so one needs to convert `f` into
-something that outputs a tactic. An element of type `'a` can be converted into an `'a`-valued tactic, ie.e. an element of type `'a tactic` by using `tclUNIT`:
-
-Consider this example:
-```
-let my_unit_tactic : unit tactic = tclUNIT ()
-```
-
-```
-let my_bool_tactic : bool tactic = tclUNIT true
-```
-
-Hence, we can convert `f` into something that outputs a tactic by
-
-```
-let my_f_tactic : a -> b -> c -> d tactic =
-  fun input_a input_b input_c -> tclUNIT (f input_a input_b input_c)
-```
-
-### Make a `valexpr` tactic
-
-Datatypes in Ocaml and in Ltac2 need to be translated to each other
-by using an intermediate datatype: namely `valexpr`. This also means that
-only `valexpr`-valued tactics can pass the ffi.
-Luckily, for many types there are already conversion functions available from
-and to `valexpr`, such as `of_bool`, `to_bool` and `of_unit`, `to_unit`.
-In general, these conversions are captured in elements of the type `'a repr`:
-an element `c` of `'a repr` has a conversion `repr_to c : valexpr -> 'a` and
-a conversion `repr_of c : 'a -> valexpr`. For more information, one can look
-at Coq's `tac2ffi.ml` file.
-
-We can then use the strategy from the previous section to make a valexpr tactic.
-```
-let my_valexpr_tactic_from_unit : valexpr tactic = tclUNIT (of_unit ())
-```
-It is common to use the `@@` operator to put everything that comes after it
-in parentheses, so one could also write
-```
-let my_valexpr_tactic_from_unit : valexpr tactic = tclUNIT @@ of_unit ()
-```
-Similarly, here is a `valexpr` tactic created from a `bool`
-```
-let my_valexpr_tactic_from_bool : valexpr tactic = tclUNIT @@ of_bool ()
-```
-
-### Make the function available for the ffi
-
-Considering an example of a function `f : a -> b -> c -> d`, and given
-`a_repr : a repr`, `b_repr : b repr`, `c_repr : c repr`, `d_repr : d repr`, we can
-make this function available for the ffi by
-
-```
-let () = define3 "my_f_external" a_repr b_repr c_repr @@
-  fun input_a, input_b, input_c ->
-    tclUNIT (repr_of d (f input_a input_b input_c))
-```
-
-The `3` is chosen because `f` has `3` inputs.
-
-Note that with some monad magic, the same definition can also be
-achieved by
-```
-let () = define3 "my_f_external" a_repr b_repr c_repr @@
-  fun input_a input_b input_c ->
-    tclUNIT @@ f input_a input_b input_c >>= fun z -> tclUNIT @@ repr_of d z
-```
-Here "my_f_external" is the name by which you can refer to this function
-from Ltac2. Any name can be chosen, and it won't be the name that you use
-to call the function from Ltac2. Representations for many different datatypes
-can be found in Coq's `tac2ffi.ml`. For many datatypes, the respresentation
-of that datatype is called the same: `bool` is for instance the name for `bool repr`, so that the following would be valid code
-
-```
-let () = define1 "my_bool_tactic" bool @@
-  fun input -> tclUNIT input >>= fun z -> tclUNIT @@ of_bool z
-```
-or yet another option
-```
-let () = define1 "my_bool_tactic" bool @@
-  fun input -> tclUNIT input >>= fun z -> tclUNIT @@ repr_of bool z
-```
-
-Note that in Coq v8.19, a new file `tac2externals.ml` was created, which
-can be used to handle a lot of the above issues.
-
-### Make the function available from Ltac2
-
-From a `.v` file, one can simply load
-```
-Require Import Waterproof.Waterproof.
-```
-and then define (in Coq v8.17) (given the caveat below)
-```
-Ltac2 @ external my_f_in_ltac2 : a_ltac2 -> b_ltac2 -> c_ltac2 -> d_ltac2 := "coq-waterproof" "my_f_external".
-```
-where `a_ltac2`, ... `d_ltac2` are the corresponding types on the
-Ltac2 side of the types `a`, ..., `d`. The caveat is that there aren't always
-corresponding types on the Ltac2 side of Ocaml types.
-
-Note that the syntax is a bit different in different versions of Coq.
-Please see the code for examples.
+A few remarks:
+- For passing variables through the ffi, one needs to convert them to an intermediate datatype: namely `valexpr`.
+  For existing datatypes these conversion functions exist and can be used conveniently.
+  With some syntactic sugar from `Tac2externals`, there's really nothing to do.
+  For inductive datatypes, it is relatively easy to create new conversion functions.
+  This process is explained in the tutorial mentioned above.
+- Although this is not really necessary for the ffi anymore, an element of type `'a` can be converted into an `'a`-valued tactic by using `tclUNIT`.
+- To make a tactic available from Ltac2, one needs to use the `Ltac2 @ external` syntax. It may be best to look for examples in the code.

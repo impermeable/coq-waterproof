@@ -22,10 +22,11 @@ Require Import Ltac2.Message.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Automation.
 Require Import Waterproof.Tactics.
+Require Import Waterproof.Util.MessagesToUser.
 Require Import Waterproof.Util.Assertions.
 
 (* -------------------------------------------------------------------------- *)
-(** * Testcases for [It suffices to show that ...] 
+(** * Testcases for [It suffices to show that ...]
   Variant without the [by] clause.
 *)
 
@@ -100,10 +101,10 @@ Proof.
   Fail By h it suffices to show that A.
 Abort.
 
-(* Test 9: unable to show goal if lemma is superfluous. *)
+(* Test 9: this passes, because the type of g is the same as the type of h. *)
 Goal B.
   pose g.
-  Fail By h it suffices to show that A.
+  By h it suffices to show that A.
 Abort.
 
 
@@ -136,4 +137,80 @@ Proof.
   intro H.
   It holds that true.
   Since true it suffices to show that b.
+Abort.
+
+(** Test 14: Multiple reasons for it suffices *)
+
+Local Parameter P Q R T : Prop.
+Local Parameter HPQ : P -> Q.
+Local Parameter HQR : Q -> R.
+Local Parameter HRT : R -> T.
+
+Goal T.
+Proof.
+By HPQ, HQR and HRT it suffices to show that P.
+Abort.
+
+(** Test 15: Multiple reasons, but one is also a
+  local assumption, using the local assumption. *)
+
+Goal (P -> Q) -> T.
+Proof.
+  intro H.
+  By H, HQR and HRT it suffices to show that P.
+Abort.
+
+(** Test 16: Multiple reasons, but one is also a
+  local assumption, using the external reason. *)
+
+Goal (P -> Q) -> T.
+Proof.
+  intro H.
+  By HPQ, HQR and HRT it suffices to show that P.
+Abort.
+
+(** Test 17: Using an external database as a reason. *)
+
+Local Parameter U V : Prop.
+Local Parameter HUV : U -> V.
+Local Parameter HVP : V -> P.
+
+Local Create HintDb my_reason.
+From Stdlib Require Import String.
+
+Notation "'my' 'reason'" := "my_reason"%string.
+Hint Resolve HUV : my_reason.
+
+Notation "'my' 'other' 'reason'" := "my_other_reason"%string.
+Hint Resolve HVP : my_other_reason.
+
+Goal V.
+Proof.
+By my reason it suffices to show that U.
+Abort.
+
+(** Test 18: Using two extra databases as a reason, with multiple databases. *)
+
+Goal P.
+By my reason and my other reason it suffices to show that U.
+Abort.
+
+(** Test 19: Using two extra databases and multiple lemmas as reasons *)
+
+Goal R.
+By my reason, HQR, my other reason and HPQ it
+  suffices to show that U.
+Abort.
+
+(** Test 20: Fails when one of the reasons is not helpful *)
+
+Waterproof Enable Logging.
+Waterproof Enable Redirect Feedback.
+
+Goal R.
+assert_feedback_with_strings
+  (fun () => By my reason, my other reason,
+    HPQ, HQR and HRT it suffices to show that U)
+  Info
+  ["It may be that the provided reason HRT is not necessary for the proof."].
 Abort.

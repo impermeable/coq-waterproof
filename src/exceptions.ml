@@ -156,11 +156,10 @@ let err (input : Pp.t) : unit Proofview.tactic =
 (**
   Return the last warning
 *)
-let get_last_warning () : Pp.t option Proofview.tactic =
-  Proofview.tclUNIT @@
-    match !(feedback_log Warning) with
-    | [] -> None
-    | hd :: tl -> Some hd
+let get_last_warning () : Pp.t option =
+  match !(feedback_log Warning) with
+| [] -> None
+| hd :: tl -> Some hd
 
 let wp_error_handler (e : exn) : Pp.t option =
   if !filter_errors then
@@ -180,3 +179,20 @@ let wp_error_handler (e : exn) : Pp.t option =
   else None
 
 let () = CErrors.register_handler wp_error_handler
+
+(**
+  Convert a reference in a shortest string representation of the
+  corresponding qualid
+*)
+let shortest_string_of_global (gr : Names.GlobRef.t) : string =
+  Nametab.shortest_qualid_of_global Names.Id.Set.empty gr
+  |> Libnames.string_of_qualid
+
+  let check_feedback_level_Ltac2_to_Ocaml (lvl: Feedback.level) (n: int) : bool =
+  match n with
+  | 0 -> lvl == Debug
+  | 1 -> lvl == Info
+  | 2 -> lvl == Notice
+  | 3 -> lvl == Warning
+  | 4 -> lvl == Error
+  | _ -> throw (CastError "Tried to check a feedback level outside range {0,1,2,3,4}")

@@ -27,12 +27,12 @@ open Wp_eauto
 open Wp_rewrite
 
 (**
-  Is automation shield enabled ? 
+  Is automation shield enabled ?
 *)
 let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
 
 (**
-  Do we want to debug the automation ?   
+  Do we want to debug the automation ?
 *)
 let automation_debug : bool ref = Summary.ref ~name:"automation_debug" false
 
@@ -76,15 +76,17 @@ let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_cons
     - [depth] ([int]): max depth of the proof search
     - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
     - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
+    - [dbs] ([hint_db_name list]): list of additional hint databases to use
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
 *)
-let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type): unit tactic =
+let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list)
+  (dbs: hint_db_name list) (database_type: database_type): unit tactic =
   Proofview.Goal.enter @@ fun goal ->
     begin
-      if shield && !automation_shield then 
-        automation_routine 3 lems (get_current_databases Shorten)
+      if shield && !automation_shield then
+        automation_routine 3 lems (dbs @ (get_current_databases Shorten))
       else
-        automation_routine depth lems (get_current_databases database_type)
+        automation_routine depth lems (dbs @ get_current_databases database_type)
     end
 
 (**
@@ -96,11 +98,13 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
     - [depth] ([int]): max depth of the proof search
     - [shield] ([bool]): if set to [true], will stop the proof search if a forbidden pattern is found
     - [lems] ([Tactypes.delayed_open_constr list]): additional lemmas that are given to solve the proof
+    - [dbs] ([hint_db_name list]): list of additional hint databases to use
     - [database_type] ([Hint_dataset_declarations]): type of databases that will be use as hint databases
     - [must_use] ([string list]): list of hints that have to be used during the automatic solving
     - [forbidden] ([string list]): list of hints that must not be used during the automatic solving
 *)
-let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list) (database_type: database_type) (must_use: constr list) (forbidden: constr list): unit tactic =
+let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open_constr list)
+  (dbs : hint_db_name list) (database_type: database_type) (must_use: constr list) (forbidden: constr list): unit tactic =
   Proofview.Goal.enter @@ fun goal ->
     begin
       let env = Proofview.Goal.env goal in
@@ -108,7 +112,7 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
       let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in
       let forbidden_tactics = List.map (Printer.pr_econstr_env env sigma) forbidden in
       if shield && !automation_shield then
-        restricted_automation_routine 3 lems (get_current_databases Shorten) must_use_tactics forbidden_tactics
+        restricted_automation_routine 3 lems (dbs @ (get_current_databases Shorten)) must_use_tactics forbidden_tactics
       else
-        restricted_automation_routine depth lems (get_current_databases database_type) must_use_tactics forbidden_tactics
+        restricted_automation_routine depth lems (dbs @ (get_current_databases database_type)) must_use_tactics forbidden_tactics
       end

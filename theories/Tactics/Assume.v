@@ -152,14 +152,14 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
 
 
 (**
-  Parses input from Ltac2 notation of the form 'A (i), B, C, D (ii), E and F', 
+  Parses input from Ltac2 notation of the form 'A (i), B, C, D (ii), E and F',
   see tactic notation specifications below.
   Returns a single list with the user's input (e.g. the above becomes [A (i); B; C; D (ii); E; F]).
 *)
-Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option)) 
-  (x2 : ((((constr * (ident option)) list) option) * (constr * (ident option))) option) 
+Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option))
+  (x2 : ((((constr * (ident option)) list) option) * (constr * (ident option))) option)
   : (constr * (ident option)) list :=
-  match x2 with 
+  match x2 with
   | Some (Some x2, x3)  => List.append (x1 :: x2) [x3]
   | Some (None   , x3)  => [x1; x3]
   | None                => [x1]
@@ -169,17 +169,15 @@ Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option))
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")")))) 
+Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
   x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
   "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
 := assume (parse_natural_language_listing x1 x2).
 
-
-
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")")))) 
+Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
   x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
   "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
 := assume (parse_natural_language_listing x1 x2).
