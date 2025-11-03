@@ -36,15 +36,15 @@ Open Scope subset_scope.
 Definition is_index_sequence (n : ℕ → ℕ) :=
   ∀ k ∈ ℕ, (n k < n (k + 1))%nat.
 
-Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 69) : metric_scope.
-Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 69) : pred_for_subset_scope.
+Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 0) : metric_scope.
+Notation "'_index' 'sequence_'" := (is_index_sequence) (at level 0) : pred_for_subset_scope.
 
-Notation "'index' 'sequence'" := (is_index_sequence) (at level 69, only parsing) : metric_scope.
-Notation "'index' 'sequence'" := (is_index_sequence) (at level 69, only parsing) : pred_for_subset_scope.
+Notation "'index' 'sequence'" := (is_index_sequence) (at level 0, only parsing) : metric_scope.
+Notation "'index' 'sequence'" := (is_index_sequence) (at level 0, only parsing) : pred_for_subset_scope.
 
-Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 69) : metric_scope.
+Notation "n 'is' 'an' '_index' 'sequence_'" := (is_index_sequence n) (at level 1) : metric_scope.
 
-Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 69, only parsing) : metric_scope.
+Notation "n 'is' 'an' 'index' 'sequence'" := (is_index_sequence n) (at level 1, only parsing) : metric_scope.
 
 Waterproof Register Expand "index" "sequence";
   for is_index_sequence;
@@ -253,6 +253,8 @@ Notation "p 'is' 'an' 'accumulation' 'point' 'of' a" := (is_accumulation_point _
 Waterproof Register Expand "accumulation" "point";
   for is_accumulation_point;
   as "Definition (sequential) accumulation point".
+
+Create HintDb subsequences.
 
 #[export] Hint Resolve index_sequence_property_automation : subsequences.
 #[export] Hint Extern 1 => (unfold ge) : subsequences.

@@ -182,6 +182,8 @@ Notation "'my' 'reason'" := "my_reason"%string.
 Hint Resolve HUV : my_reason.
 
 Notation "'my' 'other' 'reason'" := "my_other_reason"%string.
+
+Create HintDb my_other_reason.
 Hint Resolve HVP : my_other_reason.
 
 Goal V.

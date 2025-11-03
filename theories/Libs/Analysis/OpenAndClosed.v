@@ -44,7 +44,7 @@ Definition is_closed (A : R -> Prop) := is_open (complement A).
 
 
 (** Notations *)
-Notation "B( p , r )" := (open_ball p r) (at level 68, format "B( p ,  r )").
+Notation "B( p , r )" := (open_ball p r) (at level 0, format "B( p ,  r )").
 
 Waterproof Register Expand "B";
   for open_ball;
@@ -62,9 +62,9 @@ Waterproof Register Expand "interior" "point";
   for is_interior_point;
   as "Definition interior point".
 
-Notation "A 'is' '_open_'" := (is_open A) (at level 69).
+Notation "A 'is' '_open_'" := (is_open A) (at level 1).
 
-Notation "A 'is' 'open'" := (is_open A) (at level 69, only parsing).
+Notation "A 'is' 'open'" := (is_open A) (at level 1, only parsing).
 
 Waterproof Register Expand "open";
   for is_open;
@@ -72,7 +72,7 @@ Waterproof Register Expand "open";
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
-Notation "'ℝ' '\' A" := (complement A) (at level 0, only parsing).
+Notation "'ℝ' '\' A" := (complement A) (at level 20, only parsing).
 
 Waterproof Register Expand "complement";
   for complement;
@@ -82,9 +82,9 @@ Waterproof Register Expand "ℝ\";
   for complement;
   as "Definition complement".
 
-Notation "A 'is' '_closed_'" := (is_closed A) (at level 69).
+Notation "A 'is' '_closed_'" := (is_closed A) (at level 1).
 
-Notation "A 'is' 'closed'" := (is_closed A) (at level 69, only parsing).
+Notation "A 'is' 'closed'" := (is_closed A) (at level 1, only parsing).
 
 Waterproof Register Expand "closed";
   for is_closed;

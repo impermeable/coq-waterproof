@@ -376,8 +376,8 @@ Definition is_bounded (a : ℕ → ℝ) :=
     ∃ M > 0,
       ∀ n ∈ ℕ,
         |a n - q| ≤ M.
-Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 69).
-Notation "a 'is' 'bounded'" := (is_bounded a) (at level 69, only parsing).
+Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 1).
+Notation "a 'is' 'bounded'" := (is_bounded a) (at level 1, only parsing).
 
 Waterproof Register Expand "bounded";
   for is_bounded;
@@ -438,8 +438,8 @@ Qed.
 (** Definitions sequence bounded from above and below *)
 Definition is_bounded_above (a : ℕ → ℝ) :=
   ∃ M ∈ ℝ, ∀ n ∈ ℕ, a(n) ≤ M.
-Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 69).
-Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 69, only parsing).
+Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 1).
+Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 1, only parsing).
 
 Waterproof Register Expand "bounded" "above";
   for is_bounded_above;
@@ -447,8 +447,8 @@ Waterproof Register Expand "bounded" "above";
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m ∈ ℝ, ∀ n ∈ ℕ, m ≤ a(n).
-Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 69).
-Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 69, only parsing).
+Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 1).
+Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 1, only parsing).
 
 Waterproof Register Expand "bounded" "below";
   for is_bounded_below;
@@ -460,9 +460,9 @@ Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
     (∃ N1 ∈ ℕ,
       ∀ n ≥ N1, (a(n) > M)%R)%nat.
 
-Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
-Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
-Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
+Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 1).
+Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 1).
+Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 1, only parsing).
 
 Waterproof Register Expand "⟶" "∞";
   for diverges_to_plus_infinity;
@@ -477,9 +477,9 @@ Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
     ∃ N1 ∈ ℕ,
       (∀ n ≥ N1, (a(n) < M)%R)%nat.
 
-Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
-Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).
-Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
+Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 1).
+Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 1).
+Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 1, only parsing).
 
 Waterproof Register Expand "⟶" "-∞";
   for diverges_to_minus_infinity;

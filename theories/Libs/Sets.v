@@ -1,8 +1,8 @@
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
 
-Require Export Libs.Sets.Operations.
-Require Export Libs.Sets.IndexedOperations.
+Require Export Waterproof.Libs.Sets.Operations.
+Require Export Waterproof.Libs.Sets.IndexedOperations.
 
 Open Scope subset_scope.
 

@@ -24,8 +24,8 @@ Require Import Waterproof.Tactics.ItHolds.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
-Require Import Util.Goals.
-Require Import Util.MessagesToUser.
+Require Import Waterproof.Util.Goals.
+Require Import Waterproof.Util.MessagesToUser.
 
 Ltac2 Type unfold_action := [
   | Unfold (string, reference)
@@ -190,7 +190,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
   (* Print output *)
   if (Bool.or did_unfold_goal (Bool.neg (_is_empty only_unfolded_hyps)))
     then
-      match def_name with
+      (match def_name with
       | Some s => info_notice (of_string (String.concat "" [s; ":"]))
       | _ => ()
       end;
@@ -213,14 +213,14 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
             (print_tactic (concat_list [of_string "We need to show that ";
               of_lconstr unfolded_goal; of_string "."]))
           else
-            match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
+            (match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
             | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
                                 of_lconstr unfolded_goal; of_string "."]))
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
             of_string " (this is probably caused by a misalignment in the automation for";
             of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); of_string "It suffices to show that ";
                                 of_lconstr unfolded_goal; of_string "."])
-            end
+            end)
         else ();
 
       (* Print unfolded hypotheses *)
@@ -240,15 +240,16 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
           else
             (List.iter test_and_print only_unfolded_hyps)
         else ()
+      )
     else
       (* Print no statements with definition *)
-      if (Bool.and notify_if_not_present definitional) then
+      (if (Bool.and notify_if_not_present definitional) then
         (match def_name with
         | None => info_notice (of_string "Definition does not appear in any statement.")
         | Some def_name => info_notice (concat_list
             [of_string "'"; of_string def_name; of_string "'";
               of_string " cannot be used in any statement."])
-        end) else ();
+        end) else ());
 
   (* Throw error if required *)
   if throw_error

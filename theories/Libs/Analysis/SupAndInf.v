@@ -79,8 +79,8 @@ Qed.
 Notation "M 'is' 'the' '_supremum_' 'of' A" := (is_sup A M) (at level 69).
 Notation "M 'is' 'the' 'supremum' 'of' A" := (is_sup A M) (at level 69, only parsing).
 
-Notation "A 'is' '_bounded' 'from' 'above_'" := (is_bounded_above A) (at level 69).
-Notation "A 'is' 'bounded' 'from' 'above'" := (is_bounded_above A) (at level 69, only parsing).
+Notation "A 'is' '_bounded' 'from' 'above_'" := (is_bounded_above A) (at level 1).
+Notation "A 'is' 'bounded' 'from' 'above'" := (is_bounded_above A) (at level 1, only parsing).
 
 Waterproof Register Expand "bounded" "from" "above";
   for is_bounded_above;
@@ -166,8 +166,8 @@ Definition is_inf (A : subset ℝ) (m : ℝ) :=
 Notation "m 'is' 'the' '_infimum_' 'of' A" := (is_inf A m) (at level 69).
 Notation "m 'is' 'the' 'infimum' 'of' A" := (is_inf A m) (at level 69, only parsing).
 
-Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 69).
-Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 69, only parsing).
+Notation "A 'is' '_bounded' 'from' 'below_'" := (is_bounded_below A) (at level 1).
+Notation "A 'is' 'bounded' 'from' 'below'" := (is_bounded_below A) (at level 1, only parsing).
 
 Waterproof Register Expand "bounded" "from" "below";
   for is_bounded_below;

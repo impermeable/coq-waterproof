@@ -184,17 +184,17 @@ End metricspace.
 #[export] Hint Resolve <- alt_char_continuity : wp_reals.
 
 (** Notations *)
-Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 69).
+Notation "a 'is' 'an' '_accumulation' 'point_'" := (is_accumulation_point a) (at level 1).
 
-Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 69, only parsing).
+Notation "a 'is' 'an' 'accumulation' 'point'" := (is_accumulation_point a) (at level 1, only parsing).
 
 Waterproof Register Expand "accumulation" "point";
   for is_accumulation_point;
   as "Definition accumulation point".
 
-Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 69).
+Notation "a 'is' 'an' '_isolated' 'point_'" := (is_isolated_point a) (at level 1).
 
-Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 69, only parsing).
+Notation "a 'is' 'an' 'isolated' 'point'" := (is_isolated_point a) (at level 1, only parsing).
 
 Waterproof Register Expand "isolated" "point";
   for is_isolated_point;

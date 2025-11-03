@@ -54,7 +54,7 @@ Proof.
   - We conclude that (l - 1 < M)%nat.
 Qed.
 
-Notation partial_sums := sum_f_R0.
+Abbreviation partial_sums := sum_f_R0.
 
 Lemma partial_sums_pos_incr (a : ℕ → ℝ) :
   (∀ n ∈ ℕ, a n ≥ 0) ⇒
