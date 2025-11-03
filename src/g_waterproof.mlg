@@ -22,7 +22,7 @@ DECLARE PLUGIN "coq-waterproof.plugin"
 open Exceptions
 open Waterprove
 
-let waterproof_version : string = "3.0.0+9.0"
+let waterproof_version : string = "3.1.0+9.0"
 
 (* The code below is a hack to patch in (open_)lconstr into Ltac2 *)
 (* It should be removed when merged to coq-master (open_)lconstr should be in release 9.1 *)
@@ -72,21 +72,10 @@ let () = add_scope "open_lconstr" (fun arg ->
 (* Doing this enables parsing the mathematical expressions without parentheses *)
 (* The cost of this is that these words are no longer allowed to be variables *)
 {
-let () = Procq.set_keyword_state (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    (CLexer.add_keyword (
-    CLexer.add_keyword (Procq.get_keyword_state()) "and"
-    ) "as")
-    ) "hold")
-    ) "holds")
-    ) "it")
-    ) "or")
-    ) "we")
-    )
+let () = Mltop.add_init_function "coq-waterproof.plugin" @@ fun () ->
+    Procq.set_keyword_state
+      (List.fold_left CLexer.add_keyword (Procq.get_keyword_state())
+      ["and"; "as"; "hold"; "holds"; "it"; "or"; "we"; "that"])
 }
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
@@ -198,5 +187,58 @@ VERNAC COMMAND EXTEND AddWpLoggerSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Logging" ] ->
     {
       add_wp_feedback_logger ()
+    }
+END
+
+{
+  open Ltac2_plugin.Tac2entries
+  open Unfold_framework
+  open Stdarg
+  open Procq.Constr
+
+  type pre_unfold_entry =
+    | PreUnfold
+    | PreApply of Constrexpr.constr_expr
+    | PreRewrite of Constrexpr.constr_expr
+
+  let pr_pre_unfold_entry env sigma ent =
+    let open Pp in
+    match ent with
+    | PreUnfold -> str "unfold"
+    | PreApply e -> str "apply" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
+    | PreRewrite e -> str "rewrite" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
+}
+
+VERNAC ARGUMENT EXTEND unfold_action_entry
+PRINTED BY { pr_pre_unfold_entry env sigma }
+| [ ";" "by" "unfold" ] -> { PreUnfold }
+| [ ";" "by" "apply" constr(e) ] -> { PreApply e }
+| [ ";" "by" "rewrite" constr(e) ] -> { PreRewrite e }
+END
+
+VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Register" "Expand" ne_string_list(s) ";"
+      "for" ref(id) ";"
+      "as" string(name)
+      unfold_action_entry_opt(opt_unfold_action) ] => { Vernacextend.(VtSideff ([], VtNow)) }
+    SYNTERP AS notation_data_pair
+    {
+      register_unfold s id
+    } ->
+    {
+      let (notation_data, old_notation_data) = notation_data_pair in
+      let located_id = Nametab.locate id in
+      add_to_unfold_map s located_id;
+      register_notation_interpretation notation_data;
+      register_notation_interpretation old_notation_data;
+      let ua =
+        begin
+          match opt_unfold_action with
+          | None -> Unfold_entry name
+          | Some PreUnfold -> Unfold_entry name
+          | Some (PreApply e) -> Apply_entry (name, e)
+          | Some (PreRewrite e) -> Rewrite_entry (name, e)
+        end in
+      register_unfold_entry located_id ua
     }
 END

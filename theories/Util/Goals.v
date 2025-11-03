@@ -234,19 +234,19 @@ Ltac2 raise_goal_wrapped_error () :=
 Ltac2 goal_wrapped_template_msg () : bool :=
   lazy_match! goal with
   | [|- Case.Wrapper ?case_type _] =>
-    replace_notice (Message.to_string (concat_list [of_string "- Case "; of_constr case_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [of_string "- Case "; of_lconstr case_type; of_string ".${0}"])); true
   | [|- StateGoal.Wrapper ?goal_type] =>
-    replace_notice (Message.to_string (concat_list [of_string "We need to show that "; of_constr goal_type; of_string ".${0}"]));
-    replace_notice (Message.to_string (concat_list [of_string "We conclude that "; of_constr goal_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [of_string "We need to show that "; of_lconstr goal_type; of_string ".${0}"]));
+    replace_notice (Message.to_string (concat_list [of_string "We conclude that "; of_lconstr goal_type; of_string ".${0}"])); true
   | [|- VerifyGoal.Wrapper ?goal_type] =>
-    replace_notice (Message.to_string (concat_list [of_string "{ Indeed, "; of_constr goal_type; of_string ". }${0}"]));
-    replace_notice (Message.to_string (concat_list [of_string "{ We need to verify that "; of_constr goal_type; of_string ". }${0}"])); true
+    replace_notice (Message.to_string (concat_list [of_string "{ Indeed, "; of_lconstr goal_type; of_string ". }${0}"]));
+    replace_notice (Message.to_string (concat_list [of_string "{ We need to verify that "; of_lconstr goal_type; of_string ". }${0}"])); true
   | [|- StateHyp.Wrapper ?hyp_type _ _] =>
-    replace_notice (Message.to_string (concat_list [of_string "It holds that "; of_constr hyp_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [of_string "It holds that "; of_lconstr hyp_type; of_string ".${0}"])); true
   | [|- ByContradiction.Wrapper ?assumption_type _] =>
-    replace_notice (Message.to_string (concat_list [of_string "Assume that "; of_constr assumption_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [of_string "Assume that "; of_lconstr assumption_type; of_string ".${0}"])); true
   | [|- NaturalInduction.Base.Wrapper ?goal_type] =>
-    replace_notice (Message.to_string (concat_list [of_string "- We first show the base case "; of_constr goal_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [of_string "- We first show the base case "; of_lconstr goal_type; of_string ".${0}"])); true
   | [|- NaturalInduction.Step.Wrapper _] =>
     replace_notice "- We now show the induction step.${0}"; true
   | [|- StrongIndIndxSeq.Base.Wrapper _] =>

@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Coq.Reals.Reals.
+Require Import Stdlib.Reals.Reals.
 
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Sets.
@@ -40,4 +40,7 @@ Goal exists g : R -> R, g (|- 3|) = |2|.
 Abort.
 
 Goal & |0| + |3| ≤ |-3| + |0| ≤ 4 + |5|.
+Abort.
+
+Goal & |0| * | 3 | ≤ | 4 + 3 | - |5| ≤ 3 * |- 2 |.
 Abort.

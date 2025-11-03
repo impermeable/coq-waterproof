@@ -37,3 +37,4 @@ Require Export Tactics.Specialize.
 Require Export Tactics.Take.
 Require Export Tactics.ToShow.
 Require Export Tactics.Unfold.
+Require Export Tactics.By.

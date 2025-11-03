@@ -21,10 +21,12 @@ Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
-Require Import Util.Constr.
-Require Import Util.Goals.
-Require Import Util.Hypothesis.
-Require Import Util.MessagesToUser.
+From Waterproof Require Import Util.Constr.
+From Waterproof Require Import Util.Goals.
+From Waterproof Require Import Util.Hypothesis.
+From Waterproof Require Import Util.MessagesToUser.
+From Waterproof Require Import HelpNewHyp.
+From Waterproof Require Import Tactics.Unfold.
 
 Require Import Notations.Sets.
 Require Import Waterprove.
@@ -216,6 +218,14 @@ Ltac2 print_hints () :=
         (* Suggest hint to solve goal *)
         let hint_given := goal_hint () in
 
+        (* Suggest how to expand definitions *)
+        let ls := get_unfold_references_ffi () in
+        let expand_list_empty := is_empty ls in
+        if Bool.neg expand_list_empty then
+          (info_notice (of_string "You can try to expand definitions or use alternative characterizations:");
+          List.iter (fun l => wp_unfold_by_ref l false) ls)
+        else ();
+
         (* Collect forall- and exists-statements *)
         let hyps := List.map (fun (_, _, t) => t) (Control.hyps ()) in
         let forall_hyps := List.filter (forall_filter) hyps in
@@ -240,8 +250,11 @@ Ltac2 print_hints () :=
           );
 
         (* Print no hints available if none have been given *)
-        if (Bool.and (is_empty forall_hyps)
-            (Bool.and (is_empty exists_hyps) (Bool.neg hint_given)))
+        if List.fold_left (fun a b => Bool.and a b) true
+            [is_empty forall_hyps;
+             is_empty exists_hyps;
+             Bool.neg hint_given;
+             expand_list_empty]
           then (goal_no_hint ())
           else ()
         end.
@@ -261,72 +274,7 @@ Ltac2 Notation "Help" := print_hints ().
 
 Module HelpNewHyp.
 
-(** Given a forall- or exists-statement, prints suggestion how to use it. *)
 
-Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
-  if Bool.neg (get_print_hypothesis_flag ()) then ()
-  else
-  let print_forall_msg () :=
-    info_notice (concat_list [
-        of_string "To use "; of_constr x; of_string ", consider:"]);
-      let template := match label with
-        | None => "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"
-        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
-      end in
-      insert_msg "Use ... := ... in ...." template in
-  let print_exists_msg () :=
-    info_notice (concat_list [
-        of_string "To use "; of_constr x; of_string ", consider:"]);
-      insert_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}" in
-  lazy_match! x with
-  | _ -> ?_b => ()
-  | forall _, _ => print_forall_msg ()
-  | ∀ _ _ , _ => print_forall_msg ()
-  | ∀ _ > _ , _ => print_forall_msg ()
-  | ∀ _ ≥ _, _ => print_forall_msg ()
-  | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()
-  | exists _, _ => print_exists_msg ()
-  | ∃ _ _, _ => print_exists_msg ()
-  | ∃ _ > _, _ => print_exists_msg ()
-  | ∃ _ ≥ _, _ => print_exists_msg ()
-  | ∀ _ < _ , _ => print_forall_msg ()
-  | ∀ _ ≤ _, _ => print_forall_msg ()
-  | _ => ()
-  end.
-
-(** Given a forall- or exists-statement, prints suggestion how to use it,
-  after statement is proven.
-
-  (for use in 'We claim that ...'-tactic.)
-*)
-Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
-  if Bool.neg (get_print_hypothesis_flag ()) then ()
-  else
-  let print_forall_msg () :=
-    info_notice (concat_list [
-        of_string "After proving "; of_constr x; of_string ", consider:"]);
-      let template := match label with
-        | None => "Use ${0:x} := ${1:0} in (${2:i}).${3}"
-        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
-      end in
-      insert_msg "Use ... := ... in ...." template in
-  let print_exists_msg () :=
-    info_notice (concat_list [
-        of_string "After proving "; of_constr x; of_string ", consider:"]);
-      insert_msg "Obtain such a ...." "Obtain such a ${0:x}.${1}" in
-  lazy_match! x with
-  | _ -> ?_b => ()
-  | forall _, _ => print_forall_msg ()
-  | ∀ _ _, _ => print_forall_msg ()
-  | ∀ _ > _, _ => print_forall_msg ()
-  | ∀ _ ≥ _, _ => print_forall_msg ()
-  | exists _, _ => print_exists_msg ()
-  | ∃ _ _, _ => print_exists_msg ()
-  | ∃ _ > _, _ => print_exists_msg ()
-  | ∃ _ ≥ _, _ => print_exists_msg ()
-  | _ => ()
-  end.
 
 End HelpNewHyp.
 

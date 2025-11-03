@@ -3,6 +3,7 @@ Exceptions
 Proofutils
 Hint_dataset_declarations
 Hint_dataset
+Unfold_framework
 Wp_rewrite
 Wp_auto
 Wp_eauto
