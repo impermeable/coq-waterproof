@@ -19,8 +19,8 @@
 From Stdlib Require Import Reals.Reals.
 From Stdlib Require Import Qreals.
 
-Require Import Notations.Common.
-Require Import Notations.Sets.
+Require Import Waterproof.Notations.Common.
+Require Import Waterproof.Notations.Sets.
 
 (** ** (In)equalities
   Allowing unicode characters for uniqualities.
@@ -60,9 +60,9 @@ Definition cv_implies_cv_abs_to_l_abs := cv_cvabs.
   When using this in rewrites, $<$, $>$, etc. should bind stronger.
 *)
 
-Notation "| x |" := (Rabs x) (at level 40, format "| x |") : R_scope.
-Notation "|- x |" := (| (-x) |) (at level 40, x at next level, only parsing) : R_scope.
-Notation "｜ x - y ｜" := (R_dist x y) (at level 40, x at level 38, y at level 38, format "｜ x  -  y ｜") : R_scope.
+Notation "| x |" := (Rabs x) (at level 20, format "| x |") : R_scope.
+Notation "|- x |" := (| (-x) |) (at level 20, x at next level, only parsing) : R_scope.
+Notation "｜ x - y ｜" := (R_dist x y) (at level 20, x at level 38, y at level 38, format "｜ x  -  y ｜") : R_scope.
 
 (** ** Powers *)
 Notation "a ³" := (a * a * a) (at level 1) : R_scope.

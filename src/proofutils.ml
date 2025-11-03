@@ -157,7 +157,14 @@ let trace_check_used (must_use: t list) (trace: trace): trace tactic =
   ) !used_lemmas) trace.trace;
   let unused_lemmas = ref [] in
   if StringMap.exists (fun name is_used -> if (not is_used) then unused_lemmas := name::!unused_lemmas; not is_used) !used_lemmas
-    then tclZERO ~info:(Exninfo.reify ()) (SearchBound (failed trace))
+    then (* tclZERO ~info:(Exninfo.reify ()) (SearchBound (failed trace)) *)
+      let open Pp in
+      let reason_word = if List.length !unused_lemmas > 1 then "reasons" else "reason" in
+      let verb = if List.length !unused_lemmas > 1 then "are" else "is" in
+      let lemmas = Pp.prlist_with_sep (fun () -> Pp.str ", ") Pp.str !unused_lemmas in
+      Exceptions.inform (str "It may be that the provided " ++ str reason_word ++ str " " ++
+        lemmas ++ str " " ++ str verb ++ str " not necessary for the proof.")
+      >>= fun () -> tclUNIT trace
     else tclUNIT trace
 
 (**

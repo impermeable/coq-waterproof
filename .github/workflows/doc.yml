@@ -4,6 +4,8 @@ on:
 
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
   workflow_dispatch:
 
@@ -51,7 +53,7 @@ jobs:
   deploy:
     name: deploy
     needs: build
-
+    if: github.ref == 'refs/heads/main'
     permissions:
       pages: write
       id-token: write

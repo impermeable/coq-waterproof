@@ -2,6 +2,7 @@ import subprocess
 import os
 import glob
 import json
+import re
 import argparse
 
 if __name__ == "__main__":
@@ -38,10 +39,31 @@ if __name__ == "__main__":
     for filename in glob.iglob('**/*.diags', recursive=True, root_dir=FOLDER):
         print(filename)
         with open(f'{FOLDER}/{filename}') as file:
+            # Load optional .test file (same name but .test instead of .diags).
+            diags_path = os.path.join(FOLDER, filename)
+            test_path = os.path.splitext(diags_path)[0] + '.test'
+            exceptions = list()
+            if os.path.exists(test_path):
+                with open(test_path) as tf:
+                    for line in tf:
+                        line = line.strip()
+                        if not line or line.startswith('#'):
+                            continue
+                        exceptions.append(line)
+
             contents = file.read().replace('}\n{','},{')
             diags = json.loads('[' + contents + ']')
             for diag in diags:
-                if(diag['severity'] <= 1):
+                # severity <= 1 considered failing in previous behaviour
+                sev = diag.get('severity', 0)
+                if sev <= 1:
+                    msg = diag.get('message')
+
+                    # if exact message is listed, skip it and remove it to show we processed it.
+                    if len(exceptions) > 0 and exceptions[0] in msg.strip():
+                        exceptions.pop(0)
+                        continue
+
                     print(filename)
                     print(diag)
                     failed = True

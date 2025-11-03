@@ -92,7 +92,7 @@ let exists_evaluable_reference (env: Environ.env) (evaluable_ref: Evaluable.t): 
 *)
 let pr_info_nop (): unit = Feedback.msg_notice (str "idtac.")
 
-(** 
+(**
   Prints a debug header if [log] is [true]
 *)
 let pr_dbg_header (): unit = Feedback.msg_notice (str "(* info wp_auto: *)")
@@ -107,7 +107,7 @@ let tclTryDbg (debug_header_printer : unit -> unit) (tac: trace tactic): trace t
       begin
         debug_header_printer ();
         if trace.trace <> [] then
-          begin 
+          begin
             pr_trace trace;
             Feedback.msg_notice @@ str "\nApplied lemmas:";
             pr_trace @@ keep_applied trace
@@ -130,7 +130,7 @@ let hintmap_of (env: Environ.env) (sigma: Evd.evar_map) (secvars: Id.Pred.t) (co
   match hdc with
   | None -> Hint_db.map_none ~secvars
   | Some hdc ->
-      if occur_existential sigma concl then (fun db -> 
+      if occur_existential sigma concl then (fun db ->
         match Hint_db.map_eauto env sigma ~secvars hdc concl db with
           | ModeMatch (_, l) -> l
           | ModeMismatch -> []
@@ -162,7 +162,7 @@ let intro_register (kont: hint_db -> trace tactic) (db: hint_db) (forbidden_tact
         let env = Goal.env gl in
         let sigma = Goal.sigma gl in
         push_resolve_hyp env sigma (Context.Named.Declaration.get_id decl) db
-      in TraceTactics.typedGoalEnter @@ fun goal -> tclUNIT (nthDecl 1 goal) >>= (fun decl -> 
+      in TraceTactics.typedGoalEnter @@ fun goal -> tclUNIT (nthDecl 1 goal) >>= (fun decl ->
         TraceTactics.typedThen
           (tclUNIT new_trace)
           (kont (extend_local_db decl db))
@@ -283,7 +283,7 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
       tclUNIT no_trace
     end
 
-(** 
+(**
   Generates the {! wp_auto} function
 *)
 let gen_wp_auto (log: bool) ?(n: int = 5) (lems: Tactypes.delayed_open_constr list) (dbnames: hint_db_name list option) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =

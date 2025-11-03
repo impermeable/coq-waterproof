@@ -1,5 +1,15 @@
 # Change log for the coq-waterproof library
 
+## Version 3.1.0+9.1
+
+- No longer throw an error if there are unused lemmas (this speeds up automation when using `By ... it holds that ...`)
+- Remove parentheses in suggestions
+- Fix issue with keywords
+- Allow for multiple reasons in `By ...`-clause
+- Add framework for registering definitions and alternative characterizations
+- Add Expand All functionality to Help
+- Simplify ffi mechanism
+
 ## Version 3.0.0+9.0
 
 - Remove need for parentheses in many places

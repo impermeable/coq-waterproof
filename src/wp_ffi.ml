@@ -22,9 +22,9 @@
 module Tac2ffi = Ltac2_plugin.Tac2ffi
 module Tac2env = Ltac2_plugin.Tac2env
 module Tac2expr = Ltac2_plugin.Tac2expr
+open Ltac2_plugin.Tac2externals
 
 open Proofview
-open Proofview.Notations
 open Tac2expr
 open Tac2ffi
 open Ltac2_plugin.Tac2val
@@ -33,68 +33,12 @@ open Exceptions
 open Hint_dataset_declarations
 open Waterprove
 open Wp_evars
+open Unfold_framework
 
 (** Creates a name used to define the function interface *)
 let pname (s: string): ml_tactic_name = { mltac_plugin = "rocq-runtime.plugins.coq-waterproof"; mltac_tactic = s }
 
-(** Wrapper around {! Tac2env.define_primitive} to make easier the primitive definition *)
-let define_primitive (name: string) (arity: 'a arity) (f: 'a): unit =
-  Tac2env.define_primitive (pname name) (mk_closure_val arity f)
-
-(**
-  Defines a function of arity 0 (that only takes a [unit] as an argument)
-
-  This function will be callable in Ltac2 with [Ltac2 @ external <ltac2_name>: unit := "coq-waterproof" "<name>".]
-*)
-let define0 (name: string) (f: valexpr tactic): unit = define_primitive name arity_one (fun _ -> f)
-
-(**
-  Defines a function of arity 1 (that only takes one argument)
-
-  This function will be callable in Ltac2 with [Ltac2 @ external <ltac2_name>: <type> -> unit := "coq-waterproof" "<name>".]
-*)
-let define1 (name: string) (r0: 'a repr) (f: 'a -> valexpr tactic): unit =
-  define_primitive name arity_one @@ fun x -> f (repr_to r0 x)
-
-(**
-  Defines a function of arity 2 in the same way as {! define1}
-*)
-let define2 (name: string) (r0: 'a repr) (r1: 'b repr) (f: 'a -> 'b -> valexpr tactic): unit =
-  define_primitive name (arity_suc arity_one) @@ fun x y -> f (repr_to r0 x) (repr_to r1 y)
-
-(**
-  Defines a function of arity 3 in the same way as {! define1}
-*)
-let define3 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (f: 'a -> 'b -> 'c -> valexpr tactic): unit =
-  define_primitive name (arity_suc (arity_suc arity_one)) @@ fun x y z -> f (repr_to r0 x) (repr_to r1 y) (repr_to r2 z)
-
-(**
-  Defines a function of arity 4 in the same way as {! define1}
-*)
-let define4 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (f: 'a -> 'b -> 'c -> 'd -> valexpr tactic): unit =
-  define_primitive name (arity_suc (arity_suc (arity_suc arity_one))) @@
-  fun x0 x1 x2 x3 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3)
-
-(**
-  Defines a function of arity 5 in the same way as {! define1}
-*)
-let define5 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> valexpr tactic): unit =
-  define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc arity_one)))) @@
-  fun x0 x1 x2 x3 x4 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4)
-
-(**
-  Defines a function of arity 6 in the same way as {! define1}
-*)
-let define6 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (r5: 'f repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> 'f -> valexpr tactic): unit =
-  define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc arity_one))))) @@
-  fun x0 x1 x2 x3 x4 x5 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4) (repr_to r5 x5)
-
-(**
-  Defines a function of arity 7 in the same way as {! define1}
-*)
-let define7 (name: string) (r0: 'a repr) (r1: 'b repr) (r2: 'c repr) (r3: 'd repr) (r4: 'e repr) (r5: 'f repr) (r6: 'g repr) (f: 'a -> 'b -> 'c -> 'd -> 'e -> 'f -> 'g -> valexpr tactic): unit =
-  define_primitive name (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc (arity_suc arity_one)))))) @@
-  fun x0 x1 x2 x3 x4 x5 x6 -> f (repr_to r0 x0) (repr_to r1 x1) (repr_to r2 x2) (repr_to r3 x3) (repr_to r4 x4) (repr_to r5 x5) (repr_to r6 x6)
+let define s = Ltac2_plugin.Tac2externals.define (pname s)
 
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
 let thaw (f: (unit, 'a) fun1): 'a tactic = f ()
@@ -107,7 +51,6 @@ let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map):
   let _, sigma = Proofview.proofview pv in
   (sigma, c)
 
-
 (**
   Utility function to cast OCaml types into Ltac2-compatibles types
 
@@ -119,21 +62,14 @@ let delayed_of_thunk (tac: (unit, 'a) fun1) (env: Environ.env) (sigma: Evd.evar_
 (** Converts a ['a repr] into a [(unit -> 'a) repr] *)
 let thunk (r: 'a repr): (unit, 'a) fun1 repr = fun1 unit r
 
-let _ = define0
-let _ = define1
-let _ = define2
-let _ = define3
-let _ = define5
-let _ = define7
-
 (** Converts a {! Hint_dataset_declarations.database_type} into a [valexpr] *)
-let database_type_to_valexp (database_type: database_type): valexpr = match database_type with
+let of_database_type (database_type: database_type): valexpr = match database_type with
   | Main -> ValInt 0
   | Decidability -> ValInt 1
   | Shorten -> ValInt 2
 
 (** Converts a [valexpr] into a {! Hint_dataset_declarations.database_type} *)
-let database_type_from_valexp (value: valexpr): database_type = match value with
+let to_database_type (value: valexpr): database_type = match value with
   | ValInt n ->
     let database_type = match n with
       | 0 -> Main
@@ -143,118 +79,149 @@ let database_type_from_valexp (value: valexpr): database_type = match value with
     in database_type
   | _ -> throw (CastError "cannot cast something different than an [int] into a [database_type]")
 
-(* Exports {! Hint_dataset_declarations.database_type} to Ltac2 *)
-let () =
-  define0 "database_type_main" @@ tclUNIT @@ database_type_to_valexp Main;
-  define0 "database_type_decidability" @@ tclUNIT @@ database_type_to_valexp Decidability;
-  define0 "database_type_shorten" @@ tclUNIT @@ database_type_to_valexp Shorten
+let database_type = make_repr of_database_type to_database_type
 
 (** Converts a {! Feedback.level} into a [valexpr] *)
-let feedback_lvl_to_valexpr (feedback_lvl: Feedback.level): valexpr = match feedback_lvl with
-  | Debug -> ValInt (-1)
-  | Info -> ValInt 0
-  | Notice -> ValInt 1
-  | Warning -> ValInt 2
-  | Error -> ValInt 3
+let of_feedback_level (feedback_lvl: Feedback.level): valexpr = match feedback_lvl with
+  | Debug -> ValInt 0
+  | Info -> ValInt 1
+  | Notice -> ValInt 2
+  | Warning -> ValInt 3
+  | Error -> ValInt 4
 
 (** Converts a [valexpr] into a {! Feedback.level} *)
-let feedback_lvl_from_valexpr (value : valexpr): Feedback.level = match value with
+let to_feedback_level (value : valexpr): Feedback.level = match value with
   | ValInt n ->
     let feedback_lvl = match n with
-      | -1 -> Feedback.Debug
-      | 0 -> Info
-      | 1 -> Notice
-      | 2 -> Warning
-      | 3 -> Error
-      | _ -> throw (CastError "cannot cast an [int] outside {-1, 0, 1, 2, 3} into a [Feedback.level]")
+      | 0 -> Feedback.Debug
+      | 1 -> Info
+      | 2 -> Notice
+      | 3 -> Warning
+      | 4 -> Error
+      | _ -> throw (CastError "cannot cast an [int] outside {0, 1, 2, 3, 4} into a [Feedback.level]")
     in feedback_lvl
   | _ -> throw (CastError "cannot cast something different from an [int] into a [Feedback.level]")
 
-(** Pack the conversion functions for feedback levels into a representation *)
-let feedback_lvl_repr = make_repr feedback_lvl_to_valexpr feedback_lvl_from_valexpr
+let of_unfold_action =
+  function
+  | Unfold (s, gr) -> of_block (0, [|of_string s; of_reference gr|])
+  | Apply (s, c) -> of_block (1, [|of_string s; of_constr c|])
+  | Rewrite (s, c) -> of_block(2, [|of_string s; of_constr c|])
 
-(** Exports {! Feedback.level} to Ltac2 *)
-let () =
-  define0 "feedback_lvl_debug" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Debug;
-  define0 "feedback_lvl_info" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Info;
-  define0 "feedback_lvl_notice" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Notice;
-  define0 "feedback_lvl_warning" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Warning;
-  define0 "feedback_lvl_error" @@ tclUNIT @@ feedback_lvl_to_valexpr Feedback.Error
+let to_unfold_action = let open Ltac2_plugin.Tac2val in function
+  | ValBlk (0, [|s; gr|]) -> Unfold (to_string s, to_reference gr)
+  | ValBlk (1, [|s; c|]) -> Apply (to_string s, to_constr c)
+  | ValBlk (2, [|s; c|]) -> Rewrite (to_string s, to_constr c)
+  | _ -> assert false
+
+let unfold_action = make_repr of_unfold_action to_unfold_action
+
+(** Pack the conversion functions for feedback levels into a representation *)
+let feedback_level = make_repr of_feedback_level to_feedback_level
 
 (* Exports {! Waterprove.waterprove} to Ltac2 *)
 let () =
-  define4 "waterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) @@
-    fun depth shield lems database_type ->
+  define "waterprove" (int @-> bool @-> (list (thunk constr)) @-> list string @-> database_type @-> tac unit) @@
+    fun depth shield lems dbs database_type ->
       begin
         waterprove
           depth
           ~shield
           (List.map (fun lem -> delayed_of_thunk lem) lems)
+          dbs
           database_type
-      end >>= fun () -> tclUNIT @@ of_unit ()
+      end
 
 (* Exports {! Waterprove.rwaterprove} to Ltac2 *)
 let () =
-  define6 "rwaterprove" int bool (list (thunk constr)) (make_repr database_type_to_valexp database_type_from_valexp) (list constr) (list constr) @@
-    fun depth shield lems database_type must_use forbidden ->
+  define "rwaterprove" (int @-> bool @-> (list (thunk constr)) @-> list string
+      @-> database_type @-> list constr @-> list constr @-> tac unit) @@
+    fun depth shield lems dbs database_type must_use forbidden ->
       begin
         rwaterprove
           depth
           ~shield
           (List.map (fun lem -> delayed_of_thunk lem) lems)
+          dbs
           database_type
           must_use
           forbidden
-      end >>= fun () -> tclUNIT @@ of_unit ()
+      end
 
 let () =
-  define1 "warn_external" pp @@
-    fun input ->
-      warn input >>= fun () -> tclUNIT @@ of_unit ()
+  define "warn_external" (pp @-> tac unit) @@
+    warn
 
 let () =
-  define1 "notice_external" pp @@
-    fun input ->
-      notice input >>= fun () -> tclUNIT @@ of_unit ()
+  define "notice_external" (pp @-> tac unit) @@
+    notice
 
 let () =
-  define1 "throw_external" pp @@
-    fun input ->
-      err input >>= fun () -> tclUNIT @@ of_unit ()
+  define "throw_external" (pp @-> tac unit) @@
+    err
 
 let () =
-  define1 "inform_external" pp @@
-    fun input ->
-      inform input >>= fun () -> tclUNIT @@ of_unit ()
+  define "inform_external" (pp @-> tac unit) @@
+    inform
 
 let () =
-  define2 "message_external" feedback_lvl_repr pp @@
-    fun lvl input ->
-      message lvl input >>= fun () -> tclUNIT @@ of_unit ()
+  define "message_external" (feedback_level @-> pp @-> (tac unit)) @@
+    message
 
 let () =
-  define1 "refine_goal_with_evar_external" string @@
-    fun input -> refine_goal_with_evar input >>= fun () -> tclUNIT @@ of_unit ()
+  define "refine_goal_with_evar_external" (string @-> tac unit) @@
+    refine_goal_with_evar
 
 let () =
-  define1 "blank_evars_in_term_external" constr @@
-    fun term ->
-      blank_evars_in_term term >>=
-      fun evars -> tclUNIT @@ (of_list of_evar evars)
+  define "blank_evars_in_term_external" (constr @-> tac (list evar)) @@
+    blank_evars_in_term
 
 let () =
-  define1 "get_print_hypothesis_flag_external" unit @@
-    fun input -> tclUNIT @@ of_bool !print_hypothesis_help
+  define "get_print_hypothesis_flag_external" (unit @-> ret bool) @@
+    fun () -> !print_hypothesis_help
 
 let () =
-  define1 "get_redirect_errors_flag_external" unit @@
-    fun input -> tclUNIT @@ of_bool !redirect_errors
+  define "get_redirect_errors_flag_external" (unit @-> ret bool) @@
+    fun () -> !redirect_errors
 
 let () =
-  define1 "get_last_warning_external" unit @@
-    fun input -> get_last_warning input >>=
-      fun pp_option -> tclUNIT @@ of_option of_pp pp_option
+  define "get_last_warning_external" (unit @-> ret (option pp)) @@
+    get_last_warning
 
 let () =
-  define1 "get_feedback_log_external" feedback_lvl_repr @@
-    fun input -> tclUNIT @@ of_list of_pp !(feedback_log input)
+  define "get_feedback_log_external" (feedback_level @-> ret (list pp)) @@
+    fun input -> !(feedback_log input)
+
+let () =
+  define "extract_def_external" (string @-> ret (option reference)) @@
+    extract_def
+
+let () =
+  define "find_unfold_by_ref_external" (reference @-> ret (list unfold_action)) @@
+    find_unfold_actions_by_ref
+
+let () =
+  define "find_unfold_by_str_external" (string @-> ret (list unfold_action)) @@
+    find_unfold_actions_by_str
+
+let () =
+  define "get_unfold_references_external" (unit @-> ret (list reference)) @@
+    get_all_references
+
+let () =
+  define "shortest_string_of_global_external" (reference @-> ret string) @@
+    shortest_string_of_global
+
+let () =
+  define "check_feedback_level_Ltac2_to_Ocaml_external" (feedback_level @-> int @-> ret bool) @@
+    check_feedback_level_Ltac2_to_Ocaml
+
+let () =
+  define "feedback_level_round_trip_external" (feedback_level @-> ret feedback_level) @@
+    fun input -> input
+
+(** TODO: This can be removed in a later version of Rocq, probably 9.2,
+    because it has then been integrated in Ltac2. *)
+let () =
+  define "message_of_lconstr" (constr @-> tac pp) @@ fun c ->
+  Ltac2_plugin.Tac2core.pf_apply @@ fun env sigma -> Proofview.tclUNIT (Printer.pr_leconstr_env env sigma c)

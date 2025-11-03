@@ -376,13 +376,12 @@ Definition is_bounded (a : ℕ → ℝ) :=
     ∃ M > 0,
       ∀ n ∈ ℕ,
         |a n - q| ≤ M.
-Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 69).
-Notation "a 'is' 'bounded'" := (is_bounded a) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded (statement : constr) := eval unfold is_bounded in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded (Some "bounded") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded (Some "bounded") false x.
+Notation "a 'is' '_bounded_'" := (is_bounded a) (at level 1).
+Notation "a 'is' 'bounded'" := (is_bounded a) (at level 1, only parsing).
+
+Waterproof Register Expand "bounded";
+  for is_bounded;
+  as "Definition bounded".
 
 Definition is_bounded_equivalent (a : ℕ → ℝ) :=
   ∃ M > 0, ∀ n ∈ ℕ, |a n| ≤ M.
@@ -439,23 +438,21 @@ Qed.
 (** Definitions sequence bounded from above and below *)
 Definition is_bounded_above (a : ℕ → ℝ) :=
   ∃ M ∈ ℝ, ∀ n ∈ ℕ, a(n) ≤ M.
-Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 69).
-Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded_above (statement : constr) := eval unfold is_bounded_above in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_above (Some "bounded above") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "above" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_above (Some "bounded above") false x.
+Notation "a 'is' '_bounded' 'above_'" := (is_bounded_above a) (at level 1).
+Notation "a 'is' 'bounded' 'above'" := (is_bounded_above a) (at level 1, only parsing).
+
+Waterproof Register Expand "bounded" "above";
+  for is_bounded_above;
+  as "Definition bounded above".
 
 Definition is_bounded_below (a : ℕ → ℝ) :=
   ∃ m ∈ ℝ, ∀ n ∈ ℕ, m ≤ a(n).
-Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 69).
-Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 69, only parsing).
-Local Ltac2 unfold_is_bounded_below (statement : constr) := eval unfold is_bounded_below in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", constr))):=
-  wp_unfold unfold_is_bounded_below (Some "bounded below") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "bounded" "below" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_bounded_below (Some "bounded below") false x.
+Notation "a 'is' '_bounded' 'below_'" := (is_bounded_below a) (at level 1).
+Notation "a 'is' 'bounded' 'below'" := (is_bounded_below a) (at level 1, only parsing).
+
+Waterproof Register Expand "bounded" "below";
+  for is_bounded_below;
+  as "Definition bounded below".
 
 (** Convergence to +∞ and -∞. *)
 Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
@@ -463,38 +460,33 @@ Definition diverges_to_plus_infinity (a : ℕ → ℝ) :=
     (∃ N1 ∈ ℕ,
       ∀ n ≥ N1, (a(n) > M)%R)%nat.
 
-Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 20).
-Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 20).
-Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 20, only parsing).
-Local Ltac2 unfold_diverge_plus_infty (statement : constr) :=
-  eval unfold diverges_to_plus_infinity in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "⟶ ∞") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "⟶ ∞") false x.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "diverges to ∞") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_plus_infty (Some "diverges to ∞") false x.
+Notation "a ⟶ ∞" := (diverges_to_plus_infinity a) (at level 1).
+Notation "a '_diverges' 'to' '∞_'" := (diverges_to_plus_infinity a) (at level 1).
+Notation "a 'diverges' 'to' '∞'"   := (diverges_to_plus_infinity a) (at level 1, only parsing).
 
+Waterproof Register Expand "⟶" "∞";
+  for diverges_to_plus_infinity;
+  as "Definition divergence to infinity".
+
+Waterproof Register Expand "diverges" "to" "∞";
+  for diverges_to_plus_infinity;
+  as "Definition divergence to infinity".
 
 Definition diverges_to_minus_infinity (a : ℕ → ℝ) :=
   ∀ M ∈ ℝ,
     ∃ N1 ∈ ℕ,
       (∀ n ≥ N1, (a(n) < M)%R)%nat.
 
-Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 20).
-Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 20).
-Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 20, only parsing).
-Local Ltac2 unfold_diverge_minus_infty (statement : constr) :=
-  eval unfold diverges_to_minus_infinity in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", constr))):=
-  wp_unfold unfold_diverge_minus_infty (Some "⟶ -∞") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "⟶" "-∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_minus_infty (Some "⟶ -∞") false x.
-Ltac2 Notation "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_minus_infty (Some "diverges to -∞") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "diverges" "to" "-∞" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_diverge_minus_infty (Some "diverges to -∞") false x.
+Notation "a ⟶ -∞" := (diverges_to_minus_infinity a) (at level 1).
+Notation "a '_diverges' 'to' '-∞_'" := (diverges_to_minus_infinity a) (at level 1).
+Notation "a 'diverges' 'to' '-∞'"   := (diverges_to_minus_infinity a) (at level 1, only parsing).
+
+Waterproof Register Expand "⟶" "-∞";
+  for diverges_to_minus_infinity;
+  as "Definition divergence to minus infinity".
+
+Waterproof Register Expand "diverges" "to" "-∞";
+  for diverges_to_minus_infinity;
+  as "Definition divergence to minus infinity".
 
 Close Scope R_scope.
