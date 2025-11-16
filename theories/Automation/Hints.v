@@ -65,6 +65,10 @@ Create HintDb wp_core.
 
 Create HintDb wp_definitions.
 
+(** * Alternative characterizations *)
+
+Create HintDb wp_alt_chars.
+
 (** * Classical logic *)
 
 Create HintDb wp_classical_logic.

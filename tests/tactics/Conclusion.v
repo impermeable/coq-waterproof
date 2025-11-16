@@ -139,9 +139,8 @@ Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
     assert (useless: 1 = 1).
     reflexivity.
-    assert_fails_with_string
-    (fun () => By test_by_we_conclude_1 we conclude that (1 < 2))
-"Could not verify this follows from test_by_we_conclude_1.".
+    assert_feedback_with_strings (fun () => By test_by_we_conclude_1 we conclude that (1 < 2)) Info
+    ["It may be that the provided reason test_by_we_conclude_1 is not necessary for the proof."].
 Abort.
 
 (** Additional tests 'By ...' clause.  *)
@@ -179,7 +178,10 @@ Abort.
 Goal A -> B.
   intro H.
   pose f.
-  Fail By g we conclude that B.
+  assert_feedback_with_strings
+    (fun () => By g we conclude that B)
+    Info
+    ["It may be that the provided reason g is not necessary for the proof."].
 Abort.
 
 
@@ -307,3 +309,74 @@ Proof.
   It holds that (true).
   Since true we conclude that true.
 Qed.
+
+(** Test 11: Test concluding from multiple reasons.
+*)
+
+Local Parameter P Q R T : Prop.
+Local Parameter HP : P.
+Local Parameter HPQ : P -> Q.
+Local Parameter HQR : Q -> R.
+Local Parameter HRT : R -> T.
+
+Local Parameter U V : Prop.
+Local Parameter HUV : U -> V.
+Local Parameter HVP : V -> P.
+
+Local Create HintDb my_reason.
+From Stdlib Require Import String.
+
+Goal T.
+By HP, HPQ, HQR and HRT we conclude that T.
+Qed.
+
+(** Test 12: Conclude from multiple reasons, one of them is also a local hypothesis. *)
+
+Goal P -> T.
+intro H.
+By HP, HPQ, HQR and HRT we conclude that T.
+Qed.
+
+(** Test 13: Conclude from multiple reasons, one of
+  them is a local hypothesis, using the local hypothesis. *)
+Goal P -> T.
+intro H.
+By H, HPQ, HQR and HRT we conclude that T.
+Qed.
+
+(** Test 14: Conclude using an extra database. *)
+Notation "'my' 'reason'" := "my_reason"%string.
+Hint Resolve HUV : my_reason.
+
+Notation "'my' 'other' 'reason'" := "my_other_reason"%string.
+Hint Resolve HVP : my_other_reason.
+
+Goal U -> V.
+intro H.
+By my reason we conclude that V.
+Qed.
+
+(** Test 15: Use two extra databases.*)
+
+Goal U -> P.
+intro H.
+By my reason and my other reason we conclude that P.
+Qed.
+
+(** Test 16: Use two extra databases and extra lemmas. *)
+
+Goal U -> R.
+intro H.
+By my reason, my other reason, HPQ and HQR we conclude that R.
+Qed.
+
+(** Test 17: Fail when a reason is given that is not
+  used. *)
+
+Goal U -> R.
+intro H.
+assert_feedback_with_strings
+  (fun () => By my reason, my other reason, HPQ, HQR and HRT we conclude that R)
+  Info
+  ["It may be that the provided reason HRT is not necessary for the proof."].
+Abort.

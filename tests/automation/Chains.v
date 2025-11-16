@@ -23,6 +23,12 @@ Require Import Waterproof.Notations.
 
 Require Import Waterproof.Waterprove.
 
+Require Import Waterproof.Util.MessagesToUser.
+Require Import Waterproof.Util.Assertions.
+
+Waterproof Enable Logging.
+Waterproof Enable Redirect Errors.
+Waterproof Enable Redirect Feedback.
 
 (** Tests whether the error points out which specific (in)equality in the chain does not hold. *)
 Local Parameter X : Type.
@@ -57,26 +63,19 @@ Abort.
 Goal P -> (& a = b = b = b = b = b).
 Proof.
   intro H.
-  rwaterprove 5 true Main constr:(h).
+  rwaterprove 5 true Main [constr:(h)] [].
 Abort.
 
 (* Test 5: extra lemma has to be used in last equality. *)
 Goal P -> (& b = b = b = b = b = a).
 Proof.
   intro H.
-  rwaterprove 5 true Main constr:(h).
+  rwaterprove 5 true Main [constr:(h)] [].
 Abort.
 
 (* Test 6: extra lemma has to be used in 2nd and 2nd-to-last equality. *)
 Goal P -> (& b = b = a = b = b = a = a).
 Proof.
   intro H.
-  rwaterprove 5 true Main constr:(h).
-Abort.
-
-(* Test 7: Fails if extra lemma is never used. *)
-Goal P -> (P -> b = c) -> (& b = b = c = b = b = c = c).
-Proof.
-  intros H1 H2.
-  Fail rwaterprove 5 true Main constr:(h).
+  rwaterprove 5 true Main [constr:(h)] [].
 Abort.
