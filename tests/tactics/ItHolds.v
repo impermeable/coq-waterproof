@@ -29,6 +29,10 @@ Require Import Waterproof.Notations.Sets.
 Require Import Waterproof.Util.Assertions.
 Require Import Waterproof.Util.MessagesToUser.
 
+Waterproof Enable Redirect Errors.
+Waterproof Enable Redirect Feedback.
+Waterproof Enable Logging.
+
 Waterproof Enable Automation RealsAndIntegers.
 
 (* lra only works in the [R_scope] *)
@@ -201,7 +205,9 @@ Goal A -> False.
 Proof.
   intro H.
   pose f.
-  Fail By g it holds that B.
+  assert_feedback_with_strings (fun () => By g it holds that B)
+  Info
+  ["It may be that the provided reason g is not necessary for the proof."].
 Abort.
 
 (** Tests for 'Since ...' clause. *)
@@ -354,7 +360,7 @@ Proof.
   assert_feedback_with_string (fun () =>
     assert_fails_with_string (fun () => We claim that False)
     "You cannot do this right now, follow the advice in the goal window."
-  ) Notice "Hint, replace with: It holds that (6 >= 5 -> True).${0}".
+  ) Notice "Hint, replace with: It holds that 6 >= 5 -> True.${0}".
 Abort.
 
 Waterproof Disable Redirect Errors.
@@ -400,4 +406,70 @@ Proof.
   intro H1.
   Use x := 6 in (H1).
   Fail It holds that (6 >= 5 -> True) as (H1).
+Abort.
+
+(** Test 29: Use multiple hypotheses,
+  hypothesis of same type already in local context *)
+
+Local Parameter a b c : Prop.
+Local Parameter Ha : a.
+Local Parameter Hab : a -> b.
+Local Parameter Hbc : b -> c.
+
+Goal a -> b.
+Proof.
+intro H.
+By Ha, Hab and Hbc it holds that c.
+Abort.
+
+(** Test 30: Use multiple hypothesis,
+  use one hypothesis from context *)
+
+Goal a -> b.
+Proof.
+intro H.
+By H, Hab and Hbc it holds that c.
+Abort.
+
+Waterproof Enable Redirect Errors.
+
+(** Test 31: Multiple hypotheses, mention hypothesis that is not useful *)
+
+Goal a -> b.
+Proof.
+assert_feedback_with_strings (fun () => By Ha, Hab and Hbc it holds that b)
+Info
+  ["It may be that the provided reason Hbc is not necessary for the proof."].
+Abort.
+
+Local Parameter d : Prop.
+Local Parameter Hd : d.
+
+Local Create HintDb my_reason.
+From Stdlib Require Import String.
+
+Notation "'my' 'reason'" := "my_reason"%string.
+Hint Resolve Hd : my_reason.
+
+(** Test 32: Use extra database *)
+
+Goal a -> b.
+Proof.
+assert_fails_with_string
+  (fun () =>It holds that d)
+  "Could not verify that d.".
+By my reason it holds that d.
+Abort.
+
+Local Create HintDb my_second_reason.
+Notation "'my' 'second' 'reason'" := "my_second_reason"%string.
+Local Parameter Hda : d -> a.
+Hint Resolve Hda : my_second_reason.
+
+(** Test 33: Use extra databases and additional lemmas *)
+
+Goal b.
+By my reason, my second reason and Hab it holds that b as (i).
+clear i.
+By my reason, my second reason, Hab and Hbc it holds that c.
 Abort.

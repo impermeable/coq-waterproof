@@ -42,4 +42,39 @@ Goal False.
 assert_is_false (get_print_hypothesis_flag ()).
 Abort.
 
+(** Test whether feedback levels are correctly passed through the ffi. *)
+Ltac2 @ external check_feedback_level_Ltac2_to_Ocaml_ffi : FeedbackLevel -> int -> bool := "rocq-runtime.plugins.coq-waterproof" "check_feedback_level_Ltac2_to_Ocaml_external".
 
+Goal False.
+assert_is_true (check_feedback_level_Ltac2_to_Ocaml_ffi Debug 0).
+assert_is_true (check_feedback_level_Ltac2_to_Ocaml_ffi Info 1).
+assert_is_true (check_feedback_level_Ltac2_to_Ocaml_ffi Notice 2).
+assert_is_true (check_feedback_level_Ltac2_to_Ocaml_ffi Warning 3).
+assert_is_true (check_feedback_level_Ltac2_to_Ocaml_ffi Error 4).
+Abort.
+
+(** Test a round-trip of feedback levels *)
+Ltac2 @ external feedback_level_round_trip_ffi : FeedbackLevel -> FeedbackLevel := "rocq-runtime.plugins.coq-waterproof" "feedback_level_round_trip_external".
+
+Goal False.
+match feedback_level_round_trip_ffi Debug with
+| Debug => ()
+| _ => Control.throw (TestFailedError (Message.of_string "Debug did not round-trip correctly."))
+end.
+match feedback_level_round_trip_ffi Info with
+| Info => ()
+| _ => Control.throw (TestFailedError (Message.of_string "Info did not round-trip correctly."))
+end.
+match feedback_level_round_trip_ffi Notice with
+| Notice => ()
+| _ => Control.throw (TestFailedError (Message.of_string "Notice did not round-trip correctly."))
+end.
+match feedback_level_round_trip_ffi Warning with
+| Warning => ()
+| _ => Control.throw (TestFailedError (Message.of_string "Warning did not round-trip correctly."))
+end.
+match feedback_level_round_trip_ffi Error with
+| Error => ()
+| _ => Control.throw (TestFailedError (Message.of_string "Error did not round-trip correctly."))
+end.
+Abort.

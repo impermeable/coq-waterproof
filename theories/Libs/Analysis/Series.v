@@ -37,7 +37,6 @@ Waterproof Enable Automation RealsAndIntegers.
 #[export] Hint Resolve Rmult_lt_0_compat : wp_reals.
 #[export] Hint Resolve Rinv_lt_contravar : wp_reals.
 
-Waterproof Disable Filter Errors.
 Open Scope R_scope.
 
 Lemma sigma_split_v2 (a : ℕ → ℝ) (k  l M : ℕ) :
@@ -55,7 +54,7 @@ Proof.
   - We conclude that (l - 1 < M)%nat.
 Qed.
 
-Notation partial_sums := sum_f_R0.
+Abbreviation partial_sums := sum_f_R0.
 
 Lemma partial_sums_pos_incr (a : ℕ → ℝ) :
   (∀ n ∈ ℕ, a n ≥ 0) ⇒

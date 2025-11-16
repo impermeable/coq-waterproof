@@ -44,70 +44,51 @@ Definition is_closed (A : R -> Prop) := is_open (complement A).
 
 
 (** Notations *)
-Notation "B( p , r )" := (open_ball p r) (at level 68, format "B( p ,  r )").
+Notation "B( p , r )" := (open_ball p r) (at level 0, format "B( p ,  r )").
 
-Local Ltac2 unfold_open_ball (statement : constr) := eval unfold open_ball,
-  as_subset in $statement.
+Waterproof Register Expand "B";
+  for open_ball;
+  as "Definition open ball".
 
-Ltac2 Notation "Expand" "the" "definition" "of" "B" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "B") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "B" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "B") false x.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "open ball ") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" "ball" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_open_ball (Some "open ball ") false x.
+Waterproof Register Expand "open" "ball";
+  for open_ball;
+  as "Definition open ball".
 
 Notation "a 'is' 'an' '_interior' 'point_' 'of' A" := (is_interior_point a A) (at level 69).
 
 Notation "a 'is' 'an' 'interior' 'point' 'of' A" := (is_interior_point a A) (at level 69, only parsing).
 
-Local Ltac2 unfold_is_interior_point (statement : constr) := eval unfold is_interior_point in $statement.
+Waterproof Register Expand "interior" "point";
+  for is_interior_point;
+  as "Definition interior point".
 
-Ltac2 Notation "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_interior_point (Some "interior point") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "interior" "point" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_interior_point (Some "interior point") false x.
+Notation "A 'is' '_open_'" := (is_open A) (at level 1).
 
-Notation "A 'is' '_open_'" := (is_open A) (at level 69).
+Notation "A 'is' 'open'" := (is_open A) (at level 1, only parsing).
 
-Notation "A 'is' 'open'" := (is_open A) (at level 69, only parsing).
-
-Local Ltac2 unfold_is_open (statement : constr) := eval unfold is_open in $statement.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "open" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_open (Some "open") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "open" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_open (Some "open") false x.
+Waterproof Register Expand "open";
+  for is_open;
+  as "Definition open".
 
 Notation "'ℝ\' A" := (complement A) (at level 20, format "'ℝ\' A").
 
-Notation "'ℝ' '\' A" := (complement A) (at level 0, only parsing).
+Notation "'ℝ' '\' A" := (complement A) (at level 20, only parsing).
 
-Local Ltac2 unfold_complement (statement : constr) := eval unfold complement,
-  as_subset in $statement.
+Waterproof Register Expand "complement";
+  for complement;
+  as "Definition complement".
 
-Ltac2 Notation "Expand" "the" "definition" "of" "ℝ\" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "ℝ\") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "ℝ\" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "ℝ\") false x.
+Waterproof Register Expand "ℝ\";
+  for complement;
+  as "Definition complement".
 
-Ltac2 Notation "Expand" "the" "definition" "of" "complement" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "complement") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "complement" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_complement (Some "complement") false x.
+Notation "A 'is' '_closed_'" := (is_closed A) (at level 1).
 
-Notation "A 'is' '_closed_'" := (is_closed A) (at level 69).
+Notation "A 'is' 'closed'" := (is_closed A) (at level 1, only parsing).
 
-Notation "A 'is' 'closed'" := (is_closed A) (at level 69, only parsing).
-
-Local Ltac2 unfold_is_closed (statement : constr) := eval unfold is_closed in $statement.
-
-Ltac2 Notation "Expand" "the" "definition" "of" "closed" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_closed (Some "closed") true x.
-Ltac2 Notation "_internal_" "Expand" "the" "definition" "of" "closed" x(opt(seq("in", constr))) :=
-  wp_unfold unfold_is_closed (Some "closed") false x.
+Waterproof Register Expand "closed";
+  for is_closed;
+  as "Definition closed".
 
 (** Hints *)
 Lemma zero_in_interval_closed_zero_open_one : (0 ∈ [0,1)).

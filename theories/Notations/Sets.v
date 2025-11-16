@@ -19,7 +19,7 @@
 From Stdlib Require Import Sets.Ensembles.
 From Stdlib Require Import Sets.Powerset.
 
-Require Import Notations.Common.
+Require Import Waterproof.Notations.Common.
 
 Set Auto Template Polymorphism.
 
@@ -68,11 +68,10 @@ Notation "A 'is' 'disjoint' 'from' B" :=
   (Disjoint _ A B) (at level 69) : subset_scope.
 
 Notation "A 'is' 'empty'" :=
-  (forall a : _, ~ In _ A a) (at level 69) : subset_scope.
+  (forall a : _, ~ In _ A a) (at level 1) : subset_scope.
 
 Notation "A 'is' 'inhabited'" :=
-  (exists a : _, In _ A a) (at level 69) : subset_scope.
-
+  (exists a : _, In _ A a) (at level 1) : subset_scope.
 
 Notation "｛ x : T | P ｝" :=
   (fun (x : T) ↦ P) (x at level 99) : subset_scope.
@@ -197,7 +196,8 @@ Proof.
 unfold subset_in, conv, as_subset; exact I.
 Qed.
 
-Notation "{ x ∈ X | P }" := (fun x => subset_in X x ∧ P) (x binder, X at next level) : subset_scope.
+Notation "{ x ∈ X | P }" := (fun x => subset_in X x ∧ P)
+  (at level 0, x binder, X at level 99) : subset_scope.
 
 Notation "{ x , y }" := (fun a => a = x ∨ a = y) (at level 0, x at level 99, y at level 99) : subset_scope.
 
@@ -231,4 +231,4 @@ Close Scope subset_scope.
 Close Scope R_scope.
 
 Notation "A 'is' 'empty'" :=
-  (¬ (∃ x, x ∈ A)) (at level 69).
+  (¬ (∃ x, x ∈ A)) (at level 1).

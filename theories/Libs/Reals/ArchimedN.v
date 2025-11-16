@@ -1,7 +1,7 @@
 Require Import Stdlib.Reals.Reals.
 
-Require Import Notations.Common.
-Require Import Notations.Sets.
+Require Import Waterproof.Notations.Common.
+Require Import Waterproof.Notations.Sets.
 
 Open Scope R_scope.
 Open Scope subset_scope.
@@ -52,4 +52,4 @@ Proof.
     exact hm.
 Qed.
 
-Notation "'the' 'Archimedean' 'property'" := archimedN_exists (at level 10).
+Notation "'the' 'Archimedean' 'property'" := archimedN_exists (at level 0).
