@@ -5,6 +5,6 @@
 
 (package
  (name coq-waterproof)
- (version 3.1.0+9.1)
+ (version 3.1.1+9.1-dev)
  (synopsis "Coq proofs in a style that resembles non-mechanized mathematical proofs")
  (depends rocq-core rocq-stdlib))
