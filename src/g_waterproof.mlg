@@ -163,8 +163,12 @@ END
     let open Pp in
     match ent with
     | PreUnfold -> str "unfold"
-    | PreApply e -> str "apply" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
-    | PreRewrite e -> str "rewrite" ++ str " with term " ++ Ppconstr.pr_constr_expr env sigma e
+    | PreApply e ->
+      str "apply" ++ str " with term " ++
+      Ppconstr.pr_constr_expr ~flags:(Ppconstr.current_flags()) env sigma e
+    | PreRewrite e ->
+      str "rewrite" ++ str " with term " ++
+      Ppconstr.pr_constr_expr ~flags:(Ppconstr.current_flags()) env sigma e
 }
 
 VERNAC ARGUMENT EXTEND unfold_action_entry
