@@ -39,7 +39,7 @@ let eauto_unif_flags: Unification.unify_flags = auto_flags_of_state TransparentS
 let e_give_exact ?(flags: Unification.unify_flags = eauto_unif_flags) (c: types): unit tactic =
   Goal.enter begin fun gl ->
     let sigma, t1 = Tacmach.pf_type_of gl c in
-    let t2 = Tacmach.pf_concl gl in
+    let t2 = Proofview.Goal.concl gl in
     if occur_existential sigma t1 || occur_existential sigma t2 then
       Tacticals.tclTHENLIST [
         Unsafe.tclEVARS sigma;
@@ -53,7 +53,7 @@ let e_assumption: trace tactic =
   TraceTactics.typedGoalEnter begin fun gl ->
     let hyps = Goal.hyps gl in
     let sigma = Goal.sigma gl in
-    let concl = Tacmach.pf_concl gl in
+    let concl = Proofview.Goal.concl gl in
     if List.is_empty hyps then
       Tacticals.tclZEROMSG (str "No applicable tactic.")
     else
@@ -140,7 +140,7 @@ let tclTraceComplete (t: trace tactic): trace tactic =
 let rec e_trivial_fail_db (db_list: hint_db list) (local_db: hint_db) (forbidden_tactics: Pp.t list): trace tactic =
   let next = TraceTactics.typedGoalEnter begin fun gl ->
     let d = Declaration.get_id @@ Tacmach.pf_last_hyp gl in
-    let local_db = push_resolve_hyp (Tacmach.pf_env gl) (Tacmach.project gl) d local_db in
+    let local_db = push_resolve_hyp (Proofview.Goal.env gl) (Proofview.Goal.sigma gl) d local_db in
     e_trivial_fail_db db_list local_db forbidden_tactics
   end in
   TraceTactics.typedGoalEnter begin fun gl ->
@@ -148,7 +148,7 @@ let rec e_trivial_fail_db (db_list: hint_db list) (local_db: hint_db) (forbidden
     let tacl =
       e_assumption ::
       (Tactics.intro <*> next) ::
-      (e_trivial_resolve (Tacmach.pf_env gl) (Tacmach.project gl) db_list local_db secvars (Tacmach.pf_concl gl) forbidden_tactics)
+      (e_trivial_resolve (Proofview.Goal.env gl) (Proofview.Goal.sigma gl) db_list local_db secvars (Proofview.Goal.concl gl) forbidden_tactics)
     in
     tclTraceFirst (List.map tclTraceComplete tacl)
   end
