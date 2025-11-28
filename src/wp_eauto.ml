@@ -38,7 +38,9 @@ let eauto_unif_flags: Unification.unify_flags = auto_flags_of_state TransparentS
 
 let e_give_exact ?(flags: Unification.unify_flags = eauto_unif_flags) (c: types): unit tactic =
   Goal.enter begin fun gl ->
-    let sigma, t1 = Tacmach.pf_type_of gl c in
+    let env = Proofview.Goal.env gl in
+    let sigma = Proofview.Goal.sigma gl in
+    let sigma, t1 = Typing.type_of env sigma c in
     let t2 = Proofview.Goal.concl gl in
     if occur_existential sigma t1 || occur_existential sigma t2 then
       Tacticals.tclTHENLIST [
@@ -139,8 +141,10 @@ let tclTraceComplete (t: trace tactic): trace tactic =
 
 let rec e_trivial_fail_db (db_list: hint_db list) (local_db: hint_db) (forbidden_tactics: Pp.t list): trace tactic =
   let next = TraceTactics.typedGoalEnter begin fun gl ->
-    let d = Declaration.get_id @@ Tacmach.pf_last_hyp gl in
-    let local_db = push_resolve_hyp (Proofview.Goal.env gl) (Proofview.Goal.sigma gl) d local_db in
+    let env = Proofview.Goal.env gl in
+    let sigma = Proofview.Goal.sigma gl in
+    let d = Declaration.get_id @@ List.hd @@ EConstr.named_context env in
+    let local_db = push_resolve_hyp env sigma d local_db in
     e_trivial_fail_db db_list local_db forbidden_tactics
   end in
   TraceTactics.typedGoalEnter begin fun gl ->
