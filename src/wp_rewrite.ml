@@ -390,7 +390,9 @@ let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.co
   let econstr, context = Constrintern.interp_constr env sigma hyp in
   let constr = EConstr.to_constr sigma econstr in
   let univ_ctx = UState.context_set context in
-  let ctx = (Global.push_context_set QGraph.Internal univ_ctx; PConstraints.ContextSet.empty) in
+  let () = Global.push_qualities QGraph.Internal (PConstraints.ContextSet.sort_context_set univ_ctx) in (* XXX *)
+  let () = Global.push_context_set (PConstraints.ContextSet.univ_context_set univ_ctx) in
+  let ctx = PConstraints.ContextSet.empty in
   CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) ((constr, ctx), true, Option.map (in_gen (rawwit wit_ltac)) None)
 
 (**
