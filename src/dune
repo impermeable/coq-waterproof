@@ -2,6 +2,6 @@
   (name waterproof)
   (public_name coq-waterproof.plugin)
   (libraries rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2)
-  (flags :standard -rectypes -w -27 -w -3))
+  (flags :standard -rectypes -w -27 -warn-error -3))
 
 (coq.pp (modules g_waterproof databases))
