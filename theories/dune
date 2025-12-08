@@ -1,7 +1,6 @@
 (coq.theory
  (name Waterproof)
  (package coq-waterproof)
- (flags :standard -warn-error -3)
  (theories Stdlib Ltac2)
  (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2))
 
