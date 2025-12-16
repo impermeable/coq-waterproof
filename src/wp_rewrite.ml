@@ -33,7 +33,7 @@ open Proofutils
 
 (* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
 
-type raw_rew_rule = (Constr.t PConstraints.in_poly_context_set * bool * raw_generic_argument option) CAst.t
+type raw_rew_rule = (Constr.t * bool * raw_generic_argument option) CAst.t
 
 (** Rewriting rules *)
 type rew_rule = {
@@ -41,7 +41,6 @@ type rew_rule = {
   rew_lemma : constr;
   rew_type: types;
   rew_pat: constr;
-  rew_ctx: PConstraints.ContextSet.t;
   rew_l2r: bool;
   rew_tac: Genarg.glob_generic_argument option
 }
@@ -286,12 +285,8 @@ let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: 
   in
   let try_rewrite (rule: rew_rule) (tac: unit tactic): unit tactic =
     Proofview.Goal.enter begin fun gl ->
-      let sigma = Proofview.Goal.sigma gl in
-      let subst, ctx' = UnivGen.fresh_universe_context_set_instance rule.rew_ctx in
-      let subst = Sorts.QVar.Map.empty, subst in
-      let c' = Vars.subst_univs_level_constr subst rule.rew_lemma in
-      let sigma = Evd.merge_context_set Evd.univ_flexible sigma ctx' in
-      Proofview.tclTHEN (Proofview.Unsafe.tclEVARS sigma) (rewrite rule.rew_l2r c' tac)
+      let c' = rule.rew_lemma in
+      rewrite rule.rew_l2r c' tac
     end
   in
   let eval (rule: rew_rule) =
@@ -356,8 +351,7 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
 let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
   let ist = Genintern.empty_glob_sign ~strict:true env in
   let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
-  let to_rew_rule ({CAst.loc;v=((c,ctx),b,t)}: raw_rew_rule): rew_rule =
-    let sigma = Evd.merge_context_set Evd.univ_rigid sigma ctx in
+  let to_rew_rule ({CAst.loc;v=(c,b,t)}: raw_rew_rule): rew_rule =
     let info = find_applied_relation ?loc env sigma c b in
     let pat = EConstr.Unsafe.to_constr info.hyp_pat in
     let uid = fresh_key () in {
@@ -365,7 +359,6 @@ let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_ru
       rew_lemma = c;
       rew_type = EConstr.Unsafe.to_constr info.hyp_ty;
       rew_pat = pat;
-      rew_ctx = ctx;
       rew_l2r = b;
       rew_tac = Option.map intern t
     }
@@ -392,8 +385,7 @@ let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.co
   let univ_ctx = UState.context_set context in
   let () = Global.push_qualities QGraph.Internal (PConstraints.ContextSet.sort_context_set univ_ctx) in (* XXX *)
   let () = Global.push_context_set (PConstraints.ContextSet.univ_context_set univ_ctx) in
-  let ctx = PConstraints.ContextSet.empty in
-  CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) ((constr, ctx), true, Option.map (in_gen (rawwit wit_ltac)) None)
+  CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) (constr, true, Option.map (in_gen (rawwit wit_ltac)) None)
 
 (**
   This function will add in the rewrite hint database "core" every hint possible created from the hypothesis
