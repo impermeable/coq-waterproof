@@ -46,7 +46,7 @@ let thaw (f: (unit, 'a) fun1): 'a tactic = f ()
 (** Comes from [coq/plugins/ltac2/tac2tactics.ml] *)
 let delayed_of_tactic (tac: 'a tactic) (env: Environ.env) (sigma: Evd.evar_map): (Evd.evar_map * 'a) =
   let _, pv = Proofview.init sigma [] in
-  let name, poly = Names.Id.of_string "ltac2_delayed", false in
+  let name, poly = Names.Id.of_string "ltac2_delayed", PolyFlags.default in
   let c, pv, _, _, _ = Proofview.apply ~name ~poly env tac pv in
   let _, sigma = Proofview.proofview pv in
   (sigma, c)

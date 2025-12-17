@@ -295,7 +295,7 @@ let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: 
       | Some (Genarg.GenArg (Genarg.Glbwit wit, tac)) ->
         let ist = {
           Geninterp.lfun = Id.Map.empty;
-          poly = false;
+          poly = PolyFlags.default;
           extra = Geninterp.TacStore.empty
         } in Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
     in Tacticals.tclREPEAT_MAIN (tclTHEN (try_rewrite rule tac) (tclIGNORE tactic))
