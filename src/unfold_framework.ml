@@ -27,8 +27,9 @@ introduced notations, and the global reference they are associated with
     - rewrite an equality
 *)
 
-open Ltac2_plugin.Tac2entries
-open Ltac2_plugin.Tac2expr
+open Ltac2_plugin
+open Tac2entries
+open Tac2expr
 open Names
 
 module StringMap = Map.Make(String)
@@ -99,7 +100,7 @@ let extract_def (s : string) : GlobRef.t option =
     Returns:
     - (the notation interpretation data created, a deprecated version of the notation data)
 *)
-let register_unfold (toks : string list) (id : Libnames.qualid) : notation_interpretation_data * notation_interpretation_data =
+let register_unfold (toks : string list) (id : Libnames.qualid) =
   let glob_ref = Nametab.locate id in
   let full_id = Libnames.qualid_of_path (Nametab.path_of_global glob_ref) in
   let sexpr_seq = List.map (fun s -> SexprStr (CAst.make s)) ("Expand"::toks) in
@@ -109,7 +110,8 @@ let register_unfold (toks : string list) (id : Libnames.qualid) : notation_inter
   let sexpr_seq_old = List.map (fun s -> SexprStr (CAst.make s)) (["Expand"; "the"; "definition"; "of"] @ toks) in
   let get_qualid_old () = Libnames.qualid_of_string "Unfold.wp_expand_deprecated" in
   let rhs_old = CTacApp (CAst.make (CTacRef (RelId (get_qualid_old ()))), [get_ref ()]) in
-  (register_notation [] sexpr_seq (None, None) (CAst.make rhs), register_notation [] sexpr_seq_old (None, None) (CAst.make rhs_old))
+  let target = { Tac2syn.target_entry = None; target_level = None; target_scope = None } in
+  (register_notation [] sexpr_seq target (CAst.make rhs), register_notation [] sexpr_seq_old target (CAst.make rhs_old))
 
 (** A type that represents the datastructure that can be added
     to the unfold table. When it is added, it will be converted
