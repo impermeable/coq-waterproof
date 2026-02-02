@@ -19,8 +19,6 @@
 open CErrors
 open Constr
 open Equality
-open Genarg
-open Ltac_plugin.Tacarg
 open Locus
 open Names
 open Pp
@@ -33,7 +31,7 @@ open Proofutils
 
 (* All the definitions below come from coq-core hidden library (i.e not visible in the API) *)
 
-type raw_rew_rule = (Constr.t * bool * raw_generic_argument option) CAst.t
+type raw_rew_rule = (Constr.t * bool) CAst.t
 
 (** Rewriting rules *)
 type rew_rule = {
@@ -42,7 +40,6 @@ type rew_rule = {
   rew_type: types;
   rew_pat: constr;
   rew_l2r: bool;
-  rew_tac: Genarg.glob_generic_argument option
 }
 
 module HintIdent = struct
@@ -290,15 +287,7 @@ let one_base (where: variable option) (tactic: trace tactic) (rewrite_database: 
     end
   in
   let eval (rule: rew_rule) =
-    let tac = match rule.rew_tac with
-      | None -> Proofview.tclUNIT ()
-      | Some (Genarg.GenArg (Genarg.Glbwit wit, tac)) ->
-        let ist = {
-          Geninterp.lfun = Id.Map.empty;
-          poly = PolyFlags.default;
-          extra = Geninterp.TacStore.empty
-        } in Ftactic.run (Geninterp.interp wit ist tac) (fun _ -> Proofview.tclUNIT ())
-    in Tacticals.tclREPEAT_MAIN (tclTHEN (try_rewrite rule tac) (tclIGNORE tactic))
+    Tacticals.tclREPEAT_MAIN (tclTHEN (try_rewrite rule (Proofview.tclUNIT())) (tclIGNORE tactic))
   in
   let rules = tclMAP_rev eval rew_rules in
   Tacticals.tclREPEAT_MAIN @@ Proofview.tclPROGRESS rules
@@ -349,9 +338,7 @@ let find_applied_relation ?(loc: Loc.t option) (env: Environ.env) sigma c left2r
       )
 
 let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_rule) (rewrite_database: rewrite_db): rewrite_db =
-  let ist = Genintern.empty_glob_sign ~strict:true env in
-  let intern (tac: raw_generic_argument): glob_generic_argument = snd (Genintern.generic_intern ist tac) in
-  let to_rew_rule ({CAst.loc;v=(c,b,t)}: raw_rew_rule): rew_rule =
+  let to_rew_rule ({CAst.loc;v=(c,b)}: raw_rew_rule): rew_rule =
     let info = find_applied_relation ?loc env sigma c b in
     let pat = EConstr.Unsafe.to_constr info.hyp_pat in
     let uid = fresh_key () in {
@@ -360,7 +347,6 @@ let fill_rewrite_tab (env: Environ.env) (sigma: Evd.evar_map) (rule : raw_rew_ru
       rew_type = EConstr.Unsafe.to_constr info.hyp_ty;
       rew_pat = pat;
       rew_l2r = b;
-      rew_tac = Option.map intern t
     }
   in
   add_rew_rules rewrite_database [to_rew_rule rule]
@@ -371,9 +357,7 @@ let print_rewrite_hintdb (env: Environ.env) (sigma: Evd.evar_map) (rewrite_datab
   fnl () ++
   prlist_with_sep fnl (fun h ->
     str (if h.rew_l2r then "rewrite -> " else "rewrite <- ") ++
-    Printer.pr_lconstr_env env sigma h.rew_lemma ++ str " of type " ++ Printer.pr_lconstr_env env sigma h.rew_type ++
-    Option.cata (fun tac -> str " then use tactic " ++
-    Pputils.pr_glb_generic env sigma tac) (mt ()) h.rew_tac
+    Printer.pr_lconstr_env env sigma h.rew_lemma ++ str " of type " ++ Printer.pr_lconstr_env env sigma h.rew_type
   ) (find_rewrites rewrite_database)
 
 (**
@@ -386,7 +370,7 @@ let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.co
   let constr = EConstr.to_constr sigma econstr in
   let uctx = Evd.universe_context_set sigma in
   let () = Global.push_context_set uctx in
-  CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) (constr, true, Option.map (in_gen (rawwit wit_ltac)) None)
+  CAst.make ?loc:(Constrexpr_ops.constr_loc hyp) (constr, true)
 
 (**
   This function will add in the rewrite hint database "core" every hint possible created from the hypothesis
