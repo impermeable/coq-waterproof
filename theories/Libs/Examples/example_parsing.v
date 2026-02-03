@@ -1,11 +1,11 @@
 From Stdlib Require Import Reals.Reals.
 
-Require Import Notations.Common.
-Require Import Notations.Reals.
-Require Import Notations.Sets.
-Require Import Tactics.
-Require Import Waterproof.Automation.
-
+From Waterproof Require Import Notations.Common.
+From Waterproof Require Import Notations.Reals.
+From Waterproof Require Import Notations.Sets.
+From Waterproof Require Import Chains.
+From Waterproof Require Import Tactics.
+From Waterproof Require Import Automation.
 Open Scope R_scope.
 
 Waterproof Disable Filter Errors.
@@ -16,9 +16,9 @@ Assume.
 (*
 current:
 Unbound constructor Assume
-wanted, standard Rocq:
+suggestion, standard Rocq:
 - Syntax error: "that" expected after "Assume"
-wanted, waterproof:
+suggestion, waterproof:
 - Syntax error: Did you mean: "Assume that ..."?
 *)
 assume.
@@ -31,14 +31,14 @@ intr i.
 (*
 current:
 Unbould value intr.
-wanted, standard Rocq.
+suggestion, standard Rocq.
 - Syntax error: Unbound value intr. Did you mean intro?
 *)
 intros x, y.
 (*
 current:
 Unbound value y
-wanted, standard Rocq
+suggestion, standard Rocq
 - Syntax error: No ',' expected after x. Did you mean intros x y?
 *)
 intro x y.
@@ -46,32 +46,33 @@ intro x y.
 current:
 This expression has type unit.
 It is not a function and cannot be applied.
-wanted, standard Rocq:
+suggestion, standard Rocq:
 - Syntax error: '.' expected after x
 - Alternative
   Did you mean "intros x y."?
 *)
-intro _G.
+Assume that True.
 Assume that (∃ x ∈ ℝ, x = x) as (i).
 It holds that 2 * = 3.
 (*
 Maybe strictly speaking not a syntax error.
+Also, this is our doing a bit, because of the "Chains" implementation.
 current:
 Unknown interpretation for notation "= _".
-wanted:
+suggestion:
 - term of type `R` expected after "2 * " in main argument "2 * = 3"
 *)
 Obtain x according to i.
 (*
 current:
 Syntax error: '(' expected after 'to' (in [ltac2_expr]).
-wanted, standard Rocq: 
+suggestion, standard Rocq: 
 - Syntax error: label starting with '(' expected after "Obtain x according to".
   error squiggly line underneath _H
 - Syntax error: valid `label` expected after "Obtain x according to".
   A label is of the form "( ident )". Did you mean "(i)"?
   error squiggly line unerneath i
-wanted, Waterproof:
+suggestion, Waterproof:
 - label expected after "Obtain x according to". A label is of the form
 (i), so an opening parenthesis is missing here.
 with error squiggly line underneath `i`. (as is currently the case)
@@ -85,7 +86,7 @@ Syntax error: '(' expected after 'to' (in [ltac2_expr]).
 - Syntax error: valid `label` expected after "Obtain x according to".
   A label is of the form "( ident )". Did you mean "(i)"?
   error squiggly line underneath "(i".
-wanted, Waterproof:
+suggestion, Waterproof:
 - label expected after "Obtain x according to". A label is of the form
 (i), so an opening parenthesis is missing here.
 with error squiggly line underneath `i`. (as is currently the case)
@@ -94,7 +95,7 @@ Obtain x.
 (*
 current:
 Syntax error: ',' or 'according' 'to' expected (in [ltac2_expr]).
-wanted:
+suggestion:
 - Syntax error: ',' or 'according to' expected after "Obtain x".
 - Expected one fo the following:
   * "Obtain such an x"
@@ -119,7 +120,7 @@ By (i) we conclude tht 3 = 3.
 (*
 current:
 Syntax error: 'that' expected after [ltac2_expr level 5] (in [ltac2_expr]).
-wanted, standard Rocq:
+suggestion, standard Rocq:
 - Syntax error: "that" expected after "By (i) we conclude".
   with error squiggly line underneath tht.
 - Alternative suggestion:
@@ -129,7 +130,7 @@ wanted, standard Rocq:
   * it suffices to show that
   did you mean "we conclude that"?
   error squiggly line underneath "we conclude tht".
-wanted, Waterproof:
+suggestion, Waterproof:
 - syntax error after "By (i) we conclude", did you mean "that"?
 with error scribble underneath `tht`
 - Alternative:
@@ -140,9 +141,9 @@ with error scribble underneath `tht`
   after "By (i)". Did you mean "we conclude that"?
 *)
 By (i) we cnclude that 3 = 3.
-(* wanted:
+(* suggestion:
 Syntax error: ',' or 'and' or [ltac2_expr level 5] expected after [lconstr] (in [ltac2_expr]).
-wanted, standard Rocq:
+suggestion, standard Rocq:
 - Syntax error: 'conclude' expected after "By (i)) we".
   with error squiggly line underneath cnclude
 - Alternativer suggestion:
@@ -151,7 +152,7 @@ wanted, standard Rocq:
   * we conclude that
   * it suffices to show that
   did you mean "we conclude that"?
-wanted, Waterproof:
+suggestion, Waterproof:
 - syntax error after "By (i) we", did you mean "conclude"?
   with error squiggly line underneath `cnclude`
 - Alternative:
