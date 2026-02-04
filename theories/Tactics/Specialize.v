@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -480,7 +480,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_lconstr), ","))
+Waterproof Notation "Use" var_choice_list(list1(seq(ident, ":=", open_lconstr), ","))
     "in" in_hyp(lconstr) :=
   panic_if_goal_wrapped ();
   wp_specialize' var_choice_list in_hyp.

@@ -16,5 +16,21 @@
 (*                                                                            *)
 (******************************************************************************)
 
-From Ltac2 Require Import Init.
+(* Very important coding rule:
+ - This file needs to be loaded first in all of waterproof files.
+ - It is forbidden to require ltac2, except if you know what you are doing.
+ *)
+From Ltac2 Require Export Ltac2.
+
 Declare ML Module "coq-waterproof.plugin".
+
+(* This tells Rocq to use the Waterproof tactic mode when in a proof. *)
+#[export] Set Default Proof Mode "Waterproof".
+
+(* Default escape hatch to ltac2 *)
+Waterproof Notation "ltac2:" x(tactic(6)) := x.
+
+(* Reverse escape hatch *)
+Ltac2 Notation "wp:" x(waterproof_tactic) := x.
+
+Waterproof Notation x(waterproof_tactic) ";" y(thunk(waterproof_tactic(6))) : waterproof_tactic(6) := x; y ().

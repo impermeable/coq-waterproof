@@ -19,6 +19,7 @@
 From Stdlib Require Import ZArith.
 From Stdlib Require Import Reals.Reals.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Analysis.MetricSpaces.
 From Waterproof Require Import Libs.Analysis.SequencesMetric.
@@ -72,6 +73,7 @@ Definition is_accumulation_point (p : X) (a : ℕ → X) :=
     ∃ m : (ℕ → ℕ),
         is_index_sequence m ∧ (a ◦ m) ⟶ p.
 
+Set Default Proof Mode "Ltac2".
 Lemma index_sequence_property (n : ℕ → ℕ) :
     is_index_sequence n ⇒
         ∀ k ∈ ℕ,
@@ -101,21 +103,22 @@ Lemma index_sequence_property_automation (n : ℕ → ℕ) :
 Proof.
   intros; apply index_sequence_property; auto with wp_core.
 Qed.
+Set Default Proof Mode "Waterproof".
 
 Lemma index_seq_equiv (n : ℕ → ℕ) : is_index_seq n ⇔ is_index_sequence n.
 Proof.
   We show both directions.
   - We need to show that is_index_seq n ⇨ is_index_sequence n.
-    intro.
-    unfold is_index_sequence.
+    ltac2: intro.
+    ltac2: unfold is_index_sequence.
     Take k ∈ ℕ.
-    unfold is_index_seq in H.
+    ltac2: unfold is_index_seq in H.
     We conclude that (n k < n (k + 1))%nat.
   - We need to show that is_index_sequence n ⇨ is_index_seq n.
-    intro.
-    unfold is_index_seq.
+    ltac2: intro.
+    ltac2: unfold is_index_seq.
     Take k ∈ ℕ.
-    unfold is_index_sequence in H.
+    ltac2: unfold is_index_sequence in H.
     We conclude that (n k < n (k + 1))%nat.
 Qed.
 
@@ -139,7 +142,7 @@ Proof.
       Take l ∈ ℕ.
       Assume that ((k ≤ l) ⇨ (g k ≤ g l))%nat as (IH).
       Assume that (k ≤ l + 1)%nat.
-      destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
+      ltac2: destruct (lt_eq_lt_dec k (l + 1)) as [[k_lt_Sl | k_eq_Sl] | k_gt_Sl].
       + (** We first consider the case that $k < l + 1$.*)
         It holds that (k ≤ l)%nat.
         We conclude that (& g k <= g l <= g (l + 1))%nat.
@@ -172,7 +175,7 @@ Lemma index_sequence_property2_automation (n : ℕ → ℕ) :
         (k1 ≥ k2)%nat ⇒
             (n k1 ≥ n k2)%nat.
 Proof.
-  intros; apply index_sequence_property2; auto with wp_core.
+  ltac2: (intros; apply index_sequence_property2; auto with wp_core).
 Qed.
 
 Open Scope nat_scope.
@@ -201,7 +204,7 @@ Obtain such an N2. Choose N1 := N2.
   Take k : ℕ; such that (k ≥ N1)%nat.
   By index_sequence_property2 it holds that (n k ≥ n N1)%nat.
   By index_sequence_property it holds that (n N1 ≥ N1)%nat.
-  assert (H3 : (n k ≥ N1)%nat) by auto with zarith.
+  ltac2: assert (H3 : (n k ≥ N1)%nat) by auto with zarith.
   We conclude that dist _ (a (n k)) p < ε.
 Qed.
 
@@ -234,7 +237,7 @@ Obtain such a K. Choose N3 := K.
   It holds that dist _ (x (m k)) p < ε.
   It holds that y k = x (m k) as (iv).
   (* It holds that H5 : (dist (y k) p = dist (x (m k)) p). Why does this not work? *)
-  rewrite (iv).
+  ltac2: rewrite (iv).
   We conclude that dist _ (x (m k)) p < ε.
 Qed.
 
@@ -257,7 +260,7 @@ Waterproof Register Expand "accumulation" "point";
 Create HintDb subsequences.
 
 #[export] Hint Resolve index_sequence_property_automation : subsequences.
-#[export] Hint Extern 1 => (unfold ge) : subsequences.
+#[export] Hint Extern 1 => ltac2:(unfold ge) : subsequences.
 #[export] Hint Resolve double_is_even : wp_integers.
 #[export] Hint Resolve index_sequence_property2_automation : subsequences.
 

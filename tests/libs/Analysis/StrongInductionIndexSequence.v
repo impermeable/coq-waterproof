@@ -16,7 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.Waterproof.
+Require Import Waterproof.Libs.Analysis.SubsequencesMetric.
 Require Import Waterproof.Libs.Analysis.StrongInductionIndexSequence.
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Reals.
@@ -29,19 +30,20 @@ Open Scope subset_scope.
 
 #[local] Parameter Q : nat -> Prop.
 
+
 (* Test 1: without other Waterproof tactics. *)
 Goal (∃ n : (nat -> nat), is_index_sequence n /\ ∀ k ∈ nat, Q (n k)).
 Proof.
   Define the index sequence n inductively.
   - We first define n_0.
-    pose (n_0 := 0); exists n_0.
-    Control.shelve ().
+    ltac2: (pose (n_0 := 0); exists n_0).
+    ltac2: Control.shelve ().
   - Take k ∈ ℕ and assume n_0,...,n_k are defined.
-    intros H1 H2.
-    pose (n_kplus1 := 0); exists n_kplus1.
-    split.
-    + Control.shelve ().
-    + Control.shelve ().
+    ltac2: intros H1 H2.
+    ltac2: (pose (n_kplus1 := 0); exists n_kplus1).
+    ltac2: split.
+    + ltac2: Control.shelve ().
+    + ltac2: Control.shelve ().
 Abort.
 
 (* Test 2: with other Waterproof tactics. *)
@@ -52,21 +54,21 @@ Proof.
   - We first define n_0.
     Choose n_0 := 0.
     + We need to verify that (n_0 ∈ nat).
-      Control.shelve ().
+      ltac2: Control.shelve ().
     + We need to show that (Q n_0).
-      Control.shelve ().
+      ltac2: Control.shelve ().
   - Take k ∈ ℕ and assume n_0,...,n_k are defined.
     Assume that (∀ l ≤ k, Q (n l)).
     Assume that (∀ l < k, n l < n (l + 1)).
     Choose n_kplus1 := 0.
     + We need to verify that (n_kplus1 ∈ nat).
-      Control.shelve ().
+      ltac2: Control.shelve ().
     + We need to show that (Q(n_kplus1) ∧ n(k) < n_kplus1).
       We show both statements.
       * We need to show that (Q(n_kplus1)).
-        Control.shelve ().
+        ltac2: Control.shelve ().
       * We need to show that (n k < n_kplus1).
-        Control.shelve ().
+        ltac2: Control.shelve ().
 Abort.
 
 
@@ -120,12 +122,12 @@ Goal
   (∃ n : (nat → nat), (is_index_sequence n) ∧ (∀ k ∈ ℕ, candy_seq (n k) = sweet)).
 Proof.
 Define the index sequence n inductively.
-* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+* ltac2: let s := Message.to_string (Message.of_constr (Control.goal ())) in
   assert_string_equal s (String.concat "" ["(Add the following line to the proof:
  ";"
  - We first define n_0.)"]);
   Control.shelve ().
-* let s := Message.to_string (Message.of_constr (Control.goal ())) in
+* ltac2: let s := Message.to_string (Message.of_constr (Control.goal ())) in
   assert_string_equal s (String.concat "" [
  "(Add the following line to the proof:
  ";"

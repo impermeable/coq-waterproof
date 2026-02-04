@@ -23,6 +23,7 @@ From Stdlib Require Import Classical.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import ClassicalChoice.
 
+From Waterproof Require Import Waterproof.
 From Waterproof Require Import Automation.
 From Waterproof Require Import Libs.Negation.
 From Waterproof Require Import Notations.Common.
@@ -52,11 +53,11 @@ Proof.
     We claim that ∀ (m : ℕ),  ∃ g : ℕ → ℕ, ∀ N : ℕ, (N ≤ g N)%nat ∧ (P m (a (g N))) as (ii).
     {
         Take m : ℕ.
-        apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).
-        apply (i).
+        ltac2: apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P m (a l))).
+        ltac2: apply (i).
     }
-    apply choice with (R := fun (m : ℕ) (h : ℕ → ℕ) ↦ ( ∀ N : ℕ, (N ≤ h N)%nat ∧ P m (a (h N)) ) ).
-    apply (ii).
+    ltac2: apply choice with (R := fun (m : ℕ) (h : ℕ → ℕ) ↦ ( ∀ N : ℕ, (N ≤ h N)%nat ∧ P m (a (h N)) ) ).
+    ltac2: apply (ii).
 Qed.
 
 (** The next definition captures what it means to be an index sequence.*)
@@ -89,7 +90,7 @@ Lemma subseq_sat_rel (a : ℕ → ℝ) (g : ℕ → ℕ → ℕ) (P : ℕ → �
       ∀ k : ℕ, P k (a (create_seq g k)).
 Proof.
     Assume that (∀ m : ℕ, ∀ N : ℕ, P m (a (g m N))) as (i).
-    induction k. (*TODO: if we use 'We use induction on k.'-tacftic, then we cannot directly match on k + 1 *)
+    ltac2: induction k. (*TODO: if we use 'We use induction on k.'-tactic, then we cannot directly match on k + 1 *)
     - We need to show that P 0%nat (a (g 0%nat 0%nat)).
       By (i) we conclude that P 0%nat (a (g 0%nat 0%nat)).
     - We need to show that P (S k) (a (g (S k) (S (create_seq g k)))).
@@ -118,7 +119,7 @@ Proof.
       We need to show that for all k : ℕ, P k (a ((create_seq g) k)).
       Fail By subseq_sat_rel it suffices to show that
         (∀ m : ℕ, ∀ M : ℕ, P m (a (g m M))). (*TODO: fix*)
-      apply subseq_sat_rel.
+      ltac2: apply subseq_sat_rel.
       Take m : ℕ.
       We need to show that for all M : ℕ, P(m, a (g(m, M))).
       Take M : ℕ.
@@ -138,7 +139,7 @@ Proof.
       ⇨ ∀ k : ℕ, ∀ l : ℕ, (k ≤ l)%nat ⇨ (g k ≤ g l)%nat).
     Assume that (∀ k ∈ ℕ, (g k ≤ g (S k))%nat).
     Take k : ℕ.
-    induction l as [|l IH_l].
+    ltac2: induction l as [|l IH_l].
     (** We first need to show that if $k \leq 0$ then $(f (k) \leq f(0))$.*)
     Assume that (k ≤ 0)%nat.
     It holds that (k = 0)%nat.
@@ -146,8 +147,8 @@ Proof.
 
     (** Next, we need to show that if $k \leq S (l)$ then $f(k) \leq f(S (l))$.*)
     Assume that (k ≤ S l)%nat.
-    destruct (lt_eq_lt_dec k (S l)) as [temp | k_gt_Sl].
-    destruct temp as [k_lt_Sl | k_eq_Sl].
+    ltac2: destruct (lt_eq_lt_dec k (S l)) as [temp | k_gt_Sl].
+    ltac2: destruct temp as [k_lt_Sl | k_eq_Sl].
     (** We first consider the case that $k < S(l)$.*)
     It holds that (k ≤ l)%nat.
     By IH_l it holds that (g k ≤ g l)%nat.
@@ -175,7 +176,7 @@ Lemma index_seq_grows_0 (n : ℕ → ℕ) :
   is_index_seq n ⇒ ∀ k : ℕ, (n k ≥ k)%nat.
 Proof.
     Assume that is_index_seq n.
-    induction k as [|k IH].
+    ltac2: induction k as [|k IH].
     - We conclude that (n 0 >= 0)%nat.
     - It holds that for all k0 : ℕ, (n k0 < n (S k0))%nat.
       It holds that (n k < n (S k))%nat.
@@ -220,7 +221,7 @@ Lemma inf_el_to_fun (a : ℕ → ℝ) (P : ℕ → ℝ → Prop) :
     (∀ N : ℕ, ∃ k : ℕ, (N ≤ k)%nat ∧ (P N (a k))) ⇒
       ∃ f : ℕ → ℕ, ∀ l : ℕ, (l ≤ f l)%nat ∧ P l (a (f l)).
 Proof.
-    apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P k (a l))).
+    ltac2: apply choice with (R := fun (k : ℕ) (l : ℕ) ↦ ((k ≤ l)%nat ∧ P k (a l))).
 Qed.
 
 Fixpoint seq_of_max (f : ℕ → ℕ) (l : ℕ) :=
@@ -245,7 +246,7 @@ Qed.
 Lemma elements_le_seq_of_max_pre (g : ℕ → ℕ) (n : ℕ) :
     (g n ≤ seq_of_max g n)%nat.
 Proof.
-    induction n.
+    ltac2: induction n.
     - We need to show that (g(0) ≤ seq_of_max(g, 0))%nat.
       We need to show that (g 0 ≤ g 0)%nat.
       We conclude that (g 0 ≤ g 0)%nat.

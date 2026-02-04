@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -29,6 +29,9 @@ Require Import Util.Hypothesis.
 Require Import Util.MessagesToUser.
 
 Require Import Notations.Sets.
+
+(* This file is in Ltac2 style *)
+Set Default Proof Mode "Ltac2".
 
 (* Lemma to write Sn in goal induction step as n+1. *)
 Lemma Sn_eq_nplus1 : forall n, S n = n + 1.
@@ -118,7 +121,7 @@ Local Ltac2 panic_ident_Qed (i : ident) :=
     then throw (of_string "Syntax error: variable name expected after 'on'.")
     else ().
 
-Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
+Waterproof Notation "We" "use" "induction" "on" x(ident) :=
   panic_ident_Qed (x);
   panic_if_goal_wrapped ();
   induction_without_hypothesis_naming x.
@@ -146,7 +149,7 @@ Ltac2 base_case (t:constr) :=
     | [|- _] => throw (of_string "No need to indicate showing a base case.")
   end.
 
-Ltac2 Notation "We" "first" "show" "the" "base" "case" t(lconstr) := base_case t.
+Waterproof Notation "We" "first" "show" "the" "base" "case" t(lconstr) := base_case t.
 
 (** *
     Removes the NaturalInduction.Step.Wrapper.
@@ -166,4 +169,4 @@ Ltac2 induction_step () :=
     | [|- _] => throw (of_string "No need to indicate showing an induction step.")
   end.
 
-Ltac2 Notation "We" "now" "show" "the" "induction" "step" := induction_step ().
+Waterproof Notation "We" "now" "show" "the" "induction" "step" := induction_step ().

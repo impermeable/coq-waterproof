@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
 
 Require Import Util.Init.
@@ -93,14 +93,14 @@ Local Ltac2 wp_enough_by_admit (claim : constr) :=
     of_string " it suffices to show that ";
     of_lconstr claim]).
 
-Ltac2 Notation "It" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
+Waterproof Notation "It" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough statement.
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
+Waterproof Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough_since statement xtr_claim.
 
-Ltac2 Notation "By" "magic" "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
+Waterproof Notation "By" "magic" "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
   panic_if_goal_wrapped ();
   wp_enough_by_admit statement.

@@ -18,6 +18,7 @@
 
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
+Require Import Waterproof.
 
 Require Import Util.Constr.
 Require Import Util.MessagesToUser.
@@ -303,7 +304,7 @@ Ltac2 case (t:constr) :=
     | [|- _] => throw (of_string "No need to specify case.")
   end.
 
-Ltac2 Notation "Case" t(lconstr) := case t.
+Waterproof Notation "Case" t(lconstr) := case t.
 
 (**
   A goal to remind the reader to go back to an earlier

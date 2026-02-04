@@ -8,6 +8,8 @@ Waterproof Enable Automation RealsAndIntegers.
 
 Open Scope subset_scope.
 
+Set Default Proof Mode "Ltac2".
+
 (* Test 1: Basic characterization with simple property *)
 Lemma test_unique_exists_characterization {T : Type} (U : subset T) (P : T -> Prop) : 
     (∃! x ∈ U, P x) ↔ (∃ x ∈ U, P x ∧ ∀ y ∈ U, P y ⇒ y = x).

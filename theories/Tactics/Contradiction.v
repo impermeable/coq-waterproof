@@ -17,7 +17,8 @@
 (******************************************************************************)
 
 From Stdlib Require Import Classical.
-Require Import Ltac2.Ltac2.
+
+Require Import Waterproof.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -106,12 +107,12 @@ Ltac2 contradiction () :=
   | [ |- _ ] => throw (of_string "No statement to contradict.")
   end.
 
-Ltac2 Notation "We" "argue" "by" "contradiction" := contra ().
+Waterproof Notation "We" "argue" "by" "contradiction" := contra ().
 
-Ltac2 Notation "Contradiction" :=
+Waterproof Notation "Contradiction" :=
   panic_if_goal_wrapped ();
   contradiction ().
 
-Ltac2 Notation "↯" :=
+Waterproof Notation "↯" :=
   panic_if_goal_wrapped ();
   contradiction ().

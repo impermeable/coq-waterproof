@@ -34,8 +34,8 @@ Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
      (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 Goal (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
@@ -44,8 +44,8 @@ Goal (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
      ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 Close Scope R_scope.
 
@@ -58,26 +58,26 @@ Local Parameter S : nat -> Prop.
 (* Test 1: double negation cancels out. *)
 Goal ~~P -> P.
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 2: double negation cancels out (reverse). *)
 Goal P -> ~~P.
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 (* Test 3: ~(P \/ Q) implies (~P /\ ~Q). *)
 Goal ~(P \/ Q) -> (~P /\ ~Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 4: (~P /\ ~Q) implies ~(P \/ Q). *)
 Goal (~P /\ ~Q) -> ~(P \/ Q).
 Proof.
-  intro H.
+  ltac2: intro H.
 Abort. (*
   solve_by_manipulating_negation_in @H.
 Qed.*)
@@ -85,66 +85,66 @@ Qed.*)
 (* Test 5: ~(P /\ Q) implies (~P \/ ~Q). *)
 Goal ~(P /\ Q) -> (~P \/ ~Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 6: (~P \/ ~Q) implies ~(P /\ Q). *)
 Goal (~P \/ ~Q) -> ~(P /\ Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 (* Test 7: ~(P /\ Q) implies (P -> ~Q). *)
 Goal ~(P /\ Q) -> (P -> ~Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 8: (P -> ~Q) implies ~(P /\ Q). *)
 Goal (P -> ~Q) -> ~(P /\ Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 (* Test 9: ~(P -> Q) implies (P /\ ~Q). *)
 Goal ~(P -> Q) -> (P /\ ~Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 10: (P /\ ~Q) implies ~(P -> Q). *)
 Goal (P /\ ~Q) -> ~(P -> Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 (* Test 11: ~(forall x, S x) implies (exists x, ~S x). *)
 Goal ~(forall x, S x) -> (exists x, ~S x).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 12: (exists x, ~S x) implies ~(forall x, S x). *)
 Goal (exists x, ~S x) -> ~(forall x, S x).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 (* Test 13: ~(exists x, S x) implies (forall x, ~S x). *)
 Goal ~(exists x, S x) -> (forall x, ~S x).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 14: (forall x, ~S x) implies ~(exists x, S x). *)
 Goal (forall x, ~S x) -> ~(exists x, S x).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 
@@ -152,32 +152,32 @@ Qed.
 (* Test 15: or *)
 Goal (~~P \/ ~~Q) -> (P \/ Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 16: and *)
 Goal (~~P /\ ~~Q) -> (P /\ Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 17: implies *)
 Goal (~~P -> ~~Q) -> (P -> Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 18: for all *)
 Goal (forall x, ~~S x) -> (forall x, S x).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 (* Test 19: exists *)
 Goal (exists x, ~~S x) -> (exists x, S x).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 
@@ -185,8 +185,8 @@ Qed.
 (* Test 20 *)
 Goal (P \/ ~~Q) -> (~~P \/ Q).
 Proof.
-  intro H.
-  solve_by_manipulating_negation_in @H.
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation_in @H.
 Qed.
 
 (** Difficult case from theory. *)
@@ -195,8 +195,8 @@ Local Parameter A : R -> Prop.
 (* Test 21 *)
 Goal (~ (exists x : R, A x /\ L < x)) -> (forall x : R, A x ->  ~(L < x)).
 Proof.
-  intro H.
-  solve_by_manipulating_negation (fun () => ()).
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation (fun () => ()).
 Qed.
 
 
@@ -209,8 +209,8 @@ Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
      (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
-  intro H.
-  solve_by_manipulating_negation (fun () => ()).
+  ltac2: intro H.
+  ltac2: solve_by_manipulating_negation (fun () => ()).
 Qed.
 
 (* Test 23 *)
@@ -220,8 +220,8 @@ Goal (0 = 0) -> (2 = 2) -> ~ (forall eps : R, eps > 0 -> exists delta : R, delta
      (exists eps : R, eps > 0 /\ (forall delta : R, delta > 0 /\ (exists x : R,
           0 < Rdist x a < delta /\ ~ Rdist (f x) L < eps))).
 Proof.
-  intros zero_eq_zero two_eq_two H.
-  solve_by_manipulating_negation (fun () => ()).
+  ltac2: intros zero_eq_zero two_eq_two H.
+  ltac2: solve_by_manipulating_negation (fun () => ()).
 Qed.
 Close Scope R_scope.
 
@@ -231,8 +231,8 @@ Close Scope R_scope.
 (* Test 24 *)
 Goal forall n m : nat, ~(n < m) -> (n >= m).
 Proof.
-  intros n m h.
-  solve_by_manipulating_negation_in @h.
+  ltac2: intros n m h.
+  ltac2: solve_by_manipulating_negation_in @h.
 Fail Qed.
 Abort.
 
@@ -241,7 +241,7 @@ Waterproof Enable Automation RealsAndIntegers.
 (* Test 25 *)
 Goal forall n m : nat, ~(n < m) -> (n >= m).
 Proof.
-  intros n m h.
-  solve_by_manipulating_negation_in @h.
+  ltac2: intros n m h.
+  ltac2: solve_by_manipulating_negation_in @h.
 Fail Qed.
 Abort.

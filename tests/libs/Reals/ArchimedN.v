@@ -12,6 +12,8 @@ Waterproof Enable Automation RealsAndIntegers.
 Open Scope R_scope.
 Open Scope subset_scope.
 
+Set Default Proof Mode "Ltac2".
+
 (* Test 1: Basic archimedN lemma with positive real *)
 Lemma test_archimedN_positive : exists n : nat, INR(n) > 5.
 Proof.
@@ -49,7 +51,7 @@ Qed.
 (* Test 6: archimedN_exists with negative real *)
 Lemma test_archimedN_exists_negative : ∃ n ∈ ℕ, n > (-7).
 Proof.
-    By the Archimedean property we conclude that (∃ n ∈ ℕ, n > (-7)).
+    wp: By the Archimedean property we conclude that (∃ n ∈ ℕ, n > (-7)).
 Qed.
 
 (* Test 7: Testing practical application with fraction *)
@@ -61,5 +63,5 @@ Qed.
 (* Test 8: Using archimedN to prove specific bound *)
 Lemma test_specific_bound : ∃ n ∈ ℕ, n > 3.14.
 Proof.
-    By the Archimedean property we conclude that (∃ n ∈ ℕ, n > 3.14).
+    wp: By the Archimedean property we conclude that (∃ n ∈ ℕ, n > 3.14).
 Qed.

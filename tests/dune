@@ -1,5 +1,6 @@
 (coq.theory
   (name __WaterproofTests)
+  ; Disable from public build
   (package coq-waterproof)
   (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2)
   (theories Waterproof))

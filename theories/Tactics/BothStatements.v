@@ -16,8 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
+
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -44,11 +45,11 @@ Ltac2 both_directions_and () :=
     | [ |- _ ] => throw (of_string "This is not an 'and' statement, so try another approach.")
   end.
 
-Ltac2 Notation "We" "show" "both" "statements" := 
+Waterproof Notation "We" "show" "both" "statements" := 
   panic_if_goal_wrapped ();
   both_directions_and ().
 
-Ltac2 Notation "We" "prove" "both" "statements" := 
+Waterproof Notation "We" "prove" "both" "statements" := 
   panic_if_goal_wrapped ();
   both_directions_and ().
 
@@ -103,11 +104,11 @@ Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
   end.
 
 
-Ltac2 Notation "We" "show" "both" s(lconstr) "and" t(lconstr) :=
+Waterproof Notation "We" "show" "both" s(lconstr) "and" t(lconstr) :=
   panic_if_goal_wrapped ();
   both_directions_and_with_types s t.
 
-Ltac2 Notation "We" "prove" "both" s(lconstr) "and" t(lconstr) :=
+Waterproof Notation "We" "prove" "both" s(lconstr) "and" t(lconstr) :=
   panic_if_goal_wrapped ();
   both_directions_and_with_types s t.
 

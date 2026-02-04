@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
 
 Require Import Notations.Sets.
@@ -182,7 +182,7 @@ Local Ltac2 unwrap_state_goal_no_check () :=
     - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
     - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
 *)
-Ltac2 Notation "We" "conclude" _(opt("that")) target_goal(lconstr) :=
+Waterproof Notation "We" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -191,7 +191,7 @@ Ltac2 Notation "We" "conclude" _(opt("that")) target_goal(lconstr) :=
 (**
   Alternative notation for [We conclude that ...].
 *)
-Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
+Waterproof Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -216,7 +216,7 @@ Ltac2 wp_conclude_by_with_checks (target_goal : constr) (xtr_lemmas : constr lis
   guarantee_stated_goal_matches target_goal;
   conclude_by xtr_lemmas xtr_dbs.
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
+Waterproof Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
@@ -236,13 +236,13 @@ Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_
   Raises warning:
     - [Please come back later to provide an actual proof of [target_goal].], always.
 *)
-Ltac2 Notation "By" "magic" "we" "conclude" _(opt("that")) target_goal(lconstr) :=
+Waterproof Notation "By" "magic" "we" "conclude" _(opt("that")) target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;
   conclude true.
 
-Ltac2 Notation "Indeed" "," target_goal(lconstr) :=
+Waterproof Notation "Indeed" "," target_goal(lconstr) :=
   unwrap_state_goal_no_check ();
   panic_if_goal_wrapped ();
   guarantee_stated_goal_matches target_goal;

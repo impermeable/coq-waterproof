@@ -128,14 +128,14 @@ Abort.
 (** Testing de Morgan laws. *)
 
 Require Import Waterproof.Libs.Negation.
-#[export] Hint Extern 1 => solve_by_manipulating_negation (fun () => ()) : wp_negation_logic.
+#[export] Hint Extern 1 => ltac2: solve_by_manipulating_negation (fun () => ()) : wp_negation_logic.
 
 (** Level 1 *)
 Local Parameter P1 : R -> Prop.
 (* Test 15 *)
 Goal ~ (forall x : R, P1 x) -> (exists x : R, ~ (P1 x)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (there exists x : ℝ, ¬ P1 x).
 Qed.
 
@@ -150,14 +150,14 @@ Local Parameter P2 : R -> R -> Prop.
 (* Test 17 *)
 Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (there exists x : ℝ, ~ (exists y : R, P2 x y)).
 Qed.
 
 (* Test 17 *)
 Goal (exists x : R, ~ (exists y : R, P2 x y)) -> (exists x : R, forall y : R, ~ P2 x y).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (exists x : R, forall y : R, ~ P2 x y).
 Qed.
 
@@ -166,7 +166,7 @@ Qed.
 Local Parameter P3 : R -> R -> R -> Prop.
 Goal ~ (forall x : R, exists y : R, P2 x y) -> (exists x : R, ~ (exists y : R, P2 x y)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (there exists x : ℝ, ~ (exists y : R, P2 x y)).
 Qed.
 
@@ -180,7 +180,7 @@ Goal ~ (forall eps : R, eps > 0 -> exists delta : R, delta > 0 -> forall x : R,
      (exists eps : R, eps > 0 /\ ~(exists delta : R, delta > 0 -> forall x : R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (there exists eps : ℝ , eps > 0
     ∧ ¬ (there exists delta : ℝ, delta > 0 ⇨ for all x : ℝ,
                        0 < Rdist x a < delta ⇨ Rdist (f x) L < eps)).
@@ -233,13 +233,13 @@ Abort.
 (** Testing de Morgan laws. *)
 
 Require Import Waterproof.Libs.Negation.
-#[export] Hint Extern 1 => (solve_by_manipulating_negation (fun () => ())) : wp_negation_logic.
+#[export] Hint Extern 1 => ltac2: (solve_by_manipulating_negation (fun () => ())) : wp_negation_logic.
 
 (** Level 1 *)
 (* Test 25 *)
 Goal ~ (∀ x ∈ R, P1 x) -> (∃ x ∈ R, ~ (P1 x)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (∃ x ∈ ℝ, ¬ P1 x).
 Qed.
 
@@ -253,14 +253,14 @@ Abort.
 (* Test 27 *)
 Goal ~ (∀ x ∈ R, ∃ y ∈ R, P2 x y) -> (∃ x ∈ R, ~ (∃ y ∈ R, P2 x y)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (∃ x ∈ ℝ, ~ (∃ y ∈ R, P2 x y)).
 Qed.
 
 (* Test 28 *)
 Goal (∃ x < 5, ~ (∃ y ≥ 7, P2 x y)) -> (∃ x < 5, ∀ y ≥ 7, ~ P2 x y).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (∃ x < 5, ∀ y ≥ 7, ~ P2 x y).
 Qed.
 
@@ -268,7 +268,7 @@ Qed.
 (* Test 29 *)
 Goal ~ (∀ x ≤ 30, ∃ y ∈ R, P2 x y) -> (∃ x ≤ 30, ~ (∃ y ∈ R, P2 x y)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (∃ x ≤ 30, ~ (∃ y ∈ R, P2 x y)).
 Qed.
 
@@ -280,7 +280,7 @@ Goal ~ (∀ eps ∈ R, eps > 0 -> ∃ delta ∈ R, delta > 0 -> ∀ x ∈ R,
      (∃ eps ∈ R, eps > 0 /\ ~(∃ delta ∈ R, delta > 0 -> ∀ x ∈ R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)).
 Proof.
-  intro H.
+  ltac2: intro H.
   We conclude that (∃ eps ∈ R, eps > 0 /\ ~(∃ delta ∈ R, delta > 0 -> ∀ x ∈ R,
           0 < Rdist x a < delta -> Rdist (f x) L < eps)).
 Qed.

@@ -16,8 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
+
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -204,12 +205,12 @@ Ltac2 obtain_according_to_last (vars : ident list) :=
     "No statement to obtain variable from.")
   end.
 
-Ltac2 Notation "Obtain" "such" _(opt("a")) _(opt("an"))
+Waterproof Notation "Obtain" "such" _(opt("a")) _(opt("an"))
     vars(list1(ident, ",")) :=
   panic_if_goal_wrapped ();
   obtain_according_to_last vars.
 
-Ltac2 Notation "Obtain" vars(list1(ident, ",")) "according" "to"
+Waterproof Notation "Obtain" vars(list1(ident, ",")) "according" "to"
     hyp(seq("(", ident, ")")):=
   panic_if_goal_wrapped ();
   obtain_seq_according_to vars hyp.

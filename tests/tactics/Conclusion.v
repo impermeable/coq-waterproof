@@ -35,7 +35,7 @@ Waterproof Enable Automation RealsAndIntegers.
 Open Scope R_scope.
 Lemma zero_lt_one: 0 < 1.
 Proof.
-    ltac1:(lra).
+    ltac2: ltac1:(lra).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -64,7 +64,7 @@ Waterproof Enable Redirect Errors.
 *)
 Lemma test_we_conclude_3: 2 = 2.
 Proof.
-    assert_feedback_with_string (fun () => We conclude that 1+1 = 2) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: We conclude that 1+1 = 2) Warning
 "The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
@@ -74,7 +74,7 @@ Qed.
 *)
 Lemma test_we_conclude_4: forall A: Prop, (A \/ ~A  -> True).
 Proof.
-    intros A h.
+    ltac2: intros A h.
     We conclude that True.
 Qed.
 
@@ -112,8 +112,8 @@ Qed.
 *)
 Lemma test_by_we_conclude_1: (1 = 2) -> (2 = 1).
 Proof.
-    intros h.
-    apply eq_sym in h. (* Rewrite h as (2 = 1) using symmetry of "="*)
+    ltac2: intros h.
+    ltac2: apply eq_sym in h. (* Rewrite h as (2 = 1) using symmetry of "="*)
     By h we conclude that (2 = 1).
 Qed.
 
@@ -124,7 +124,7 @@ Qed.
 *)
 Lemma test_by_we_conclude_3: 2 = 1 + 1.
 Proof.
-    assert_feedback_with_string (fun () => We conclude that (2 = 2)) Warning
+    ltac2: assert_feedback_with_string (fun () => wp: We conclude that (2 = 2)) Warning
 "The statement you provided does not exactly correspond to what you need to show.
 This can make your proof less readable.".
 Qed.
@@ -137,9 +137,9 @@ Qed.
 *)
 Lemma test_by_we_conclude_5: 1 < 2.
 Proof.
-    assert (useless: 1 = 1).
-    reflexivity.
-    assert_feedback_with_strings (fun () => By test_by_we_conclude_1 we conclude that (1 < 2)) Info
+    ltac2: assert (useless: 1 = 1).
+    ltac2: reflexivity.
+    ltac2: assert_feedback_with_strings (fun () => wp: By test_by_we_conclude_1 we conclude that (1 < 2)) Info
     ["It may be that the provided reason test_by_we_conclude_1 is not necessary for the proof."].
 Abort.
 
@@ -148,22 +148,22 @@ Abort.
 #[local] Parameter A B : Prop.
 #[local] Parameter f : A -> B.
 Goal A -> B.
-  intro H.
+  ltac2: intro H.
   Fail We conclude that B.
 Abort.
 
 (* Test 7: able to show that goal with means required for proof. *)
 Goal A -> B.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   We conclude that B.
 Qed.
 
 (* Test 8: able to show goal with additional lemma. *)
 Goal A -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   By f we conclude that B.
 Qed.
 
@@ -176,10 +176,10 @@ Abort.
 
 (* Test 10: unable to show goal with superfluous lemma. *)
 Goal A -> B.
-  intro H.
-  pose f.
-  assert_feedback_with_strings
-    (fun () => By g we conclude that B)
+  ltac2: intro H.
+  ltac2: pose f.
+  ltac2: assert_feedback_with_strings
+    (fun () => wp: By g we conclude that B)
     Info
     ["It may be that the provided reason g is not necessary for the proof."].
 Abort.
@@ -189,8 +189,8 @@ Abort.
   For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
 Goal A -> B.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Since A -> B we conclude that B.
 Abort.
 
@@ -205,9 +205,9 @@ Inductive even : nat -> Prop :=
 
 Lemma sum_example_by_we_conclude: forall x:nat, x = 2 -> even x.
 Proof.
-    intros x h.
-    rewrite h. (* Change the goal to "even 2"*)
-    apply evenS. (* Change the goal to "even 0"*)
+    ltac2: intros x h.
+    ltac2: rewrite h. (* Change the goal to "even 2"*)
+    ltac2: apply evenS. (* Change the goal to "even 0"*)
     By even0 we conclude that (even 0).
 Qed.
 
@@ -226,13 +226,13 @@ Qed.
 
 
 Goal forall eps : R, eps > 0 -> (Rmin (eps / 2) 1 <= eps).
-intro eps.
-intro eps_gt_0.
-assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
-cbn; repeat split.
-auto with wp_core wp_reals.
-auto with wp_reals.
-auto with wp_core wp_reals.
+ltac2: intro eps.
+ltac2: intro eps_gt_0.
+ltac2: assert (& Rmin (eps/2) 1 <= eps/2 <= eps).
+ltac2: (cbn; repeat split).
+ltac2: auto with wp_core wp_reals.
+ltac2: auto with wp_reals.
+ltac2: auto with wp_core wp_reals.
 Qed.
 
 Close Scope R_scope.
@@ -282,13 +282,13 @@ Lemma test_induction :
   forall F : nat -> nat, (forall k : nat, (F(k+1) = F(k))%nat) ->
     forall k : nat, (F(k) = F(0))%nat.
 Proof.
-  intros F H.
+  ltac2: intros F H.
   We use induction on k.
   * We first show the base case (F(0%nat) = F(0%nat)).
     We conclude that (F(0) = F(0))%nat.
   * We now show the induction step.
-    intro k.
-    intro H1.
+    ltac2: intro k.
+    ltac2: intro H1.
     We conclude that (& F(k+1) = F(k) = F(0))%nat.
 Qed.
 
@@ -333,14 +333,14 @@ Qed.
 (** Test 12: Conclude from multiple reasons, one of them is also a local hypothesis. *)
 
 Goal P -> T.
-intro H.
+ltac2: intro H.
 By HP, HPQ, HQR and HRT we conclude that T.
 Qed.
 
 (** Test 13: Conclude from multiple reasons, one of
   them is a local hypothesis, using the local hypothesis. *)
 Goal P -> T.
-intro H.
+ltac2: intro H.
 By H, HPQ, HQR and HRT we conclude that T.
 Qed.
 
@@ -354,21 +354,21 @@ Create HintDb my_other_reason.
 Hint Resolve HVP : my_other_reason.
 
 Goal U -> V.
-intro H.
+ltac2: intro H.
 By my reason we conclude that V.
 Qed.
 
 (** Test 15: Use two extra databases.*)
 
 Goal U -> P.
-intro H.
+ltac2: intro H.
 By my reason and my other reason we conclude that P.
 Qed.
 
 (** Test 16: Use two extra databases and extra lemmas. *)
 
 Goal U -> R.
-intro H.
+ltac2: intro H.
 By my reason, my other reason, HPQ and HQR we conclude that R.
 Qed.
 
@@ -376,9 +376,9 @@ Qed.
   used. *)
 
 Goal U -> R.
-intro H.
-assert_feedback_with_strings
-  (fun () => By my reason, my other reason, HPQ, HQR and HRT we conclude that R)
+ltac2: intro H.
+ltac2: assert_feedback_with_strings
+  (fun () => wp: By my reason, my other reason, HPQ, HQR and HRT we conclude that R)
   Info
   ["It may be that the provided reason HRT is not necessary for the proof."].
 Abort.

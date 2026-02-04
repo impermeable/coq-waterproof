@@ -66,15 +66,15 @@ Qed.
 (* Test 6: Testing even_of *)
 Lemma test_even_of : Zeven 14.
 Proof.
-    apply (even_of 7 14).
-    reflexivity.
+    ltac2: apply (even_of 7 14).
+    ltac2: reflexivity.
 Qed.
 
 (* Test 7: Testing odd_of *)
 Lemma test_odd_of : Zodd 15.
 Proof.
-    apply (odd_of 7 15).
-    reflexivity.
+    ltac2: apply (odd_of 7 15).
+    ltac2: reflexivity.
 Qed.
 
 (* Test 8: Zero is even *)
@@ -153,15 +153,15 @@ Qed.
 (* Test 17: Large even number test *)
 Lemma test_large_even : Zeven 1000.
 Proof.
-    apply (even_of 500 1000).
-    reflexivity.
+    ltac2: apply (even_of 500 1000).
+    ltac2: reflexivity.
 Qed.
 
 (* Test 18: Large odd number test *)
 Lemma test_large_odd : Zodd 1001.
 Proof.
-    apply (odd_of 500 1001).
-    reflexivity.
+    ltac2: apply (odd_of 500 1001).
+    ltac2: reflexivity.
 Qed.
 
 (* Test 19: Testing even_or_odd with a concrete case *)

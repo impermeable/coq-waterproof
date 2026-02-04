@@ -34,6 +34,8 @@ Waterproof Enable Redirect Feedback.
 Local Parameter X : Type.
 Local Parameter a b c : X.
 
+Set Default Proof Mode "Ltac2".
+
 (* Test 1: first equality does not hold. *)
 Goal (& a = b = c).
 Proof.

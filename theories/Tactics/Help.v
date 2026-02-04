@@ -266,7 +266,7 @@ Ltac2 print_hints () :=
 (** * Help tactic
     Tries to give a hint how to proceed proving the current goal.
 *)
-Ltac2 Notation "Help" := print_hints ().
+Waterproof Notation "Help" := print_hints ().
 
 
 

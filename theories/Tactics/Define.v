@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 
 Require Import Util.Goals.
 
@@ -32,12 +32,10 @@ Require Import Util.Goals.
 *)
 Local Ltac2 defining (u: ident) (t: constr) :=
   pose ($u := $t);
-  let u_constr := Control.hyp u in 
+  let u_constr := Control.hyp u in
   let w := Fresh.fresh (Fresh.Free.of_goal ()) @_defeq in
   assert ($w : $u_constr = $t) by reflexivity.
-    
 
-
-Ltac2 Notation "Define" u(ident) ":=" t(lconstr) :=
+Waterproof Notation "Define" u(ident) ":=" t(lconstr) :=
   panic_if_goal_wrapped ();
   defining u t.

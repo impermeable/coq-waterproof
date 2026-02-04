@@ -174,8 +174,7 @@ Proof.
   exact (na (b_to_a b)).
 Qed.
 
-Require Import Ltac2.Ltac2.
-
+Require Import Waterproof.
 Require Import Util.Constr.
 Require Import Util.Hypothesis.
 Require Import Waterprove.

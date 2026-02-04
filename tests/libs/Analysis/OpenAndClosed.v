@@ -19,6 +19,7 @@
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Message.
 
+Require Import Waterproof.Waterproof.
 Require Import Waterproof.Libs.Analysis.OpenAndClosed.
 Require Import Waterproof.Notations.Common.
 Require Import Waterproof.Notations.Reals.
@@ -39,7 +40,7 @@ Goal ∀ A : subset ℝ, A is open → A is open.
 Proof.
   Take A : (subset ℝ).
   Assume that (A is open).
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand open)
@@ -54,7 +55,7 @@ Abort.
 Goal ∀ x : ℝ, x = x.
 Proof.
   Take x : ℝ.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand open)

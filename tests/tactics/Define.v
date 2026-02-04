@@ -28,20 +28,20 @@ Require Import Waterproof.Util.Assertions.
 
 (** Test 0: This should work just fine *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
-    intro n.
+    ltac2: intro n.
     Define m := n.
 Abort.
 
 
 (** Test 1: This should also work *)
 Goal (0 = 0) -> forall n : nat, ((n = n) \/ (n + 1 = n + 1)).
-    intros h n.
+    ltac2: intros h n.
     Fail Define h := n.
     Define m := n.
 Abort.
 
 (** Test 2: Complex expression without parens *)
 Goal forall n : nat, ((n = n) /\ (n + 1 = n + 1)).
-    intro n.
+    ltac2: intro n.
     Define m := n + 1.
 Abort.
