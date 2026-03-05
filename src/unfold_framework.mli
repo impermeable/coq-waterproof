@@ -17,7 +17,10 @@
 (******************************************************************************)
 
 open Names
-open Ltac2_plugin.Tac2entries
+open Libnames
+open Ltac2_plugin
+open Tac2expr
+open Tac2entries
 
 (**
 In this module we keep two tables:
@@ -51,7 +54,7 @@ val wp_unfold_map : GlobRef.t StringMap.t ref
 
 val add_to_unfold_map : string list -> GlobRef.t -> unit
 
-val register_unfold : string list -> Libnames.qualid -> notation_interpretation_data * notation_interpretation_data
+val register_unfold : string list -> Libnames.qualid -> (qualid option, raw_tacexpr) notation_interpretation_data * (qualid option, raw_tacexpr) notation_interpretation_data
 
 val register_unfold_entry : GlobRef.t -> unfold_entry -> unit
 
