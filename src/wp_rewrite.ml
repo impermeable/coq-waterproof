@@ -365,8 +365,8 @@ let print_rewrite_hintdb (env: Environ.env) (sigma: Evd.evar_map) (rewrite_datab
 *)
 let to_raw_rew_rule (env: Environ.env) (sigma: Evd.evar_map) (hyp: Constrexpr.constr_expr): raw_rew_rule =
   let econstr, context = Constrintern.interp_constr env sigma hyp in
-  let sigma = Evd.from_ctx context in
-  let sigma = Evd.collapse_sort_variables sigma in
+  let sigma = Evd.from_ustate context in
+  let sigma = Evd.collapse_sort_variables ~only_above_prop:false sigma in
   let constr = EConstr.to_constr sigma econstr in
   let uctx = Evd.universe_context_set sigma in
   let () = Global.push_context_set uctx in
