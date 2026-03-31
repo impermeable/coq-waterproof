@@ -234,6 +234,7 @@ let search (trace: trace) (max_depth: int) (lems: Tactypes.delayed_open_constr l
   let make_local_db (gl: Goal.t): hint_db =
     let env = Goal.env gl in
     let sigma = Goal.sigma gl in
+    let lems = Auto.get_reference_hints env sigma lems in
     try make_local_hint_db env sigma false lems with _ -> make_local_hint_db env sigma false []
   in
   let rec inner_search (trace: trace) (n: int) (previous_envs: (EConstr.named_context * EConstr.constr * Evd.evar_map) list) (local_db: hint_db): trace tactic =

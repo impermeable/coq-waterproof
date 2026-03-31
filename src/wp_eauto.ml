@@ -279,7 +279,9 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
           let hyps' = EConstr.named_context env in
           if hyps' == hyps
             then db
-            else make_local_hint_db env sigma ~ts:TransparentState.full true local_lemmas
+            else
+              let local_lemmas = Auto.get_reference_hints env sigma local_lemmas in
+              make_local_hint_db env sigma ~ts:TransparentState.full true local_lemmas
         in try
           esearch_find env sigma dblist db secvars concl forbidden_tactics
             |> List.sort compare
@@ -356,7 +358,10 @@ let resolve_esearch (max_depth: int) (dblist: hint_db list) (local_lemmas: Tacty
 *)
 let esearch (log: bool) (depth: int) (lems: Tactypes.delayed_open_constr list) (db_list: hint_db list) (must_use_tactics: Pp.t list) (forbidden_tactics: Pp.t list): trace tactic =
   TraceTactics.typedGoalEnter begin fun gl ->
-  let local_db env sigma = make_local_hint_db env sigma ~ts:TransparentState.full true lems in
+  let local_db env sigma =
+    let lems = Auto.get_reference_hints env sigma lems in
+    make_local_hint_db env sigma ~ts:TransparentState.full true lems
+  in
   let tac (s: search_state): search_state tactic = resolve_esearch depth db_list lems s must_use_tactics forbidden_tactics in
   tclORELSE
     begin
