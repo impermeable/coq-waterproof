@@ -171,7 +171,7 @@ and esearch_find (env: Environ.env) (sigma: Evd.evar_map) (db_list: hint_db list
     let priority = match FullHint.repr hint with
       | Unfold_nth _ -> 1
       | _ -> FullHint.priority hint
-    in let tac: hint hint_ast -> trace tactic = function
+    in let tac : _ -> trace tactic = function
       | Res_pf h -> unify_e_resolve state h <*> tclUNIT @@ no_trace
       | ERes_pf h -> unify_e_resolve state h <*> tclUNIT @@ no_trace
       | Give_exact h -> e_exact h <*> tclUNIT @@ singleton_trace true (str "exact") (str "")
