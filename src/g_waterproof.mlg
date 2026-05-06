@@ -42,8 +42,8 @@ let wp_entry_full_name =
     (Libnames.add_path_suffix (Libnames.path_of_string "Waterproof.Waterproof") wp_entry_name)
 
 let parse_wp_tactic _kwstate strm =
-  let entry = Tac2entries.CustomTab.of_path wp_entry_full_name in
-  let entry = Tac2entries.find_custom_entry entry in
+  let entry = Tac2syn.CustomTab.of_path wp_entry_full_name in
+  let entry = Tac2syn.find_custom_entry entry in
   Procq.Entry.parse_token_stream entry strm
 
 let wp_tactic_entry = Procq.Entry.of_parser "waterproof_tactic" { parser_fun = parse_wp_tactic }
@@ -60,13 +60,15 @@ let _ : Pvernac.proof_mode = Pvernac.register_proof_mode "Waterproof"
 let pr_ltac2expr e = Tac2print.pr_rawexpr_gen E5 ~avoid:Names.Id.Set.empty e
 
 let () = "coq-waterproof.plugin" |> Mltop.declare_cache_obj @@ fun () ->
-  Tac2entries.register_custom_entry (CAst.make wp_entry_name)
+  Tac2syn.register_custom_entry (CAst.make wp_entry_name)
 
-let waterproof_set_default_notation_target = function
-  | (Some _, _) as v -> v
-  | None, lev ->
+let waterproof_set_default_notation_target n =
+  match n.Tac2syn.target_entry with
+  | Some _ -> n
+  | None ->
     let qid = Libnames.qualid_of_path wp_entry_full_name in
-    Some qid, Some (Option.default 5 lev)
+    { Tac2syn.target_entry = Some qid; target_level = Some (Option.default 5 n.target_level);
+      target_scope = n.target_scope }
 
 let raw_attributes = Attributes.raw_attributes
 
