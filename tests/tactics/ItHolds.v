@@ -16,8 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-Require Import Ltac2.Message.
+Require Import Waterproof.Waterproof.
 From Stdlib Require Import Reals.Reals.
 From Stdlib Require Import Lra.
 
@@ -39,7 +38,7 @@ Waterproof Enable Automation RealsAndIntegers.
 Local Open Scope R_scope.
 Lemma zero_lt_one: 0 < 1.
 Proof.
-    ltac1:(lra).
+    ltac2: ltac1:(lra).
 Qed.
 
 (* This axiom does not make sense,
@@ -49,7 +48,7 @@ Local Parameter x_var : R.
 Local Parameter H_x_is_10 : x_var = 10.
 Lemma x_is_10 : x_var = 10.
 Proof.
-  exact H_x_is_10.
+  ltac2: exact H_x_is_10.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -101,7 +100,7 @@ Abort.
 Lemma test_it_holds_1: 0 = 0.
 Proof.
     It holds that True as (i).
-    assert_hyp_has_type @i constr:(True).
+    ltac2: assert_hyp_has_type @i constr:(True).
 Abort.
 
 
@@ -125,18 +124,18 @@ Inductive even : nat -> Prop :=
 
 Lemma it_holds_example: forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.
-    intros x h.
+    ltac2: intros x h.
     It holds that x = 2 as (i).
-    rewrite (i). (* Change the goal to "even 2"*)
-    apply evenS. (* Change the goal to "even 0"*)
-    apply even0.
+    ltac2: rewrite (i). (* Change the goal to "even 2"*)
+    ltac2: apply evenS. (* Change the goal to "even 0"*)
+    ltac2: apply even0.
 Qed.
 
 
 (* Test 4: Check what error is thrown when a hypothesis identifier is already in use.*)
 Goal forall x:nat, x > 1 /\ x < 3 -> even x.
 Proof.
-    intros x h.
+    ltac2: intros x h.
     Fail It holds that x = 2 as (h).
     It holds that x = 2 as (i).
 Abort.
@@ -149,24 +148,24 @@ Abort.
 (* Test 5: regular check that assertion works. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   It holds that B.
 Abort.
 
 (* Test 6: check that assertion works with label *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   It holds that B as (i).
 Abort.
 
 (* Test 7: check that assertion fails with label that is already used. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Fail It holds that B as (H).
 Abort.
 
@@ -175,21 +174,21 @@ Abort.
  *)
 Goal A -> False.
 Proof.
-intro H.
+ltac2: intro H.
 Fail It holds that B as (H).
 Abort.
 
 (* Test 8: 'By ...' succeeds if additional lemma is needed for proof assertion. *)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   By f it holds that B.
 Abort.
 (* Test 8b: also when lemma is included in local hypotheses. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   By f it holds that B.
 Abort.
 
@@ -203,9 +202,9 @@ Abort.
 #[local] Parameter g : B -> A.
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
-  assert_feedback_with_strings (fun () => By g it holds that B)
+  ltac2: intro H.
+  ltac2: pose f.
+  ltac2: assert_feedback_with_strings (fun () => wp: By g it holds that B)
   Info
   ["It may be that the provided reason g is not necessary for the proof."].
 Abort.
@@ -215,15 +214,15 @@ Abort.
 (* Note that no additional hypotheses are added by the Since-tactic. *)
 Goal A -> False.
 Proof.
-  intro H.
-  pose f.
+  ltac2: intro H.
+  ltac2: pose f.
   Since A -> B it holds that B.
 Abort.
 
 (* Test 12: 'Since ...' fails if claimed cause is not proven previously. *)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Fail Since A -> B it holds that B.
 Abort.
 
@@ -245,7 +244,7 @@ Abort.
 #[local] Hint Resolve f : core.
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Since A -> B it holds that B.
 Abort.
 
@@ -257,7 +256,7 @@ Abort.
 (* Test 15: 'By ...' with statement fails.*)
 Goal A -> False.
 Proof.
-  intro H.
+  ltac2: intro H.
   Fail By A -> B it holds that B.
   Since A -> B it holds that B.
 Abort.
@@ -267,8 +266,8 @@ Waterproof Enable Redirect Errors.
 (* Test 16: 'Since ...' with reference fails. *)
 Goal A -> False.
 Proof.
-  intro H.
-  assert_fails_with_string (fun () => Since f it holds that B)
+  ltac2: intro H.
+  ltac2: assert_fails_with_string (fun () => wp: Since f it holds that B)
   "Cannot use reference f with `Since`.
 Try `By f ...` instead.".
 Abort.
@@ -280,7 +279,7 @@ Waterproof Disable Redirect Errors.
 (* Test 17: impossible goal with use of lemma in hypotheses. *)
 Goal False.
 Proof.
-  assert (A -> B) as f' by admit.
+  ltac2: assert (A -> B) as f' by admit.
   Fail By f' it holds that B.
 Abort.
 
@@ -288,9 +287,9 @@ Abort.
 #[local] Parameter C : Prop.
 Goal A -> False.
 Proof.
-  intro H.
-  assert (A -> B) as f' by admit.
-  assert (B -> C) as g' by admit.
+  ltac2: intro H.
+  ltac2: assert (A -> B) as f' by admit.
+  ltac2: assert (B -> C) as g' by admit.
   By g' it holds that C.
 Abort.
 
@@ -315,7 +314,7 @@ Abort.
 (* Fails without workaround in [Waterprove._rwaterprove]. *)
 Goal A -> (A -> B) -> B.
 Proof.
-  intros Ha Hf.
+  ltac2: intros Ha Hf.
   By Ha it holds that B.
 Abort.
 
@@ -332,7 +331,7 @@ Goal 1 < 2.
 Proof.
   It holds that orb true false.
   Since orb true false it holds that 1 < 2.
-  assumption.
+  ltac2: assumption.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -342,10 +341,10 @@ Open Scope subset_scope.
 (** Test 23: Test whether wrapper for specialize works *)
 Goal (∀ x ≥ 5, True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   Use x := 6 in (H1).
   * We need to verify that (6 >= 5).
-    Control.shelve ().
+    ltac2: Control.shelve ().
   * It holds that True as (i).
 Abort.
 
@@ -354,11 +353,11 @@ Waterproof Enable Redirect Feedback.
 (** Test 24: Test wrapper specialize blocks other tactics and generates notice *)
 Goal (forall x : nat, x >= 5 -> True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   Use x := 6 in (H1).
   Waterproof Enable Redirect Errors.
-  assert_feedback_with_string (fun () =>
-    assert_fails_with_string (fun () => We claim that False)
+  ltac2: assert_feedback_with_string (fun () =>
+    assert_fails_with_string (fun () => wp: We claim that False)
     "You cannot do this right now, follow the advice in the goal window."
   ) Notice "Hint, replace with: It holds that 6 >= 5 -> True.${0}".
 Abort.
@@ -368,7 +367,7 @@ Waterproof Disable Redirect Errors.
 (** Test 25: Test wrapper specialize fails with wrong statement *)
 Goal (forall x : nat, x >= 5 -> True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   It holds that 3 >= 5 -> True. (* test whether automation could show this*)
   Use x := 6 in (H1).
   Fail It holds that 3 >= 5 -> True.
@@ -378,11 +377,11 @@ Abort.
   even if another instance is added inbetween. *)
 Goal (forall x : nat, x + 1>= x -> True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   Use x := 6 in (H1).
-  assert (6 + 1 >= 6 -> True) as decoy by exact (H1 6).
+  ltac2: assert (6 + 1 >= 6 -> True) as decoy by exact (H1 6).
   It holds that 6 + 1 >= 6 -> True as (i).
-  ltac1:(rename i into ii). (* test for hypohtesis without producing output *)
+  ltac2: ltac1:(rename i into ii). (* test for hypohtesis without producing output *)
   Fail Check _H. (* '_H' is auto-generated by 'specialize' tactic *)
 Abort.
 
@@ -391,7 +390,7 @@ Abort.
   if user-specified name is already used. *)
 Goal (forall x : nat, x >= 5 -> True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   Use x := 6 in (H1).
   Fail It holds that (6 >= 5 -> True) as (H1).
 Abort.
@@ -403,7 +402,7 @@ Abort.
   if wrong statement user-specified name is already used. *)
 Goal (forall x : nat, x >= 5 -> True) -> True.
 Proof.
-  intro H1.
+  ltac2: intro H1.
   Use x := 6 in (H1).
   Fail It holds that (6 >= 5 -> True) as (H1).
 Abort.
@@ -418,7 +417,7 @@ Local Parameter Hbc : b -> c.
 
 Goal a -> b.
 Proof.
-intro H.
+ltac2: intro H.
 By Ha, Hab and Hbc it holds that c.
 Abort.
 
@@ -427,7 +426,7 @@ Abort.
 
 Goal a -> b.
 Proof.
-intro H.
+ltac2: intro H.
 By H, Hab and Hbc it holds that c.
 Abort.
 
@@ -437,7 +436,7 @@ Waterproof Enable Redirect Errors.
 
 Goal a -> b.
 Proof.
-assert_feedback_with_strings (fun () => By Ha, Hab and Hbc it holds that b)
+ltac2: assert_feedback_with_strings (fun () => wp: By Ha, Hab and Hbc it holds that b)
 Info
   ["It may be that the provided reason Hbc is not necessary for the proof."].
 Abort.
@@ -455,8 +454,8 @@ Hint Resolve Hd : my_reason.
 
 Goal a -> b.
 Proof.
-assert_fails_with_string
-  (fun () =>It holds that d)
+ltac2: assert_fails_with_string
+  (fun () => wp: It holds that d)
   "Could not verify that d.".
 By my reason it holds that d.
 Abort.
@@ -470,6 +469,6 @@ Hint Resolve Hda : my_second_reason.
 
 Goal b.
 By my reason, my second reason and Hab it holds that b as (i).
-clear i.
+ltac2: clear i.
 By my reason, my second reason, Hab and Hbc it holds that c.
 Abort.

@@ -28,6 +28,8 @@ Require Import Waterproof.Util.Assertions.
 Waterproof Enable Redirect Feedback.
 Waterproof Enable Redirect Errors.
 
+Set Printing Width 78.
+
 Definition foo : nat := 0.
 
 Waterproof Register Expand "foo";
@@ -40,7 +42,7 @@ Waterproof Register Expand "foo";
   to remove the line after use. *)
 Goal foo = 1.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand foo)
@@ -54,8 +56,8 @@ Abort.
     to remove the line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
-  assert_feedback_with_strings
+  ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand foo)
@@ -70,15 +72,15 @@ Abort.
 
 (* Tests framework expand the definition. *)
 Local Ltac2 unfold_foo (statement : constr) := eval unfold foo in $statement.
-Ltac2 Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
+Waterproof Notation "Expand" "the" "definition" "of" "foo2" x(opt(seq("in", constr))) :=
   wp_unfold unfold_foo (Some "foo2") true true x.
 
 (* Test 6: unfold term in hypotheses and goal and throws an error suggesting
     to remove line after use. *)
 Goal (foo = 0) -> (foo = 2) -> (foo = 1).
 Proof.
-  intros.
-  assert_feedback_with_strings
+  ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand foo)
@@ -93,7 +95,7 @@ Abort.
 (* Test 7: fails to unfold term in statment without term. *)
 Goal False.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand foo)
@@ -115,8 +117,8 @@ but without having the automation able to prove the alternative
 characterizations: then warnings should be thrown. *)
 Goal R -> P.
 Proof.
-  intros.
-  assert_feedback_with_strings
+  ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand notation for P)
@@ -124,7 +126,7 @@ Proof.
   Warning
 ["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
 It suffices to show that Q."].
-assert_fails_with_string (fun () => It suffices to show that Q)
+ltac2: assert_fails_with_string (fun () => wp: It suffices to show that Q)
 "Could not verify that it suffices to show Q.".
 Abort.
 
@@ -133,8 +135,8 @@ but without having the automation able to prove the alternative characterization
 
 Goal P -> R.
 Proof.
-  intros.
-  assert_feedback_with_strings
+  ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand notation for P)
@@ -142,7 +144,7 @@ Proof.
   Warning
 ["The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
 It holds that Q."].
-assert_fails_with_string (fun () => It holds that Q)
+ltac2: assert_fails_with_string (fun () => wp: It holds that Q)
 "Could not verify that Q.".
 Abort.
 
@@ -152,8 +154,8 @@ Local Hint Resolve <- HPQ : core.
 (* Test 10: Use the [apply_in_constr] tactic for an alternative characterization, with concept in conclusion *)
 Goal R -> P.
 Proof.
-  intros.
-  assert_feedback_with_strings
+  ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand notation for P)
@@ -167,8 +169,8 @@ Abort.
 (* Test 11: Use the [apply_in_constr] tactic for an alternative characterization, with concept in assumption *)
 Goal P -> R.
 Proof.
-  intros.
-  assert_feedback_with_strings
+  ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand notation for P)
@@ -184,7 +186,7 @@ Local Parameter HPR : P = R.
 (* Test 12: Test for [tactic_in_constr] *)
 Goal False.
 Proof.
-assert_constr_equal (tactic_in_constr constr:(HPR) constr:(P -> Q)) constr:(R -> Q).
+ltac2: assert_constr_equal (tactic_in_constr constr:(HPR) constr:(P -> Q)) constr:(R -> Q).
 Abort.
 
 Waterproof Register Expand "characterization" "of" "P";
@@ -192,14 +194,14 @@ Waterproof Register Expand "characterization" "of" "P";
   as "Characterization of P";
   by rewrite HPR.
 
-Local Hint Extern 1 => rewrite HPR : core.
+Local Hint Extern 1 => ltac2: rewrite HPR : core.
 
 (* Test 13: Test unfolding by rewriting *)
 
 Goal T -> P.
 Proof.
-intros.
-  assert_feedback_with_strings
+ltac2: intros.
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand characterization of P)
@@ -228,8 +230,8 @@ Local Parameter A : subset R.
 (* Test 14, test for infimum, as it is important that it works in practice. *)
 Goal 4 is the infimum of A -> 3 is the infimum of A.
 Proof.
-intro H.
-assert_feedback_with_strings
+ltac2: intro H.
+ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand infimum)
@@ -249,8 +251,8 @@ Abort.
 (* Test 15, test for supremum, as it is important that it works in practice. *)
 Goal 4 is the supremum of A -> 3 is the supremum of A.
 Proof.
-intro H.
-assert_feedback_with_strings
+ltac2: intro H.
+ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand supremum)
@@ -270,11 +272,11 @@ Abort.
 (* Test 15, use Expand All *)
 Goal 4 is the supremum of A -> 3 is the infimum of A.
 Proof.
-intro H.
-assert_feedback_with_strings
+ltac2: intro H.
+ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand All)
+  (fun () => wp: Expand All)
 "Remove this line in the final version of your proof.")
   Info
 [
@@ -302,10 +304,10 @@ Definition my_nat : nat := 3.
 
 Goal my_nat = 4.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand my_nat)
+  (fun () => wp: Expand my_nat)
 "Remove this line in the final version of your proof.")
   Info
 ["Definition my_nat:";
@@ -315,18 +317,18 @@ Abort.
 (* Test 17, deprecated notation *)
 Goal my_nat = 4.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of my_nat)
+  (fun () => wp: Expand the definition of my_nat)
 "Remove this line in the final version of your proof.")
   Info
 ["Definition my_nat:";
 "Hint, replace with: We need to show that 3 = 4."].
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of my_nat)
+  (fun () => wp: Expand the definition of my_nat)
 "Remove this line in the final version of your proof.")
   Warning
 ["Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead."].
@@ -341,7 +343,7 @@ Waterproof Register Expand "my_nat_2";
 (* Test 17, deprecated notation with framework *)
 Goal my_nat_2 = 4.
 Proof.
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
   (fun () => Expand the definition of my_nat_2)
@@ -349,10 +351,10 @@ Proof.
   Info
 ["Definition my_nat_2:";
 "Hint, replace with: We need to show that 3 = 4."].
-  assert_feedback_with_strings
+  ltac2: assert_feedback_with_strings
   (fun () =>
   assert_fails_with_string
-  (fun () => Expand the definition of my_nat)
+  (fun () => wp: Expand the definition of my_nat)
 "Remove this line in the final version of your proof.")
   Warning
 ["Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead."].

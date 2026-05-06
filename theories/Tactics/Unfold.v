@@ -16,6 +16,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+Require Import Waterproof.
+
 Require Import Ltac2.Ltac2.
 Require Import Ltac2.Std.
 Require Import Ltac2.Message.
@@ -213,7 +215,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
             (print_tactic (concat_list [of_string "We need to show that ";
               of_lconstr unfolded_goal; of_string "."]))
           else
-            (match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
+            (match Control.case (fun () => (wp: It suffices to show that $unfolded_goal); Control.zero Succeeded) with
             | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
                                 of_lconstr unfolded_goal; of_string "."]))
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
@@ -229,7 +231,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
           let it_holds_msg := fun (x : constr) => concat_list
             [of_string "It holds that "; of_lconstr x; of_string "."] in
           let test_and_print unfolded_h :=
-            match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
+            match Control.case (fun () => (wp: It holds that $unfolded_h); Control.zero Succeeded) with
             | Err Succeeded => print_tactic (it_holds_msg unfolded_h)
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
             of_string " (this is probably caused by a misalignment in the automation for";
@@ -334,17 +336,17 @@ Ltac2 wp_expand_deprecated (r : reference) :=
   Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
   Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
 *)
-Ltac2 Notation "Expand" x(reference) :=
+Waterproof Notation "Expand" x(reference) :=
   wp_expand x.
 
 (** Deprecated version of this notation *)
-Ltac2 Notation "Expand" "the" "definition" "of" x(reference) :=
+Waterproof Notation "Expand" "the" "definition" "of" x(reference) :=
   wp_expand_deprecated x.
 
 (**
   Unfold all occurences of all registered definitions and alternative characterizations.
 *)
-Ltac2 Notation "Expand" "All" :=
+Waterproof Notation "Expand" "All" :=
   let ls := get_unfold_references_ffi () in
   List.iter (fun l => wp_unfold_by_ref l false) ls;
   throw (of_string "Remove this line in the final version of your proof.").

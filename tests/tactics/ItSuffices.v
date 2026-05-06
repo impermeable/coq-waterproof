@@ -37,11 +37,11 @@ Open Scope nat_scope.
 *)
 Lemma test_it_suffices_1: forall x:nat, x>0 /\ x < 2 -> x = S (0).
 Proof.
-  intros x.
+  ltac2: intros x.
   It suffices to show that x = 1.
   (* Old goal should have been proven by the above,
     now the assumption used remains to be proven.*)
-  assert_goal_is constr:(x=1).
+  ltac2: assert_goal_is constr:(x=1).
 Abort.
 
 (** * Test 2
@@ -49,9 +49,9 @@ Abort.
 *)
 Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
-  intros A B.
+  ltac2: intros A B.
   (* Clearly this statement isn't helpful in proving the goal! *)
-  let result () := By f_increasing it suffices to show that 1 + 1 = 2 in
+  ltac2: let result () := wp: By f_increasing it suffices to show that 1 + 1 = 2 in
   assert_raises_error result.
 Abort.
 
@@ -60,7 +60,7 @@ Local Parameter f_increasing : forall m n : nat, m <= n -> f m <= f n.
 
 Lemma test_it_suffices_3: f 1 <= f 2.
   By f_increasing it suffices to show that 1 <= 2.
-  assert_goal_is constr:(1 <= 2).
+  ltac2: assert_goal_is constr:(1 <= 2).
 Abort.
 
 (** * Test 2
@@ -68,7 +68,7 @@ Abort.
 *)
 Lemma test_it_suffices_2: forall A B : Prop , A /\ A -> B.
 Proof.
-  intros A B.
+  ltac2: intros A B.
   (* Clearly this statement isn't helpful in proving the goal! *)
   Fail By f_increasing it suffices to show that 1 + 1 = 2.
 Abort.
@@ -84,7 +84,7 @@ Abort.
 (* Test 6: able to show that goal is enough if it implies current goal. *)
 Goal B.
 Proof.
-  pose g.
+  ltac2: pose g.
   It suffices to show that A.
 Abort.
 
@@ -103,7 +103,7 @@ Abort.
 
 (* Test 9: this passes, because the type of g is the same as the type of h. *)
 Goal B.
-  pose g.
+  ltac2: pose g.
   By h it suffices to show that A.
 Abort.
 
@@ -111,7 +111,7 @@ Abort.
 (* Test 10: 'Since ...' works. For more tests with 'Since ...', see [tests/.../ItHolds.v] *)
 Goal B.
 Proof.
-  pose g.
+  ltac2: pose g.
   Since A -> B it suffices to show that A.
 Abort.
 
@@ -119,14 +119,14 @@ Parameter b : bool.
 (* Test 11: "It suffices" works with a boolean statement *)
 Goal ((is_true b) -> B) -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   Since is_true b -> B it suffices to show that b.
 Abort.
 
 (* Test 12: "It suffices" works with a boolean statement *)
 Goal ((is_true b) -> B) -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   It suffices to show that b.
 Abort.
 
@@ -134,7 +134,7 @@ Abort.
   clause *)
 Goal ((is_true b) -> B) -> B.
 Proof.
-  intro H.
+  ltac2: intro H.
   It holds that true.
   Since true it suffices to show that b.
 Abort.
@@ -156,7 +156,7 @@ Abort.
 
 Goal (P -> Q) -> T.
 Proof.
-  intro H.
+  ltac2: intro H.
   By H, HQR and HRT it suffices to show that P.
 Abort.
 
@@ -165,7 +165,7 @@ Abort.
 
 Goal (P -> Q) -> T.
 Proof.
-  intro H.
+  ltac2: intro H.
   By HPQ, HQR and HRT it suffices to show that P.
 Abort.
 
@@ -210,8 +210,8 @@ Waterproof Enable Logging.
 Waterproof Enable Redirect Feedback.
 
 Goal R.
-assert_feedback_with_strings
-  (fun () => By my reason, my other reason,
+ltac2: assert_feedback_with_strings
+  (fun () => wp: By my reason, my other reason,
     HPQ, HQR and HRT it suffices to show that U)
   Info
   ["It may be that the provided reason HRT is not necessary for the proof."].

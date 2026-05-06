@@ -30,6 +30,8 @@ Waterproof Enable Redirect Errors.
 *)
 Waterproof Enable Hypothesis Help.
 
+Set Default Proof Mode "Ltac2".
+
 Goal False.
 assert_is_true (get_print_hypothesis_flag ()).
 Abort.

@@ -225,6 +225,8 @@ Ltac2 assert_feedback_with_strings (tac : unit -> 'a) (lvl : FeedbackLevel)
 Ltac2 assert_feedback_with_string (tac : unit -> 'a) (lvl : FeedbackLevel) (expected_string : string) :=
   assert_feedback_with_strings tac lvl [expected_string].
 
+(* Waterproof Notation "assert_feedback_with_string_n" tac(thunk(waterproof_tactic)) : waterproof_tactic (1) := assert_feedback_with_string tac. *)
+
 (**
   Checks if a tactic warns
 

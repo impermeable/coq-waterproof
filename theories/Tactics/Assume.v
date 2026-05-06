@@ -16,8 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
+
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -169,7 +170,7 @@ Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option))
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
+Waterproof Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
   x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
   "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
 := assume (parse_natural_language_listing x1 x2).
@@ -177,7 +178,7 @@ Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
 (**
   Simply alternative notation for [Assume].
 *)
-Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
+Waterproof Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
   x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
   "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
 := assume (parse_natural_language_listing x1 x2).

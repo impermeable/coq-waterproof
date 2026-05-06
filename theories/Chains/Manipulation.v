@@ -17,8 +17,6 @@
 (******************************************************************************)
 
 From Ltac2 Require Import Ltac2.
-From Ltac2 Require Option.
-
 Require Import Inequalities.
 Require Export Notations.Sets.
 
@@ -59,3 +57,4 @@ Ltac2 simpl_member_subset () :=
       | [ |- _ ] => ()
     end
   )).
+

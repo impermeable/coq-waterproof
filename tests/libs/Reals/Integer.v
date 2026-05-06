@@ -15,15 +15,15 @@ Open Scope subset_scope.
 (* Test 1: Basic Z_in_R membership test *)
 Lemma test_Z_in_R_basic : 3 ∈ Z_in_R.
 Proof.
-    exists 3%Z.
-    reflexivity.
+    ltac2: exists 3%Z.
+    ltac2: reflexivity.
 Qed.
 
 (* Test 2: Negative integer in Z_in_R *)
 Lemma test_Z_in_R_negative : (-5) ∈ Z_in_R.
 Proof.
-    exists (-5)%Z.
-    reflexivity.
+    ltac2: exists (-5)%Z.
+    ltac2: reflexivity.
 Qed.
 
 (* Test 3: Testing plus_Z_in_R lemma *)
@@ -99,7 +99,7 @@ Qed.
 (* Test 12: Demonstrating closure of Z_in_R under operations *)
 Lemma test_Z_in_R_closure : (2 + 3) ∈ Z_in_R.
 Proof.
-    apply plus_Z_in_R.
-    { exists 2%Z. reflexivity. }
-    { exists 3%Z. reflexivity. }
+    ltac2: apply plus_Z_in_R.
+    { ltac2: exists 2%Z. ltac2: reflexivity. }
+    { ltac2: exists 3%Z. ltac2: reflexivity. }
 Qed.

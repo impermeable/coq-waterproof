@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 
 Require Import Util.Constr.
 Require Import Util.Goals.
@@ -135,10 +135,10 @@ Local Ltac2 to_verify (t : constr) :=
     - To show : ...
     - To show that : ...
 *)
-Ltac2 Notation "We" "need" "to" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
+Waterproof Notation "We" "need" "to" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
 
-Ltac2 Notation "To" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
+Waterproof Notation "To" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
 
-Ltac2 Notation "We" "need" "to" "verify" _(opt("that")) _(opt(":")) t(lconstr) := to_verify t.
+Waterproof Notation "We" "need" "to" "verify" _(opt("that")) _(opt(":")) t(lconstr) := to_verify t.
 
-Ltac2 Notation "To" "verify" _(opt(":")) t(lconstr) := to_verify t.
+Waterproof Notation "To" "verify" _(opt(":")) t(lconstr) := to_verify t.

@@ -40,18 +40,18 @@ Local Ltac2 parse_arguments (x1 : constr)
   | None => [x1]
   end.
 
-Ltac2 Notation "it" "holds" : 0 := "it holds".
-Ltac2 Notation "we" "conclude" : 3 := "we conclude".
-Ltac2 Notation "it" "suffices" "to" "show" : 0 := "it suffices".
+Waterproof Notation "it" "holds" : 0 := "it holds".
+Waterproof Notation "we" "conclude" : 3 := "we conclude".
+Waterproof Notation "it" "suffices" "to" "show" : 0 := "it suffices".
 
-Ltac2 Notation "By"
+Waterproof Notation "By"
   first_term(lconstr)
   x2(opt(
     seq(
       opt(seq(",", list1(lconstr, ","))),
       seq("and", lconstr)
     )
-  )) x(tactic) "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
+  )) x(Waterproof.waterproof_tactic) "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
   let parsed_args := parse_arguments first_term x2 in
   let xtr_lemmas := List.filter_out (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
   let xtr_dbs := List.filter (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in

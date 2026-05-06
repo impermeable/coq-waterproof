@@ -36,7 +36,7 @@ Abort.
 (** Test 1: this should work and completely finish the proof. *)
 Goal forall n : nat, n = n.
 Proof.
-    intro n.
+    ltac2: intro n.
     We argue by contradiction.
     Assume that (n ≠ n).
     Contradiction.
@@ -45,7 +45,7 @@ Qed.
 (** Test 2: this should work and completely finish the proof. *)
 Goal forall n : nat, n = n.
 Proof.
-    intro n.
+    ltac2: intro n.
     We argue by contradiction.
     Assume that (n ≠ n).
     It holds that (n = n). ↯.
@@ -63,13 +63,13 @@ Abort.
     to some earlier statement. *)
 #[local] Parameter P Q A : Prop.
 Goal P -> Q.
-    intro H.
+    ltac2: intro H.
     Fail Contradiction.
 Abort.
 
 (** Test 5: fails to negate sets and types. *)
 Goal nat -> Q.
-    intro x.
+    ltac2: intro x.
     Fail Contradiction.
 Abort.
 
@@ -77,7 +77,7 @@ Abort.
     ask automation to find proof of ~~goal. *)
 Goal P -> (P -> A) -> (A -> Q) -> P /\ Q.
 Proof.
-    intros Hp H1 H2.
+    ltac2: intros Hp H1 H2.
     Fail We conclude that (P /\ Q).
     We argue by contradiction.
     Assume that (~ (P /\ Q)).

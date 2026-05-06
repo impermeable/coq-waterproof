@@ -11,6 +11,8 @@ Require Import Libs.Reals.RealInequalities.
 Open Scope R_scope.
 Open Scope subset_scope.
 
+Local Set Default Proof Mode "Classic".
+
 Definition is_rational (q : ℝ) : Prop := ∃ n ∈ Z_in_R, ∃ m ∈ Z_in_R, 0 ≠ m ∧ q = n/m.
 
 Definition Q_in_R : subset ℝ := fun y => exists x, Q2R(x) = y.

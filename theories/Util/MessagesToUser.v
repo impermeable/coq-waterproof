@@ -16,11 +16,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
+Require Import Ltac2.Ltac2.
 Require Import Ltac2.Bool.
 Require Import Ltac2.Init.
 Require Import Ltac2.String.
-
 Require Import Waterproof.Waterproof.
 
 (** TODO: in later versions of Coq this can be replaced by a native function *)

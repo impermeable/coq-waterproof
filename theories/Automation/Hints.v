@@ -16,8 +16,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
-
 From Stdlib Require Import Arith.PeanoNat.
 From Stdlib Require Import Classical_Pred_Type.
 From Stdlib Require Import Lia.

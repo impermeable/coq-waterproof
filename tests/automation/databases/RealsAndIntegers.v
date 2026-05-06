@@ -30,47 +30,47 @@ Open Scope R_scope.
 
 Goal forall x y: R, forall f: R -> R, x = y -> f (x + 1) = f (y + 1).
 Proof.
-  waterprove 5 false Main.
+  ltac2: waterprove 5 false Main.
 Qed.
 
 Goal forall x y: R, forall f: R -> R, x = y -> f x = f y /\ x = y.
 Proof.
-  waterprove 5 false Main.
+  ltac2: waterprove 5 false Main.
 Qed.
 
 Goal (& 3 < 4 <= 5).
-  cbn; repeat split; auto with wp_core wp_reals.
+  ltac2: (cbn; repeat split; auto with wp_core wp_reals).
 Qed.
 
 Goal (& 3 = 3 = 3).
-  cbn; repeat split; auto with wp_core wp_reals.
+  ltac2: (cbn; repeat split; auto with wp_core wp_reals).
 Qed.
 
 Goal forall x : R, (& x < 5 = 2 + 3) -> (x < 5).
-  intro x.
-  intro H.
-  auto with wp_core wp_reals.
+  ltac2: intro x.
+  ltac2: intro H.
+  ltac2: auto with wp_core wp_reals.
 Qed.
 
 (** ** Testcases to deal with Rabs Rmin Rmax *)
 
 Goal forall b: R, b > 0 -> - Rmax( 0, 1 - b/2) >= - 1.
-  auto with wp_reals.
+  ltac2: auto with wp_reals.
 Qed.
 
 Goal forall b: R, b > 0 -> Rmin( 0, -1 + b/2) <= 1.
-  auto with wp_reals.
+  ltac2: auto with wp_reals.
 Qed.
 
 Goal forall r : R, r > 0 ->
   | Rmax 0 (1 - r/2) - 1 | = 1 - (Rmax 0 (1 - r/2)).
-  auto with wp_reals.
+  ltac2: auto with wp_reals.
 Qed.
 
 Goal forall x r : R, r > 0 ->
   x = Rmax 0 (1 - r/2) -> Rabs (x - 1) < r.
-  intros x r r_gt_0 x_eq_Rmax.
-  auto with wp_reals.
+  ltac2: intros x r r_gt_0 x_eq_Rmax.
+  ltac2: auto with wp_reals.
 Qed.
 
 Close Scope R_scope.

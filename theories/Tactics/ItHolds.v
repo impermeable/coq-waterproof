@@ -16,8 +16,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
+
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -155,7 +156,7 @@ Ltac2 wp_assert_by_with_checks (claim : constr) (label : ident option) (xtr_lemm
   given an additional lemma that has to be used in said proof.
   If succesful, replaces current goal by proposed goal. *)
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
+Waterproof Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert_since claim label xtr_claim.
 
@@ -210,7 +211,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     wp_assert claim label false
   end.
 
-Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
+Waterproof Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
   wp_assert_with_unwrap claim label.
 
 
@@ -228,6 +229,6 @@ Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident
     - [Please come back later to provide an actual proof of [claim].], always.
 *)
 
-Ltac2 Notation "By" "magic" "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
+Waterproof Notation "By" "magic" "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
   panic_if_goal_wrapped ();
   wp_assert claim label true.

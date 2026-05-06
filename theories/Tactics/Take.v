@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 Require Import Ltac2.Message.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
@@ -267,7 +267,7 @@ Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c opt
     | [ |- _ ] => throw (of_string "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→).")
   end.
 
-Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
+Waterproof Notation "Take" x(list1(seq(list1(ident, ","),
   opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), opt("≠"), lconstr), "and")) :=
   panic_if_goal_wrapped ();
   take x.

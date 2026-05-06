@@ -16,8 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Export Ltac2.Ltac2.
-
+Require Import Ltac2.Ltac2.
 Require Import Waterproof.Waterproof.
 Require Import Waterproof.Notations.Common.
 

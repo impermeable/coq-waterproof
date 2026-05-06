@@ -16,11 +16,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-Require Import Ltac2.Ltac2.
+Require Import Waterproof.
 
 Require Export Util.Goals.
 Require Import Util.MessagesToUser.
-
 
 (**
   Split the proof of an if and only if statement into both of its directions, wraps both resulting goals in a [StateGoal.Wrapper].
@@ -41,10 +40,10 @@ Ltac2 both_statements_iff () :=
     | [ |- _ ] => throw (Message.of_string "The goal is not to show an `if and only if`-statement, try another approach.")
   end.
 
-Ltac2 Notation "We" "show" "both" "directions" := 
+Waterproof Notation "We" "show" "both" "directions" := 
   panic_if_goal_wrapped ();
   both_statements_iff ().
 
-Ltac2 Notation "We" "prove" "both" "directions" := 
+Waterproof Notation "We" "prove" "both" "directions" := 
   panic_if_goal_wrapped ();
   both_statements_iff ().
