@@ -250,7 +250,7 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
       let env = Goal.env gl in
       let sigma = Goal.sigma gl in
       let concl = Goal.concl gl in
-      let hyps = EConstr.named_context env in
+      let hyps = Environ.named_context_val env in
       let db = delayed_database env sigma in
       let secvars = secvars_of_hyps hyps in
 
@@ -263,7 +263,7 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
         let map_assum (id: variable): (bool * delayed_db * trace tactic * Pp.t) =
           let hint =  str "exact" ++ str " " ++ Id.print id in
           (false, mkdb, tclLOG (fun _ _ -> (hint, str "")) (e_give_exact (mkVar id) <*> tclUNIT no_trace) forbidden_tactics, hint)
-        in List.map map_assum (ids_of_named_context hyps)
+        in List.map map_assum (ids_of_named_context (Environ.named_context_of_val hyps))
       in
 
       (* Construction of tactic equivalent to [intros] *)
@@ -276,7 +276,7 @@ let branching (n: int) (delayed_database: delayed_db) (dblist: hint_db list) (lo
       (* Construction of tactics derivated from hint databases *)
       let rec_tacs: (bool * delayed_db * trace tactic * Pp.t) list tactic =
         let mkdb (env: Environ.env) (sigma: Evd.evar_map): hint_db =
-          let hyps' = EConstr.named_context env in
+          let hyps' = Environ.named_context_val env in
           if hyps' == hyps
             then db
             else
