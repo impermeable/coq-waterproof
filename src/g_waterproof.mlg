@@ -267,7 +267,7 @@ VERNAC COMMAND EXTEND RegisterUnfold CLASSIFIED AS SIDEFF
       unfold_action_entry_opt(opt_unfold_action) ] => { Vernacextend.(VtSideff ([], VtNow)) }
     SYNTERP AS notation_data_pair
     {
-      register_unfold s id
+      register_unfold s
     } ->
     {
       let (notation_data, old_notation_data) = notation_data_pair in
