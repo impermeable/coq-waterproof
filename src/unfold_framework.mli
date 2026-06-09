@@ -50,11 +50,9 @@ type unfold_entry =
 
 module StringMap : Map.S with type key = string
 
-val wp_unfold_map : GlobRef.t StringMap.t ref
-
 val add_to_unfold_map : string list -> GlobRef.t -> unit
 
-val register_unfold : string list -> Libnames.qualid -> (qualid option, raw_tacexpr) notation_interpretation_data * (qualid option, raw_tacexpr) notation_interpretation_data
+val register_unfold : string list -> (qualid option, raw_tacexpr) notation_interpretation_data * (qualid option, raw_tacexpr) notation_interpretation_data
 
 val register_unfold_entry : GlobRef.t -> unfold_entry -> unit
 

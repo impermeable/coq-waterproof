@@ -90,6 +90,34 @@ let add_to_unfold_tbl (id : GlobRef.t) (ua : unfold_action) : unit =
 let extract_def (s : string) : GlobRef.t option =
   StringMap.find_opt s !wp_unfold_map
 
+let wit_unfold_reference = Tac2dyn.Arg.create "waterproof-unfold"
+
+let gtypref kn = GTypRef (Other kn, [])
+
+let () =
+  let ml_intern ist s =
+    let s = String.concat " " s in
+    match StringMap.find_opt s !wp_unfold_map with
+    | None -> CErrors.anomaly Pp.(str "unfold data not registered for " ++ str s)
+    | Some gr -> Tac2env.GlbVal gr, gtypref Tac2quote.Refs.t_reference
+  in
+  let ml_subst s c = Globnames.subst_global_reference s c in
+  let ml_interp _ gr = Proofview.tclUNIT (Tac2ffi.of_reference gr) in
+  let ml_print _ _ = let open Pp in function
+    | GlobRef.VarRef id -> str "reference:(" ++ str "&" ++ Id.print id ++ str ")"
+    | r -> str "reference:(" ++ Printer.pr_global r ++ str ")"
+  in
+  let ml_raw_print _ _ r = let open Pp in
+    h (str "<waterproof unfold " ++ prlist_with_sep spc str r ++ str ">")
+  in
+  Tac2env.define_ml_object wit_unfold_reference {
+    ml_intern;
+    ml_subst;
+    ml_interp;
+    ml_print;
+    ml_raw_print;
+  }
+
 (**
     Registers a new unfold notation in the notation table.
 
@@ -100,16 +128,14 @@ let extract_def (s : string) : GlobRef.t option =
     Returns:
     - (the notation interpretation data created, a deprecated version of the notation data)
 *)
-let register_unfold (toks : string list) (id : Libnames.qualid) =
-  let glob_ref = Nametab.locate id in
-  let full_id = Libnames.qualid_of_path (Nametab.path_of_global glob_ref) in
+let register_unfold (toks : string list) =
   let sexpr_seq = List.map (fun s -> SexprStr (CAst.make s)) ("Expand"::toks) in
-  let get_qualid () = Libnames.qualid_of_string "Unfold.wp_expand" in
-  let get_ref () = CAst.make @@ CTacExt (Ltac2_plugin.Tac2quote.wit_reference, CAst.make (Ltac2_plugin.Tac2qexpr.QReference full_id)) in
-  let rhs = CTacApp (CAst.make (CTacRef (RelId (get_qualid ()))), [get_ref ()]) in
+  let get_qualid = Libnames.qualid_of_string "Unfold.wp_expand" in
+  let get_ref = CAst.make @@ CTacExt (wit_unfold_reference, toks) in
+  let rhs = CTacApp (CAst.make (CTacRef (RelId get_qualid)), [get_ref]) in
   let sexpr_seq_old = List.map (fun s -> SexprStr (CAst.make s)) (["Expand"; "the"; "definition"; "of"] @ toks) in
-  let get_qualid_old () = Libnames.qualid_of_string "Unfold.wp_expand_deprecated" in
-  let rhs_old = CTacApp (CAst.make (CTacRef (RelId (get_qualid_old ()))), [get_ref ()]) in
+  let get_qualid_old = Libnames.qualid_of_string "Unfold.wp_expand_deprecated" in
+  let rhs_old = CTacApp (CAst.make (CTacRef (RelId get_qualid_old)), [get_ref]) in
   let target = { Tac2syn.target_entry = None; target_level = None; target_scope = None } in
   (register_notation [] sexpr_seq target (CAst.make rhs), register_notation [] sexpr_seq_old target (CAst.make rhs_old))
 
