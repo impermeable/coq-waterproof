@@ -280,17 +280,18 @@ ltac2: assert_feedback_with_strings
 "Remove this line in the final version of your proof.")
   Info
 [
+"Definition supremum:";
+"Hint, replace with: It holds that 4 is an _upper bound_ for A
+              ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L).";
+"Alternative characterization supremum:";
+"Hint, replace with: It holds that 4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a).";
 "Definition infimum:";
 "Hint, replace with: We need to show that 3 is a _lower bound_ for A
                      ∧ (∀ l ∈ ℝ, l is a _lower bound_ for A ⇨ l ≤ 3).";
 "Alternative characterization infimum:";
 "Hint, replace with: It suffices to show that 3 is a _lower bound_ for A
-                         ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε).";
-"Definition supremum:";
-"Hint, replace with: It holds that 4 is an _upper bound_ for A
-              ∧ (∀ L ∈ ℝ, L is an _upper bound_ for A ⇨ 4 ≤ L).";
-"Alternative characterization supremum:";
-"Hint, replace with: It holds that 4 is an _upper bound_ for A ∧ (∀ ε > 0, ∃ a ∈ A, 4 - ε < a)."].
+                         ∧ (∀ ε > 0, ∃ a ∈ A, a < 3 + ε)."
+].
 Abort.
 
 Close Scope R_scope.
