@@ -132,7 +132,7 @@ sig
 
   (** [add c i dn] adds the binding [(c,i)] to [dn]. [c] can be a
      closed term or a pattern (with untyped Evars). No Metas accepted *)
-  val add : constr -> ident -> t -> t
+  val add : Environ.env -> constr -> ident -> t -> t
 
   (** [find_all dn] returns all idents contained in dn *)
   val find_all : t -> ident list
@@ -152,7 +152,7 @@ end = struct
 
   type ident = HintIdent.t
 
-  let pat_of_constr c : (unit DTerm.t * Constr.t list) option =
+  let pat_of_constr env c : (unit DTerm.t * Constr.t list) option =
     let open GlobRef in
     let rec pat_of_constr c = match Constr.kind c with
       | Rel _ -> Some (DRel, [])
@@ -178,7 +178,7 @@ end = struct
         (* Same change as in the autorewrite library: the motivation there is:
            UnsafeMonomorphic is fine because the term will only be used
            by pat_of_constr which ignores universes *)
-      | Proj (p, _, c) -> pat_of_constr @@ mkApp (UnsafeMonomorphic.mkConst @@ Projection.constant p, [|c|])
+      | Proj (p, _, c) -> pat_of_constr @@ mkApp (UnsafeMonomorphic.mkConst @@ Environ.projection_repr_constant env (Projection.repr p), [|c|])
       | Int i -> Some (DInt i, [])
       | Float f -> Some (DFloat f, [])
       | String s -> Some (DString s, [])
@@ -189,9 +189,9 @@ end = struct
 
   let empty = TDnet.empty
 
-  let add (c:constr) (id:Ident.t) (dn:t) =
+  let add env (c:constr) (id:Ident.t) (dn:t) =
     let (ctx, c) = Term.decompose_prod_decls c in
-    let c = TDnet.pattern pat_of_constr c in
+    let c = TDnet.pattern (fun p -> pat_of_constr env p) c in
     TDnet.add dn c id
 
   let find_all dn = TDnet.lookup dn (fun () -> Everything) ()
@@ -253,7 +253,7 @@ let decompose_applied_relation (env: Environ.env) (sigma: Evd.evar_map) (c: cons
 (* All the definitions below are inspired by the coq-core hidden library (i.e not visible in the API) but modified for Waterproof *)
 let add_rew_rules (rewrite_database: rewrite_db) (rew_rules: rew_rule list): rewrite_db =
   List.fold_left (fun accu r -> {
-    rdb_hintdn = HintDN.add r.rew_pat r accu.rdb_hintdn;
+    rdb_hintdn = HintDN.add (Global.env ()) r.rew_pat r accu.rdb_hintdn;
     rdb_order = KerName.Map.add r.rew_id accu.rdb_maxuid accu.rdb_order;
     rdb_maxuid = accu.rdb_maxuid + 1;
   }) rewrite_database rew_rules

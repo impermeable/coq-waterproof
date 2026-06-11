@@ -126,7 +126,7 @@ let tclTryDbg (debug_header_printer : unit -> unit) (tac: trace tactic): trace t
   Creates a function that takes a hint database and returns a hint list
 *)
 let hintmap_of (env: Environ.env) (sigma: Evd.evar_map) (secvars: Id.Pred.t) (concl: Evd.econstr): hint_db -> FullHint.t list =
-  let hdc = try Some (decompose_app_bound sigma concl) with Bound -> None in
+  let hdc = try Some (decompose_app_bound env sigma concl) with Bound -> None in
   match hdc with
   | None -> Hint_db.map_none ~secvars
   | Some hdc ->
