@@ -185,6 +185,10 @@ let () =
     fun () -> !redirect_errors
 
 let () =
+  define "get_language_external" (unit @-> ret string) @@
+    fun () -> !language
+
+let () =
   define "get_last_warning_external" (unit @-> ret (option pp)) @@
     get_last_warning
 

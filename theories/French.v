@@ -16,6 +16,21 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(** French entry point for the Waterproof tactic language.
+
+    Import this module instead of [Waterproof.Tactics] to use the French tactic
+    keywords and French user-facing messages:
+
+    <<
+      Require Import Waterproof.French.
+    >>
+
+    For every tactic file whose notations have been split into [English]/[French]
+    submodules, this file exports the [French] submodule (so the French keywords
+    are the active ones, mutually exclusive with the English ones). Tactic files
+    that have not been translated yet still expose their English notations; they
+    are exported here unchanged until a French translation is available. *)
+
 Require Export Ltac2.Ltac2.
 
 Require Export Tactics.Assume.
@@ -39,7 +54,13 @@ Require Export Tactics.ToShow.
 Require Export Tactics.Unfold.
 Require Export Tactics.By.
 
-(** Activate the English tactic notations. Tactic files whose notations have been
-    split into [English]/[French] submodules expose them through these exports;
-    [Waterproof.French] exports the [French] counterparts instead. *)
-Export Conclusion.English.
+(** Activate the French notations for the translated tactic files.
+    (English notations of these files are deliberately NOT exported here.) *)
+Export Conclusion.French.
+
+(** Switch user-facing messages to French.
+    NB: the [Waterproof Language] command sets a flag that is local to the file
+    in which it is issued; it does not propagate through [Require Import]. Users
+    of this module that want French messages should therefore also write
+    [Waterproof Language French.] at the top of their own file. *)
+Waterproof Language French.

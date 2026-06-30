@@ -91,6 +91,13 @@ let redirect_errors : bool ref = Summary.ref ~name:"redirect_errors" false
 let print_hypothesis_help : bool ref = Summary.ref ~name:"print_hypothesis_help" false
 
 (**
+  Language used for user-facing messages.
+  Set with the commands [Waterproof Language French.] / [Waterproof Language English.].
+  The stored value is the short language code ("en" / "fr"); default is "en".
+*)
+let language : string ref = Summary.ref ~name:"language" "en"
+
+(**
   Type of exceptions used in Wateproof
 *)
 type wexn =

@@ -183,6 +183,20 @@ VERNAC COMMAND EXTEND RedirectErrorsDisableSideEff CLASSIFIED AS SIDEFF
     }
 END
 
+VERNAC COMMAND EXTEND LanguageFrenchSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Language" "French" ] ->
+    {
+      language := "fr"
+    }
+END
+
+VERNAC COMMAND EXTEND LanguageEnglishSideEff CLASSIFIED AS SIDEFF
+  | [ "Waterproof" "Language" "English" ] ->
+    {
+      language := "en"
+    }
+END
+
 VERNAC COMMAND EXTEND AddWpLoggerSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Logging" ] ->
     {

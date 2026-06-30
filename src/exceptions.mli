@@ -47,6 +47,12 @@ val add_wp_feedback_logger : unit -> unit
 val print_hypothesis_help : bool ref
 
 (**
+  Language used for user-facing messages (short code, e.g. "en" / "fr").
+  Set with [Waterproof Language French.] / [Waterproof Language English.]; default "en".
+*)
+val language : string ref
+
+(**
   The last thrown warning
 *)
 val last_thrown_warning : Pp.t option ref

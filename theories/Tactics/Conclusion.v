@@ -32,14 +32,19 @@ Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
 Ltac2 warn_equivalent_goal_given () :=
-  warn (of_string
+  warn (tr
+[("en",
 "The statement you provided does not exactly correspond to what you need to show.
-This can make your proof less readable."
+This can make your proof less readable.");
+ ("fr",
+"L'énoncé que vous avez fourni ne correspond pas exactement à ce qu'il faut démontrer.
+Cela peut rendre votre preuve moins lisible.")]
   ).
 
 Ltac2 wrong_goal_msg (wrong_goal : constr) :=
   concat_list
-    [of_constr wrong_goal; of_string " does not correspond to what you need to show."].
+    [of_constr wrong_goal; tr [("en", " does not correspond to what you need to show.");
+                               ("fr", " ne correspond pas à ce qu'il faut démontrer.")]].
 
 (**
   Check if [target] is judgementally (i.e. by rewriting definitions) equal to the goal.
@@ -116,13 +121,15 @@ Local Ltac2 conclude (postpone : bool) :=
   if postpone
     then
       let g := Control.goal () in
-      warn (concat_list [of_string "Please come back later to provide an actual proof of ";
+      warn (concat_list [tr [("en", "Please come back later to provide an actual proof of ");
+                             ("fr", "Veuillez revenir plus tard pour fournir une véritable preuve de ")];
         of_constr g; of_string "."]);
       admit
     else
       (* Attempt to solve current goal *)
       let err_msg (g : constr) := concat_list
-        [of_string "Could not verify that "; of_constr g; of_string "."]
+        [tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")];
+         of_constr g; of_string "."]
       in
       match Control.case (fun () => waterprove 5 true Main) with
       | Val _ => ()
@@ -133,7 +140,8 @@ Local Ltac2 conclude (postpone : bool) :=
 (** Attempts to solve current goal using additional lemma which has to be used. *)
 Local Ltac2 core_conclude_by (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   let err_msg (g : constr) := concat_list
-    [of_string "Could not verify that "; of_constr g; of_string "."]
+    [tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")];
+     of_constr g; of_string "."]
   in
   match Control.case (fun () =>
     rwaterprove 5 true Main xtr_lemmas xtr_dbs)
@@ -177,32 +185,6 @@ Local Ltac2 unwrap_state_goal_no_check () :=
 
   Arguments:
     - [target_goal: constr], expression that should equal the goal under focus.
-
-  Raises exceptions:
-    - [AutomationFailure], if [waterprove] fails the prove the goal (i.e. the goal is too difficult, or does not hold).
-    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus, even after rewriting.
-*)
-Ltac2 Notation "We" "conclude" _(opt("that")) target_goal(lconstr) :=
-  unwrap_state_goal_no_check ();
-  panic_if_goal_wrapped ();
-  guarantee_stated_goal_matches target_goal;
-  conclude false.
-
-(**
-  Alternative notation for [We conclude that ...].
-*)
-Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
-  unwrap_state_goal_no_check ();
-  panic_if_goal_wrapped ();
-  guarantee_stated_goal_matches target_goal;
-  conclude false.
-
-
-(**
-  Finish proving a goal using automation.
-
-  Arguments:
-    - [target_goal: constr], expression that should equal the goal under focus.
     - [xtr_lemmas: constr list], extra lemmas that can be used for proof of [target_goal].
     - [xtr_dbs: hint_db_name list], extra hint databases that can be used for proof of [target_goal].
 
@@ -216,34 +198,95 @@ Ltac2 wp_conclude_by_with_checks (target_goal : constr) (xtr_lemmas : constr lis
   guarantee_stated_goal_matches target_goal;
   conclude_by xtr_lemmas xtr_dbs.
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
-  unwrap_state_goal_no_check ();
-  panic_if_goal_wrapped ();
-  guarantee_stated_goal_matches target_goal;
-  conclude_since xtr_claim.
-
-
 (**
-  Finish proof by postponing the goal.
+  English tactic notations for concluding a proof.
 
-  Arguments:
-    - [target_goal: constr], expression that should equal the goal under focus.
-
-  Raises exceptions:
-    - [ConcludeError], if [target_goal] is not equivalent to the actual goal under focus,
-        even after rewriting.
-
-  Raises warning:
-    - [Please come back later to provide an actual proof of [target_goal].], always.
+  The notations are thin wrappers around the shared logic above; the French
+  module below provides the same notations with French keywords. Importing
+  exactly one of these modules selects the language of the tactic keywords
+  (see [Waterproof.Tactics] and [Waterproof.French]).
 *)
-Ltac2 Notation "By" "magic" "we" "conclude" _(opt("that")) target_goal(lconstr) :=
-  unwrap_state_goal_no_check ();
-  panic_if_goal_wrapped ();
-  guarantee_stated_goal_matches target_goal;
-  conclude true.
+Module English.
 
-Ltac2 Notation "Indeed" "," target_goal(lconstr) :=
-  unwrap_state_goal_no_check ();
-  panic_if_goal_wrapped ();
-  guarantee_stated_goal_matches target_goal;
-  conclude false.
+  (**
+    Finish proving a goal using automation.
+
+    Raises exceptions:
+      - [AutomationFailure], if [waterprove] fails to prove the goal.
+      - [ConcludeError], if [target_goal] is not equivalent to the goal under focus.
+  *)
+  Ltac2 Notation "We" "conclude" _(opt("that")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude false.
+
+  (** Alternative notation for [We conclude that ...]. *)
+  Ltac2 Notation "It" "follows" _(opt("that")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude false.
+
+  Ltac2 Notation "Since" xtr_claim(lconstr) "we" "conclude" _(opt("that")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude_since xtr_claim.
+
+  (**
+    Finish proof by postponing the goal.
+
+    Raises warning:
+      - [Please come back later to provide an actual proof of [target_goal].], always.
+  *)
+  Ltac2 Notation "By" "magic" "we" "conclude" _(opt("that")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude true.
+
+  Ltac2 Notation "Indeed" "," target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude false.
+
+End English.
+
+(** French translations of the notations in [English]. *)
+Module French.
+
+  (** Équivalent français de [We conclude that ...]. *)
+  Ltac2 Notation "Nous" "concluons" _(opt("que")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude false.
+
+  (** Notation alternative pour [Nous concluons que ...]. *)
+  Ltac2 Notation "Il" "s'ensuit" _(opt("que")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude false.
+
+  Ltac2 Notation "Puisque" xtr_claim(lconstr) "nous" "concluons" _(opt("que")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude_since xtr_claim.
+
+  Ltac2 Notation "Par" "magie" "nous" "concluons" _(opt("que")) target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude true.
+
+  Ltac2 Notation "En" "effet" "," target_goal(lconstr) :=
+    unwrap_state_goal_no_check ();
+    panic_if_goal_wrapped ();
+    guarantee_stated_goal_matches target_goal;
+    conclude false.
+
+End French.
