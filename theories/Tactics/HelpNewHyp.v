@@ -37,16 +37,16 @@ Ltac2 suggest_how_to_use (x : constr) (label : ident option) :=
   else
   let print_forall_msg () :=
     info_notice (concat_list [
-        of_string "To use "; of_constr x; of_string ", consider:"]);
+        tr [("en", "To use "); ("fr", "Pour utiliser ")]; of_constr x; tr [("en", ", consider:"); ("fr", ", envisagez :")]]);
       let template := match label with
-        | None => "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"
-        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
+        | None => tr_string [("en", "Use ${0:x} := ${1:0} in (${2:0 = 0}).${3}"); ("fr", "Utilisons ${0:x} := ${1:0} dans (${2:0 = 0}).${3}")]
+        | Some i => String.concat "" [tr_string [("en", "Use ${0:x} := ${1:0} in ("); ("fr", "Utilisons ${0:x} := ${1:0} dans (")]; Ident.to_string i; ").${2}"]
       end in
-      insert_msg "Use ... := ... in ...." template in
+      insert_msg (tr_string [("en", "Use ... := ... in ...."); ("fr", "Utilisons ... := ... dans ....")]) template in
   let print_exists_msg () :=
     info_notice (concat_list [
-        of_string "To use "; of_constr x; of_string ", consider:"]);
-      insert_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}" in
+        tr [("en", "To use "); ("fr", "Pour utiliser ")]; of_constr x; tr [("en", ", consider:"); ("fr", ", envisagez :")]]);
+      insert_msg (tr_string [("en", "Obtain ... according to ...."); ("fr", "Obtenons ... à partir de ....")]) (tr_string [("en", "Obtain ${0:x} according to (${1:i}).${2}"); ("fr", "Obtenons ${0:x} à partir de (${1:i}).${2}")]) in
   lazy_match! x with
   | _ -> ?_b => ()
   | forall _, _ => print_forall_msg ()
@@ -74,16 +74,16 @@ Ltac2 suggest_how_to_use_after_proof (x : constr) (label : ident option) :=
   else
   let print_forall_msg () :=
     info_notice (concat_list [
-        of_string "After proving "; of_constr x; of_string ", consider:"]);
+        tr [("en", "After proving "); ("fr", "Après avoir prouvé ")]; of_constr x; tr [("en", ", consider:"); ("fr", ", envisagez :")]]);
       let template := match label with
-        | None => "Use ${0:x} := ${1:0} in (${2:i}).${3}"
-        | Some i => String.concat "" ["Use ${0:x} := ${1:0} in ("; Ident.to_string i; ").${2}"]
+        | None => tr_string [("en", "Use ${0:x} := ${1:0} in (${2:i}).${3}"); ("fr", "Utilisons ${0:x} := ${1:0} dans (${2:i}).${3}")]
+        | Some i => String.concat "" [tr_string [("en", "Use ${0:x} := ${1:0} in ("); ("fr", "Utilisons ${0:x} := ${1:0} dans (")]; Ident.to_string i; ").${2}"]
       end in
-      insert_msg "Use ... := ... in ...." template in
+      insert_msg (tr_string [("en", "Use ... := ... in ...."); ("fr", "Utilisons ... := ... dans ....")]) template in
   let print_exists_msg () :=
     info_notice (concat_list [
-        of_string "After proving "; of_constr x; of_string ", consider:"]);
-      insert_msg "Obtain such a ...." "Obtain such a ${0:x}.${1}" in
+        tr [("en", "After proving "); ("fr", "Après avoir prouvé ")]; of_constr x; tr [("en", ", consider:"); ("fr", ", envisagez :")]]);
+      insert_msg (tr_string [("en", "Obtain such a ...."); ("fr", "Obtenons un tel ....")]) (tr_string [("en", "Obtain such a ${0:x}.${1}"); ("fr", "Obtenons un tel ${0:x}.${1}")]) in
   lazy_match! x with
   | _ -> ?_b => ()
   | forall _, _ => print_forall_msg ()

@@ -33,30 +33,54 @@
 
 Require Export Ltac2.Ltac2.
 
-Require Export Tactics.Assume.
-Require Export Tactics.Because.
-Require Export Tactics.BothDirections.
-Require Export Tactics.BothStatements.
-Require Export Tactics.Claims.
-Require Export Tactics.Choose.
-Require Export Tactics.Obtain.
-Require Export Tactics.Conclusion.
-Require Export Tactics.Contradiction.
-Require Export Tactics.Define.
-Require Export Tactics.Either.
-Require Export Tactics.Help.
-Require Export Tactics.Induction.
-Require Export Tactics.ItHolds.
-Require Export Tactics.ItSuffices.
-Require Export Tactics.Specialize.
-Require Export Tactics.Take.
-Require Export Tactics.ToShow.
-Require Export Tactics.Unfold.
-Require Export Tactics.By.
+(** Language-neutral content that the English entry point re-exports too
+    (goal wrappers, the [Case]/[Cas] tactic, ...). Safe to export: it contains
+    no language-specific tactic notations. *)
+Require Export Util.Goals.
+
+Require Tactics.Assume.
+Require Tactics.Because.
+Require Tactics.BothDirections.
+Require Tactics.BothStatements.
+Require Tactics.Claims.
+Require Tactics.Choose.
+Require Tactics.Obtain.
+Require Tactics.Conclusion.
+Require Tactics.Contradiction.
+Require Tactics.Define.
+Require Tactics.Either.
+Require Tactics.Help.
+Require Tactics.Induction.
+Require Tactics.ItHolds.
+Require Tactics.ItSuffices.
+Require Tactics.Specialize.
+Require Tactics.Take.
+Require Tactics.ToShow.
+Require Tactics.Unfold.
+Require Tactics.By.
 
 (** Activate the French notations for the translated tactic files.
     (English notations of these files are deliberately NOT exported here.) *)
+Export Assume.French.
+Export Because.French.
+Export BothDirections.French.
+Export BothStatements.French.
+Export Choose.French.
+Export Obtain.French.
 Export Conclusion.French.
+Export Contradiction.French.
+Export Define.French.
+Export Either.French.
+Export Help.French.
+Export Induction.French.
+Export ItHolds.French.
+Export ItSuffices.French.
+Export Specialize.French.
+Export Take.French.
+Export ToShow.French.
+Export Unfold.French.
+Export By.French.
+Export Claims.French.
 
 (** Switch user-facing messages to French.
     NB: the [Waterproof Language] command sets a flag that is local to the file

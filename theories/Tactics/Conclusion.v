@@ -254,6 +254,8 @@ Module English.
 
 End English.
 
+Export English.
+
 (** French translations of the notations in [English]. *)
 Module French.
 

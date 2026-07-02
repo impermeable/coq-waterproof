@@ -33,96 +33,97 @@ Require Import Waterprove.
 Open Scope subset_scope.
 
 Local Ltac2 goal_impl_msg (premise: constr) :=
-  info_notice (concat_list [of_string "The goal is to show an implication (⇒). Assume the premise "; of_constr premise; of_string "."]);
-  replace_msg "Assume that ...." "Assume that ${0:0 = 0}.${1}".
+  info_notice (concat_list [tr [("en", "The goal is to show an implication (⇒). Assume the premise "); ("fr", "Le but est de montrer une implication (⇒). Supposez la prémisse ")]; of_constr premise; of_string "."]);
+  replace_msg (tr_string [("en", "Assume that ...."); ("fr", "Supposons que ....")]) (tr_string [("en", "Assume that ${0:0 = 0}.${1}"); ("fr", "Supposons que ${0:0 = 0}.${1}")]).
 
 Local Ltac2 goal_func_msg (var_type: constr) :=
-  info_notice (concat_list [of_string "The goal is to construct a map (⇒). Introduce an arbitrary variable of type "; of_constr var_type; of_string "."]);
-  replace_msg "Take ... : ...." "Take ${0:x} : ${1:X}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to construct a map (⇒). Introduce an arbitrary variable of type "); ("fr", "Le but est de construire une application (⇒). Introduisez une variable arbitraire de type ")]; of_constr var_type; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... : ...."); ("fr", "Soit ... : ....")]) (tr_string [("en", "Take ${0:x} : ${1:X}.${2}"); ("fr", "Soit ${0:x} : ${1:X}.${2}")]).
 
 Local Ltac2 goal_forall_msg (var_type: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a ‘for all’-statement (∀).
-Introduce an arbitrary variable of type "; of_constr var_type; of_string "."]);
-  replace_msg "Take ... : ...." "Take ${0:x} : ${1:X}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a ‘for all’-statement (∀).
+Introduce an arbitrary variable of type "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀).
+Introduisez une variable arbitraire de type ")]; of_constr var_type; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... : ...."); ("fr", "Soit ... : ....")]) (tr_string [("en", "Take ${0:x} : ${1:X}.${2}"); ("fr", "Soit ${0:x} : ${1:X}.${2}")]).
 
 Ltac2 goal_forall_gt_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable strictly larger than "; of_constr y; of_string "."]);
-  replace_msg "Take ... > ...." "Take ${0:x} > ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable strictly larger than "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire strictement supérieure à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... > ...."); ("fr", "Soit ... > ....")]) (tr_string [("en", "Take ${0:x} > ${1:0}.${2}"); ("fr", "Soit ${0:x} > ${1:0}.${2}")]).
 
 Local Ltac2 goal_forall_ge_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable larger than or equal to "; of_constr y; of_string "."]);
-  replace_msg "Take ... ≥ ...." "Take ${0:x} ≥ ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable larger than or equal to "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire supérieure ou égale à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... ≥ ...."); ("fr", "Soit ... ≥ ....")]) (tr_string [("en", "Take ${0:x} ≥ ${1:0}.${2}"); ("fr", "Soit ${0:x} ≥ ${1:0}.${2}")]).
 
 Local Ltac2 goal_forall_lt_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable strictly less than "; of_constr y; of_string "."]);
-  replace_msg "Take ... < ...." "Take ${0:x} < ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable strictly less than "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire strictement inférieure à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... < ...."); ("fr", "Soit ... < ....")]) (tr_string [("en", "Take ${0:x} < ${1:0}.${2}"); ("fr", "Soit ${0:x} < ${1:0}.${2}")]).
 
 Local Ltac2 goal_forall_le_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable less than or equal to "; of_constr y; of_string "."]);
-  replace_msg "Take ... ≤ ...." "Take ${0:x} ≤ ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable less than or equal to "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire inférieure ou égale à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... ≤ ...."); ("fr", "Soit ... ≤ ....")]) (tr_string [("en", "Take ${0:x} ≤ ${1:0}.${2}"); ("fr", "Soit ${0:x} ≤ ${1:0}.${2}")]).
 
 Local Ltac2 goal_forall_ne_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a ‘for all’-statement (∀). Introduce an arbitrary variable not equal to "; of_constr y; of_string "."]);
-  replace_msg "Take ... ≠ ...." "Take ${0:x} ≠ ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a ‘for all’-statement (∀). Introduce an arbitrary variable not equal to "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire différente de ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... ≠ ...."); ("fr", "Soit ... ≠ ....")]) (tr_string [("en", "Take ${0:x} ≠ ${1:0}.${2}"); ("fr", "Soit ${0:x} ≠ ${1:0}.${2}")]).
 
 Local Ltac2 goal_forall_pred_msg (q: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable that is (a/an) "; of_constr q; of_string "."]);
-  replace_msg "Take ... ...." "Take ${0:x} ${1:0 = 0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable that is (a/an) "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire qui est (un/une) ")]; of_constr q; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... ...."); ("fr", "Soit ... ....")]) (tr_string [("en", "Take ${0:x} ${1:0 = 0}.${2}"); ("fr", "Soit ${0:x} ${1:0 = 0}.${2}")]).
 
 Local Ltac2 goal_exists_el_msg (var_type: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable in "; of_constr var_type; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable in "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique dans ")]; of_constr var_type; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_exists_gt_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly larger than "; of_constr y; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly larger than "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique strictement supérieure à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_exists_ge_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable larger than or equal to "; of_constr y; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable larger than or equal to "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique supérieure ou égale à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_exists_lt_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly less than "; of_constr y; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable strictly less than "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique strictement inférieure à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_exists_le_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable less than or equal to "; of_constr y; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable less than or equal to "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique inférieure ou égale à ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_exists_ne_msg (y: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable not equal to "; of_constr y; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable not equal to "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique différente de ")]; of_constr y; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_exists_pred_msg (q: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) "; of_constr q; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable that is (a/an) "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique qui est (un/une) ")]; of_constr q; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_and_msg () :=
-  info_notice (of_string "The goal is to show a conjunction (∧). Show both statements.");
-  replace_msg "We show both statements." "We show both statements.${0}".
+  info_notice (tr [("en", "The goal is to show a conjunction (∧). Show both statements."); ("fr", "Le but est de montrer une conjonction (∧). Montrez les deux énoncés.")]);
+  replace_msg (tr_string [("en", "We show both statements."); ("fr", "Prouvons les deux énoncés.")]) (tr_string [("en", "We show both statements.${0}"); ("fr", "Prouvons les deux énoncés.${0}")]).
 
 Local Ltac2 goal_or_msg () :=
-  info_notice (of_string "The goal is to show a disjunction (∨). It suffices to show one of the statements.");
-  replace_msg "It suffices to show that ...." "It suffices to show that ${0:0 = 0}.${1}".
+  info_notice (tr [("en", "The goal is to show a disjunction (∨). It suffices to show one of the statements."); ("fr", "Le but est de montrer une disjonction (∨). Il suffit de montrer l'un des énoncés.")]);
+  replace_msg (tr_string [("en", "It suffices to show that ...."); ("fr", "Il suffit de montrer que ....")]) (tr_string [("en", "It suffices to show that ${0:0 = 0}.${1}"); ("fr", "Il suffit de montrer que ${0:0 = 0}.${1}")]).
 
 Local Ltac2 goal_neg_msg (negated_type : constr) :=
-  info_notice (concat_list [of_string "The goal is to show a negation (¬). Assume that the negated expression "; of_constr negated_type; of_string "."]);
-  replace_msg "Assume that ...." "Assume that ${0:0 = 0}.${1}".
+  info_notice (concat_list [tr [("en", "The goal is to show a negation (¬). Assume that the negated expression "); ("fr", "Le but est de montrer une négation (¬). Supposez que l'expression niée ")]; of_constr negated_type; of_string "."]);
+  replace_msg (tr_string [("en", "Assume that ...."); ("fr", "Supposons que ....")]) (tr_string [("en", "Assume that ${0:0 = 0}.${1}"); ("fr", "Supposons que ${0:0 = 0}.${1}")]).
 
 Local Ltac2 goal_directly () :=
-  info_notice (of_string "The goal can be shown immediately.");
-  replace_msg "We conclude that ...." "We conclude that ${0:0 = 0}.${1}".
+  info_notice (tr [("en", "The goal can be shown immediately."); ("fr", "Le but peut être montré immédiatement.")]);
+  replace_msg (tr_string [("en", "We conclude that ...."); ("fr", "Nous concluons que ....")]) (tr_string [("en", "We conclude that ${0:0 = 0}.${1}"); ("fr", "Nous concluons que ${0:0 = 0}.${1}")]).
 
 Local Ltac2 goal_no_hint () :=
-  info_notice (of_string "No direct hint available. Does the goal contain a definition that can be expanded?").
+  info_notice (tr [("en", "No direct hint available. Does the goal contain a definition that can be expanded?"); ("fr", "Aucun indice direct disponible. Le but contient-il une définition qui peut être développée ?")]).
 
 Local Ltac2 goal_exists_msg (var_type: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'there exists'-statement (∃). Choose a specific variable of type "; of_constr var_type; of_string "."]);
-  replace_msg "Choose ... := ...." "Choose ${0:x} := ${1:0}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'there exists'-statement (∃). Choose a specific variable of type "); ("fr", "Le but est de montrer un énoncé « il existe » (∃). Choisissez une variable spécifique de type ")]; of_constr var_type; of_string "."]);
+  replace_msg (tr_string [("en", "Choose ... := ...."); ("fr", "Choisissons ... := ....")]) (tr_string [("en", "Choose ${0:x} := ${1:0}.${2}"); ("fr", "Choisissons ${0:x} := ${1:0}.${2}")]).
 
 Local Ltac2 goal_forall_el_msg (var_type: constr) :=
-  info_notice (concat_list [of_string "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable in "; of_constr var_type; of_string "."]);
-  replace_msg "Take ... ∈ ...." "Take ${0:x} ∈ ${1:X}.${2}".
+  info_notice (concat_list [tr [("en", "The goal is to show a 'for all'-statement (∀). Introduce an arbitrary variable in "); ("fr", "Le but est de montrer un énoncé « pour tout » (∀). Introduisez une variable arbitraire dans ")]; of_constr var_type; of_string "."]);
+  replace_msg (tr_string [("en", "Take ... ∈ ...."); ("fr", "Soit ... ∈ ....")]) (tr_string [("en", "Take ${0:x} ∈ ${1:X}.${2}"); ("fr", "Soit ${0:x} ∈ ${1:X}.${2}")]).
 
 (**
   Auxilliary tactic that checks if goal can be shown with automation
@@ -207,7 +208,7 @@ Local Ltac2 is_empty (ls : 'a list) :=
 Ltac2 print_hints () :=
   (* If advice is given in proof window, suggest to follow that, nothing else. *)
   if (goal_wrapped_template_msg ())
-    then (info_notice (of_string "Follow the advice in the goal window."))
+    then (info_notice (tr [("en", "Follow the advice in the goal window."); ("fr", "Suivez le conseil dans la fenêtre du but.")]))
 
     else
       (* Then if proof can be shown automatically, suggest that, nothing else. *)
@@ -222,7 +223,7 @@ Ltac2 print_hints () :=
         let ls := get_unfold_references_ffi () in
         let expand_list_empty := is_empty ls in
         if Bool.neg expand_list_empty then
-          (info_notice (of_string "You can try to expand definitions or use alternative characterizations:");
+          (info_notice (tr [("en", "You can try to expand definitions or use alternative characterizations:"); ("fr", "Vous pouvez essayer de développer des définitions ou d'utiliser des caractérisations alternatives :")]);
           List.iter (fun l => wp_unfold_by_ref l false) ls)
         else ();
 
@@ -235,18 +236,18 @@ Ltac2 print_hints () :=
         if (is_empty forall_hyps)
           then ()
           else (
-            info_notice(of_string "You can use one of the ‘for all’-statements (∀):");
+            info_notice(tr [("en", "You can use one of the ‘for all’-statements (∀):"); ("fr", "Vous pouvez utiliser l'un des énoncés « pour tout » (∀) :")]);
             List.iter (fun h => info_notice (concat (of_string "    ") (of_constr h))) forall_hyps;
-            replace_msg "Use ... := ... in ...." "Use ${0:x} := ${1:0} in ({2:i}).${3}"
+            replace_msg (tr_string [("en", "Use ... := ... in ...."); ("fr", "Utilisons ... := ... dans ....")]) (tr_string [("en", "Use ${0:x} := ${1:0} in ({2:i}).${3}"); ("fr", "Utilisons ${0:x} := ${1:0} dans ({2:i}).${3}")])
           );
 
         (* Print how to use exists statements. *)
         if (is_empty exists_hyps)
           then ()
           else (
-            info_notice(of_string "You can use one of the ‘there exists’-statements (∃):");
+            info_notice(tr [("en", "You can use one of the ‘there exists’-statements (∃):"); ("fr", "Vous pouvez utiliser l'un des énoncés « il existe » (∃) :")]);
             List.iter (fun h => info_notice (concat (of_string "    ") (of_constr h))) exists_hyps;
-            replace_msg "Obtain ... according to ...." "Obtain ${0:x} according to (${1:i}).${2}"
+            replace_msg (tr_string [("en", "Obtain ... according to ...."); ("fr", "Obtenons ... à partir de ....")]) (tr_string [("en", "Obtain ${0:x} according to (${1:i}).${2}"); ("fr", "Obtenons ${0:x} à partir de (${1:i}).${2}")])
           );
 
         (* Print no hints available if none have been given *)
@@ -266,7 +267,19 @@ Ltac2 print_hints () :=
 (** * Help tactic
     Tries to give a hint how to proceed proving the current goal.
 *)
-Ltac2 Notation "Help" := print_hints ().
+Module English.
+
+  Ltac2 Notation "Help" := print_hints ().
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Aide" := print_hints ().
+
+End French.
 
 
 

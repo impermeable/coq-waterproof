@@ -72,15 +72,15 @@ Ltac2 choose_variable_in_exists_goal_with_renaming (s:ident) (t:constr) :=
       match Constr.has_evar t with
       | true =>
         rename_blank_evars_in_term (Ident.to_string s) t;
-        warn (concat_list [of_string "Please come back later to make a definitive choice for "; of_ident s; of_string "."; fnl ();
-        of_string "For now you can use that "; of_constr constr:($v = $t); of_string "."]);
+        warn (concat_list [tr [("en", "Please come back later to make a definitive choice for "); ("fr", "Veuillez revenir plus tard pour faire un choix définitif pour ")]; of_ident s; of_string "."; fnl ();
+        tr [("en", "For now you can use that "); ("fr", "Pour l'instant vous pouvez utiliser que ")]; of_constr constr:($v = $t); of_string "."]);
         assert_fix_earlier_warning ()
       | _ => ()
       end;
       exists $v;
       assert ($w : $v = $t) by reflexivity
 
-    | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
+    | [ |- _ ] => throw (tr [("en", "`Choose` can only be applied to 'exists' goals."); ("fr", "« Choisissons » ne peut être utilisé que sur des buts de type « exists ».")])
   end;
   if sealed then
     split;
@@ -124,12 +124,12 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
       match Constr.has_evar t with
       |  true =>
         rename_blank_evars_in_term name t;
-        warn (concat_list [of_string "Please come back later to make a definite choice."]);
+        warn (concat_list [tr [("en", "Please come back later to make a definite choice."); ("fr", "Veuillez revenir plus tard pour faire un choix définitif.")]]);
         assert_fix_earlier_warning ();
         eexists $t
       |  false => exists $t
       end
-  | [ |- _ ] => throw (of_string "`Choose` can only be applied to 'exists' goals.")
+  | [ |- _ ] => throw (tr [("en", "`Choose` can only be applied to 'exists' goals."); ("fr", "« Choisissons » ne peut être utilisé que sur des buts de type « exists ».")])
   end;
   if sealed then
     split;
@@ -139,9 +139,26 @@ Ltac2 choose_variable_in_exists_no_renaming (t:constr) :=
     Control.focus 2 2 (fun () => apply StateGoal.unwrap)
   else ().
 
-Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_lconstr) :=
-  panic_if_goal_wrapped ();
-  match s with
-    | None => choose_variable_in_exists_no_renaming t
-    | Some s => choose_variable_in_exists_goal_with_renaming s t
-  end.
+Module English.
+
+  Ltac2 Notation "Choose" s(opt(seq(ident, ":="))) t(open_lconstr) :=
+    panic_if_goal_wrapped ();
+    match s with
+      | None => choose_variable_in_exists_no_renaming t
+      | Some s => choose_variable_in_exists_goal_with_renaming s t
+    end.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Choisissons" s(opt(seq(ident, ":="))) t(open_lconstr) :=
+    panic_if_goal_wrapped ();
+    match s with
+      | None => choose_variable_in_exists_no_renaming t
+      | Some s => choose_variable_in_exists_goal_with_renaming s t
+    end.
+
+End French.

@@ -100,7 +100,7 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
         revert $x;
         apply NaturalInduction.Step.unwrap)
   | _ =>
-    throw (of_string "Cannot apply natural induction on this goal.")
+    throw (tr [("en", "Cannot apply natural induction on this goal."); ("fr", "Impossible d'appliquer la récurrence sur ce but.")])
   end.
 
 (* Quick fix for Wateproof editor / Coq lsp, where
@@ -115,13 +115,8 @@ Ltac2 induction_without_hypothesis_naming (x: ident) :=
 *)
 Local Ltac2 panic_ident_Qed (i : ident) :=
   if Ident.equal i @Qed
-    then throw (of_string "Syntax error: variable name expected after 'on'.")
+    then throw (tr [("en", "Syntax error: variable name expected after 'on'."); ("fr", "Erreur de syntaxe : nom de variable attendu après « sur ».")])
     else ().
-
-Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
-  panic_ident_Qed (x);
-  panic_if_goal_wrapped ();
-  induction_without_hypothesis_naming x.
 
 (** *
     Removes the NaturalInduction.Base.Wrapper.
@@ -141,12 +136,10 @@ Ltac2 base_case (t:constr) :=
     | [|- NaturalInduction.Base.Wrapper ?v] =>
       match Constr.equal v t with
         | true => apply (NaturalInduction.Base.wrap)
-        | false => throw (of_string "Wrong goal specified.")
+        | false => throw (tr [("en", "Wrong goal specified."); ("fr", "Mauvais but spécifié.")])
       end
-    | [|- _] => throw (of_string "No need to indicate showing a base case.")
+    | [|- _] => throw (tr [("en", "No need to indicate showing a base case."); ("fr", "Inutile d'indiquer que l'on montre un cas de base.")])
   end.
-
-Ltac2 Notation "We" "first" "show" "the" "base" "case" t(lconstr) := base_case t.
 
 (** *
     Removes the NaturalInduction.Step.Wrapper.
@@ -163,7 +156,33 @@ Ltac2 Notation "We" "first" "show" "the" "base" "case" t(lconstr) := base_case t
 Ltac2 induction_step () :=
   lazy_match! goal with
     | [|- NaturalInduction.Step.Wrapper _] => apply (NaturalInduction.Step.wrap)
-    | [|- _] => throw (of_string "No need to indicate showing an induction step.")
+    | [|- _] => throw (tr [("en", "No need to indicate showing an induction step."); ("fr", "Inutile d'indiquer que l'on montre une étape de récurrence.")])
   end.
 
-Ltac2 Notation "We" "now" "show" "the" "induction" "step" := induction_step ().
+Module English.
+
+  Ltac2 Notation "We" "use" "induction" "on" x(ident) :=
+    panic_ident_Qed (x);
+    panic_if_goal_wrapped ();
+    induction_without_hypothesis_naming x.
+
+  Ltac2 Notation "We" "first" "show" "the" "base" "case" t(lconstr) := base_case t.
+
+  Ltac2 Notation "We" "now" "show" "the" "induction" "step" := induction_step ().
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Raisonnons" "par" "récurrence" "sur" x(ident) :=
+    panic_ident_Qed (x);
+    panic_if_goal_wrapped ();
+    induction_without_hypothesis_naming x.
+
+  Ltac2 Notation "Traitons" "d'abord" "le" "cas" "de" "base" t(lconstr) := base_case t.
+
+  Ltac2 Notation "Traitons" "maintenant" "l'étape" "de" "récurrence" := induction_step ().
+
+End French.

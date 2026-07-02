@@ -44,7 +44,7 @@ Local Ltac2 check_goal (t:constr) :=
     | [ |- ?g] =>
       match check_constr_equal g t with
         | true => ()
-        | false => throw (of_string "Wrong goal specified.")
+        | false => throw (tr [("en", "Wrong goal specified."); ("fr", "Mauvais but spécifié.")])
       end
   end.
 
@@ -67,7 +67,7 @@ Local Ltac2 unwrap_state_goal (t : constr) :=
     | [|- StateGoal.Wrapper ?g] =>
       match (check_constr_equal g t) with
         | true  => apply StateGoal.wrap
-        | false => throw (of_string "Wrong goal specified.")
+        | false => throw (tr [("en", "Wrong goal specified."); ("fr", "Mauvais but spécifié.")])
       end
   end.
 
@@ -88,7 +88,7 @@ Local Ltac2 unwrap_verify_goal (t : constr) :=
     | [|- VerifyGoal.Wrapper ?g] =>
       match (check_constr_equal g t) with
         | true  => apply VerifyGoal.wrap
-        | false => throw (of_string "Wrong goal specified.")
+        | false => throw (tr [("en", "Wrong goal specified."); ("fr", "Mauvais but spécifié.")])
       end
   end.
 
@@ -121,7 +121,7 @@ Local Ltac2 to_verify (t : constr) :=
   let t := correct_type_by_wrapping t in
   lazy_match! goal with
     | [|- VerifyGoal.Wrapper _] => unwrap_verify_goal t; change $t
-    | [|- _] => (warn (of_string "Did you mean to write: We need to show that (...). ?"))
+    | [|- _] => (warn (tr [("en", "Did you mean to write: We need to show that (...). ?"); ("fr", "Vouliez-vous écrire : Nous devons montrer que (...). ?")]))
   end.
 
 (*
@@ -135,10 +135,28 @@ Local Ltac2 to_verify (t : constr) :=
     - To show : ...
     - To show that : ...
 *)
-Ltac2 Notation "We" "need" "to" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
+Module English.
 
-Ltac2 Notation "To" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
+  Ltac2 Notation "We" "need" "to" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
 
-Ltac2 Notation "We" "need" "to" "verify" _(opt("that")) _(opt(":")) t(lconstr) := to_verify t.
+  Ltac2 Notation "To" "show" _(opt("that")) _(opt(":")) t(lconstr) := to_show t.
 
-Ltac2 Notation "To" "verify" _(opt(":")) t(lconstr) := to_verify t.
+  Ltac2 Notation "We" "need" "to" "verify" _(opt("that")) _(opt(":")) t(lconstr) := to_verify t.
+
+  Ltac2 Notation "To" "verify" _(opt(":")) t(lconstr) := to_verify t.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Nous" "devons" "montrer" _(opt("que")) _(opt(":")) t(lconstr) := to_show t.
+
+  Ltac2 Notation "Montrons" _(opt("que")) _(opt(":")) t(lconstr) := to_show t.
+
+  Ltac2 Notation "Nous" "devons" "vérifier" _(opt("que")) _(opt(":")) t(lconstr) := to_verify t.
+
+  Ltac2 Notation "Vérifions" _(opt(":")) t(lconstr) := to_verify t.
+
+End French.

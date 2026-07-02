@@ -31,8 +31,8 @@ Require Import Util.TypeCorrector.
 Require Import Waterproof.Tactics.Help.
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
-  concat_list [of_string "Expected assumption of "; of_constr e;
-    of_string " instead of "; of_constr t; of_string "."].
+  concat_list [tr [("en", "Expected assumption of "); ("fr", "Hypothèse attendue de ")]; of_constr e;
+    tr [("en", " instead of "); ("fr", " au lieu de ")]; of_constr t; of_string "."].
 (**
   Attempts to assume a negated expression.
 
@@ -58,7 +58,7 @@ Local Ltac2 assume_negation (x : (constr * (ident option)) list) :=
               | false => throw (expected_of_type_instead_of_message u t)
               | true  => (* Check whether this was the only assumption made.*)
                   match tail with
-                  | _::_ => throw (of_string "Nothing left to assume after the negated expression.")
+                  | _::_ => throw (tr [("en", "Nothing left to assume after the negated expression."); ("fr", "Il ne reste rien à supposer après l'expression niée.")])
                   | [] => (* Assume negation : check whether a name has been given *)
                       match n with
                       | None   => let h := Fresh.in_goal @_H in intro $h; change $t in $h
@@ -108,9 +108,9 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
                       HelpNewHyp.suggest_how_to_use t n
                   | false => throw (expected_of_type_instead_of_message u t)
                   end
-              | false => throw (of_string "`Assume ...` cannot be used to construct a map (→). Use [Take] instead.")
+              | false => throw (tr [("en", "`Assume ...` cannot be used to construct a map (→). Use [Take] instead."); ("fr", "« Supposons ... » ne peut pas être utilisé pour construire une application (→). Utilisez « Soit » à la place.")])
               end
-          | [ |- _ ] => throw (of_string "Tried to assume too many properties.")
+          | [ |- _ ] => throw (tr [("en", "Tried to assume too many properties."); ("fr", "Tentative de supposer trop de propriétés.")])
           end
       end;
 
@@ -123,7 +123,7 @@ Local Ltac2 rec process_ident_type_pairs (x : (constr * (ident option)) list) :=
 Local Ltac2 remove_contra_wrapper (wrapped_assumption : constr) (assumption : constr) :=
   match (check_constr_equal wrapped_assumption assumption) with
   | true  => apply (ByContradiction.wrap $wrapped_assumption)
-  | false => throw (of_string "Wrong assumption specified.")
+  | false => throw (tr [("en", "Wrong assumption specified."); ("fr", "Mauvaise hypothèse spécifiée.")])
   end.
 
 
@@ -147,7 +147,7 @@ Local Ltac2 assume (x : (constr * (ident option)) list) :=
   lazy_match! goal with
   | [ |- not _ ]  => assume_negation x
   | [ |- _ -> _ ] => process_ident_type_pairs x
-  | [ |- _ ] => throw (of_string "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬).")
+  | [ |- _ ] => throw (tr [("en", "`Assume ...` can only be used to prove an implication (⇨) or a negation (¬)."); ("fr", "« Supposons ... » ne peut être utilisé que pour prouver une implication (⇨) ou une négation (¬).")])
   end.
 
 
@@ -169,15 +169,34 @@ Local Ltac2 parse_natural_language_listing (x1 : constr * (ident option))
 (**
   Version with type checking.
 *)
-Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
-  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
-  "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
-:= assume (parse_natural_language_listing x1 x2).
+Module English.
 
-(**
-  Simply alternative notation for [Assume].
-*)
-Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
-  x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
-  "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
-:= assume (parse_natural_language_listing x1 x2).
+  Ltac2 Notation "Assume" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
+    x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+    "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
+  := assume (parse_natural_language_listing x1 x2).
+
+  (** Simply alternative notation for [Assume]. *)
+  Ltac2 Notation "such" "that" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
+    x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+    "and", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
+  := assume (parse_natural_language_listing x1 x2).
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Supposons" "que" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
+    x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+    "et", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
+  := assume (parse_natural_language_listing x1 x2).
+
+  (** Notation alternative pour [Supposons]. *)
+  Ltac2 Notation "On" "suppose" "que" x1(seq(lconstr, opt(seq("as", "(", ident, ")"))))
+    x2(opt(seq(opt(seq(",", seq(list0(seq(lconstr, opt(seq("as", "(", ident, ")"))), ",")))),
+    "et", seq(lconstr, opt(seq("as", "(", ident, ")"))))) )
+  := assume (parse_natural_language_listing x1 x2).
+
+End French.

@@ -92,7 +92,7 @@ Ltac2 Type exn ::= [ Binder_not_found (message) ].
 *)
 Local Ltac2 _get_binder_type_from_binder_list (name : ident) (b_list : binder list) : constr :=
   match List.find_opt (_binder_name_equal name) b_list with
-  | None => Control.throw (Binder_not_found (concat_list [of_string "The variable "; of_ident name; of_string " was not found."]))
+  | None => Control.throw (Binder_not_found (concat_list [tr [("en", "The variable "); ("fr", "La variable ")]; of_ident name; tr [("en", " was not found."); ("fr", " n'a pas été trouvée.")]]))
   | Some b => Constr.Binder.type b
   end.
 
@@ -175,7 +175,7 @@ Ltac2 rec get_binders_with_implication_from_goal_aux () :
             get_binders_with_implication_from_goal_aux ()
           end
       end
-    | _ => throw (of_string "Expected a product type");
+    | _ => throw (tr [("en", "Expected a product type"); ("fr", "Type produit attendu")]);
       get_binders_with_implication_from_goal_aux ()
     end
   | [ |- _] => ([], 0)
@@ -256,14 +256,14 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
     | (* TODO: this can be relaxed, the code presumably also
          works with an implication *)
       _ -> ?_x => (* Exclude matching on functions (naming codomain necessary) *)
-      throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
+      throw (tr [("en", "`Use ... in (*)` only works if (*) starts with a for-all quantifier."); ("fr", "« Utilisons ... dans (*) » ne fonctionne que si (*) commence par un quantificateur universel.")])
     | forall _ : _, _ =>
       (* Create new hypotheses *)
       let binder_types :=
         match Control.case (fun () => get_binders_with_implication_from_hyp h) with
         | Val (x, _) => x
-        | Err exn => warn (concat_list [of_string "Could not understand the structure with the involved sets. A simplified version of 'Use' is used.";
-      fnl () ; of_string "This is a not a problem, but you may report this example, mentioning the exception:"; fnl (); of_exn exn]); []
+        | Err exn => warn (concat_list [tr [("en", "Could not understand the structure with the involved sets. A simplified version of 'Use' is used."); ("fr", "Impossible de comprendre la structure avec les ensembles concernés. Une version simplifiée de « Utilisons » est utilisée.")];
+      fnl () ; tr [("en", "This is a not a problem, but you may report this example, mentioning the exception:"); ("fr", "Ce n'est pas un problème, mais vous pouvez signaler cet exemple en mentionnant l'exception :")]; fnl (); of_exn exn]); []
         end in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
       (* The introduction of helper definition was added for Coq v8.18 since otherwise
@@ -292,7 +292,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
       match is_empty evars with
       | true => ()
       | false => warn (concat_list (
-          [of_string "Please come back to this line later to make a definite choice for ";
+          [tr [("en", "Please come back to this line later to make a definite choice for "); ("fr", "Veuillez revenir à cette ligne plus tard pour faire un choix définitif pour ")];
             _of_idents evars; of_string "."]));
           assert_fix_earlier_warning ()
       end;
@@ -332,8 +332,8 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
         Control.focus 2 (Int.add (List.length new_hyp_list) 1) (fun () =>
           apply StateGoal.unwrap)) with
       | Val _ => ()
-      | Err exn => warn (concat_list [of_string "Could not understand the structure with the involved sets. A simplified version of 'Use' is used.";
-      fnl () ; of_string "This is a not a problem, but you may report this example, mentioning the exception:"; fnl (); of_exn exn])
+      | Err exn => warn (concat_list [tr [("en", "Could not understand the structure with the involved sets. A simplified version of 'Use' is used."); ("fr", "Impossible de comprendre la structure avec les ensembles concernés. Une version simplifiée de « Utilisons » est utilisée.")];
+      fnl () ; tr [("en", "This is a not a problem, but you may report this example, mentioning the exception:"); ("fr", "Ce n'est pas un problème, mais vous pouvez signaler cet exemple en mentionnant l'exception :")]; fnl (); of_exn exn])
       end;
       (* Wrap the goal *)
       Control.focus 1 1 (fun () =>
@@ -344,7 +344,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
       ltac1:(revgoals);
       (* substitute the temporary definitions *)
       List.iter (fun (_, c) => subst $c) def_list
-    | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
+    | _ => throw (tr [("en", "`Use ... in (*)` only works if (*) starts with a for-all quantifier."); ("fr", "« Utilisons ... dans (*) » ne fonctionne que si (*) commence par un quantificateur universel.")])
   end.
 
 Ltac2 wp_specialize_one (var_choice : ident * ident) (id : ident) :=
@@ -367,12 +367,12 @@ Ltac2 wp_specialize_one (var_choice : ident * ident) (id : ident) :=
     | None => ()
     | Some second_guessed_name =>
       if Ident.equal first_guessed_name second_guessed_name then
-        warn (concat_list [of_string "Expected variable name ";  of_ident first_guessed_name;
-          of_string " instead of "; of_ident var; of_string "."])
+        warn (concat_list [tr [("en", "Expected variable name "); ("fr", "Nom de variable attendu ")];  of_ident first_guessed_name;
+          tr [("en", " instead of "); ("fr", " au lieu de ")]; of_ident var; of_string "."])
       else
-        warn (concat_list [of_string "Expected variable name "; of_ident first_guessed_name;
-          of_string " or " ;
-          of_ident second_guessed_name; of_string " instead of " ; of_ident var;
+        warn (concat_list [tr [("en", "Expected variable name "); ("fr", "Nom de variable attendu ")]; of_ident first_guessed_name;
+          tr [("en", " or "); ("fr", " ou ")] ;
+          of_ident second_guessed_name; tr [("en", " instead of "); ("fr", " au lieu de ")] ; of_ident var;
           of_string "."])
     end
   end;
@@ -446,13 +446,13 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
   match is_empty evars with
   | true => ()
   | false => warn (concat_list (
-      [of_string "Please come back to this line later to make a definite choice for ";
+      [tr [("en", "Please come back to this line later to make a definite choice for "); ("fr", "Veuillez revenir à cette ligne plus tard pour faire un choix définitif pour ")];
         _of_idents evars; of_string "."]));
       assert_fix_earlier_warning ()
   end;
   lazy_match! statement with
     | _ -> ?_x => (* Exclude matching on functions (naming codomain necessary) *)
-      throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
+      throw (tr [("en", "`Use ... in (*)` only works if (*) starts with a for-all quantifier."); ("fr", "« Utilisons ... dans (*) » ne fonctionne que si (*) commence par un quantificateur universel.")])
     | forall _ : _, _ =>
       (* Create new hypotheses *)
       List.iter (fun x => Control.focus 1 1 (fun () => wp_specialize_one x aux_id)) def_list;
@@ -465,7 +465,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
       List.iter (fun (_, c) => subst $c) def_list;
       ltac1:(revgoals)
       (* still need to restate the goal *)
-    | _ => throw (of_string "`Use ... in (*)` only works if (*) starts with a for-all quantifier.")
+    | _ => throw (tr [("en", "`Use ... in (*)` only works if (*) starts with a for-all quantifier."); ("fr", "« Utilisons ... dans (*) » ne fonctionne que si (*) commence par un quantificateur universel.")])
   end.
 
 
@@ -480,7 +480,22 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
   Raises fatal exceptions:
     - If the hypothesis [in_hyp] does not start with a for-all statement.
 *)
-Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_lconstr), ","))
-    "in" in_hyp(lconstr) :=
-  panic_if_goal_wrapped ();
-  wp_specialize' var_choice_list in_hyp.
+Module English.
+
+  Ltac2 Notation "Use" var_choice_list(list1(seq(ident, ":=", open_lconstr), ","))
+      "in" in_hyp(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_specialize' var_choice_list in_hyp.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Utilisons" var_choice_list(list1(seq(ident, ":=", open_lconstr), ","))
+      "dans" in_hyp(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_specialize' var_choice_list in_hyp.
+
+End French.

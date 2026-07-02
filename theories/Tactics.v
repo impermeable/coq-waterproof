@@ -39,7 +39,8 @@ Require Export Tactics.ToShow.
 Require Export Tactics.Unfold.
 Require Export Tactics.By.
 
-(** Activate the English tactic notations. Tactic files whose notations have been
-    split into [English]/[French] submodules expose them through these exports;
-    [Waterproof.French] exports the [French] counterparts instead. *)
-Export Conclusion.English.
+(** Each tactic file above re-exports its own [English] notation submodule (via
+    [Export English.]), so [Require Import Waterproof.Tactics] activates the full
+    English tactic language. [Waterproof.French] instead only [Require]s the files
+    (without importing their English notations) and exports the [French]
+    submodules, so the two languages stay mutually exclusive. *)

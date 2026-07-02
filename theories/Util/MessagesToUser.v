@@ -107,7 +107,7 @@ Ltac2 language_is_french () : bool := String.equal (get_language ()) "fr".
     is not in the list, so it should always be the English text. Adding a new
     language therefore never changes the arity of [tr]: untranslated sites simply
     keep falling back to English. *)
-Ltac2 tr (translations : (string * string) list) : message :=
+Ltac2 tr_string (translations : (string * string) list) : string :=
   let lang := get_language () in
   let rec lookup (ls : (string * string) list) (fallback : string) : string :=
     match ls with
@@ -119,9 +119,14 @@ Ltac2 tr (translations : (string * string) list) : message :=
     end
   in
   match translations with
-  | [] => Message.of_string ""
+  | [] => ""
   | first :: _ =>
       match first with
-      | (_, en) => Message.of_string (lookup translations en)
+      | (_, en) => lookup translations en
       end
   end.
+
+(** [message]-returning variant of [tr_string]; use this at message sites and
+    [tr_string] where a [string] is required (e.g. [replace_msg]/[insert_msg]). *)
+Ltac2 tr (translations : (string * string) list) : message :=
+  Message.of_string (tr_string translations).

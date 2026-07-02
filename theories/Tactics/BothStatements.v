@@ -41,20 +41,12 @@ Require Import Util.MessagesToUser.
 Ltac2 both_directions_and () :=
   lazy_match! goal with 
     | [ |- _ /\ _] => split; Control.enter (fun () => apply StateGoal.unwrap)
-    | [ |- _ ] => throw (of_string "This is not an 'and' statement, so try another approach.")
+    | [ |- _ ] => throw (tr [("en", "This is not an 'and' statement, so try another approach."); ("fr", "Ce n'est pas un énoncé « et », essayez une autre approche.")])
   end.
 
-Ltac2 Notation "We" "show" "both" "statements" := 
-  panic_if_goal_wrapped ();
-  both_directions_and ().
-
-Ltac2 Notation "We" "prove" "both" "statements" := 
-  panic_if_goal_wrapped ();
-  both_directions_and ().
-
 Local Ltac2 need_to_show_instead_of_msg (correct:constr) (wrong:constr) :=
-  concat_list [of_string "You need to show "; of_constr correct;
-    of_string " instead of "; of_constr wrong; of_string "."].
+  concat_list [tr [("en", "You need to show "); ("fr", "Vous devez montrer ")]; of_constr correct;
+    tr [("en", " instead of "); ("fr", " au lieu de ")]; of_constr wrong; of_string "."].
 (**
   Split the proof of a conjuction statement into two specified parts, but also verifies that the parts wrote by the user, in which the goal should split into, are the correct ones.
 
@@ -94,21 +86,52 @@ Ltac2 both_directions_and_with_types (s: constr) (t:constr) :=
                 | false =>
                   match check_constr_equal t v with 
                     | true  => throw (need_to_show_instead_of_msg u s)
-                    | false => throw (of_string "Neiher of these two statements are what you need to show.")
+                    | false => throw (tr [("en", "Neiher of these two statements are what you need to show."); ("fr", "Aucun de ces deux énoncés n'est ce que vous devez montrer.")])
                   end
               end
           end
       end
-    | [ |- _ ] => throw (of_string "This is not an 'and' statement, so try another tactic.")
+    | [ |- _ ] => throw (tr [("en", "This is not an 'and' statement, so try another tactic."); ("fr", "Ce n'est pas un énoncé « et », essayez une autre tactique.")])
   end.
 
+Module English.
 
-Ltac2 Notation "We" "show" "both" s(lconstr) "and" t(lconstr) :=
-  panic_if_goal_wrapped ();
-  both_directions_and_with_types s t.
+  Ltac2 Notation "We" "show" "both" "statements" :=
+    panic_if_goal_wrapped ();
+    both_directions_and ().
 
-Ltac2 Notation "We" "prove" "both" s(lconstr) "and" t(lconstr) :=
-  panic_if_goal_wrapped ();
-  both_directions_and_with_types s t.
+  Ltac2 Notation "We" "prove" "both" "statements" :=
+    panic_if_goal_wrapped ();
+    both_directions_and ().
 
+  Ltac2 Notation "We" "show" "both" s(lconstr) "and" t(lconstr) :=
+    panic_if_goal_wrapped ();
+    both_directions_and_with_types s t.
 
+  Ltac2 Notation "We" "prove" "both" s(lconstr) "and" t(lconstr) :=
+    panic_if_goal_wrapped ();
+    both_directions_and_with_types s t.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Prouvons" "les" "deux" "énoncés" :=
+    panic_if_goal_wrapped ();
+    both_directions_and ().
+
+  Ltac2 Notation "Démontrons" "les" "deux" "énoncés" :=
+    panic_if_goal_wrapped ();
+    both_directions_and ().
+
+  Ltac2 Notation "Prouvons" "à" "la" "fois" s(lconstr) "et" t(lconstr) :=
+    panic_if_goal_wrapped ();
+    both_directions_and_with_types s t.
+
+  Ltac2 Notation "Démontrons" "à" "la" "fois" s(lconstr) "et" t(lconstr) :=
+    panic_if_goal_wrapped ();
+    both_directions_and_with_types s t.
+
+End French.

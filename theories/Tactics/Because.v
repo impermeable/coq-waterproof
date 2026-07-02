@@ -29,7 +29,7 @@ Local Ltac2 check_wrong_prop_specified (user_type:constr) (coq_type:constr) :=
  match Constr.equal user_type coq_type with
     | true  => ()
     | false => throw (concat_list
-      [of_string "Property "; of_constr user_type; of_string " should be ";
+      [tr [("en", "Property "); ("fr", "La propriété ")]; of_constr user_type; tr [("en", " should be "); ("fr", " devrait être ")];
        of_constr coq_type; of_string "."])
   end.
 
@@ -76,11 +76,6 @@ Local Ltac2 and_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:co
 
   let type_v := get_value_of_hyp_id vv in
   check_wrong_prop_specified tv type_v.
-
-
-Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "and" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) _(opt("hold")) := 
-  panic_if_goal_wrapped ();
-  and_hypothesis_destruct_with_types s u tu v tv.
 
 
 (**
@@ -132,6 +127,28 @@ Local Ltac2 or_hypothesis_destruct_with_types (s:ident) (u:ident option) (tu:con
     apply (Case.unwrap $type_v)
   ).
 
-Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "or" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) _(opt("holds")) :=
-  panic_if_goal_wrapped ();
-  or_hypothesis_destruct_with_types s u tu v tv.
+Module English.
+
+  Ltac2 Notation "Because" "(" s(ident) ")" "both" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "and" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) _(opt("hold")) :=
+    panic_if_goal_wrapped ();
+    and_hypothesis_destruct_with_types s u tu v tv.
+
+  Ltac2 Notation "Because" "(" s(ident) ")" "either" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "or" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) _(opt("holds")) :=
+    panic_if_goal_wrapped ();
+    or_hypothesis_destruct_with_types s u tu v tv.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Comme" "(" s(ident) ")" "à" "la" "fois" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "et" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    and_hypothesis_destruct_with_types s u tu v tv.
+
+  Ltac2 Notation "Comme" "(" s(ident) ")" "soit" tu(lconstr) u(opt(seq("as", "(", ident, ")"))) "soit" tv(lconstr) v(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    or_hypothesis_destruct_with_types s u tu v tv.
+
+End French.
