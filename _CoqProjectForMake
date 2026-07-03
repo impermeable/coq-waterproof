@@ -93,6 +93,7 @@ theories/Libs/Logic/ConstructiveLogic.v
 theories/Libs/Analysis.v
 theories/Libs/Analysis/ContinuityDomainNat.v
 theories/Libs/Analysis/ContinuityDomainR.v
+theories/Libs/Analysis/FiniteSums.v
 theories/Libs/Analysis/LimsupLiminfBolzano.v
 theories/Libs/Analysis/MetricSpaces.v
 theories/Libs/Analysis/OpenAndClosed.v
@@ -159,4 +160,5 @@ tests/util/TypeCorrector.v
 ## Libs
 tests/libs/Negation.v
 tests/libs/Analysis/StrongInductionIndexSequence.v
+tests/libs/Analysis/FiniteSums.v
 tests/libs/Sets.v
