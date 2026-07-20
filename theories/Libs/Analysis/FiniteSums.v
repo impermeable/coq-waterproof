@@ -26,9 +26,12 @@ From Stdlib Require Import Arith.
 
 Open Scope R_scope.
 
-Notation "'Σ' '[' i '=' m ',' n ']' '(' e ')'" :=
+Declare Scope sum_scope.
+
+Notation "'Σ' '[' i '=' m ',' n ']' e" :=
   (sigma (fun i => e) m n)
-  (at level 50, i ident).
+  (at level 50, i ident)
+  : sum_scope.
 
 Local Ltac simpl_INR :=
   repeat (
