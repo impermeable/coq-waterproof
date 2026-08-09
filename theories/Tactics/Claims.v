@@ -32,8 +32,24 @@ Local Ltac2 my_assert (t:constr) (id:ident option) :=
     | Some id => ltac2_assert id t
   end.
 
-Ltac2 Notation "We" "claim" "that" t(lconstr) id(opt(seq("as", "(", ident, ")"))) :=
-  panic_if_goal_wrapped ();
-  (* Print suggestion on how to use new statement (after it is proven). *)
-  HelpNewHyp.suggest_how_to_use_after_proof t id;
-  my_assert t id.
+Module English.
+
+  Ltac2 Notation "We" "claim" "that" t(lconstr) id(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    (* Print suggestion on how to use new statement (after it is proven). *)
+    HelpNewHyp.suggest_how_to_use_after_proof t id;
+    my_assert t id.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Affirmons" "que" t(lconstr) id(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    (* Print suggestion on how to use new statement (after it is proven). *)
+    HelpNewHyp.suggest_how_to_use_after_proof t id;
+    my_assert t id.
+
+End French.

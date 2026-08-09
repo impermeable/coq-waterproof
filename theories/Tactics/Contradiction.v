@@ -75,7 +75,7 @@ Ltac2 contradiction () :=
           (waterprove 5 true Main))
       with
       | Err (FailedToProve g) => throw (concat_list
-        [of_string "Could not verify that "; of_constr g; of_string "."])
+        [tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")]; of_constr g; of_string "."])
       | Err exn => Control.zero exn
       | Val _ =>
         let p := Control.hyp id_contra in
@@ -88,13 +88,13 @@ Ltac2 contradiction () :=
         assert (~ $p) as $id_contra)
       with
       | Err _ => throw (concat_list
-        [of_string "Previous statement cannot be negated."])
+        [tr [("en", "Previous statement cannot be negated."); ("fr", "L'énoncé précédent ne peut pas être nié.")]])
       | Val _ =>
         match Control.case (fun () => Control.focus 1 1 (fun () =>
           (waterprove 5 true Main)))
         with
         | Err (FailedToProve g) => throw (concat_list
-          [of_string "Could not verify that "; of_constr g; of_string "."])
+          [tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")]; of_constr g; of_string "."])
         | Err exn => Control.zero exn
         | Val _ =>
           let not_p := Control.hyp id_contra in
@@ -103,15 +103,35 @@ Ltac2 contradiction () :=
         end
       end
     end
-  | [ |- _ ] => throw (of_string "No statement to contradict.")
+  | [ |- _ ] => throw (tr [("en", "No statement to contradict."); ("fr", "Aucun énoncé à contredire.")])
   end.
 
-Ltac2 Notation "We" "argue" "by" "contradiction" := contra ().
+Module English.
 
-Ltac2 Notation "Contradiction" :=
-  panic_if_goal_wrapped ();
-  contradiction ().
+  Ltac2 Notation "We" "argue" "by" "contradiction" := contra ().
 
-Ltac2 Notation "↯" :=
-  panic_if_goal_wrapped ();
-  contradiction ().
+  Ltac2 Notation "Contradiction" :=
+    panic_if_goal_wrapped ();
+    contradiction ().
+
+  Ltac2 Notation "↯" :=
+    panic_if_goal_wrapped ();
+    contradiction ().
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Raisonnons" "par" "l'absurde" := contra ().
+
+  Ltac2 Notation "Contradiction" :=
+    panic_if_goal_wrapped ();
+    contradiction ().
+
+  Ltac2 Notation "↯" :=
+    panic_if_goal_wrapped ();
+    contradiction ().
+
+End French.

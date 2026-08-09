@@ -60,7 +60,7 @@ Local Ltac2 try_out_label (label : ident) :=
   *)
 Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):=
   let err_msg (g : constr) := concat_list
-    [of_string "Could not verify that "; of_constr g; of_string "."] in
+    [tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")]; of_constr g; of_string "."] in
   let id :=
     match label with
     | None => Fresh.in_goal @_H
@@ -74,7 +74,7 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
       Control.focus 1 1 (fun () =>
         admit
         );
-      warn (concat_list [of_string "Please come back later to provide an actual proof of ";
+      warn (concat_list [tr [("en", "Please come back later to provide an actual proof of "); ("fr", "Veuillez revenir plus tard pour fournir une véritable preuve de ")];
         of_constr claim; of_string "."])
 
     else
@@ -97,7 +97,7 @@ Local Ltac2 wp_assert (claim : constr) (label : ident option) (postpone : bool):
   *)
 Local Ltac2 core_wp_assert_by (claim : constr) (label : ident option) (xtr_lemmas : constr list) (dbs : hint_db_name list) :=
   let err_msg (g : constr) := concat_list
-    [of_string "Could not verify that "; of_constr g; of_string "."] in
+    [tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")]; of_constr g; of_string "."] in
   let id :=
     match label with
     | None => Fresh.in_goal @_H
@@ -155,9 +155,7 @@ Ltac2 wp_assert_by_with_checks (claim : constr) (label : ident option) (xtr_lemm
   given an additional lemma that has to be used in said proof.
   If succesful, replaces current goal by proposed goal. *)
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
-  panic_if_goal_wrapped ();
-  wp_assert_since claim label xtr_claim.
+
 
 (** * It holds that ... (...)
   Attempts to assert a claim and proves it automatically.
@@ -181,7 +179,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
   lazy_match! goal with
   | [_ : ?s |- StateHyp.Wrapper ?s _ _] =>
     if Bool.neg (check_constr_equal s claim) then
-      throw (of_string "Wrong statement specified.")
+      throw (tr [("en", "Wrong statement specified."); ("fr", "Mauvais énoncé spécifié.")])
     else
       match! goal with
       | [h : ?s |- StateHyp.Wrapper ?s ?h_spec _] =>
@@ -197,7 +195,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
         | Val _ =>
           apply (StateHyp.wrap $s);
           Std.clear [h]
-        | Err exn => print (of_string "Exception occurred"); print (of_exn exn)
+        | Err exn => print (tr [("en", "Exception occurred"); ("fr", "Une exception s'est produite")]); print (of_exn exn)
         end
       (* rename ident generated in specialize with user-specified label*)
       (* match label with
@@ -210,8 +208,7 @@ Local Ltac2 wp_assert_with_unwrap (claim : constr) (label : ident option) :=
     wp_assert claim label false
   end.
 
-Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
-  wp_assert_with_unwrap claim label.
+
 
 
 (** * By magic it holds that ... (...)
@@ -228,6 +225,36 @@ Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident
     - [Please come back later to provide an actual proof of [claim].], always.
 *)
 
-Ltac2 Notation "By" "magic" "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
-  panic_if_goal_wrapped ();
-  wp_assert claim label true.
+(** Tactic notations for [It holds that ...]. The shared logic above is
+    language-independent; importing [English] or [French] selects the keywords. *)
+Module English.
+
+  Ltac2 Notation "Since" xtr_claim(lconstr) "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    wp_assert_since claim label xtr_claim.
+
+  Ltac2 Notation "It" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
+    wp_assert_with_unwrap claim label.
+
+  Ltac2 Notation "By" "magic" "it" "holds" "that" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    wp_assert claim label true.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Puisque" xtr_claim(lconstr) "il" "s'avère" "que" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    wp_assert_since claim label xtr_claim.
+
+  Ltac2 Notation "Il" "s'avère" "que" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
+    wp_assert_with_unwrap claim label.
+
+  Ltac2 Notation "Par" "magie" "il" "s'avère" "que" claim(lconstr) label(opt(seq("as", "(", ident, ")"))) :=
+    panic_if_goal_wrapped ();
+    wp_assert claim label true.
+
+End French.

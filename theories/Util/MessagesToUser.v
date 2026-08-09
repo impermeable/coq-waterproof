@@ -32,6 +32,7 @@ Ltac2 Type FeedbackLevel := [ Debug | Info | Notice | Warning | Error ].
 Ltac2 @ external send_message_external: FeedbackLevel -> message -> unit := "rocq-runtime.plugins.coq-waterproof" "message_external".
 Ltac2 @ external throw_external: message -> unit := "rocq-runtime.plugins.coq-waterproof" "throw_external".
 Ltac2 @ external get_print_hypothesis_flag: unit -> bool := "rocq-runtime.plugins.coq-waterproof" "get_print_hypothesis_flag_external".
+Ltac2 @ external get_language : unit -> string := "rocq-runtime.plugins.coq-waterproof" "get_language_external".
 Ltac2 @ external get_redirect_errors_flag : unit -> bool := "rocq-runtime.plugins.coq-waterproof" "get_redirect_errors_flag_external".
 Ltac2 @ external shortest_string_of_global_ffi : Std.reference -> string :=
   "rocq-runtime.plugins.coq-waterproof" "shortest_string_of_global_external".
@@ -89,3 +90,43 @@ Ltac2 throw (msg : message) :=
     Control.zero (RedirectedToUserError msg)
   (** We use an OCaml error here, because it gets rendered much nicer in the editor *)
   else throw_external msg.
+
+(** [true] when the active language (see [Waterproof Language ...]) is French. *)
+Ltac2 language_is_french () : bool := String.equal (get_language ()) "fr".
+
+(** Selects a translation of a message fragment based on the active language
+    (see [Waterproof Language ...]).
+
+    Each user-facing message site lists its translations as [(language_code, text)]
+    pairs, e.g.
+    <<
+      tr [("en", "Could not verify that "); ("fr", "Impossible de vérifier que ")]
+    >>
+    The language code matches the value set by [Waterproof Language ...] (currently
+    ["en"] / ["fr"]). The FIRST entry is the fallback used when the active language
+    is not in the list, so it should always be the English text. Adding a new
+    language therefore never changes the arity of [tr]: untranslated sites simply
+    keep falling back to English. *)
+Ltac2 tr_string (translations : (string * string) list) : string :=
+  let lang := get_language () in
+  let rec lookup (ls : (string * string) list) (fallback : string) : string :=
+    match ls with
+    | [] => fallback
+    | pair :: rest =>
+        match pair with
+        | (code, text) => if String.equal code lang then text else lookup rest fallback
+        end
+    end
+  in
+  match translations with
+  | [] => ""
+  | first :: _ =>
+      match first with
+      | (_, en) => lookup translations en
+      end
+  end.
+
+(** [message]-returning variant of [tr_string]; use this at message sites and
+    [tr_string] where a [string] is required (e.g. [replace_msg]/[insert_msg]). *)
+Ltac2 tr (translations : (string * string) list) : message :=
+  Message.of_string (tr_string translations).

@@ -32,37 +32,37 @@ Require Import Notations.Sets.
 Require Import Stdlib.Sets.Ensembles.
 
 Local Ltac2 too_many_of_type_message (t : constr) :=
-  concat_list [of_string "Tried to introduce too many variables of type ";
+  concat_list [tr [("en", "Tried to introduce too many variables of type "); ("fr", "Tentative d'introduction de trop de variables de type ")];
     of_constr t; of_string "."].
 
 Local Ltac2 could_not_introduce_no_forall_message (id : ident) :=
-  concat_list [of_string "Could not introduce "; of_ident id;
-    of_string ". There is no variable to introduce at this point."].
+  concat_list [tr [("en", "Could not introduce "); ("fr", "Impossible d'introduire ")]; of_ident id;
+    tr [("en", ". There is no variable to introduce at this point."); ("fr", ". Il n'y a aucune variable à introduire à ce stade.")]].
 
 Local Ltac2 expected_implication_message (id : ident) :=
-  concat_list [of_string "Expected an implication after introducing ";
+  concat_list [tr [("en", "Expected an implication after introducing "); ("fr", "Implication attendue après l'introduction de ")];
     of_ident id; of_string "."].
 
 Local Ltac2 expected_of_type_instead_of_message (e : constr) (t : constr) :=
-  concat_list [of_string "Expected variable of type "; of_constr e;
-    of_string " instead of "; of_constr t; of_string "."].
+  concat_list [tr [("en", "Expected variable of type "); ("fr", "Variable de type attendue ")]; of_constr e;
+    tr [("en", " instead of "); ("fr", " au lieu de ")]; of_constr t; of_string "."].
 
 Local Ltac2 expected_different_condition_message (e : constr) (expected : constr) :=
   let simplified_e := (eval cbn in $e) in
-  concat_list [of_string "The provided condition " ; of_constr simplified_e;
-  of_string " does not correspond to the expected condition in the for-all statement"; of_constr expected].
+  concat_list [tr [("en", "The provided condition "); ("fr", "La condition fournie ")] ; of_constr simplified_e;
+  tr [("en", " does not correspond to the expected condition in the for-all statement"); ("fr", " ne correspond pas à la condition attendue dans l'énoncé universel")]; of_constr expected].
 
 Local Ltac2 expected_el_message (e : constr) (z : ident) (expected_rhs : constr) :=
   let simplified_e := (eval cbn in $e) in
-  concat_list [of_string "The provided condition " ;
+  concat_list [tr [("en", "The provided condition "); ("fr", "La condition fournie ")] ;
   of_ident z; of_string " ∈ "; of_constr expected_rhs;
-  of_string " does not correspond to the expected ";
-  of_string "condition in the for-all statement "; of_constr simplified_e ].
+  tr [("en", " does not correspond to the expected "); ("fr", " ne correspond pas à la condition attendue ")];
+  tr [("en", "condition in the for-all statement "); ("fr", "dans l'énoncé universel ")]; of_constr simplified_e ].
 
 Local Ltac2 expected_col_not_el_message (z : ident) (provided_rhs : constr)
   (expected_rhs : constr) :=
-  concat_list [of_string "The provided condition " ; of_ident z; of_string " ∈ ";
-  of_constr provided_rhs; of_string " does not correspond to the expected condition in the for-all statement ";
+  concat_list [tr [("en", "The provided condition "); ("fr", "La condition fournie ")] ; of_ident z; of_string " ∈ ";
+  of_constr provided_rhs; tr [("en", " does not correspond to the expected condition in the for-all statement "); ("fr", " ne correspond pas à la condition attendue dans l'énoncé universel ")];
   of_ident z; of_string " : "; of_constr expected_rhs ].
 
 Ltac2 Type TakeKind :=
@@ -84,7 +84,7 @@ Ltac2 string_to_take_kind (s : string) :=
   else if String.equal s "≠" then
     TakeNe
   else
-    (throw (of_string "Unknown symbol encountered after Take"); TakeCol).
+    (throw (tr [("en", "Unknown symbol encountered after Take"); ("fr", "Symbole inconnu rencontré après « Soit »")]); TakeCol).
 
 Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 'c option* 'd option * 'e option * 'f option) :=
   let (col_opt, el_opt, gt_opt, ge_opt, lt_opt, le_opt, ne_opt) := option_tuple in
@@ -97,7 +97,7 @@ Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 
     (match le_opt with | Some _ => [TakeLe] | None => [] end);
     (match ne_opt with | Some _ => [TakeNe] | None => [] end)] in
   if Int.gt (List.length final_list) 1 then
-    throw (of_string "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); TakeCol
+    throw (tr [("en", "Too many symbols provided to the 'Take' tactic. Use exactly one of: :, ∈, >, ≥, < , ≤"); ("fr", "Trop de symboles fournis à la tactique « Soit ». Utilisez exactement l'un de : :, ∈, >, ≥, <, ≤")]); TakeCol
     else
     match final_list with
     | [] => TakeNone
@@ -106,7 +106,7 @@ Local Ltac2 get_take_kind (option_tuple : unit option * 'a option * 'b option * 
 
 Local Ltac2 pred_from_take_kind (rhs : constr) (tk : TakeKind) :=
   match tk with
-  | TakeCol => throw (Message.of_string "No assumption expected when using 'Take : '. Please report.");
+  | TakeCol => throw (tr [("en", "No assumption expected when using 'Take : '. Please report."); ("fr", "Aucune hypothèse attendue avec « Soit : ». Veuillez le signaler.")]);
       constr:(0)
   | TakeEl => constr:((∈ $rhs)%pfs)
   | TakeGt => constr:((> $rhs)%pfs)
@@ -232,7 +232,7 @@ Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b op
       match check_constr_equal sort_u constr:(Prop) with
         | false =>
           List.iter (fun id => intro_ident id type take_kind) ids
-        | true  => throw (of_string "Tried to introduce too many variables.")
+        | true  => throw (tr [("en", "Tried to introduce too many variables."); ("fr", "Tentative d'introduction de trop de variables.")])
       end
     | [ |- forall _ : ?u, _] =>
       (* Check whether [u] is not a proposition. *)
@@ -240,9 +240,9 @@ Local Ltac2 intro_per_type (pair : (ident list * unit option * 'a option * 'b op
       match check_constr_equal sort_u constr:(Prop) with
         | false =>
           List.iter (fun id => intro_ident id type take_kind) ids
-        | true  => throw (of_string "Tried to introduce too many variables.")
+        | true  => throw (tr [("en", "Tried to introduce too many variables."); ("fr", "Tentative d'introduction de trop de variables.")])
       end
-    | [ |- _ ] => throw (of_string "Tried to introduce too many variables.")
+    | [ |- _ ] => throw (tr [("en", "Tried to introduce too many variables."); ("fr", "Tentative d'introduction de trop de variables.")])
   end.
 
 (**
@@ -255,19 +255,34 @@ Local Ltac2 take (x : (ident list * unit option * 'a option * 'b option * 'c opt
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
         | false => List.iter intro_per_type x
-        | true  => throw (of_string "`Take ...` cannot be used to prove an implication (⇨). Use `Assume that ...` instead.")
+        | true  => throw (tr [("en", "`Take ...` cannot be used to prove an implication (⇨). Use `Assume that ...` instead."); ("fr", "« Soit ... » ne peut pas être utilisé pour prouver une implication (⇨). Utilisez « Supposons que ... » à la place.")])
       end
     | [ |- forall _ : ?u, _] =>
       (* Check whether [u] is not a proposition. *)
       let sort_u := get_value_of_hyp u in
       match check_constr_equal sort_u constr:(Prop) with
         | false => List.iter intro_per_type x
-        | true  => throw (of_string "`Take ...` cannot be used to prove an implication (⇨). Use `Assume that ...` instead.")
+        | true  => throw (tr [("en", "`Take ...` cannot be used to prove an implication (⇨). Use `Assume that ...` instead."); ("fr", "« Soit ... » ne peut pas être utilisé pour prouver une implication (⇨). Utilisez « Supposons que ... » à la place.")])
       end
-    | [ |- _ ] => throw (of_string "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→).")
+    | [ |- _ ] => throw (tr [("en", "`Take ...` can only be used to prove a `for all`-statement (∀) or to construct a map (→)."); ("fr", "« Soit ... » ne peut être utilisé que pour prouver un énoncé universel (∀) ou pour construire une application (→).")])
   end.
 
-Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
-  opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), opt("≠"), lconstr), "and")) :=
-  panic_if_goal_wrapped ();
-  take x.
+Module English.
+
+  Ltac2 Notation "Take" x(list1(seq(list1(ident, ","),
+    opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), opt("≠"), lconstr), "and")) :=
+    panic_if_goal_wrapped ();
+    take x.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Soit" x(list1(seq(list1(ident, ","),
+    opt (":"), opt("∈"), opt(">"), opt("≥"), opt("<"), opt("≤"), opt("≠"), lconstr), "et")) :=
+    panic_if_goal_wrapped ();
+    take x.
+
+End French.

@@ -226,7 +226,7 @@ Notation "'Add' 'the' 'following' 'line' 'to' 'the' 'proof:' 'Take' 'k' '∈' '�
 
 
 Ltac2 raise_goal_wrapped_error () :=
-  throw (of_string "You cannot do this right now, follow the advice in the goal window.").
+  throw (tr [("en", "You cannot do this right now, follow the advice in the goal window."); ("fr", "Vous ne pouvez pas faire cela maintenant, suivez le conseil dans la fenêtre du but.")]).
 
 (**
   Provide template hints for wrapped goals
@@ -234,25 +234,25 @@ Ltac2 raise_goal_wrapped_error () :=
 Ltac2 goal_wrapped_template_msg () : bool :=
   lazy_match! goal with
   | [|- Case.Wrapper ?case_type _] =>
-    replace_notice (Message.to_string (concat_list [of_string "- Case "; of_lconstr case_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [tr [("en", "- Case "); ("fr", "- Cas ")]; of_lconstr case_type; of_string ".${0}"])); true
   | [|- StateGoal.Wrapper ?goal_type] =>
-    replace_notice (Message.to_string (concat_list [of_string "We need to show that "; of_lconstr goal_type; of_string ".${0}"]));
-    replace_notice (Message.to_string (concat_list [of_string "We conclude that "; of_lconstr goal_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [tr [("en", "We need to show that "); ("fr", "Nous devons montrer que ")]; of_lconstr goal_type; of_string ".${0}"]));
+    replace_notice (Message.to_string (concat_list [tr [("en", "We conclude that "); ("fr", "Nous concluons que ")]; of_lconstr goal_type; of_string ".${0}"])); true
   | [|- VerifyGoal.Wrapper ?goal_type] =>
-    replace_notice (Message.to_string (concat_list [of_string "{ Indeed, "; of_lconstr goal_type; of_string ". }${0}"]));
-    replace_notice (Message.to_string (concat_list [of_string "{ We need to verify that "; of_lconstr goal_type; of_string ". }${0}"])); true
+    replace_notice (Message.to_string (concat_list [tr [("en", "{ Indeed, "); ("fr", "{ En effet, ")]; of_lconstr goal_type; of_string ". }${0}"]));
+    replace_notice (Message.to_string (concat_list [tr [("en", "{ We need to verify that "); ("fr", "{ Nous devons vérifier que ")]; of_lconstr goal_type; of_string ". }${0}"])); true
   | [|- StateHyp.Wrapper ?hyp_type _ _] =>
-    replace_notice (Message.to_string (concat_list [of_string "It holds that "; of_lconstr hyp_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [tr [("en", "It holds that "); ("fr", "Il s'avère que ")]; of_lconstr hyp_type; of_string ".${0}"])); true
   | [|- ByContradiction.Wrapper ?assumption_type _] =>
-    replace_notice (Message.to_string (concat_list [of_string "Assume that "; of_lconstr assumption_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [tr [("en", "Assume that "); ("fr", "Supposons que ")]; of_lconstr assumption_type; of_string ".${0}"])); true
   | [|- NaturalInduction.Base.Wrapper ?goal_type] =>
-    replace_notice (Message.to_string (concat_list [of_string "- We first show the base case "; of_lconstr goal_type; of_string ".${0}"])); true
+    replace_notice (Message.to_string (concat_list [tr [("en", "- We first show the base case "); ("fr", "- Traitons d'abord le cas de base ")]; of_lconstr goal_type; of_string ".${0}"])); true
   | [|- NaturalInduction.Step.Wrapper _] =>
-    replace_notice "- We now show the induction step.${0}"; true
+    replace_notice (tr_string [("en", "- We now show the induction step.${0}"); ("fr", "- Traitons maintenant l'étape de récurrence.${0}")]); true
   | [|- StrongIndIndxSeq.Base.Wrapper _] =>
-    replace_notice "- We first define n_0.${0}"; true
+    replace_notice (tr_string [("en", "- We first define n_0.${0}"); ("fr", "- Définissons d'abord n_0.${0}")]); true
   | [|- StrongIndIndxSeq.Step.Wrapper _] =>
-    replace_notice "- Take k ∈ ℕ and assume n_0,...,n_k are defined.${0}"; true
+    replace_notice (tr_string [("en", "- Take k ∈ ℕ and assume n_0,...,n_k are defined.${0}"); ("fr", "- Soit k ∈ ℕ et supposons que n_0,...,n_k sont définis.${0}")]); true
   | [|- False] => true
   | [|- _] => false
   end.
@@ -298,12 +298,13 @@ Ltac2 case (t:constr) :=
       let t := correct_type_by_wrapping t in
       match check_constr_equal v t with
         | true => apply (Case.wrap $v)
-        | false => throw (of_string "Wrong case specified.")
+        | false => throw (tr [("en", "Wrong case specified."); ("fr", "Mauvais cas spécifié.")])
       end
-    | [|- _] => throw (of_string "No need to specify case.")
+    | [|- _] => throw (tr [("en", "No need to specify case."); ("fr", "Inutile de spécifier un cas.")])
   end.
 
 Ltac2 Notation "Case" t(lconstr) := case t.
+Ltac2 Notation "Cas" t(lconstr) := case t.
 
 (**
   A goal to remind the reader to go back to an earlier

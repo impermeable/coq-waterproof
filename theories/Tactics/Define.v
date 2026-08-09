@@ -38,6 +38,20 @@ Local Ltac2 defining (u: ident) (t: constr) :=
     
 
 
-Ltac2 Notation "Define" u(ident) ":=" t(lconstr) :=
-  panic_if_goal_wrapped ();
-  defining u t.
+Module English.
+
+  Ltac2 Notation "Define" u(ident) ":=" t(lconstr) :=
+    panic_if_goal_wrapped ();
+    defining u t.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Définissons" u(ident) ":=" t(lconstr) :=
+    panic_if_goal_wrapped ();
+    defining u t.
+
+End French.

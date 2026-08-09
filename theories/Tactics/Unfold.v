@@ -21,6 +21,10 @@ Require Import Ltac2.Std.
 Require Import Ltac2.Message.
 Require Import Waterproof.Tactics.ItSuffices.
 Require Import Waterproof.Tactics.ItHolds.
+(* Bring the English notations of these tactics into scope: they are used
+   internally below (in suggestions tested via [Control.case]). *)
+Import ItSuffices.English.
+Import ItHolds.English.
 Local Ltac2 concat_list (ls : message list) : message :=
   List.fold_right concat ls (of_string "").
 
@@ -136,7 +140,7 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
       let rewritten_term :=
       match! goal with
       | [|- ?c -> True ] => c
-      | [|- _] => throw (Message.of_string "Unexpected error in tactic_in_constr. Please report."); constr:(False)
+      | [|- _] => throw (tr [("en", "Unexpected error in tactic_in_constr. Please report."); ("fr", "Erreur inattendue dans tactic_in_constr. Veuillez le signaler.")]); constr:(False)
       end in
       intro;
       exact I;
@@ -210,15 +214,15 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       if did_unfold_goal
         then
           if definitional then
-            (print_tactic (concat_list [of_string "We need to show that ";
+            (print_tactic (concat_list [tr [("en", "We need to show that "); ("fr", "Nous devons montrer que ")];
               of_lconstr unfolded_goal; of_string "."]))
           else
             match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
-            | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
+            | Err Succeeded => (print_tactic (concat_list [tr [("en", "It suffices to show that "); ("fr", "Il suffit de montrer que ")];
                                 of_lconstr unfolded_goal; of_string "."]))
-            | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
-            of_string " (this is probably caused by a misalignment in the automation for";
-            of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); of_string "It suffices to show that ";
+            | _ => warn (concat_list [tr [("en", "The following suggestion will likely not work,"); ("fr", "La suggestion suivante ne fonctionnera probablement pas,")];
+            tr [("en", " (this is probably caused by a misalignment in the automation for"); ("fr", " (ceci est probablement dû à un désalignement dans l'automatisation pour")];
+            tr [("en", " unfolding statements. Please notify your teacher or the Waterproof developers):"); ("fr", " le déroulement des énoncés. Veuillez prévenir votre enseignant ou les développeurs de Waterproof) :")]; fnl(); tr [("en", "It suffices to show that "); ("fr", "Il suffit de montrer que ")];
                                 of_lconstr unfolded_goal; of_string "."])
             end
         else ();
@@ -227,13 +231,13 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       if (Bool.neg (_is_empty only_unfolded_hyps))
         then
           let it_holds_msg := fun (x : constr) => concat_list
-            [of_string "It holds that "; of_lconstr x; of_string "."] in
+            [tr [("en", "It holds that "); ("fr", "Il s'avère que ")]; of_lconstr x; of_string "."] in
           let test_and_print unfolded_h :=
             match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
             | Err Succeeded => print_tactic (it_holds_msg unfolded_h)
-            | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
-            of_string " (this is probably caused by a misalignment in the automation for";
-            of_string " unfolding statements. Please notify your teacher or the Waterproof developers):"; fnl(); it_holds_msg unfolded_h])
+            | _ => warn (concat_list [tr [("en", "The following suggestion will likely not work,"); ("fr", "La suggestion suivante ne fonctionnera probablement pas,")];
+            tr [("en", " (this is probably caused by a misalignment in the automation for"); ("fr", " (ceci est probablement dû à un désalignement dans l'automatisation pour")];
+            tr [("en", " unfolding statements. Please notify your teacher or the Waterproof developers):"); ("fr", " le déroulement des énoncés. Veuillez prévenir votre enseignant ou les développeurs de Waterproof) :")]; fnl(); it_holds_msg unfolded_h])
             end in
           if definitional then
             (List.iter (fun unfolded_h => print_tactic (it_holds_msg unfolded_h))) only_unfolded_hyps
@@ -245,15 +249,15 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
       (* Print no statements with definition *)
       if (Bool.and notify_if_not_present definitional) then
         (match def_name with
-        | None => info_notice (of_string "Definition does not appear in any statement.")
+        | None => info_notice (tr [("en", "Definition does not appear in any statement."); ("fr", "La définition n'apparaît dans aucun énoncé.")])
         | Some def_name => info_notice (concat_list
             [of_string "'"; of_string def_name; of_string "'";
-              of_string " cannot be used in any statement."])
+              tr [("en", " cannot be used in any statement."); ("fr", " ne peut être utilisé dans aucun énoncé.")]])
         end) else ();
 
   (* Throw error if required *)
   if throw_error
-    then throw (of_string "Remove this line in the final version of your proof.")
+    then throw (tr [("en", "Remove this line in the final version of your proof."); ("fr", "Supprimez cette ligne dans la version finale de votre preuve.")])
     else ().
 
 (**
@@ -317,10 +321,10 @@ Ltac2 wp_unfold_by_ref (r : reference) (notify_if_not_present : bool) :=
 
 Ltac2 wp_expand (r : reference) :=
   wp_unfold_by_ref r true;
-  throw (of_string "Remove this line in the final version of your proof.").
+  throw (tr [("en", "Remove this line in the final version of your proof."); ("fr", "Supprimez cette ligne dans la version finale de votre preuve.")]).
 
 Ltac2 wp_expand_deprecated (r : reference) :=
-  warn (of_string "Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead.");
+  warn (tr [("en", "Warning: The notation 'Expand the definition of' is deprecated. Please use 'Expand' instead."); ("fr", "Attention : la notation « Développons la définition de » est obsolète. Veuillez utiliser « Développons » à la place.")]);
   wp_expand r.
 
 (**
@@ -334,17 +338,38 @@ Ltac2 wp_expand_deprecated (r : reference) :=
   Waterproof Register Unfold Apply "infimum" is_infimum ; (alt_char_inf).
   Waterproof Register Unfold Rewrite "powerRZ" powerRZ ; (powerRZ_Rpower).]
 *)
-Ltac2 Notation "Expand" x(reference) :=
-  wp_expand x.
+Module English.
 
-(** Deprecated version of this notation *)
-Ltac2 Notation "Expand" "the" "definition" "of" x(reference) :=
-  wp_expand_deprecated x.
+  Ltac2 Notation "Expand" x(reference) :=
+    wp_expand x.
 
-(**
-  Unfold all occurences of all registered definitions and alternative characterizations.
-*)
-Ltac2 Notation "Expand" "All" :=
-  let ls := get_unfold_references_ffi () in
-  List.iter (fun l => wp_unfold_by_ref l false) ls;
-  throw (of_string "Remove this line in the final version of your proof.").
+  (** Deprecated version of this notation *)
+  Ltac2 Notation "Expand" "the" "definition" "of" x(reference) :=
+    wp_expand_deprecated x.
+
+  (** Unfold all occurences of all registered definitions and alternative characterizations. *)
+  Ltac2 Notation "Expand" "All" :=
+    let ls := get_unfold_references_ffi () in
+    List.iter (fun l => wp_unfold_by_ref l false) ls;
+    throw (tr [("en", "Remove this line in the final version of your proof."); ("fr", "Supprimez cette ligne dans la version finale de votre preuve.")]).
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Développons" x(reference) :=
+    wp_expand x.
+
+  (** Version dépréciée de cette notation *)
+  Ltac2 Notation "Développons" "la" "définition" "de" x(reference) :=
+    wp_expand_deprecated x.
+
+  (** Développe toutes les occurrences de toutes les définitions et caractérisations alternatives enregistrées. *)
+  Ltac2 Notation "Développons" "tout" :=
+    let ls := get_unfold_references_ffi () in
+    List.iter (fun l => wp_unfold_by_ref l false) ls;
+    throw (tr [("en", "Remove this line in the final version of your proof."); ("fr", "Supprimez cette ligne dans la version finale de votre preuve.")]).
+
+End French.

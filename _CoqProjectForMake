@@ -51,6 +51,7 @@ theories/Notations/Reals.v
 theories/Notations/Sets.v
 
 theories/Tactics.v
+theories/French.v
 theories/Tactics/Assume.v
 theories/Tactics/Because.v
 theories/Tactics/BothDirections.v

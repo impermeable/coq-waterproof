@@ -92,8 +92,8 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
   | sig ?pred =>
     check_binder_warn pred var true
   | _ => throw (concat_list
-    [of_string "Couldn't obtain "; of_ident var; of_string "."; fnl ();
-     of_string "There aren't enough variables to obtain."])
+    [tr [("en", "Couldn't obtain "); ("fr", "Impossible d'obtenir ")]; of_ident var; of_string "."; fnl ();
+     tr [("en", "There aren't enough variables to obtain."); ("fr", "Il n'y a pas assez de variables à obtenir.")]])
   end;
   destruct $h as [$var $hyp];
   unfold subset_type in $var;
@@ -124,7 +124,7 @@ Ltac2 obtain_according_to (var : ident) (hyp : ident) :=
 *)
 Local Ltac2 panic_ident_Qed (i : ident) :=
   if Ident.equal i @Qed
-    then throw (of_string "Syntax error: variable name expected after 'such'.")
+    then throw (tr [("en", "Syntax error: variable name expected after 'such'."); ("fr", "Erreur de syntaxe : nom de variable attendu après « tel ».")])
     else ().
 
 (** *
@@ -157,7 +157,7 @@ Ltac2 obtain_seq_according_to (vars : ident list) (hyp) :=
   | ex  _ => ()
   | sig _ => ()
   | _ => throw (concat_list
-    [of_string "Can only obtain variables from 'there exists...' statements."])
+    [tr [("en", "Can only obtain variables from 'there exists...' statements."); ("fr", "On ne peut obtenir des variables qu'à partir d'énoncés « il existe ... ».")]])
   end;
   assert $pre_og_type as $prop_label;
   Control.focus 1 1 (fun () => exact $og_term);
@@ -197,19 +197,39 @@ Ltac2 obtain_according_to_last (vars : ident list) :=
     | ex  _ =>
       obtain_seq_according_to vars id_h
     | sig _ => obtain_seq_according_to vars id_h
-    | _ => throw (of_string
-      "Previous statement is not of the form 'there exists ...'.")
+    | _ => throw (tr [("en", "Previous statement is not of the form 'there exists ...'.");
+      ("fr", "L'énoncé précédent n'est pas de la forme « il existe ... ».")])
     end
-  | [ |- _] => throw (of_string
-    "No statement to obtain variable from.")
+  | [ |- _] => throw (tr [("en", "No statement to obtain variable from.");
+    ("fr", "Aucun énoncé à partir duquel obtenir une variable.")])
   end.
 
-Ltac2 Notation "Obtain" "such" _(opt("a")) _(opt("an"))
-    vars(list1(ident, ",")) :=
-  panic_if_goal_wrapped ();
-  obtain_according_to_last vars.
+Module English.
 
-Ltac2 Notation "Obtain" vars(list1(ident, ",")) "according" "to"
-    hyp(seq("(", ident, ")")):=
-  panic_if_goal_wrapped ();
-  obtain_seq_according_to vars hyp.
+  Ltac2 Notation "Obtain" "such" _(opt("a")) _(opt("an"))
+      vars(list1(ident, ",")) :=
+    panic_if_goal_wrapped ();
+    obtain_according_to_last vars.
+
+  Ltac2 Notation "Obtain" vars(list1(ident, ",")) "according" "to"
+      hyp(seq("(", ident, ")")):=
+    panic_if_goal_wrapped ();
+    obtain_seq_according_to vars hyp.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Obtenons" "un" "tel"
+      vars(list1(ident, ",")) :=
+    panic_if_goal_wrapped ();
+    obtain_according_to_last vars.
+
+  Ltac2 Notation "Obtenons" vars(list1(ident, ",")) "à" "partir" "de"
+      hyp(seq("(", ident, ")")):=
+    panic_if_goal_wrapped ();
+    obtain_seq_according_to vars hyp.
+
+End French.

@@ -38,13 +38,31 @@ Require Import Util.MessagesToUser.
 Ltac2 both_statements_iff () :=
   lazy_match! goal with 
     | [ |- _ <-> _] => split; Control.enter (fun () => apply StateGoal.unwrap)
-    | [ |- _ ] => throw (Message.of_string "The goal is not to show an `if and only if`-statement, try another approach.")
+    | [ |- _ ] => throw (tr [("en", "The goal is not to show an `if and only if`-statement, try another approach."); ("fr", "Le but n'est pas de montrer un énoncé « si et seulement si », essayez une autre approche.")])
   end.
 
-Ltac2 Notation "We" "show" "both" "directions" := 
-  panic_if_goal_wrapped ();
-  both_statements_iff ().
+Module English.
 
-Ltac2 Notation "We" "prove" "both" "directions" := 
-  panic_if_goal_wrapped ();
-  both_statements_iff ().
+  Ltac2 Notation "We" "show" "both" "directions" :=
+    panic_if_goal_wrapped ();
+    both_statements_iff ().
+
+  Ltac2 Notation "We" "prove" "both" "directions" :=
+    panic_if_goal_wrapped ();
+    both_statements_iff ().
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Prouvons" "les" "deux" "sens" :=
+    panic_if_goal_wrapped ();
+    both_statements_iff ().
+
+  Ltac2 Notation "Démontrons" "les" "deux" "sens" :=
+    panic_if_goal_wrapped ();
+    both_statements_iff ().
+
+End French.

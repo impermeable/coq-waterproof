@@ -64,7 +64,7 @@ Ltac2 either_or_prop (t1:constr) (t2:constr) :=
         destruct $h_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-      | Err _ => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
+      | Err _ => throw (tr [("en", "Could not find a proof that the first or the second statement holds."); ("fr", "Impossible de trouver une preuve que le premier ou le deuxième énoncé est vrai.")])
     end.
 
 (**
@@ -95,7 +95,7 @@ Ltac2 either_or_type (t1:constr) (t2:constr) :=
         destruct $h_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t2))
-      | Err _ => throw (Message.of_string "Could not find a proof that the first or the second statement holds.")
+      | Err _ => throw (tr [("en", "Could not find a proof that the first or the second statement holds."); ("fr", "Impossible de trouver une preuve que le premier ou le deuxième énoncé est vrai.")])
     end.
 
 (**
@@ -120,10 +120,6 @@ Ltac2 either_or (t1:constr) (t2:constr) :=
   if goal_is_prop
     then either_or_prop t1 t2
     else either_or_type t1 t2.
-
-Ltac2 Notation "Either" t1(lconstr) "or" t2(lconstr) := 
-  panic_if_goal_wrapped ();
-  either_or t1 t2.
 
 (* Type that enables a three-case distiction to be solved with three bullets that are of the same level. *)
 Inductive sumtriad (A B C : Prop): Set :=
@@ -226,7 +222,7 @@ Ltac2 either_or_or_prop (t1:constr) (t2:constr) (t3:constr) :=
         destruct $h2_val;
         Control.focus 1 1 (fun () => apply (Case.unwrap $t2));
         Control.focus 2 2 (fun () => apply (Case.unwrap $t3)))
-    | Err _ => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
+    | Err _ => throw (tr [("en", "Could not find a proof that the first, the second or the third statement holds."); ("fr", "Impossible de trouver une preuve que le premier, le deuxième ou le troisième énoncé est vrai.")])
   end.
 
 (**
@@ -264,7 +260,7 @@ Ltac2 either_or_or_type (t1:constr) (t2:constr) (t3:constr) :=
       Control.focus 1 1 (fun () => apply (Case.unwrap $t1));
       Control.focus 2 2 (fun () => apply (Case.unwrap $t2));
       Control.focus 3 3 (fun () => apply (Case.unwrap $t3))
-    | Err _ => throw (Message.of_string "Could not find a proof that the first, the second or the third statement holds.")
+    | Err _ => throw (tr [("en", "Could not find a proof that the first, the second or the third statement holds."); ("fr", "Impossible de trouver une preuve que le premier, le deuxième ou le troisième énoncé est vrai.")])
   end.
 
 (**
@@ -288,6 +284,28 @@ Ltac2 either_or_or (t1:constr) (t2:constr) (t3:constr) :=
       else either_or_or_type t1 t2 t3
   end.
 
-Ltac2 Notation "Either" t1(lconstr) "," t2(lconstr) "or" t3(lconstr) := 
-  panic_if_goal_wrapped ();
-  either_or_or t1 t2 t3.
+Module English.
+
+  Ltac2 Notation "Either" t1(lconstr) "or" t2(lconstr) :=
+    panic_if_goal_wrapped ();
+    either_or t1 t2.
+
+  Ltac2 Notation "Either" t1(lconstr) "," t2(lconstr) "or" t3(lconstr) :=
+    panic_if_goal_wrapped ();
+    either_or_or t1 t2 t3.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Ou" "bien" t1(lconstr) "ou" "bien" t2(lconstr) :=
+    panic_if_goal_wrapped ();
+    either_or t1 t2.
+
+  Ltac2 Notation "Ou" "bien" t1(lconstr) "," t2(lconstr) "ou" "bien" t3(lconstr) :=
+    panic_if_goal_wrapped ();
+    either_or_or t1 t2 t3.
+
+End French.

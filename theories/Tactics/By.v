@@ -40,25 +40,58 @@ Local Ltac2 parse_arguments (x1 : constr)
   | None => [x1]
   end.
 
-Ltac2 Notation "it" "holds" : 0 := "it holds".
-Ltac2 Notation "we" "conclude" : 3 := "we conclude".
-Ltac2 Notation "it" "suffices" "to" "show" : 0 := "it suffices".
+Module English.
 
-Ltac2 Notation "By"
-  first_term(lconstr)
-  x2(opt(
-    seq(
-      opt(seq(",", list1(lconstr, ","))),
-      seq("and", lconstr)
-    )
-  )) x(tactic) "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
-  let parsed_args := parse_arguments first_term x2 in
-  let xtr_lemmas := List.filter_out (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
-  let xtr_dbs := List.filter (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
-  let xtr_dbs := List.map rocq_string_to_ltac2_string xtr_dbs in
-  if String.equal x "it holds" then
-    (wp_assert_by_with_checks claim label xtr_lemmas xtr_dbs)
-  else if String.equal x "we conclude" then
-    (wp_conclude_by_with_checks claim xtr_lemmas xtr_dbs)
-  else
-    (wp_enough_by_with_checks claim xtr_lemmas xtr_dbs).
+  Ltac2 Notation "it" "holds" : 0 := "it holds".
+  Ltac2 Notation "we" "conclude" : 3 := "we conclude".
+  Ltac2 Notation "it" "suffices" "to" "show" : 0 := "it suffices".
+
+  Ltac2 Notation "By"
+    first_term(lconstr)
+    x2(opt(
+      seq(
+        opt(seq(",", list1(lconstr, ","))),
+        seq("and", lconstr)
+      )
+    )) x(tactic) "that" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
+    let parsed_args := parse_arguments first_term x2 in
+    let xtr_lemmas := List.filter_out (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
+    let xtr_dbs := List.filter (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
+    let xtr_dbs := List.map rocq_string_to_ltac2_string xtr_dbs in
+    if String.equal x "it holds" then
+      (wp_assert_by_with_checks claim label xtr_lemmas xtr_dbs)
+    else if String.equal x "we conclude" then
+      (wp_conclude_by_with_checks claim xtr_lemmas xtr_dbs)
+    else
+      (wp_enough_by_with_checks claim xtr_lemmas xtr_dbs).
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "il" "s'avère" : 0 := "it holds".
+  Ltac2 Notation "nous" "concluons" : 3 := "we conclude".
+  Ltac2 Notation "il" "suffit" "de" "montrer" : 0 := "it suffices".
+
+  Ltac2 Notation "Par"
+    first_term(lconstr)
+    x2(opt(
+      seq(
+        opt(seq(",", list1(lconstr, ","))),
+        seq("et", lconstr)
+      )
+    )) x(tactic) "que" claim(lconstr) label(opt(seq("as", "(", ident, ")")))  :=
+    let parsed_args := parse_arguments first_term x2 in
+    let xtr_lemmas := List.filter_out (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
+    let xtr_dbs := List.filter (fun z => Constr.equal (Constr.type z) constr:(string)) parsed_args in
+    let xtr_dbs := List.map rocq_string_to_ltac2_string xtr_dbs in
+    if String.equal x "it holds" then
+      (wp_assert_by_with_checks claim label xtr_lemmas xtr_dbs)
+    else if String.equal x "we conclude" then
+      (wp_conclude_by_with_checks claim xtr_lemmas xtr_dbs)
+    else
+      (wp_enough_by_with_checks claim xtr_lemmas xtr_dbs).
+
+End French.

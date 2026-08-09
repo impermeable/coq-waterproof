@@ -33,7 +33,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
   If succesful, replaces current goal by proposed goal. *)
 Local Ltac2 wp_enough (new_goal : constr) :=
   let err_msg := concat_list
-    [of_string "Could not verify that it suffices to show "; of_lconstr new_goal; of_string "."] in
+    [tr [("en", "Could not verify that it suffices to show "); ("fr", "Impossible de vérifier qu'il suffit de montrer ")]; of_lconstr new_goal; of_string "."] in
   match Control.case (fun () =>
     let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by (waterprove 5 true Main))
@@ -49,7 +49,7 @@ Local Ltac2 wp_enough (new_goal : constr) :=
   If succesful, replaces current goal by proposed goal. *)
 Local Ltac2 core_wp_enough_by (new_goal : constr) (xtr_lemmas : constr list) (xtr_dbs : hint_db_name list) :=
   let err_msg := concat_list
-    [of_string "Could not verify that it suffices to show "; of_lconstr new_goal; of_string "."] in
+    [tr [("en", "Could not verify that it suffices to show "); ("fr", "Impossible de vérifier qu'il suffit de montrer ")]; of_lconstr new_goal; of_string "."] in
   match Control.case (fun () =>
     let new_goal := correct_type_by_wrapping new_goal in
     enough $new_goal by
@@ -89,18 +89,40 @@ Local Ltac2 wp_enough_since (claim : constr) (xtr_claim : constr) :=
 
 Local Ltac2 wp_enough_by_admit (claim : constr) :=
   enough $claim by admit;
-  warn (concat_list [of_string "Please come back later to prove that";
-    of_string " it suffices to show that ";
+  warn (concat_list [tr [("en", "Please come back later to prove that"); ("fr", "Veuillez revenir plus tard pour prouver")];
+    tr [("en", " it suffices to show that "); ("fr", " qu'il suffit de montrer que ")];
     of_lconstr claim]).
 
-Ltac2 Notation "It" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
-  panic_if_goal_wrapped ();
-  wp_enough statement.
+Module English.
 
-Ltac2 Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
-  panic_if_goal_wrapped ();
-  wp_enough_since statement xtr_claim.
+  Ltac2 Notation "It" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_enough statement.
 
-Ltac2 Notation "By" "magic" "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
-  panic_if_goal_wrapped ();
-  wp_enough_by_admit statement.
+  Ltac2 Notation "Since" xtr_claim(lconstr) "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_enough_since statement xtr_claim.
+
+  Ltac2 Notation "By" "magic" "it" "suffices" "to" "show" _(opt("that")) statement(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_enough_by_admit statement.
+
+End English.
+
+Export English.
+
+Module French.
+
+  Ltac2 Notation "Il" "suffit" "de" "montrer" _(opt("que")) statement(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_enough statement.
+
+  Ltac2 Notation "Puisque" xtr_claim(lconstr) "il" "suffit" "de" "montrer" _(opt("que")) statement(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_enough_since statement xtr_claim.
+
+  Ltac2 Notation "Par" "magie" "il" "suffit" "de" "montrer" _(opt("que")) statement(lconstr) :=
+    panic_if_goal_wrapped ();
+    wp_enough_by_admit statement.
+
+End French.
