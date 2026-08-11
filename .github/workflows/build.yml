@@ -21,10 +21,13 @@ jobs:
         with:
           custom_image: 'rocq/rocq-prover:9.0-ocaml-4.14-flambda'
           opam_file: 'rocq-waterproof.opam'
-          before_script: |
-            startGroup "Install dependencies"
+          before_install: | 
+            startGroup "Unpin dune"
               opam config list; opam repo list; opam list
               opam update
               opam unpin dune -n || true
+            endGroup
+          before_script: |
+            startGroup "Install dependencies"
               sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev              
             endGroup
