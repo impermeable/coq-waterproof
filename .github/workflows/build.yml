@@ -25,5 +25,6 @@ jobs:
             startGroup "Install dependencies"
               sudo apt-get -y -q install binutils make csh g++ sed gawk autoconf automake autotools-dev
               opam config list; opam repo list; opam list
+              opam update
               opam unpin dune -n || true
             endGroup
