@@ -5,7 +5,7 @@
         "dockerfile": "Dockerfile"
     },
 
-    "onCreateCommand": "echo \"Installing rocq-waterproof for the first time\" && dune build -p coq-waterproof",
+    "onCreateCommand": "echo \"Installing rocq-waterproof for the first time\" && dune build -p rocq-waterproof",
 
     "customizations": {
         "vscode": {
