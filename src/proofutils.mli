@@ -112,7 +112,7 @@ module type Mergeable = sig
 
 end
 
-(** Generalization of tactics defined in coq-core for {! Mergeable}-typed tactics *)
+(** Generalization of tactics defined in rocq-core for {! Mergeable}-typed tactics *)
 module TypedTactics : functor (M : Mergeable) -> sig
 
   (** Merge of tactics' returned elements *)
