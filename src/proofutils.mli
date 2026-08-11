@@ -206,7 +206,7 @@ val tclTraceFirst :
   Backtracking.trace Proofview.tactic
 
 (**
-  Rewrite of Coq's hint printer to keep only the necessary parts
+  Rewrite of Rocq's hint printer to keep only the necessary parts
 *)
 val pr_hint :
   Environ.env -> Evd.evar_map -> Hints.FullHint.t -> Pp.t

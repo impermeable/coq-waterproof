@@ -1,4 +1,4 @@
-src/META.coq-waterproof
+src/META.rocq-waterproof
 -R theories/ Waterproof
 -I src
 
@@ -85,7 +85,7 @@ theories/Util/TypeCorrector.v
 theories/Waterproof.v
 theories/Waterprove.v
 
-# Coq-Waterproof libraries
+# Rocq-Waterproof libraries
 
 ## Analysis
 theories/Libs/Logic/InformativeEpsilon.v
@@ -107,7 +107,7 @@ theories/Libs/Analysis/Subsequences.v
 theories/Libs/Analysis/SupAndInf.v
 theories/Libs/Sets.v
 
-# Coq-Waterproof tests
+# Rocq-Waterproof tests
 
 ## Chains
 tests/chains/Inequalities.v

@@ -16,7 +16,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-DECLARE PLUGIN "coq-waterproof.plugin"
+DECLARE PLUGIN "rocq-waterproof.plugin"
 
 {
 open Exceptions
@@ -72,7 +72,7 @@ let () = add_scope "open_lconstr" (fun arg ->
 (* Doing this enables parsing the mathematical expressions without parentheses *)
 (* The cost of this is that these words are no longer allowed to be variables *)
 {
-let () = Mltop.add_init_function "coq-waterproof.plugin" @@ fun () ->
+let () = Mltop.add_init_function "rocq-waterproof.plugin" @@ fun () ->
     Procq.set_keyword_state
       (List.fold_left CLexer.add_keyword (Procq.get_keyword_state())
       ["and"; "as"; "hold"; "holds"; "it"; "or"; "we"; "that"])

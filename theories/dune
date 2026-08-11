@@ -1,17 +1,17 @@
 (coq.theory
  (name Waterproof)
- (package coq-waterproof)
+ (package rocq-waterproof)
  (flags :standard)
  (theories Stdlib Ltac2)
- (plugins coq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2))
+ (plugins rocq-waterproof.plugin rocq-runtime.plugins.ltac rocq-runtime.plugins.ltac2))
 
 (include_subdirs qualified)
 
 (rule
  (alias runtest)
  (deps
-  (package coq-waterproof)
-  (package coq-lsp)
+  (package rocq-waterproof)
+  (package rocq-lsp)
   %{project_root}/tests/test-folder.py
   (source_tree %{workspace_root}/test-exercises))
  (action (progn

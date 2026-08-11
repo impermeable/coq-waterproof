@@ -33,11 +33,11 @@ Ltac2 Type unfold_action := [
   | Rewrite (string, constr)
 ].
 
-Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.coq-waterproof" "extract_def_external".
-Ltac2 @ external find_unfolds_by_str_ffi : string -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_by_str_external".
-Ltac2 @ external find_unfolds_by_ref_ffi : reference -> unfold_action list := "rocq-runtime.plugins.coq-waterproof" "find_unfold_by_ref_external".
+Ltac2 @ external extract_def_ffi : string -> reference option := "rocq-runtime.plugins.rocq-waterproof" "extract_def_external".
+Ltac2 @ external find_unfolds_by_str_ffi : string -> unfold_action list := "rocq-runtime.plugins.rocq-waterproof" "find_unfold_by_str_external".
+Ltac2 @ external find_unfolds_by_ref_ffi : reference -> unfold_action list := "rocq-runtime.plugins.rocq-waterproof" "find_unfold_by_ref_external".
 
-Ltac2 @ external get_unfold_references_ffi : unit -> reference list := "rocq-runtime.plugins.coq-waterproof" "get_unfold_references_external".
+Ltac2 @ external get_unfold_references_ffi : unit -> reference list := "rocq-runtime.plugins.rocq-waterproof" "get_unfold_references_external".
 
 
 Local Ltac2 _is_empty (ls : 'a list) :=

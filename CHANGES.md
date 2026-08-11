@@ -1,4 +1,4 @@
-# Change log for the coq-waterproof library
+# Change log for the rocq-waterproof library
 
 ## Version 3.1.0+9.0
 
