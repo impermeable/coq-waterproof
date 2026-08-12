@@ -31,6 +31,10 @@ Then, one can install the `rocq-waterproof` plugin by:
 ```bash
 $ opam install rocq-waterproof
 ```
+or, in the transition period in the Coq -> Rocq namechange for `rocq-waterproof`, by
+```bash
+$ opam install coq-waterproof
+```
 
 This will install the latest release of rocq-waterproof.
 
