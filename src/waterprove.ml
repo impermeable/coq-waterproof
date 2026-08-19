@@ -29,22 +29,23 @@ open Wp_rewrite
 (**
   Is automation shield enabled ?
 *)
-let automation_shield: bool ref = Summary.ref ~name:"automation_shield" true
+let automation_shield: bool Summary.Ref.t = Summary.ref ~name:"automation_shield" true
 
 (**
   Do we want to debug the automation ?
 *)
-let automation_debug : bool ref = Summary.ref ~name:"automation_debug" false
+let automation_debug : bool Summary.Ref.t = Summary.ref ~name:"automation_debug" false
 
 (**
   Should rewrite hints be printed ?
 *)
-let print_rewrite_hints : bool ref = Summary.ref ~name:"print_rewrite_hints" false
+let print_rewrite_hints : bool Summary.Ref.t = Summary.ref ~name:"print_rewrite_hints" false
 
 (**
   Function that will actually call automation functions
 *)
 let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list): unit tactic =
+  let open Summary.Ref in
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_auto !automation_debug depth lems databases;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ wp_eauto !automation_debug depth lems databases;
@@ -56,6 +57,7 @@ let automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (d
   Same function as {! automation_routine} but with restricted version of automation functions
 *)
 let restricted_automation_routine (depth: int) (lems: Tactypes.delayed_open_constr list) (databases: hint_db_name list) (must_use: Pp.t list) (forbidden: Pp.t list): unit tactic =
+  let open Summary.Ref in
   Tacticals.tclFIRST [
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_auto !automation_debug depth lems databases must_use forbidden;
     Tacticals.tclCOMPLETE @@ tclIGNORE @@ rwp_eauto !automation_debug depth lems databases must_use forbidden;
@@ -83,6 +85,7 @@ let waterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_open
   (dbs: hint_db_name list) (database_type: database_type): unit tactic =
   Proofview.Goal.enter @@ fun goal ->
     begin
+      let open Summary.Ref in
       if shield && !automation_shield then
         automation_routine 3 lems (dbs @ (get_current_databases Shorten))
       else
@@ -107,6 +110,7 @@ let rwaterprove (depth: int) ?(shield: bool = false) (lems: Tactypes.delayed_ope
   (dbs : hint_db_name list) (database_type: database_type) (must_use: constr list) (forbidden: constr list): unit tactic =
   Proofview.Goal.enter @@ fun goal ->
     begin
+      let open Summary.Ref in
       let env = Proofview.Goal.env goal in
       let sigma = Proofview.Goal.sigma goal in
       let must_use_tactics = List.map (Printer.pr_econstr_env env sigma) must_use in

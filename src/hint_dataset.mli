@@ -19,12 +19,12 @@
 (**
   Contains the hint dataset that is currently loaded
 *)
-val loaded_hint_dataset : string list ref
+val loaded_hint_dataset : string list Summary.Ref.t
 
 (**
   Dictionary with dataset names as keys and datasets as values
 *)
-val existing_datasets: Hint_dataset_declarations.hint_dataset Proofutils.StringMap.t ref
+val existing_datasets: Hint_dataset_declarations.hint_dataset Proofutils.StringMap.t Summary.Ref.t
 
 (**
   Replace all current loaded hints by the ones declared in the [hint_dataset]

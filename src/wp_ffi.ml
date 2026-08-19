@@ -177,10 +177,12 @@ let () =
     blank_evars_in_term
 
 let () =
+  let open Summary.Ref in
   define "get_print_hypothesis_flag_external" (unit @-> ret bool) @@
     fun () -> !print_hypothesis_help
 
 let () =
+  let open Summary.Ref in
   define "get_redirect_errors_flag_external" (unit @-> ret bool) @@
     fun () -> !redirect_errors
 
@@ -189,6 +191,7 @@ let () =
     get_last_warning
 
 let () =
+  let open Summary.Ref in
   define "get_feedback_log_external" (feedback_level @-> ret (list pp)) @@
     fun input -> !(feedback_log input)
 

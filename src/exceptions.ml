@@ -30,7 +30,7 @@ let wp_error_log = Summary.ref ~name:"wp_error_log" []
 (**
   A rudimentary feedback log
 *)
-let feedback_log (lvl : level) : Pp.t list ref =
+let feedback_log (lvl : level) : Pp.t list Summary.Ref.t =
   match lvl with
   | Debug -> wp_debug_log
   | Info -> wp_info_log
@@ -51,6 +51,7 @@ let info_counter = Summary.ref ~name:"info_counter" 0
 let wp_feedback_logger (fb : feedback) : unit =
   match fb.contents with
   | Message (lvl, _, _, msg) ->
+    let open Summary.Ref in
     (feedback_log lvl :=
       (msg) :: !(feedback_log lvl);
     info_counter := !info_counter + 1)
@@ -60,6 +61,7 @@ let wp_feedback_logger (fb : feedback) : unit =
   Adds wp_feedback_logger to Coq's feedback mechanism
 *)
 let add_wp_feedback_logger () : unit =
+  let open Summary.Ref in
   match !wp_feedback_logger_id with
   | Some _ -> msg_warning (str "The waterproof feedback logger was already added")
   | None -> let id = Feedback.add_feeder wp_feedback_logger in
@@ -73,22 +75,22 @@ let fatal_flag: unit Exninfo.t = Exninfo.make "waterproof_fatal_flag"
 (**
   The last thrown warning
 *)
-let last_thrown_warning : Pp.t option ref = Summary.ref ~name:"last_thrown_warning" None
+let last_thrown_warning : Pp.t option Summary.Ref.t = Summary.ref ~name:"last_thrown_warning" None
 
 (**
   Redirect warnings: this is useful when testing the plugin
 *)
-let redirect_feedback : bool ref = Summary.ref ~name:"redirect_feedback" false
+let redirect_feedback : bool Summary.Ref.t = Summary.ref ~name:"redirect_feedback" false
 
 (**
   Redirect errors: this is useful when testing the plugin
 *)
-let redirect_errors : bool ref = Summary.ref ~name:"redirect_errors" false
+let redirect_errors : bool Summary.Ref.t = Summary.ref ~name:"redirect_errors" false
 
 (**
   Print hypotheses help
 *)
-let print_hypothesis_help : bool ref = Summary.ref ~name:"print_hypothesis_help" false
+let print_hypothesis_help : bool Summary.Ref.t = Summary.ref ~name:"print_hypothesis_help" false
 
 (**
   Type of exceptions used in Wateproof
@@ -124,6 +126,7 @@ let throw ?(info: Exninfo.info = Exninfo.null) (exn: wexn): 'a =
   Send a message
 *)
 let message (lvl : Feedback.level) (input : Pp.t) : unit Proofview.tactic =
+  let open Summary.Ref in
   if !redirect_feedback then
     Proofview.tclUNIT @@ (feedback_log lvl := input :: !(feedback_log lvl))
   else
@@ -157,11 +160,13 @@ let err (input : Pp.t) : unit Proofview.tactic =
   Return the last warning
 *)
 let get_last_warning () : Pp.t option =
+  let open Summary.Ref in
   match !(feedback_log Warning) with
-| [] -> None
-| hd :: tl -> Some hd
+  | [] -> None
+  | hd :: tl -> Some hd
 
 let wp_error_handler (e : exn) : Pp.t option =
+  let open Summary.Ref in
   if !filter_errors then
     (match e with
     | CErrors.UserError pps ->
