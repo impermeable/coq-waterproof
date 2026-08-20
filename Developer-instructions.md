@@ -31,7 +31,7 @@ Most development is done based off the main branch, and then the following setup
 ```
 opam init
 eval $(opam env)
-opam install rocq-lsp.0.2.4+9.0
+opam install coq-lsp.0.2.4+9.0
 opam install ocaml-lsp-server
 ```
 replacing 9.0 with the desired version of Rocq, or more generally, replacing
@@ -51,7 +51,7 @@ opam switch create your_preferred_switch_name ocaml-base-compiler.4.14.1
 ```
 Next you can install the background libraries again
 ```
-opam install rocq-lsp.0.2.4+9.0
+opam install coq-lsp.0.2.4+9.0
 opam install ocaml-lsp-server
 ```
 again replacing 9.0 with the desired version of Rocq
@@ -133,7 +133,7 @@ dune build -p rocq-waterproof @runtest
 
 ## Setting up VSCode
 
-If you use VSCode, we recommend installing the [OCaml Platform](https://marketplace.visualstudio.com/items?itemName=ocamllabs.ocaml-platform) and [Rocq LSP](https://marketplace.visualstudio.com/items?itemName=ejgallego.rocq-lsp) plugins.
+If you use VSCode, we recommend installing the [OCaml Platform](https://marketplace.visualstudio.com/items?itemName=ocamllabs.ocaml-platform) and [Rocq LSP](https://marketplace.visualstudio.com/items?itemName=ejgallego.coq-lsp) plugins.
 
 ## Making Ocaml functions available from Ltac2: Using the foreign function interface (ffi)
 

@@ -9,7 +9,7 @@
 
     "customizations": {
         "vscode": {
-            "extensions" : [ "ejgallego.rocq-lsp",
+            "extensions" : [ "ejgallego.coq-lsp",
                              "ocamllabs.ocaml-platform" ]
         }
     }

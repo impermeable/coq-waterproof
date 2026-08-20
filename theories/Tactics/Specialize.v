@@ -266,7 +266,7 @@ Local Ltac2 wp_specialize (var_choice_list : (ident * constr) list) (h:constr) :
       fnl () ; of_string "This is a not a problem, but you may report this example, mentioning the exception:"; fnl (); of_exn exn]); []
         end in
       let w := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
-      (* The introduction of helper definition was added for Rocq v8.18 since otherwise
+      (* The introduction of helper definition was added for Coq v8.18 since otherwise
          one would get an error saying that one cannot instantiate the evar.
          We build variable names for the helper variables from the
          binder name, in the hope to avoid naming conflicts. *)
@@ -427,7 +427,7 @@ Local Ltac2 wp_specialize' (var_choice_list : (ident * constr) list) (h:constr) 
   let aux_id := Fresh.fresh (Fresh.Free.of_goal ()) @_H in
   assert $possibly_sealed_statement as $aux_id;
   Control.focus 1 1 (fun () => exact $h);
-  (* The introduction of helper definitions was added for Rocq v8.18 since otherwise
+  (* The introduction of helper definitions was added for Coq v8.18 since otherwise
     one would get an error saying that one cannot instantiate the evar.
     We build variable names for the helper variables from the
     binder name, in the hope to avoid naming conflicts. *)

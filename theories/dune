@@ -11,7 +11,7 @@
  (alias runtest)
  (deps
   (package rocq-waterproof)
-  (package rocq-lsp)
+  (package coq-lsp)
   %{project_root}/tests/test-folder.py
   (source_tree %{workspace_root}/test-exercises))
  (action (progn
