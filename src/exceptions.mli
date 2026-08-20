@@ -19,17 +19,17 @@
 (**
   A flag that determines whether Waterproof should filter errors
 *)
-val filter_errors : bool ref
+val filter_errors : bool Summary.Ref.t
 
 (**
   A rudimentary feedback log
 *)
-val feedback_log : Feedback.level -> Pp.t list ref
+val feedback_log : Feedback.level -> Pp.t list Summary.Ref.t
 
 (**
   The id that we obtained when registering wp_feedback_logger as a feeder in Feedback.mli
 *)
-val wp_feedback_logger_id : int option ref
+val wp_feedback_logger_id : int option Summary.Ref.t
 
 (**
   Our own logger that we add as a feeder to Coq's feedback mechanism in Feedback.mli
@@ -44,24 +44,24 @@ val add_wp_feedback_logger : unit -> unit
 (**
   Should hypothesis hints be printed (For instance on how you can use a forall statement)?
 *)
-val print_hypothesis_help : bool ref
+val print_hypothesis_help : bool Summary.Ref.t
 
 (**
   The last thrown warning
 *)
-val last_thrown_warning : Pp.t option ref
+val last_thrown_warning : Pp.t option Summary.Ref.t
 
 (**
   Redirect warnings: this is useful when testing the plugin: meant to redirect Waterproof
   errors directly to the log
 *)
-val redirect_feedback : bool ref
+val redirect_feedback : bool Summary.Ref.t
 
 (**
   Redirect errors: this is useful when testing the plugin: meant to redirect errors
   to Control.zero rather than CErrors.user_err
 *)
-val redirect_errors : bool ref
+val redirect_errors : bool Summary.Ref.t
 
 (**
   Type of exceptions used in Wateproof

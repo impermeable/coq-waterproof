@@ -120,6 +120,7 @@ END
 VERNAC COMMAND EXTEND AutomationShieldEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Automation" "Shield" ] ->
     {
+      let open Summary.Ref in
       automation_shield := true
     }
 END
@@ -127,6 +128,7 @@ END
 VERNAC COMMAND EXTEND AutomationShieldDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Automation" "Shield" ] ->
     {
+      let open Summary.Ref in
       automation_shield := false
     }
 END
@@ -134,6 +136,7 @@ END
 VERNAC COMMAND EXTEND FilterErrorsEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Filter" "Errors" ] ->
     {
+      let open Summary.Ref in
       filter_errors := true
     }
 END
@@ -141,6 +144,7 @@ END
 VERNAC COMMAND EXTEND FilterErrorsDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Filter" "Errors" ] ->
     {
+      let open Summary.Ref in
       filter_errors := false
     }
 END
@@ -148,6 +152,7 @@ END
 VERNAC COMMAND EXTEND AutomationDebugEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Debug" "Automation" ] ->
     {
+      let open Summary.Ref in
       automation_debug := true
     }
 END
@@ -155,6 +160,7 @@ END
 VERNAC COMMAND EXTEND AutomationDebugDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Debug" "Automation" ] ->
     {
+      let open Summary.Ref in
       automation_debug := false
     }
 END
@@ -162,6 +168,7 @@ END
 VERNAC COMMAND EXTEND AutomationPrintRewriteHintsEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Printing" "Rewrite" "Hints"] ->
     {
+      let open Summary.Ref in
       print_rewrite_hints := true
     }
 END
@@ -169,6 +176,7 @@ END
 VERNAC COMMAND EXTEND AutomationPrintRewriteHintsDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Printing" "Rewrite" "Hints" ] ->
     {
+      let open Summary.Ref in
       print_rewrite_hints := false
     }
 END
@@ -176,6 +184,7 @@ END
 VERNAC COMMAND EXTEND PrintHypothesisHelpEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Hypothesis" "Help" ] ->
     {
+      let open Summary.Ref in
       print_hypothesis_help := true
     }
   END
@@ -183,6 +192,7 @@ VERNAC COMMAND EXTEND PrintHypothesisHelpEnableSideEff CLASSIFIED AS SIDEFF
 VERNAC COMMAND EXTEND PrintHypothesisHelpDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Hypothesis" "Help" ] ->
     {
+      let open Summary.Ref in
       print_hypothesis_help := false
     }
   END
@@ -197,6 +207,7 @@ END
 VERNAC COMMAND EXTEND RedirectWarningsEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Redirect" "Feedback" ] ->
     {
+      let open Summary.Ref in
       redirect_feedback := true
     }
 END
@@ -204,6 +215,7 @@ END
 VERNAC COMMAND EXTEND RedirectWarningsDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Redirect" "Feedback" ] ->
     {
+      let open Summary.Ref in
       redirect_feedback := false
     }
 END
@@ -212,6 +224,7 @@ END
 VERNAC COMMAND EXTEND RedirectErrorsEnableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Enable" "Redirect" "Errors" ] ->
     {
+      let open Summary.Ref in
       redirect_errors := true
     }
 END
@@ -219,6 +232,7 @@ END
 VERNAC COMMAND EXTEND RedirectErrorsDisableSideEff CLASSIFIED AS SIDEFF
   | [ "Waterproof" "Disable" "Redirect" "Errors" ] ->
     {
+      let open Summary.Ref in
       redirect_errors := false
     }
 END

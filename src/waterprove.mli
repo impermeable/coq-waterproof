@@ -19,17 +19,17 @@
 (**
   Is automation shield enabled ?
 *)
-val automation_shield : bool ref
+val automation_shield : bool Summary.Ref.t
 
 (**
   Do we want to debug the automation ?
 *)
-val automation_debug : bool ref
+val automation_debug : bool Summary.Ref.t
 
 (**
   Should rewrite hints be printed ?
 *)
-val print_rewrite_hints: bool ref
+val print_rewrite_hints: bool Summary.Ref.t
 
 (**
   Waterprove

@@ -44,11 +44,12 @@ type unfold_action =
   let wp_unfold_map = Summary.ref ~name:"wp_unfold_map" StringMap.empty
 
 (** The table that associates global references to unfold actions *)
-let wp_unfold_tbl : unfold_action list GlobRef.Map_env.t ref = Summary.ref ~name:"wp_unfold_tbl" GlobRef.Map_env.empty
+let wp_unfold_tbl : unfold_action list GlobRef.Map_env.t Summary.Ref.t = Summary.ref ~name:"wp_unfold_tbl" GlobRef.Map_env.empty
 
 (** The following constructions are necessary to ensure persistence of the tables.. *)
 
 let cache_unfold_map (s, id) =
+  let open Summary.Ref in
   wp_unfold_map := StringMap.add s id !wp_unfold_map
 
 let declare_unfold_map =
@@ -62,6 +63,7 @@ let declare_unfold_map =
     }
 
 let cache_unfold_tbl (id, ua) =
+  let open Summary.Ref in
   wp_unfold_tbl := GlobRef.Map_env.update id
       (function None -> Some [ua] | Some prev -> Some (ua::prev))
       !wp_unfold_tbl
@@ -90,6 +92,7 @@ let add_to_unfold_tbl (id : GlobRef.t) (ua : unfold_action) : unit =
   Lib.add_leaf (declare_unfold_tbl (id, ua))
 
 let extract_def (s : string) : GlobRef.t option =
+  let open Summary.Ref in
   StringMap.find_opt s !wp_unfold_map
 
 let wit_unfold_reference = Tac2dyn.Arg.create "waterproof-unfold"
@@ -97,6 +100,7 @@ let wit_unfold_reference = Tac2dyn.Arg.create "waterproof-unfold"
 let gtypref kn = GTypRef (Other kn, [])
 
 let () =
+  let open Summary.Ref in
   let ml_intern ist s =
     let s = String.concat " " s in
     match StringMap.find_opt s !wp_unfold_map with
@@ -174,9 +178,11 @@ let register_unfold_entry (id : GlobRef.t) (ue : unfold_entry) : unit =
       add_to_unfold_tbl id (Rewrite (s, f e))
 
 let get_all_references () : GlobRef.t list =
- !wp_unfold_tbl |> GlobRef.Map_env.domain |> GlobRef.Set_env.elements
+  let open Summary.Ref in
+  !wp_unfold_tbl |> GlobRef.Map_env.domain |> GlobRef.Set_env.elements
 
 let find_unfold_actions_by_ref (r : GlobRef.t) : unfold_action list =
+  let open Summary.Ref in
   Option.default [] (GlobRef.Map_env.find_opt r !wp_unfold_tbl)
 
 let find_unfold_actions_by_str (s : string) : unfold_action list =

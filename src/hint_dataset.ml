@@ -26,18 +26,19 @@ open Proofutils
 (**
   Contains the hint dataset that is currently loaded
 *)
-let loaded_hint_dataset: string list ref = ref ~name:"loaded_hint_dataset" []
+let loaded_hint_dataset: string list Summary.Ref.t = ref ~name:"loaded_hint_dataset" []
 
 (**
   Dictionary with dataset names as keys and datasets as values
 *)
-let existing_datasets: hint_dataset StringMap.t ref = 
+let existing_datasets: hint_dataset StringMap.t Summary.Ref.t = 
   ref ~name:"existing_datasets" @@ List.fold_left (fun dict (name, dataset) -> StringMap.add name dataset dict) StringMap.empty [("Empty", empty); ("Core", core); ("Algebra", algebra); ("Integers", integers); ("RealsAndIntegers", reals_and_integers); ("Sets", sets); ("Intuition", intuition); ("ClassicalEpsilon", classical_epsilon)]
 
 (**
   Adds a dataset to the currently loaded hint datasets
 *)
 let load_dataset (hint_dataset_name: string): unit =
+  let open Summary.Ref in
   if StringMap.mem hint_dataset_name !existing_datasets then
     begin 
       if not @@ List.mem hint_dataset_name !loaded_hint_dataset
@@ -50,18 +51,21 @@ let load_dataset (hint_dataset_name: string): unit =
   Removes a dataset to the currently loaded hint datasets
 *)
 let remove_dataset (hint_dataset_name: string): unit =
+  let open Summary.Ref in
   loaded_hint_dataset := List.filter (fun dataset -> dataset <> hint_dataset_name) !loaded_hint_dataset
 
 (**
   Clears all the currently loaded datasets
 *)
 let clear_dataset (): unit =
+  let open Summary.Ref in
   loaded_hint_dataset := ["Empty"]
 
 (**
   Creates a new empty dataset from a given name
 *)
 let create_new_dataset (dataset_name: string): unit =
+  let open Summary.Ref in
   if StringMap.mem dataset_name !existing_datasets
     then throw (NonExistingDataset dataset_name) (* TODO *)
     else
@@ -73,6 +77,7 @@ let create_new_dataset (dataset_name: string): unit =
   Sets the databases of a given {! database_type} in a given dataset
 *)
 let populate_dataset (dataset_name: string) (database_type: database_type) (databases: string list): unit =
+  let open Summary.Ref in
   existing_datasets := StringMap.update dataset_name (function
     | None -> throw (NonExistingDataset dataset_name)
     | Some dataset -> Some (set_databases dataset database_type databases)
@@ -82,6 +87,7 @@ let populate_dataset (dataset_name: string) (database_type: database_type) (data
   Converts a name into the corresponding hint dataset
 *)
 let dataset_of_name (name: string): hint_dataset = 
+  let open Summary.Ref in
   try
     StringMap.find name !existing_datasets
   with Not_found -> throw (NonExistingDataset name)
@@ -98,6 +104,6 @@ let rec merge (list1: 'a list) (list2: 'a list): 'a list = match list1 with
   Returns the list of databases of the current loaded dataset for the given {! Hint_dataset_declarations.database_type}
 *)
 let get_current_databases (database_type: database_type): hint_db_name list =
-
+  let open Summary.Ref in
   let datasets = List.map dataset_of_name !loaded_hint_dataset in
   List.fold_left (fun acc dataset -> merge acc (get_databases dataset database_type)) [] datasets
