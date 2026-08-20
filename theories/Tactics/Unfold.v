@@ -213,7 +213,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
             (print_tactic (concat_list [of_string "We need to show that ";
               of_lconstr unfolded_goal; of_string "."]))
           else
-            match Control.case (fun () => It suffices to show that $unfolded_goal; Control.zero Succeeded) with
+            match Control.case (fun () => wp_enough unfolded_goal; Control.zero Succeeded) with
             | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
                                 of_lconstr unfolded_goal; of_string "."]))
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";

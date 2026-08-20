@@ -31,7 +31,7 @@ Local Ltac2 concat_list (ls : message list) : message :=
 
 (** Attempts to prove that proposed goal is enough to show current goal.
   If succesful, replaces current goal by proposed goal. *)
-Local Ltac2 wp_enough (new_goal : constr) :=
+Ltac2 wp_enough (new_goal : constr) :=
   let err_msg := concat_list
     [of_string "Could not verify that it suffices to show "; of_lconstr new_goal; of_string "."] in
   match Control.case (fun () =>
