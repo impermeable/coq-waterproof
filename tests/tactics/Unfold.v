@@ -314,9 +314,11 @@ We show both statements.
   assert_fails_with_string
   (fun () => Expand All)
 "Remove this line in the final version of your proof.")
-  Info
+  Warning
 [
-"Alternative characterization supremum:"].
+"The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
+It suffices to show that 
+4 is the _supremum_ of [0, 4)."].
 Abort.
 
 Close Scope R_scope.
