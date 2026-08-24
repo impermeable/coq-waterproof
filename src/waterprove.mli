@@ -34,7 +34,7 @@ val print_rewrite_hints: bool ref
 (**
   Waterprove
 
-  This function is the main automatic solver of coq-waterproof.
+  This function is the main automatic solver of rocq-waterproof.
 
   The databases used for the proof search are the one declared in the current imported dataset (see {! Hint_dataset.loaded_hint_dataset}).
 
