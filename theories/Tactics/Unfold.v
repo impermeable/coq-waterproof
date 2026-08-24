@@ -106,11 +106,13 @@ Ltac2 apply_in_constr (alt_char : constr) (x : constr) : constr :=
       let h1 := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
       intro $h1;
       try (apply $alt_char);
-      let rewritten_term := Control.goal() in
-      let h2 := Control.hyp h1 in
-      destruct $h2;
-      exact I;
-      rewritten_term)
+      Control.focus 1 1 (fun () =>
+        let rewritten_term := Control.goal() in
+        let h2 := Control.hyp h1 in
+        destruct $h2;
+        exact I;
+        rewritten_term)
+      )
     ) in
   clear $h;
   return_term.
@@ -133,14 +135,16 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
   let return_term : constr :=
     (Control.focus 1 1 (fun () =>
       try (setoid_rewrite $equality);
-      let rewritten_term :=
-      match! goal with
-      | [|- ?c -> True ] => c
-      | [|- _] => throw (Message.of_string "Unexpected error in tactic_in_constr. Please report."); constr:(False)
-      end in
-      intro;
-      exact I;
-      rewritten_term)
+      Control.focus 1 1 (fun () =>
+        let rewritten_term :=
+        match! goal with
+        | [|- ?c -> True ] => c
+        | [|- _] => throw (Message.of_string "Unexpected error in tactic_in_constr. Please report."); constr:(False)
+        end in
+        intro;
+        exact I;
+        rewritten_term)
+      )
     ) in
   clear $h;
   return_term.
