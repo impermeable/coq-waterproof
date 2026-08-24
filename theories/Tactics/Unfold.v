@@ -213,7 +213,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
             (print_tactic (concat_list [of_string "We need to show that ";
               of_lconstr unfolded_goal; of_string "."]))
           else
-            match Control.case (fun () => wp_enough unfolded_goal; Control.zero Succeeded) with
+            match Control.case (fun () => wp_enough_base unfolded_goal; Control.zero Succeeded) with
             | Err Succeeded => (print_tactic (concat_list [of_string "It suffices to show that ";
                                 of_lconstr unfolded_goal; of_string "."]))
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
@@ -229,7 +229,7 @@ Ltac2 unfold_in_all (unfold_method: constr -> constr)
           let it_holds_msg := fun (x : constr) => concat_list
             [of_string "It holds that "; of_lconstr x; of_string "."] in
           let test_and_print unfolded_h :=
-            match Control.case (fun () => It holds that $unfolded_h; Control.zero Succeeded) with
+            match Control.case (fun () => wp_assert_base unfolded_h; Control.zero Succeeded) with
             | Err Succeeded => print_tactic (it_holds_msg unfolded_h)
             | _ => warn (concat_list [of_string "The following suggestion will likely not work,";
             of_string " (this is probably caused by a misalignment in the automation for";

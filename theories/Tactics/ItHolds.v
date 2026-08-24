@@ -50,6 +50,17 @@ Local Ltac2 try_out_label (label : ident) :=
   | Val _ => clear $label
   end.
 
+(** Simple version of a waterproof assert tactic.
+
+  Arguments:
+  - [claim]: the claim to assert.
+
+  Throws:
+  - [FailedToProve] if [waterprove] fails to prove that [claim] holds.
+*)
+Ltac2 wp_assert_base (claim : constr) :=
+  let claim := correct_type_by_wrapping claim in
+  assert $claim by (waterprove 5 true Main).
 
 (** Attempts to assert that [claim] holds, if succesful [claim] is added to the local
   hypotheses. If [label] is specified [claim] is given [label] as its identifier, otherwise an
