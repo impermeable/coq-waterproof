@@ -106,6 +106,12 @@ Ltac2 apply_in_constr (alt_char : constr) (x : constr) : constr :=
       let h1 := Fresh.fresh (Fresh.Free.of_goal () ) @__wp__h in
       intro $h1;
       try (apply $alt_char);
+      (* The previous tactic application may have generated multiple 
+      goals. We are fine with extra goals if they can be 
+      closed by assumption *)
+      Control.focus 2 (Control.numgoals()) (fun () => Control.enter (fun () =>
+        assumption
+      ));
       Control.focus 1 1 (fun () =>
         let rewritten_term := Control.goal() in
         let h2 := Control.hyp h1 in
@@ -135,6 +141,12 @@ Ltac2 tactic_in_constr (equality : constr) (x : constr) : constr :=
   let return_term : constr :=
     (Control.focus 1 1 (fun () =>
       try (setoid_rewrite $equality);
+      (* The previous tactic application may have generated multiple 
+      goals. We are fine with extra goals if they can be 
+      closed by assumption *)
+      Control.focus 2 (Control.numgoals()) (fun () => Control.enter (fun () =>
+        assumption
+      ));
       Control.focus 1 1 (fun () =>
         let rewritten_term :=
         match! goal with
