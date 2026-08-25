@@ -41,7 +41,6 @@ Qed.
 Ltac2 wp_contrapose () :=
   lazy_match! goal with
   | [ |- ~ ?a -> ~ ?b] =>
-    print (of_string "Applying contrapositive: ");
     apply (wp_contrapositive $b $a)
   | [ |- ?_a -> ?_b] =>
     apply wp_contrapositive
