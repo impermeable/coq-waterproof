@@ -35,6 +35,10 @@ Local Ltac2 concat_list (ls : message list) : message :=
   goal is enough to show the current goal.
   If successful, replaces current goal by proposed goal.
 
+  We have added this to be able to use an enough tactic
+  that doesn't throw a fatal error, which is useful
+  in the expand framework.
+
   Arguments:
   - [new_goal]: proposed new goal.
 
