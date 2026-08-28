@@ -309,6 +309,17 @@ We show both statements.
   Info
 [
 "Alternative characterization supremum:"].
+  Take ε > 0.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand All)
+"Remove this line in the final version of your proof.")
+  Warning
+[
+"The following suggestion will likely not work, (this is probably caused by a misalignment in the automation for unfolding statements. Please notify your teacher or the Waterproof developers):
+It suffices to show that 
+4 is the _supremum_ of [0, 4)."].
 Abort.
 
 Close Scope R_scope.
@@ -379,3 +390,14 @@ Proof.
 Abort.
 
 Close Scope nat_scope.
+
+(** Test 18 *)
+
+Local Parameter HypForApplyTest : P -> True -> True -> Q.
+
+Goal Q.
+Proof.
+assert True by trivial.
+let x := apply_in_constr constr:(HypForApplyTest) (Control.goal()) in
+  assert_constr_equal x constr:(P).
+Abort.
