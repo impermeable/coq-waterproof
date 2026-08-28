@@ -292,6 +292,25 @@ assert_feedback_with_strings
 ].
 Abort.
 
+Goal 4 is the supremum of [0, 4).
+
+It suffices to show that (4 is an upper bound for [0,4))
+  ∧ (∀ ε > 0, ∃ a ∈ [0, 4), 4 - ε < a).
+
+We show both statements.
+- We conclude that 4 is an upper bound for [0, 4).
+- We need to show that
+    ∀ ε > 0, ∃ a ∈ [0, 4), 4 - ε < a.
+  assert_feedback_with_strings
+  (fun () =>
+  assert_fails_with_string
+  (fun () => Expand All)
+"Remove this line in the final version of your proof.")
+  Info
+[
+"Alternative characterization supremum:"].
+Abort.
+
 Close Scope R_scope.
 
 
