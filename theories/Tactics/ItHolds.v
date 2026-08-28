@@ -52,6 +52,10 @@ Local Ltac2 try_out_label (label : ident) :=
 
 (** Simple version of a waterproof assert tactic.
 
+  We have added this to be able to use an assert tactic
+  that doesn't throw a fatal error, which is useful
+  in the expand framework.
+
   Arguments:
   - [claim]: the claim to assert.
 
